@@ -7,6 +7,7 @@ import {ReactiveFormsModule, FormsModule} from "@angular/forms";
 import {LoggedInActivator} from "qCommon/app/services/CheckSessionActivator"
 import {CustomDatepicker} from "./directives/customDatepicker";
 import {CustomDatepicker1} from "./directives/customDatepicker1";
+import {InvoiceSettingsComponent} from "./components/InvoiceSettings.component";
 
 @NgModule({
     imports: [CommonModule, FormsModule, ReactiveFormsModule, ShareModule, RouterModule.forChild([
