@@ -13,7 +13,7 @@ import {InvoiceSettingsComponent} from "./components/InvoiceSettings.component";
     imports: [CommonModule, FormsModule, ReactiveFormsModule, ShareModule, RouterModule.forChild([
         {path: 'invoices/invoiceSettings', component: InvoiceSettingsComponent, canActivate: [LoggedInActivator]}
     ])],
-    declarations: [CustomDatepicker, CustomDatepicker1],
+    declarations: [CustomDatepicker, CustomDatepicker1, InvoiceSettingsComponent],
     exports: [RouterModule, CustomDatepicker, CustomDatepicker1],
     providers: [],
     schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
