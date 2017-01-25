@@ -27,6 +27,7 @@ export class InvoiceSettingsComponent implements  OnInit {
   document: any;
   billUploadResp: any;
   companyId: string;
+  logoURL:string;
 
   constructor(private _fb: FormBuilder, private _invoiceSettingsForm: InvoiceSettingsForm, private dss: DomSanitizer,
       private invoiceService: InvoicesService){
@@ -68,6 +69,7 @@ export class InvoiceSettingsComponent implements  OnInit {
       let link: string = "";
 
       link = this.document.temporaryURL;
+      this.logoURL = link;
     }
   }
 

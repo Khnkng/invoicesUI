@@ -14,7 +14,7 @@ export class InvoiceSettingsForm extends abstractForm{
         numberValidator.push(Validators.pattern);
         numberValidator.push(Validators.required);
         return {
-            "templateType": [""],
+            "templateType": ["Contemporary"],
             "companyLogo": [""],
             "displayLogo": [false],
             "accentColor": ["", Validators.required],
