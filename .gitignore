@@ -7,4 +7,7 @@ app/bower_components/
 typings
 .idea/**
 .DS_Store
-
+app/**/*.js
+app/**/*.map
+*.js
+*.map

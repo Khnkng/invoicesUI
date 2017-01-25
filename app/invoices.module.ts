@@ -8,6 +8,8 @@ import {LoggedInActivator} from "qCommon/app/services/CheckSessionActivator"
 import {CustomDatepicker} from "./directives/customDatepicker";
 import {CustomDatepicker1} from "./directives/customDatepicker1";
 import {InvoiceSettingsComponent} from "./components/InvoiceSettings.component";
+import {InvoiceSettingsForm} from "./forms/InvoiceSettings.form";
+import {InvoicesService} from "./services/Invoices.service";
 
 @NgModule({
     imports: [CommonModule, FormsModule, ReactiveFormsModule, ShareModule, RouterModule.forChild([
@@ -15,7 +17,7 @@ import {InvoiceSettingsComponent} from "./components/InvoiceSettings.component";
     ])],
     declarations: [CustomDatepicker, CustomDatepicker1, InvoiceSettingsComponent],
     exports: [RouterModule, CustomDatepicker, CustomDatepicker1],
-    providers: [],
+    providers: [InvoiceSettingsForm, InvoicesService],
     schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
 export class InvoicesModule {

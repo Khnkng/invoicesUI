@@ -1,23 +1,236 @@
-<form>
+<form [formGroup]="invoiceSettingsForm">
     <div class="row">
         <div class="small-12 medium-12 columns">
             <ul foundation class="accordion" data-accordion data-allow-all-closed="true">
                 <li data-accordion-item class="accordion-item is-active">
                     <a class="accordion-title">General Settings</a>
                     <div class="accordion-content" data-tab-content>
-
+                        <div class="row">
+                            <div class="small-12 medium-3 columns text-right">
+                                <label>Template type:</label>
+                            </div>
+                            <div class="small-12 medium-9 columns">
+                                <div>Contemporary</div>
+                                <div>Classic</div>
+                                <div>Modern</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="small-12 medium-3 columns text-right">
+                                <label>Company Logo:</label>
+                            </div>
+                            <div class="small-12 medium-9 columns">
+                                <section class="upload-area"  ng2FileDrop [uploader]="uploader" (fileOver)="fileOverBase($event)" >
+                                    <div class="row upload-choose-btn" [ngClass]="{'popup-file-over': hasBaseDropZoneOver}">
+                                        <div class="column text-center">
+                                            <label for="nativeFileUpload" class="button">Choose File</label>
+                                            <input type="file" id="nativeFileUpload" (change)="startUpload($event)" value="null" class="show-for-sr" ng2FileSelect [uploader]="uploader" />
+                                            <p>Drag and drop files here.</p>
+                                        </div>
+                                    </div>
+                                    <div class="row files-to-upload-section">
+                                        <ul *ngIf="uploader.queue.length>0">
+                                            <li *ngFor="let item of uploader.queue">
+                                                <div class="row">
+                                                    <div class="column small-10" [ngClass]="{'item-uploaded':item.isSuccess}">
+                                                        <span *ngIf="!(item.isReady || item.isUploading || item.isSuccess)">
+                                                          <i class="ion-ios-cloud-upload-outline" (click)="item.upload()"></i>
+                                                        </span>
+                                                        {{ item?.file?.name }} &nbsp;({{ item?.file?.size/1024/1024 | number:'.2' }} MB)
+                                                    </div>
+                                                    <div class="column small-2 text-right">
+                                                        <i *ngIf="(item.isUploading)" class="ion-ios-close-outline" (click)="item.cancel()"></i>
+                                                        <i class="ion-ios-minus-outline" (click)="removeUploadItem(item)"></i>
+                                                    </div>
+                                                </div>
+                                                <div *ngIf="item.isUploading">
+                                                    <div class="progress">
+                                                        <div class="progress-meter" [ngStyle]="{ 'width': item.progress + '%' }"></div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="small-12 medium-3 columns text-right">
+                                <label>Display Logo:</label>
+                            </div>
+                            <div class="small-12 medium-9 columns">
+                                <input type="checkbox" formControlName="displayLogo"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="small-12 medium-3 columns text-right">
+                                <label>Accent Color:</label>
+                            </div>
+                            <div class="small-12 medium-9 columns">
+                                <input type="text" formControlName="accentColor"/>
+                            </div>
+                        </div>
                     </div>
                 </li>
                 <li data-accordion-item class="accordion-item">
                     <a class="accordion-title">Invoice Settings</a>
                     <div class="accordion-content" data-tab-content>
-
+                        <div class="row">
+                            <div class="small-12 medium-3 columns text-right">
+                                <label>Default Payment terms:</label>
+                            </div>
+                            <div class="small-12 medium-9 columns">
+                                <textarea formControlName="defaultPaymentTerms"></textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="small-12 medium-3 columns text-right">
+                                <label>Default Title:</label>
+                            </div>
+                            <div class="small-12 medium-9 columns">
+                                <input type="text" formControlName="defaultTitle"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="small-12 medium-3 columns text-right">
+                                <label>Default subheading:</label>
+                            </div>
+                            <div class="small-12 medium-9 columns">
+                                <input type="checkbox" formControlName="defaultSubHeading"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="small-12 medium-3 columns text-right">
+                                <label>Default Footer:</label>
+                            </div>
+                            <div class="small-12 medium-9 columns">
+                                <input type="text" formControlName="defaultFooter"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="small-12 medium-3 columns text-right">
+                                <label>Standard Memo:</label>
+                            </div>
+                            <div class="small-12 medium-9 columns">
+                                <textarea formControlName="standardMemo"></textarea>
+                            </div>
+                        </div>
                     </div>
                 </li>
                 <li data-accordion-item class="accordion-item">
                     <a class="accordion-title">Column Settings</a>
                     <div class="accordion-content" data-tab-content>
-
+                        <div class="row">
+                            <div class="small-12 medium-12 columns">
+                                <label>Edit the titles of columns on your choice.</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="small-12 medium-3 columns text-right">
+                                <label>Items:</label>
+                            </div>
+                            <div class="small-12 medium-9 columns">
+                                <div class="field-group">
+                                    <div class="field-row">
+                                        <input type="radio" name="items" formControlName="items" value="Items"/>
+                                    </div>
+                                    <div class="field-row">
+                                        <input type="radio" name="items" formControlName="items" value="Products"/>
+                                    </div>
+                                    <div class="field-row">
+                                        <input type="radio" name="items" formControlName="items" value="Services"/>
+                                    </div>
+                                    <div class="field-row">
+                                        <input type="radio" name="items" formControlName="items" value="Other"/>
+                                        <input type="text"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="small-12 medium-3 columns text-right">
+                                <label>Units:</label>
+                            </div>
+                            <div class="small-12 medium-9 columns">
+                                <div class="field-group">
+                                    <div class="field-row">
+                                        <input type="radio" name="units" formControlName="Quantity"/>
+                                    </div>
+                                    <div class="field-row">
+                                        <input type="radio" name="units" formControlName="Hours"/>
+                                    </div>
+                                    <div class="field-row">
+                                        <input type="radio" name="units" formControlName="Other"/>
+                                        <input type="text"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="small-12 medium-3 columns text-right">
+                                <label>Price:</label>
+                            </div>
+                            <div class="small-12 medium-9 columns">
+                                <div class="field-group">
+                                    <div class="field-row">
+                                        <input type="radio" name="price" formControlName="Price"/>
+                                    </div>
+                                    <div class="field-row">
+                                        <input type="radio" name="price" formControlName="Rate"/>
+                                    </div>
+                                    <div class="field-row">
+                                        <input type="radio" name="price" formControlName="Other"/>
+                                        <input type="text"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="small-12 medium-3 columns text-right">
+                                <label>Amount:</label>
+                            </div>
+                            <div class="small-12 medium-9 columns">
+                                <div class="field-group">
+                                    <div class="field-row">
+                                        <input type="radio" name="amount" formControlName="Amount"/>
+                                    </div>
+                                    <div class="field-row">
+                                        <input type="radio" name="amount" formControlName="Other"/>
+                                        <input type="text"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="small-12 medium-3 columns text-right">
+                                <label>Hide columns:</label>
+                            </div>
+                            <div class="small-12 medium-9 columns">
+                                <div class="row">
+                                    <div class="small-12 medium-6 columns">
+                                        <input type="checkbox" formControlName="hideItemName"/> <lable>Hide item name</lable>
+                                    </div>
+                                    <div class="small-12 medium-6 columns">
+                                        <input type="checkbox" formControlName="hideItemDescription"/> <lable>Hide item description</lable>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="small-12 medium-6 columns">
+                                        <input type="checkbox" formControlName="hideUnits"/> <lable>Hide units</lable>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="small-12 medium-6 columns">
+                                        <input type="checkbox" formControlName="hidePrice"/> <lable>Hide price</lable>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="small-12 medium-6 columns">
+                                        <input type="checkbox" formControlName="hideAmount"/> <lable>Hide Amount</lable>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </li>
             </ul>
@@ -25,8 +238,13 @@
     </div>
     <div class="row">
         <div class="small-12 medium-12 columns">
-            <button class="button small" type="submit">Submit</button>
+            <button class="button small float-right" type="submit">Submit</button>
         </div>
     </div>
 </form>
 
+<!--
+
+
+
+-->
