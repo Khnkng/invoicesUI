@@ -16,6 +16,7 @@ export class InvoiceSettingsForm extends abstractForm{
         return {
             "templateType": ["Contemporary"],
             "companyLogo": [""],
+            "documentId": [""],
             "displayLogo": [false],
             "accentColor": ["", Validators.required],
             "defaultPaymentTerms": [""],
@@ -31,7 +32,12 @@ export class InvoiceSettingsForm extends abstractForm{
             "hideItemDescription": [false],
             "hideUnits": [false],
             "hidePrice": [false],
-            "hideAmount": [false]
+            "hideAmount": [false],
+
+            "otherItems": [""],
+            "otherUnits": [""],
+            "otherPrice": [""],
+            "otherAmount": [""]
         }
     }
 

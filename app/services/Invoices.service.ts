@@ -7,9 +7,11 @@ import {Injectable} from "@angular/core";
 import {QountServices} from "qCommon/app/services/QountServices";
 import {PATH, SOURCE_TYPE} from "qCommon/app/constants/Qount.constants";
 import {Session} from "qCommon/app/services/Session";
+import {Observable} from "rxjs/Observable";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/catch";
 import "rxjs/add/observable/throw";
+import {INVOICE_PATHS} from "../constants/invoices.constants";
 
 
 @Injectable()
@@ -20,8 +22,30 @@ export class InvoicesService extends QountServices {
     }
 
     getDocumentServiceUrl():string {
-        var url = this.interpolateUrl(PATH.DOCUMENT_SERVICE,null,{id: Session.getUser().id});
+        let url = this.interpolateUrl(PATH.DOCUMENT_SERVICE,null,{id: Session.getUser().id});
         url = PATH.DOCUMENT_SERVICE_URL + url;
         return url;
+    }
+
+    createPreference(data, companyId:string): Observable<any> {
+        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE_PREFERENCE,null,{id: Session.getUser().id,companyId: companyId});
+        return this.create(url, data, SOURCE_TYPE.JAVA).map(res => <any> res.json())
+            .catch(this.handleError)
+    }
+
+    getPreference(companyId:String): Observable<any> {
+        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE_PREFERENCE,null,{id: Session.getUser().id, companyId: companyId});
+        return this.query(url, SOURCE_TYPE.JAVA).map(res => <any> res.json())
+            .catch(this.handleError)
+    }
+
+    updatePreference(data, id:string, companyId:string): Observable<any> {
+        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE_PREFERENCE,null,{id: Session.getUser().id,companyId:companyId});
+        return this.update(url+"/"+id, data, SOURCE_TYPE.JAVA).map(res => <any> res.json())
+            .catch(this.handleError)
+    }
+
+    private handleError (error: Response) {
+        return Observable.throw(error.text());
     }
 }

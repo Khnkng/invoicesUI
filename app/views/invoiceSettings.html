@@ -1,4 +1,4 @@
-<form [formGroup]="invoiceSettingsForm">
+<form (ngSubmit)="submit($event)" [formGroup]="invoiceSettingsForm">
     <div class="row invoice-settings">
         <div class="small-12 medium-12 columns">
             <ul foundation class="accordion" data-accordion data-allow-all-closed="true">
@@ -41,7 +41,9 @@
                                 <label>Company Logo:</label>
                             </div>
                             <div class="small-12 medium-3 columns">
-                                <img src="{{logoURL}}" *ngIf="logoURL"/>
+                                <div class="image-wrapper">
+                                    <img src="{{logoURL}}" *ngIf="logoURL"/>
+                                </div>
                             </div>
                             <div class="small-12 medium-3 columns">
                                 <div class="file-upload-modal">
@@ -93,7 +95,7 @@
                                 <label>Accent Color:</label>
                             </div>
                             <div class="small-12 medium-6 columns">
-                                <input type="text" formControlName="accentColor"/>
+                                <input type="text" class="color-field" formControlName="accentColor"/>
                             </div>
                         </div>
                     </div>
@@ -180,7 +182,7 @@
                                             <input type="radio" formControlName="items" value="Other"/>
                                             <span>Other</span>
                                         </label>
-                                        <input class="float-left" type="text"/>
+                                        <input class="float-left" type="text" [disabled]="isOtherItem()" formControlName="otherItems"/>
                                     </div>
                                 </div>
                             </div>
@@ -208,7 +210,7 @@
                                             <input type="radio" formControlName="units" value="Other"/>
                                             <span>Other</span>
                                         </label>
-                                        <input type="text" class="float-left"/>
+                                        <input type="text" class="float-left" [disabled]="isOtherUnit()" formControlName="otherUnits"/>
                                     </div>
                                 </div>
                             </div>
@@ -236,7 +238,7 @@
                                             <input type="radio" formControlName="price" value="Other"/>
                                             <span>Other</span>
                                         </label>
-                                        <input class="float-left" type="text"/>
+                                        <input class="float-left" type="text" [disabled]="isOtherPrice()" formControlName="otherPrice"/>
                                     </div>
                                 </div>
                             </div>
@@ -258,7 +260,7 @@
                                             <input type="radio" formControlName="amount" value="Other"/>
                                             <span>Other</span>
                                         </label>
-                                        <input class="float-left" type="text"/>
+                                        <input class="float-left" type="text" [disabled]="isOtherAmount()" formControlName="otherAmount"/>
                                     </div>
                                 </div>
                             </div>
