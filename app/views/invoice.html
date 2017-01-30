@@ -1,5 +1,71 @@
 <div class="new-invoice row" foundation>
     <div class="column small-12 medium-12 large-12 qount-form-backgorund">
-        {{newInvoice? "New Invoice": "Edit Invoice"}}
+        <div class="qount-off-canvas-menu chart-of-accounts">
+            <div class="flyout expanded" [ngClass]="{'expanded':true}">
+                <section class="flyout-placeholder">
+                    <div class="row">
+                        <div class="small-12 medium-12 columns">
+                            <header class="flyout-header">
+                                {{newInvoice? "New Invoice" : "Edit Invoice"}}
+                                <div class="button-wrapper float-right">
+                                    <button class="hollow button small">Preview</button>
+                                    <button class="button small">Save</button>
+                                </div>
+                            </header>
+                        </div>
+                    </div>
+                    <div class="flyout-body flyout-shadow-effect">
+                        <section class="form-section clearfix">
+                            <div class="row">
+                                <div class="small-12 medium-12 columns">
+                                    <div class="row">
+                                        <div class="small-12 medium-3 columns">
+                                            <div class="logo"></div>
+                                        </div>
+                                        <div class="small-12 medium-5 columns"></div>
+                                        <div class="small-12 medium-4 columns">
+                                            <div class="invoice-title float-right">
+                                                <input type="text" [(ngModel)]="preference.defaultTitle"/>
+                                            </div>
+                                            <div class="invoice-sub-heading float-right">
+                                                <input type="text" [(ngModel)]="preference.defaultSubHeading"/>
+                                            </div>
+                                            <div class="invoice-address float-right">
+                                                <input type="text"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="small-12 medium-3 columns">
+                                            <div class="add-customer">
+                                                <a (click)="populateCustomers()">
+                                                    <i class="icon ion-ios-plus-outline"></i>Add Customer
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="small-12 medium-5 columns"></div>
+                                        <div class="small-12 medium-4 columns">
+                                            <div>
+                                                <span class="float-right">Invoice Number:</span>
+                                                <input class="float-right" type="text" disabled/>
+                                            </div>
+                                            <div class="float-right">
+                                                P.O.Number/S.O.Number: <input type="text"/>
+                                            </div>
+                                            <div class="float-right">
+                                                Invoice Date: <input type="text" custom-datepicker [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setInvoiceDate($event)" placeholder="Invoice Date*"/>
+                                            </div>
+                                            <div class="float-right">
+                                                Payment Date: <input type="text" custom-datepicker [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setPaymentDate($event)" placeholder="Payment Date*">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </section>
+            </div>
+        </div>
     </div>
 </div>
