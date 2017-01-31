@@ -17,51 +17,142 @@
                     <div class="flyout-body flyout-shadow-effect">
                         <section class="form-section clearfix">
                             <div class="row">
-                                <div class="small-12 medium-12 columns">
-                                    <div class="row">
-                                        <div class="small-12 medium-3 columns">
-                                            <div class="logo"></div>
+
+                                <div class="small-12 medium-6 columns">
+                                    <div class="addCustomerLogo">
+                                        <div class="addCustomerLink">
+                                            <a (click)="populateCustomers()">
+                                                <i class="icon ion-ios-personadd-outline"></i>Add Customer
+                                            </a>
                                         </div>
-                                        <div class="small-12 medium-5 columns"></div>
-                                        <div class="small-12 medium-4 columns">
-                                            <div class="invoice-title float-right">
-                                                <input type="text" [(ngModel)]="preference.defaultTitle"/>
+                                    </div>
+                                </div>
+                                <div class="small-12 medium-6 columns">
+
+                                    <div class="row">
+                                        <div class="small-12 medium-6 columns">
+                                            <label>Invoice Number:</label>
+                                        </div>
+                                        <div class="small-12 medium-6 columns">
+                                            <input type="text" disabled/>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="small-12 medium-6 columns">
+                                            <label>P.O.Number/S.O.Number: </label>
+                                        </div>
+                                        <div class="small-12 medium-6 columns">
+                                            <input type="text"/>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="row">
+                                        <div class="small-12 medium-6 columns">
+                                            <label>Invoice Date: </label>
+                                        </div>
+                                        <div class="small-12 medium-6 columns">
+                                            <input type="text" custom-datepicker [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setInvoiceDate($event)" placeholder="Invoice Date*"/>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="row">
+                                        <div class="small-12 medium-6 columns">
+                                            <label>Payment Date: </label>
+                                        </div>
+                                        <div class="small-12 medium-6 columns">
+                                            <input type="text" custom-datepicker [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setPaymentDate($event)" placeholder="Payment Date*">
+                                        </div>
+                                    </div>
+
+                                    <!--<div class="invoice-title float-right">
+                                        <input type="text" [(ngModel)]="preference.defaultTitle"/>
+                                    </div>
+                                    <div class="invoice-sub-heading float-right">
+                                        <input type="text" [(ngModel)]="preference.defaultSubHeading"/>
+                                    </div>
+                                    <div class="invoice-address float-right">
+                                        <input type="text"/>
+                                    </div>-->
+                                </div>
+                            </div>
+                            <div class="row items-table">
+                                <div class="row header">
+                                    <div class="column medium-6">
+                                        <label>Items</label>
+                                    </div>
+                                    <div class="column medium-4">
+                                        <label style="width:50%;">Quantity</label>
+                                        <label style="width:45%;">Price</label>
+                                    </div>
+                                    <div class="column medium-2">
+                                        <label>Amount</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="column medium-6">
+                                        <div class="row">
+                                            <div class="column medium-8" style="padding: 0px 0.9375rem 0px 0px;">
+                                                <input type="text"/>
                                             </div>
-                                            <div class="invoice-sub-heading float-right">
-                                                <input type="text" [(ngModel)]="preference.defaultSubHeading"/>
-                                            </div>
-                                            <div class="invoice-address float-right">
+                                            <div class="column medium-4" style="padding: 0px 0.9375rem 0px 0px;">
                                                 <input type="text"/>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="small-12 medium-3 columns">
-                                            <div class="add-customer">
-                                                <a (click)="populateCustomers()">
-                                                    <i class="icon ion-ios-plus-outline"></i>Add Customer
-                                                </a>
-                                            </div>
+                                    <div class="column medium-4">
+                                        <div class="column medium-6" style="padding: 0px 0.9375rem 0px 0px;">
+                                            <input type="text"/>
                                         </div>
-                                        <div class="small-12 medium-5 columns"></div>
-                                        <div class="small-12 medium-4 columns">
-                                            <div>
-                                                <span class="float-right">Invoice Number:</span>
-                                                <input class="float-right" type="text" disabled/>
-                                            </div>
-                                            <div class="float-right">
-                                                P.O.Number/S.O.Number: <input type="text"/>
-                                            </div>
-                                            <div class="float-right">
-                                                Invoice Date: <input type="text" custom-datepicker [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setInvoiceDate($event)" placeholder="Invoice Date*"/>
-                                            </div>
-                                            <div class="float-right">
-                                                Payment Date: <input type="text" custom-datepicker [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setPaymentDate($event)" placeholder="Payment Date*">
-                                            </div>
+                                        <div class="column medium-6" style="padding: 0px 0px 0px 0px;">
+                                            <input type="text"/>
                                         </div>
+                                    </div>
+                                    <div class="column medium-2">
+                                        $600
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="column medium-6" style="padding-right:0px;">
+                                        <a>View Income Account</a>
+                                        <label style="display: inline" class="float-right">Tax:</label>
+                                    </div>
+                                    <div class="column medium-4">
+                                        <input type="text"/>
+                                    </div>
+                                    <div class="column medium-2">
+                                        $600
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="column medium-6" style="padding-right:0px;">
+                                        <label style="display: inline" class="float-right">Tax:</label>
+                                    </div>
+                                    <div class="column medium-4">
+                                        <input type="text"/>
+                                    </div>
+                                    <div class="column medium-2">
+                                        ---
                                     </div>
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="column medium-12 text-center add-item">
+                                    <a><i class="icon ion-ios-plus-outline"></i> Add an item</a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="column medium-10"> <label>Subtotal</label></div>
+                                <div class="column medium-2">$34</div>
+                            </div>
+                            <div class="row">
+                                <div class="column medium-10"><label class="float-right" style="display:inline;">Total</label></div>
+                                <div class="column medium-2">$200</div>
+                            </div>
+
                         </section>
                     </div>
                 </section>
