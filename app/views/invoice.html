@@ -53,7 +53,7 @@
                                             <label>Invoice Date: </label>
                                         </div>
                                         <div class="small-12 medium-6 columns">
-                                            <input type="text" custom-datepicker [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setInvoiceDate($event)" placeholder="Invoice Date*"/>
+                                            <input type="text" invoice-custom-datepicker [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setInvoiceDate($event)" placeholder="Invoice Date*"/>
                                         </div>
                                     </div>
 
@@ -63,7 +63,7 @@
                                             <label>Payment Date: </label>
                                         </div>
                                         <div class="small-12 medium-6 columns">
-                                            <input type="text" custom-datepicker [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setPaymentDate($event)" placeholder="Payment Date*">
+                                            <input type="text" invoice-custom-datepicker [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setPaymentDate($event)" placeholder="Payment Date*">
                                         </div>
                                     </div>
 
