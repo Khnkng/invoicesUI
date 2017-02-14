@@ -1,3 +1,4 @@
+<form (ngSubmit)="submit($event)" [formGroup]="invoiceForm">
 <div class="new-invoice row" foundation>
     <div class="column small-12 medium-12 large-12 qount-form-backgorund">
         <div class="qount-off-canvas-menu chart-of-accounts">
@@ -62,7 +63,7 @@
                                             <label>Invoice Date: </label>
                                         </div>
                                         <div class="small-12 medium-6 columns">
-                                            <input type="text" formControlName="invoice_date" custom-datepicker [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setInvoiceDate($event)" placeholder="Invoice Date*"/>
+                                            <input type="text" formControlName="invoice_date" invoice-custom-datepicker [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setInvoiceDate($event)" placeholder="Invoice Date*"/>
                                         </div>
                                     </div>
 
@@ -72,7 +73,7 @@
                                             <label>Payment Date: </label>
                                         </div>
                                         <div class="small-12 medium-6 columns">
-                                            <input type="text" formControlName="payment_date" custom-datepicker [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setPaymentDate($event)" placeholder="Payment Date*">
+                                            <input type="text" formControlName="payment_date" invoice-custom-datepicker atepicker1 [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setPaymentDate($event)" placeholder="Payment Date*">
                                         </div>
                                     </div>
 

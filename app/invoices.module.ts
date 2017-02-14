@@ -14,6 +14,7 @@ import {InvoiceComponent} from "./components/Invoice.component";
 import {InvoiceForm} from "./forms/Invoice.form";
 import {InvoiceLineForm, InvoiceLineTaxesForm} from "./forms/InvoiceLine.form";
 import {InvoicesComponent} from "./components/invoices.component";
+import {CustomDatepicker1} from "./directives/customDatepicker1";
 
 @NgModule({
     imports: [CommonModule, FormsModule, ReactiveFormsModule, ShareModule, RouterModule.forChild([
@@ -23,15 +24,14 @@ import {InvoicesComponent} from "./components/invoices.component";
         {path: 'invoices/', component: InvoicesComponent, canActivate: [LoggedInActivator]},
         {path: 'invoices/invoiceSettings', component: InvoiceSettingsComponent, canActivate: [LoggedInActivator]}
     ])],
-    declarations: [CustomDatepicker, CustomDatepicker1, InvoiceSettingsComponent, InvoiceDashboardComponent,
-            InvoiceComponent, InvoicesComponent],
-    exports: [RouterModule, CustomDatepicker, CustomDatepicker1],
+    declarations: [InvoiceCustomDatepicker, CustomDatepicker1, InvoiceSettingsComponent, InvoiceDashboardComponent,
+            InvoiceComponent, InvoicesComponent, InvoiceCustomDatepicker],
+    exports: [RouterModule, CustomDatepicker1],
     providers: [InvoiceSettingsForm, InvoicesService, InvoiceForm, InvoiceLineForm, InvoiceLineTaxesForm],
-    declarations: [InvoiceCustomDatepicker, InvoiceSettingsComponent, InvoiceDashboardComponent, InvoiceComponent],
-    exports: [RouterModule, InvoiceCustomDatepicker],
-    providers: [InvoiceSettingsForm, InvoicesService],
     schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
+
+
 export class InvoicesModule {
 
 }
