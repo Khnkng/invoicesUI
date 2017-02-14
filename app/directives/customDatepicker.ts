@@ -5,10 +5,10 @@ declare var jQuery:any;
 declare var Pikaday:any;
 declare var moment:any;
 @Directive({
-  selector: '[custom-datepicker]'
+  selector: '[invoice-custom-datepicker]'
 })
 
-export class CustomDatepicker {
+export class InvoiceCustomDatepicker {
 dateFormat:any;
   fmt:string;
   minDate:any = new Date();
