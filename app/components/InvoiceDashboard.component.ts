@@ -9,6 +9,7 @@ import {ToastService} from "qCommon/app/services/Toast.service";
 import {TOAST_TYPE} from "qCommon/app/constants/Qount.constants";
 import {CompaniesService} from "qCommon/app/services/Companies.service";
 import {LoadingService} from "qCommon/app/services/LoadingService";
+import {InvoicesService} from "../services/Invoices.service";
 
 declare let _:any;
 declare let jQuery:any;
@@ -51,10 +52,11 @@ export class InvoiceDashboardComponent{
     hasProposals:boolean = false;
     allCompanies:Array<any>;
     currentCompany:any;
+    invoices:any;
 
     constructor(private _router:Router,private _route: ActivatedRoute,
                 private toastService: ToastService, private loadingService:LoadingService,
-                private companiesService: CompaniesService) {
+                private companiesService: CompaniesService, private invoiceService: InvoicesService) {
         let companyId = Session.getCurrentCompany();
         this.companiesService.companies().subscribe(companies => {
             this.allCompanies = companies;
@@ -114,6 +116,10 @@ export class InvoiceDashboardComponent{
             this.isLoading = false;
         } else if(this.selectedTab == 2){
             this.isLoading = false;
+            this.invoiceService.invoices().subscribe(invoices => {
+                debugger;
+                this.buildInvoiceTableData(invoices);
+            }, error => this.handleError(error));
         }
     }
 
@@ -141,10 +147,12 @@ export class InvoiceDashboardComponent{
 
     removeInvoice(invoice){
         let base = this;
+        this.invoiceService.deleteInvoice(invoice.id).subscribe(success => {this.toastService.pop(TOAST_TYPE.success, "Invoice deleted successfully.");},
+            error => {this.toastService.pop(TOAST_TYPE.error, "Invoice deletion failed.")});
     }
 
     showInvoice(invoice){
-        let link = ['invoice/dashboard', invoice.id];
+        let link = ['invoices/edit', invoice.id];
         this._router.navigate(link);
     }
 
@@ -207,5 +215,36 @@ export class InvoiceDashboardComponent{
     addNewProposal(){
         let link = ['invoices/NewProposal'];
         this._router.navigate(link);
+    }
+
+    buildInvoiceTableData(invoices) {
+        this.hasInvoices = false;
+        this.invoices = invoices;
+        this.invoiceTableData.rows = [];
+        this.invoiceTableOptions.search = true;
+        this.invoiceTableOptions.pageSize = 9;
+        this.invoiceTableData.columns = [
+            {"name": "id", "title": "id", "visible": false},
+            {"name": "po_number", "title": "PO Number"},
+            {"name": "invoice_date", "title": "Invoice Date"},
+            {"name": "payment_date", "title": "Payment Date"},
+            {"name": "amount", "title": "amount"},
+            {"name": "actions", "title": ""}
+        ];
+        let base = this;
+        invoices.forEach(function(invoice) {
+            let row:any = {};
+            row['id'] = invoice['id'];
+            row['po_number'] = invoice['po_number'];
+            row['invoice_date'] = invoice['invoice_date'];
+            row['payment_date'] = invoice['payment_date'];
+            row['amount'] = invoice['amount'];
+            row['actions'] = "<a class='action' data-action='edit' style='margin:0px 0px 0px 5px;'><i class='icon ion-edit'></i></a><a class='action' data-action='delete' style='margin:0px 0px 0px 5px;'><i class='icon ion-trash-b'></i></a>";
+            base.invoiceTableData.rows.push(row);
+        });
+
+        setTimeout(function(){
+            base.hasInvoices = true;
+        }, 0)
     }
 }

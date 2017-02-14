@@ -45,6 +45,32 @@ export class InvoicesService extends QountServices {
             .catch(this.handleError)
     }
 
+
+    createInvoice(invoiceData) : Observable<any> {
+    let url = this.interpolateUrl(INVOICE_PATHS.INVOICE,null,{id: Session.getUser().id});
+    return this.create(url, invoiceData, SOURCE_TYPE.JAVA).map(res => <any> res.json())
+        .catch(this.handleError)
+    }
+
+    invoices() : Observable<any> {
+        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE,null,{id: Session.getUser().id});
+        return this.query(url, SOURCE_TYPE.JAVA).map(res => <any> res.json())
+            .catch(this.handleError)
+    }
+
+    getInvoice(invoiceId) : Observable<any> {
+        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE,null,{id: Session.getUser().id});
+        return this.query(url+"/"+invoiceId, SOURCE_TYPE.JAVA).map(res => <any> res.json())
+            .catch(this.handleError)
+    }
+
+    deleteInvoice(invoiceId) : Observable<any> {
+        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE,null,{id: Session.getUser().id});
+        return this.delete(url+"/"+invoiceId, SOURCE_TYPE.JAVA).map(res => <any> res.json())
+            .catch(this.handleError)
+    }
+
+
     private handleError (error: Response) {
         return Observable.throw(error.text());
     }
