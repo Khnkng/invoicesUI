@@ -40,38 +40,92 @@ export class InvoiceComponent{
 
         let _form:any = this._invoiceForm.getForm();
         _form['invoiceLines'] = this.invoiceLineArray;
-
         this.invoiceForm = this._fb.group(_form);
-        this.addInvoiceList();
         this.routeSub = this._route.params.subscribe(params => {
             this.invoiceID=params['invoiceID'];
-            debugger;
-            if(!this.invoiceID){
-                this.newInvoice = true;
-            } else {
-                this.invoiceService.getInvoice(this.invoiceID).subscribe(invoice=>{
-                    this.invoice = invoice;
-                    this._invoiceForm.updateForm(this.invoiceForm, this.invoice);
-                });
-            }
+            this.loadInitialData();
         });
 
 
     }
 
-    addInvoiceList() {
-        let _form:any = this._invoiceLineForm.getForm();
+    loadCustomers(companyId:any) {
+        this.customerService.customers(companyId)
+            .subscribe(customers => {
+                this.customers = customers;
+                this.loadItemCodes(companyId);
+            }, error =>{
+                this.toastService.pop(TOAST_TYPE.error, "Failed to load your customers");
+            });
+    }
+
+    loadItemCodes(companyId:any) {
+        this.codeService.itemCodes(companyId)
+            .subscribe(itemCodes => {
+                this.itemCodes = itemCodes;
+                this.loadTaxList(companyId);
+            });
+    }
+
+    loadTaxList(companyId:any) {
+        this.companyService.getTaxofCompany(companyId)
+            .subscribe(taxesList  => {
+                this.taxesList=taxesList;
+                this.setupForm();
+            });
+    }
+
+    setupForm() {
+        let base = this;
+        if(!this.invoiceID){
+            this.newInvoice = true;
+            this.addInvoiceList();
+
+        } else {
+            this.invoiceService.getInvoice(this.invoiceID).subscribe(invoice=>{
+                this.invoice = invoice;
+                let _invoice = _.cloneDeep(invoice);
+                delete _invoice.invoiceLines;
+                this._invoiceForm.updateForm(this.invoiceForm, _invoice);
+                this.invoice.invoiceLines.forEach(function(invoiceLine:any){
+                    base.addInvoiceList(invoiceLine);
+                });
+                /*this.invoice.invoiceLines.forEach(function (invoiceLine:any) {
+                 this.addInvoiceList(invoiceLine);
+                 });*/
+            });
+        }
+    }
+
+
+
+    loadInitialData() {
+        let companyId = Session.getCurrentCompany();
+        this.loadCustomers(companyId);
+    }
+
+    addInvoiceList(line?:any) {
+        debugger;
+        let base = this;
+        let _form:any = this._invoiceLineForm.getForm(line);
         let taxesLineArray:FormArray = new FormArray([]);
 
         _form['invoiceLineTaxes'] = taxesLineArray;
         let invoiceListForm = this._fb.group(_form);
         this.invoiceLineArray.push(invoiceListForm);
         this.taxArray.push(taxesLineArray);
-        this.addTaxLine(this.taxArray.length-1);
+        if(line && line.invoiceLineTaxes) {
+            line.invoiceLineTaxes.forEach(function(taxLine){
+                base.addTaxLine(base.taxArray.length-1, taxLine);
+            });
+        } else {
+            this.addTaxLine(this.taxArray.length-1);
+        }
     }
 
-    addTaxLine(index) {
-        let _form:any = this._invoiceLineTaxesForm.getForm();
+    addTaxLine(index, tax?:any) {
+        debugger;
+        let _form:any = this._invoiceLineTaxesForm.getForm(tax);
         let invoiceTaxForm = this._fb.group(_form);
         this.taxArray[index].push(invoiceTaxForm);
     }
@@ -90,27 +144,7 @@ export class InvoiceComponent{
 
 
 
-        let companyId = Session.getCurrentCompany();
-        this.customerService.customers(companyId)
-            .subscribe(customers => {
-                this.customers = customers;
-            }, error =>{
-                this.toastService.pop(TOAST_TYPE.error, "Failed to load your customers");
-            });
-        this.invoiceService.getPreference(companyId)
-            .subscribe(preference => {
-                this.preference = preference;
-            }, error =>{
-                this.toastService.pop(TOAST_TYPE.error, "Failed to load Invoice settings.");
-            });
 
-        this.codeService.itemCodes(companyId)
-            .subscribe(itemCodes => this.itemCodes = itemCodes);
-
-        this.companyService.getTaxofCompany(companyId)
-            .subscribe(taxesList  => {
-                this.taxesList=taxesList;
-            });
 
         if(!this.newInvoice){
             //Fetch existing invoice
@@ -139,14 +173,14 @@ export class InvoiceComponent{
     calcLineTax(taxId, price, quantity) {
         let tax = _.find(this.taxesList, {id: taxId});
         if(taxId && price && quantity) {
-            return (tax.taxRate * parseInt(price) * parseInt(quantity))/100;
+            return (tax.taxRate * parseFloat(price) * parseFloat(quantity))/100;
         }
         return 0;
     }
 
     calcAmt(price, quantity){
         if(price && quantity) {
-            return parseInt(price) * parseInt(quantity);
+            return parseFloat(price) * parseFloat(quantity);
         }
         return 0;
     }
@@ -155,9 +189,11 @@ export class InvoiceComponent{
         let invoiceData = this._invoiceForm.getData(this.invoiceForm);
         let subTotal = 0;
         let base = this;
-        invoiceData.invoiceLines.forEach(function(invoiceLine){
-            subTotal = subTotal + base.calcAmt(invoiceLine.price, invoiceLine.quantity);
-        });
+        if(invoiceData.invoiceLines) {
+            invoiceData.invoiceLines.forEach(function(invoiceLine){
+                subTotal = subTotal + base.calcAmt(invoiceLine.price, invoiceLine.quantity);
+            });
+        }
         return subTotal;
     }
 
@@ -165,14 +201,19 @@ export class InvoiceComponent{
         let invoiceData = this._invoiceForm.getData(this.invoiceForm);
         let total = 0;
         let base = this;
-        invoiceData.invoiceLines.forEach(function(invoiceLine){
-            total = total + base.calcAmt(invoiceLine.price, invoiceLine.quantity);
 
-            invoiceLine.invoiceLineTaxes.forEach(function(tax){
-                let taxAmt = base.calcLineTax(tax.tax_id, 1, total);
-                total = total - taxAmt;
+        if(invoiceData.invoiceLines) {
+            invoiceData.invoiceLines.forEach(function (invoiceLine) {
+                total = total + base.calcAmt(invoiceLine.price, invoiceLine.quantity);
+
+                if(invoiceLine.invoiceLineTaxes) {
+                    invoiceLine.invoiceLineTaxes.forEach(function (tax) {
+                        let taxAmt = base.calcLineTax(tax.tax_id, 1, total);
+                        total = total - taxAmt;
+                    });
+                }
             });
-        });
+        }
         return total;
     }
 
@@ -201,12 +242,22 @@ export class InvoiceComponent{
             });
         });
 
-        this.invoiceService.createInvoice(invoiceData).subscribe(resp => {
-            console.log("invoice created successfully", resp);
-            this.toastService.pop(TOAST_TYPE.success, "Invoice created successfully");
-        }, error=>{
-            this.toastService.pop(TOAST_TYPE.error, "Invoice created failed");
-        });
+        if(this.newInvoice) {
+
+            this.invoiceService.createInvoice(invoiceData).subscribe(resp => {
+                console.log("invoice created successfully", resp);
+                this.toastService.pop(TOAST_TYPE.success, "Invoice created successfully");
+            }, error=>{
+                this.toastService.pop(TOAST_TYPE.error, "Invoice created failed");
+            });
+        } else {
+            this.invoiceService.updateInvoice(invoiceData).subscribe(resp => {
+                console.log("invoice created successfully", resp);
+                this.toastService.pop(TOAST_TYPE.success, "Invoice updated successfully");
+            }, error=>{
+                this.toastService.pop(TOAST_TYPE.error, "Invoice update failed");
+            });
+        }
         return false;
     }
 }

@@ -52,6 +52,12 @@ export class InvoicesService extends QountServices {
         .catch(this.handleError)
     }
 
+    updateInvoice(invoiceData) : Observable<any> {
+        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE,null,{id: Session.getUser().id});
+        return this.update(url+"/"+invoiceData.id, invoiceData, SOURCE_TYPE.JAVA).map(res => <any> res.json())
+            .catch(this.handleError)
+    }
+
     invoices() : Observable<any> {
         let url = this.interpolateUrl(INVOICE_PATHS.INVOICE,null,{id: Session.getUser().id});
         return this.query(url, SOURCE_TYPE.JAVA).map(res => <any> res.json())

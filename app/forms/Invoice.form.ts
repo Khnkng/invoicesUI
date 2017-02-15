@@ -15,11 +15,11 @@ export class InvoiceForm extends abstractForm{
         numberValidator.push(Validators.required);
 
         return {
+            "id":[""],
             "customer_id": ["", Validators.required],
             "company_id": ["", Validators.required],
             "po_number": ["", Validators.required],
             "invoice_date": ["", Validators.required],
-            "invoice_number": [""],
             "payment_date": ["", Validators.required]
         }
     }

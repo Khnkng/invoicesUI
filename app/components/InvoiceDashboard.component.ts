@@ -124,6 +124,7 @@ export class InvoiceDashboardComponent{
     }
 
     handleAction($event){
+        debugger;
         let action = $event.action;
         delete $event.action;
         delete $event.actions;
