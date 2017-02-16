@@ -14,6 +14,7 @@ import {FormGroup, FormBuilder, FormArray} from "@angular/forms";
 import {InvoiceLineForm, InvoiceLineTaxesForm} from "../forms/InvoiceLine.form";
 
 declare let _:any;
+declare let numeral:any;
 declare let jQuery:any;
 
 @Component({
@@ -173,16 +174,20 @@ export class InvoiceComponent{
     calcLineTax(taxId, price, quantity) {
         let tax = _.find(this.taxesList, {id: taxId});
         if(taxId && price && quantity) {
-            return (tax.taxRate * parseFloat(price) * parseFloat(quantity))/100;
+            let priceVal = numeral(price).value();
+            let quantityVal = numeral(quantity).value();
+            return numeral((tax.taxRate * parseFloat(priceVal) * parseFloat(quantityVal))/100).format('$00.00');
         }
-        return 0;
+        return numeral(0).format('$00.00');
     }
 
     calcAmt(price, quantity){
         if(price && quantity) {
-            return parseFloat(price) * parseFloat(quantity);
+            let priceVal = numeral(price).value();
+            let quantityVal = numeral(quantity).value();
+            return numeral(parseFloat(priceVal) * parseFloat(quantityVal)).format('$00.00');
         }
-        return 0;
+        return numeral(0).format('$00.00');
     }
 
     calcSubTotal() {
@@ -191,10 +196,10 @@ export class InvoiceComponent{
         let base = this;
         if(invoiceData.invoiceLines) {
             invoiceData.invoiceLines.forEach(function(invoiceLine){
-                subTotal = subTotal + base.calcAmt(invoiceLine.price, invoiceLine.quantity);
+                subTotal = subTotal + numeral(base.calcAmt(invoiceLine.price, invoiceLine.quantity)).value();
             });
         }
-        return subTotal;
+        return numeral(subTotal).format('$00.00');
     }
 
     calcTotal() {
@@ -204,17 +209,17 @@ export class InvoiceComponent{
 
         if(invoiceData.invoiceLines) {
             invoiceData.invoiceLines.forEach(function (invoiceLine) {
-                total = total + base.calcAmt(invoiceLine.price, invoiceLine.quantity);
+                total = total + numeral(base.calcAmt(invoiceLine.price, invoiceLine.quantity)).value();
 
                 if(invoiceLine.invoiceLineTaxes) {
                     invoiceLine.invoiceLineTaxes.forEach(function (tax) {
-                        let taxAmt = base.calcLineTax(tax.tax_id, 1, total);
+                        let taxAmt = numeral(base.calcLineTax(tax.tax_id, 1, total)).value();
                         total = total - taxAmt;
                     });
                 }
             });
         }
-        return total;
+        return numeral(total).format('$00.00');
     }
 
     submit($event){
