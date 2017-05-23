@@ -3,8 +3,7 @@
   "version": "1.0.1",
   "scripts": {
     "build": "gulp build",
-    "start": "gulp dev",
-    "postinstall": "typings install"
+    "start": "gulp dev"
   },
   "dependencies": {
     "@angular/common": "~2.4.0",
