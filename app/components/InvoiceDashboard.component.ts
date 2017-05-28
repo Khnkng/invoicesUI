@@ -17,7 +17,7 @@ declare let moment:any;
 
 @Component({
     selector: 'invoice-dashboard',
-    templateUrl: '/app/views/invoiceDashboard.html',
+    templateUrl: '../views/invoiceDashboard.html',
 })
 
 export class InvoiceDashboardComponent{

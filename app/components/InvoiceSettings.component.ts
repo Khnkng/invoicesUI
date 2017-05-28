@@ -20,7 +20,7 @@ declare let moment:any;
 
 @Component({
   selector: 'invoice-settings',
-  templateUrl: '/app/views/invoiceSettings.html',
+  templateUrl: '../views/invoiceSettings.html',
 })
 
 export class InvoiceSettingsComponent implements  OnInit {

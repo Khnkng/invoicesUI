@@ -16,7 +16,7 @@ declare let _:any;
 
 @Component({
     selector: 'itemcodes',
-    templateUrl: '/app/views/itemCodes.html',
+    templateUrl: '../views/itemCodes.html'
 })
 
 export class InvoicesComponent{
