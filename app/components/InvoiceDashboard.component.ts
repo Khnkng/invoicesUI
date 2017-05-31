@@ -117,8 +117,8 @@ export class InvoiceDashboardComponent{
         } else if(this.selectedTab == 2){
             this.isLoading = false;
             this.invoiceService.invoices().subscribe(invoices => {
-                debugger;
-                this.buildInvoiceTableData(invoices);
+                if(invoices.invoices)
+                this.buildInvoiceTableData(invoices.invoices);
             }, error => this.handleError(error));
         }
     }
