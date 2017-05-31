@@ -47,31 +47,31 @@ export class InvoicesService extends QountServices {
 
 
     createInvoice(invoiceData) : Observable<any> {
-    let url = this.interpolateUrl(INVOICE_PATHS.INVOICE,null,{id: Session.getUser().id});
+    let url = this.interpolateUrl(INVOICE_PATHS.INVOICE,null,{id: Session.getUser().id,companyId:Session.getCurrentCompany()});
     return this.create(url, invoiceData, SOURCE_TYPE.JAVA).map(res => <any> res.json())
         .catch(this.handleError)
     }
 
     updateInvoice(invoiceData) : Observable<any> {
-        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE,null,{id: Session.getUser().id});
+        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE,null,{id: Session.getUser().id,companyId:Session.getCurrentCompany()});
         return this.update(url+"/"+invoiceData.id, invoiceData, SOURCE_TYPE.JAVA).map(res => <any> res.json())
             .catch(this.handleError)
     }
 
     invoices() : Observable<any> {
-        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE,null,{id: Session.getUser().id});
+        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE,null,{id: Session.getUser().id,companyId:Session.getCurrentCompany()});
         return this.query(url, SOURCE_TYPE.JAVA).map(res => <any> res.json())
             .catch(this.handleError)
     }
 
     getInvoice(invoiceId) : Observable<any> {
-        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE,null,{id: Session.getUser().id});
+        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE,null,{id: Session.getUser().id,companyId:Session.getCurrentCompany()});
         return this.query(url+"/"+invoiceId, SOURCE_TYPE.JAVA).map(res => <any> res.json())
             .catch(this.handleError)
     }
 
     deleteInvoice(invoiceId) : Observable<any> {
-        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE,null,{id: Session.getUser().id});
+        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE,null,{id: Session.getUser().id,companyId:Session.getCurrentCompany()});
         return this.delete(url+"/"+invoiceId, SOURCE_TYPE.JAVA).map(res => <any> res.json())
             .catch(this.handleError)
     }

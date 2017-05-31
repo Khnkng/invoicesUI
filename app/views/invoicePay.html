@@ -1,0 +1,188 @@
+<form (ngSubmit)="submit($event)" [formGroup]="invoiceForm">
+    <div class="new-invoice row" foundation>
+        <div class="column small-12 medium-12 large-12 qount-form-backgorund">
+            <div class="qount-off-canvas-menu chart-of-accounts">
+                <div class="flyout expanded" [ngClass]="{'expanded':true}">
+                    <section class="flyout-placeholder">
+                        <div class="row">
+                            <div class="small-12 medium-12 columns">
+                                <header class="flyout-header">
+                                    Pay Invoice
+                                    <div class="button-wrapper float-right">
+                                        <button type="submit" class="button small">Pay</button>
+
+                                    </div>
+                                </header>
+                            </div>
+                        </div>
+                        <div class="flyout-body flyout-shadow-effect">
+                            <section class="form-section clearfix">
+                                <div class="row">
+
+                                    <div class="small-12 medium-6 columns">
+                                        <!--<div class="addCustomerLogo">
+                                            <div class="addCustomerLink">
+                                                <a (click)="gotoCustomersPage()">
+                                                    <i class="icon ion-ios-personadd-outline"></i>Add Customer
+                                                </a>
+                                            </div>
+                                        </div>-->
+                                        <div style="width: 330px;">
+                                            <label style="text-align: left">
+                                                Customer
+                                                <select  formControlName="customer_id" class="jeSelect" disabled>
+                                                    <option *ngFor="let customer of customers" value="{{customer.customer_id}}">{{customer.customer_name}}</option>
+                                                </select>
+                                            </label>
+                                        </div>
+                                        <div style="width: 330px;">
+                                            <!--<label style="text-align: left">
+                                                Select Currency
+                                                <select formControlName="locale">
+                                                    <option value="en-us">$</option>
+                                                    <option value="ind">₹</option>
+                                                </select>
+                                            </label>-->
+                                        </div>
+                                    </div>
+                                    <div class="small-12 medium-6 columns">
+
+                                        <div class="row">
+                                            <div class="small-12 medium-6 columns">
+                                                <label>Invoice Number:</label>
+                                            </div>
+                                            <div class="small-12 medium-6 columns">
+                                                <input type="text" formControlName="id" readonly/>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="small-12 medium-6 columns">
+                                                <label>P.O.Number/S.O.Number: </label>
+                                            </div>
+                                            <div class="small-12 medium-6 columns">
+                                                <input type="text" formControlName="po_number" readonly/>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="row">
+                                            <div class="small-12 medium-6 columns">
+                                                <label>Invoice Date: </label>
+                                            </div>
+                                            <div class="small-12 medium-6 columns">
+                                                <input type="text" formControlName="invoice_date" readonly/>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="row">
+                                            <div class="small-12 medium-6 columns">
+                                                <label>Payment Date: </label>
+                                            </div>
+                                            <div class="small-12 medium-6 columns">
+                                                <input type="text" formControlName="payment_date" readonly>
+                                            </div>
+                                        </div>
+
+                                        <!--<div class="invoice-title float-right">
+                                            <input type="text" [(ngModel)]="preference.defaultTitle"/>
+                                        </div>
+                                        <div class="invoice-sub-heading float-right">
+                                            <input type="text" [(ngModel)]="preference.defaultSubHeading"/>
+                                        </div>
+                                        <div class="invoice-address float-right">
+                                            <input type="text"/>
+                                        </div>-->
+                                    </div>
+                                </div>
+                                <div formArrayName="invoiceLines">
+                                    <div class="row items-table" *ngFor="let invoiceLine of invoiceForm.controls.invoiceLines.controls;let iindex=index;">
+                                        <div class="column column-12" [formGroupName]="iindex">
+
+                                            <div *ngIf="iindex == 0" class="row header">
+                                                <div class="column medium-4">
+                                                    <label>Items</label>
+                                                </div>
+                                                <div class="column medium-2">
+                                                    <label>Description</label>
+                                                </div>
+                                                <div class="column medium-4">
+                                                    <label style="width:50%;">Quantity</label>
+                                                    <label style="width:45%;">Price</label>
+                                                </div>
+                                                <div class="column medium-2">
+                                                    <label>Amount</label>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="column medium-6">
+                                                    <div class="row">
+                                                        <div class="column medium-8" style="padding: 0px 0.9375rem 0px 0px;">
+                                                            <select class="jeSelect" [formControl]="invoiceLine.controls.item_id" disabled>
+                                                                <option *ngFor="let item of itemCodes" [value]="item.id">{{item.name}}</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="column medium-4" style="padding: 0px 0.9375rem 0px 0px;">
+                                                            <input type="text" [formControl]="invoiceLine.controls.description" readonly/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="column medium-4">
+                                                    <div class="column medium-6" style="padding: 0px 0.9375rem 0px 0px;">
+                                                        <input type="text" [formControl]="invoiceLine.controls.quantity" readonly/>
+                                                    </div>
+                                                    <div class="column medium-6" style="padding: 0px 0px 0px 0px;">
+                                                        <input type="text" [formControl]="invoiceLine.controls.price" numeral [locale]="invoiceForm.controls.locale.value" [format]="'$00.00'" readonly/>
+                                                    </div>
+                                                </div>
+                                                <div class="column medium-2">
+                                                    <span>{{calcAmt(invoiceLine.controls.quantity.value, invoiceLine.controls.price.value)}}</span> <!--<span class="float-right"><a (click)="deleteInvoiceLine(iindex)"><i class="icon ion-trash-b"></i></a></span>-->
+                                                </div>
+
+                                            </div>
+                                            <div formArrayName="invoiceLineTaxes">
+                                                <div *ngFor="let invoiceTaxLine of invoiceLine.controls.invoiceLineTaxes.controls;let tindex=index;">
+                                                    <div class="row" [formGroupName]="tindex">
+                                                        <div class="column medium-6" style="padding-right:0px;">
+                                                            <label style="display: inline" class="float-right">Tax:</label>
+                                                        </div>
+                                                        <div class="column medium-4">
+                                                            <select class="jeSelect" [formControl]="invoiceTaxLine.controls.tax_id" disabled>
+                                                                <option *ngFor="let taxItem of taxesList" [value]="taxItem.id">{{taxItem.name}} - {{taxItem.taxRate}}</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="column medium-2">
+                                                            <span>${{calcLineTax(invoiceTaxLine.controls.tax_id.value, invoiceLine.controls.quantity.value, invoiceLine.controls.price.value)}}</span><!-- <span class="float-right"><a (click)="addTaxLine(iindex)"><i class="icon ion-ios-plus-outline"></i></a></span>-->
+                                                            <!--<span class="float-right"><a (click)="deleteTaxLine(iindex, tindex)"><i class="icon ion-trash-b"></i></a></span>-->
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--<div class="row">
+                                    <div class="column medium-12 text-center add-item">
+                                        <a (click)="addInvoiceList()"><i class="icon ion-ios-plus-outline"></i> Add an item</a>
+                                    </div>
+                                </div>-->
+                                <div class="row">
+                                    <div class="column medium-10"> <label>Subtotal</label></div>
+                                    <div class="column medium-2">{{calcSubTotal()}}</div>
+                                </div>
+                                <div class="row">
+                                    <div class="column medium-10"><label class="float-right" style="display:inline;">Total</label></div>
+                                    <div class="column medium-2">{{calcTotal()}}</div>
+                                </div>
+
+                            </section>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

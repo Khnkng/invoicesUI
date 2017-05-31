@@ -15,6 +15,8 @@ import {InvoiceForm} from "./forms/Invoice.form";
 import {InvoiceLineForm, InvoiceLineTaxesForm} from "./forms/InvoiceLine.form";
 import {InvoicesComponent} from "./components/invoices.component";
 import {CustomDatepicker1} from "./directives/customDatepicker1";
+import {InvoicePayComponent} from "./components/invoicePay.component";
+import {DashBoardActivator} from "qCommon/app/services/DashBoardActivator";
 
 @NgModule({
     imports: [CommonModule, FormsModule, ReactiveFormsModule, ShareModule, RouterModule.forChild([
@@ -22,10 +24,11 @@ import {CustomDatepicker1} from "./directives/customDatepicker1";
         {path: 'invoices/edit/:invoiceID', component: InvoiceComponent, canActivate: [LoggedInActivator]},
         {path: 'invoices/NewInvoice', component: InvoiceComponent, canActivate: [LoggedInActivator]},
         {path: 'invoices/', component: InvoicesComponent, canActivate: [LoggedInActivator]},
-        {path: 'invoices/invoiceSettings', component: InvoiceSettingsComponent, canActivate: [LoggedInActivator]}
+        {path: 'invoices/invoiceSettings', component: InvoiceSettingsComponent, canActivate: [LoggedInActivator]},
+        {path: 'payment/invoices/:invoiceID', component: InvoicePayComponent, canActivate: [DashBoardActivator]}
     ])],
     declarations: [InvoiceCustomDatepicker, CustomDatepicker1, InvoiceSettingsComponent, InvoiceDashboardComponent,
-            InvoiceComponent, InvoicesComponent, InvoiceCustomDatepicker],
+            InvoiceComponent, InvoicesComponent, InvoiceCustomDatepicker,InvoicePayComponent],
     exports: [RouterModule, CustomDatepicker1],
     providers: [InvoiceSettingsForm, InvoicesService, InvoiceForm, InvoiceLineForm, InvoiceLineTaxesForm],
     schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
