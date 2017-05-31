@@ -15,7 +15,7 @@ import {InvoiceForm} from "./forms/Invoice.form";
 import {InvoiceLineForm, InvoiceLineTaxesForm} from "./forms/InvoiceLine.form";
 import {InvoicesComponent} from "./components/invoices.component";
 import {CustomDatepicker1} from "./directives/customDatepicker1";
-import {InvoicePayComponent} from "./components/invoicePay.component.ts";
+import {InvoicePayComponent} from "./components/invoicePay.component";
 import {DashBoardActivator} from "qCommon/app/services/DashBoardActivator";
 
 @NgModule({
