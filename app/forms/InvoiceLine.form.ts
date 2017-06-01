@@ -17,6 +17,7 @@ export class InvoiceLineForm extends abstractForm{
             description:[model ? model.description : '', Validators.required],
             quantity:[model ? model.quantity : 0, Validators.required],
             price:[model ? model.price : 0, Validators.required],
+            name:[model?model.name:'']
         };
     }
 

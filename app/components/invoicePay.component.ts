@@ -90,6 +90,7 @@ export class InvoicePayComponent{
                 _invoice.customer_name=_invoice.customer.customer_name;
                 this._invoiceForm.updateForm(this.invoiceForm, _invoice);
                 this.invoice.invoiceLines.forEach(function(invoiceLine:any){
+                    invoiceLine.name=invoiceLine.item.name;
                     base.addInvoiceList(invoiceLine);
                 });
                 /*this.invoice.invoiceLines.forEach(function (invoiceLine:any) {

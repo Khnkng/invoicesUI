@@ -19,83 +19,42 @@
                             <section class="form-section clearfix">
                                 <div class="row">
 
+                                    <div class="small-12 medium-3 columns">
+                                        <label style="text-align: left;">Customer
+                                            <input type="text" formControlName="customer_name" readonly/>
+                                        </label>
+                                    </div>
+                                    <div class="small-12 medium-3 columns">
+                                        <label style="text-align: left;">Invoice Number:
+                                            <input type="text" formControlName="id" readonly/>
+                                        </label>
+                                    </div>
+                                    <div class="small-12 medium-3 columns">
+                                        <label  style="text-align: left;">P.O.Number/S.O.Number:
+                                            <input type="text" formControlName="po_number" readonly/>
+                                        </label>
+                                    </div>
+                                    <div class="small-12 medium-3 columns">
+                                        <label style="text-align: left;">Invoice Date:
+                                            <input type="text" formControlName="invoice_date" readonly/>
+                                        </label>
+                                    </div>
+                                    <div class="small-12 medium-3 columns">
+                                        <label style="text-align: left;">Payment Date:
+                                            <input type="text" formControlName="payment_date" readonly>
+                                        </label>
+                                    </div>
+                                    <!--
+
                                     <div class="small-12 medium-6 columns">
-                                        <!--<div class="addCustomerLogo">
-                                            <div class="addCustomerLink">
-                                                <a (click)="gotoCustomersPage()">
-                                                    <i class="icon ion-ios-personadd-outline"></i>Add Customer
-                                                </a>
-                                            </div>
-                                        </div>-->
                                         <div style="width: 330px;">
                                             <label style="text-align: left">
                                                 Customer
                                                 <input type="text" formControlName="customer_name" readonly/>
-                                                <!--<select  formControlName="customer_id" class="jeSelect" disabled>
-                                                    <option *ngFor="let customer of customers" value="{{customer.customer_id}}">{{customer.customer_name}}</option>
-                                                </select>-->
                                             </label>
                                         </div>
-                                        <div style="width: 330px;">
-                                            <!--<label style="text-align: left">
-                                                Select Currency
-                                                <select formControlName="locale">
-                                                    <option value="en-us">$</option>
-                                                    <option value="ind">₹</option>
-                                                </select>
-                                            </label>-->
-                                        </div>
-                                    </div>
-                                    <div class="small-12 medium-6 columns">
+                                    </div>-->
 
-                                        <div class="row">
-                                            <div class="small-12 medium-6 columns">
-                                                <label>Invoice Number:</label>
-                                            </div>
-                                            <div class="small-12 medium-6 columns">
-                                                <input type="text" formControlName="id" readonly/>
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="small-12 medium-6 columns">
-                                                <label>P.O.Number/S.O.Number: </label>
-                                            </div>
-                                            <div class="small-12 medium-6 columns">
-                                                <input type="text" formControlName="po_number" readonly/>
-                                            </div>
-                                        </div>
-
-
-                                        <div class="row">
-                                            <div class="small-12 medium-6 columns">
-                                                <label>Invoice Date: </label>
-                                            </div>
-                                            <div class="small-12 medium-6 columns">
-                                                <input type="text" formControlName="invoice_date" readonly/>
-                                            </div>
-                                        </div>
-
-
-                                        <div class="row">
-                                            <div class="small-12 medium-6 columns">
-                                                <label>Payment Date: </label>
-                                            </div>
-                                            <div class="small-12 medium-6 columns">
-                                                <input type="text" formControlName="payment_date" readonly>
-                                            </div>
-                                        </div>
-
-                                        <!--<div class="invoice-title float-right">
-                                            <input type="text" [(ngModel)]="preference.defaultTitle"/>
-                                        </div>
-                                        <div class="invoice-sub-heading float-right">
-                                            <input type="text" [(ngModel)]="preference.defaultSubHeading"/>
-                                        </div>
-                                        <div class="invoice-address float-right">
-                                            <input type="text"/>
-                                        </div>-->
-                                    </div>
                                 </div>
                                 <div formArrayName="invoiceLines">
                                     <div class="row items-table" *ngFor="let invoiceLine of invoiceForm.controls.invoiceLines.controls;let iindex=index;">
@@ -123,7 +82,7 @@
                                                             <!--<select class="jeSelect" [formControl]="invoiceLine.controls.item_id" disabled>
                                                                 <option *ngFor="let item of itemCodes" [value]="item.id">{{item.name}}</option>
                                                             </select>-->
-                                                            <input type="text" [formControl]="invoiceLine.controls.item_id" readonly/>
+                                                            <input type="text" [formControl]="invoiceLine.controls.name" readonly/>
                                                         </div>
                                                         <div class="column medium-4" style="padding: 0px 0.9375rem 0px 0px;">
                                                             <input type="text" [formControl]="invoiceLine.controls.description" readonly/>

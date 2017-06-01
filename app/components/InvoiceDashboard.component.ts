@@ -116,7 +116,7 @@ export class InvoiceDashboardComponent{
             this.isLoading = false;
         } else if(this.selectedTab == 2){
             this.isLoading = false;
-            this.invoiceService.invoices().subscribe(invoices => {
+            this.invoiceService.invoices('notpaid').subscribe(invoices => {
                 if(invoices.invoices)
                 this.buildInvoiceTableData(invoices.invoices);
             }, error => this.handleError(error));
