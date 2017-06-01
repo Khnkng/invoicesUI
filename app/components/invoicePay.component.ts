@@ -87,6 +87,7 @@ export class InvoicePayComponent{
                 this.invoice = invoice;
                 let _invoice = _.cloneDeep(invoice);
                 delete _invoice.invoiceLines;
+                _invoice.customer_name=_invoice.customer.customer_name;
                 this._invoiceForm.updateForm(this.invoiceForm, _invoice);
                 this.invoice.invoiceLines.forEach(function(invoiceLine:any){
                     base.addInvoiceList(invoiceLine);
@@ -102,11 +103,11 @@ export class InvoicePayComponent{
 
     loadInitialData() {
         let companyId = Session.getCurrentCompany();
-        this.loadCustomers(companyId);
+        this.setupForm();
+        //this.loadCustomers(companyId);
     }
 
     addInvoiceList(line?:any) {
-        debugger;
         let base = this;
         let _form:any = this._invoiceLineForm.getForm(line);
         let taxesLineArray:FormArray = new FormArray([]);
@@ -125,7 +126,6 @@ export class InvoicePayComponent{
     }
 
     addTaxLine(index, tax?:any) {
-        debugger;
         let _form:any = this._invoiceLineTaxesForm.getForm(tax);
         let invoiceTaxForm = this._fb.group(_form);
         this.taxArray[index].push(invoiceTaxForm);
@@ -171,12 +171,11 @@ export class InvoicePayComponent{
         this._router.navigate(link);
     }
 
-    calcLineTax(taxId, price, quantity) {
-        let tax = _.find(this.taxesList, {id: taxId});
-        if(taxId && price && quantity) {
+    calcLineTax(tax_rate, price, quantity) {
+        if(tax_rate && price && quantity) {
             let priceVal = numeral(price).value();
             let quantityVal = numeral(quantity).value();
-            return numeral((tax.taxRate * parseFloat(priceVal) * parseFloat(quantityVal))/100).format('$00.00');
+            return numeral((tax_rate * parseFloat(priceVal) * parseFloat(quantityVal))/100).format('$00.00');
         }
         return numeral(0).format('$00.00');
     }
@@ -213,7 +212,7 @@ export class InvoicePayComponent{
 
                 if(invoiceLine.invoiceLineTaxes) {
                     invoiceLine.invoiceLineTaxes.forEach(function (tax) {
-                        let taxAmt = numeral(base.calcLineTax(tax.tax_id, 1, total)).value();
+                        let taxAmt = numeral(base.calcLineTax(tax.tax_rate, 1, total)).value();
                         total = total - taxAmt;
                     });
                 }

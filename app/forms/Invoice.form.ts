@@ -21,7 +21,8 @@ export class InvoiceForm extends abstractForm{
             "po_number": ["", Validators.required],
             "invoice_date": ["", Validators.required],
             "payment_date": ["", Validators.required],
-            "locale": [""]
+            "locale": [""],
+            "customer_name":[""]
         }
     }
 

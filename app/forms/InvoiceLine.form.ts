@@ -26,7 +26,9 @@ export class InvoiceLineForm extends abstractForm{
 export class InvoiceLineTaxesForm extends abstractForm {
     getForm(model?:any) {
         return {
-            tax_id:[model ? model.tax_id : '', Validators.required]
+            tax_id:[model ? model.tax_id : '', Validators.required],
+            tax_rate:[model?model.tax_rate:''],
+            name:[model?model.name:'']
         };
     }
 }
