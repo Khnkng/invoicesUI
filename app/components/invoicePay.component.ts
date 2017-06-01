@@ -83,7 +83,7 @@ export class InvoicePayComponent{
             this.addInvoiceList();
 
         } else {
-            this.invoiceService.getInvoice(this.invoiceID).subscribe(invoice=>{
+            this.invoiceService.getPaymentInvoice(this.invoiceID).subscribe(invoice=>{
                 this.invoice = invoice;
                 let _invoice = _.cloneDeep(invoice);
                 delete _invoice.invoiceLines;
