@@ -1,3 +1,4 @@
+<div foundation>
 <form (ngSubmit)="submit($event)" [formGroup]="invoiceForm">
     <div class="new-invoice row" foundation>
         <div class="column small-12 medium-12 large-12 qount-form-backgorund">
@@ -8,8 +9,8 @@
                             <div class="small-12 medium-12 columns">
                                 <header class="flyout-header">
                                     Pay Invoice
-                                    <div class="button-wrapper float-right">
-                                        <button type="submit" class="button small">Pay</button>
+                                    <div class="button-wrapper float-right" *ngIf="!isPaid">
+                                        <button type="button" class="button small" (click)="payInvoice($event)">Pay</button>
 
                                     </div>
                                 </header>
@@ -148,3 +149,46 @@
         </div>
     </div>
 </form>
+
+<div class="reveal tiny bill-modal-container" id="creditcard-details-conformation" data-reveal foundation  data-close-on-click="false">
+    <div class="row">
+        <div class="small-12 medium-12 columns">
+            <label style="text-align: left;">Card Number
+                <input type="text" [(ngModel)]="card_number"/>
+            </label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="small-12 medium-4 columns">
+            <label style="text-align: left;">Exp.Month
+                <select [(ngModel)]="card_exp_month">
+                    <option value="{{month}}" *ngFor="let month of months">{{month}}</option>
+                </select>
+            </label>
+        </div>
+        <div class="small-12 medium-5 columns">
+            <label style="text-align: left;">Exp.Year
+                <select [(ngModel)]="card_exp_year">
+                    <option value="{{year}}" *ngFor="let year of years">{{year}}</option>
+                </select>
+            </label>
+        </div>
+        <div class="small-12 medium-3 columns">
+            <label style="text-align: left;">CVV
+                <input type="text" [(ngModel)]="csc" placeholder="CVV" />
+            </label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="small-12 medium-12 columns">
+            <label style="text-align: left;">Card Owner Number
+                <input type="text" [(ngModel)]="card_owner_name"/>
+            </label>
+        </div>
+    </div>
+    <div class="text-right">
+        <button class="button small" [disabled]="!checkValidation()" (click)="saveCard()">Submit</button>
+        <button class="button small" (click)="closeCreditCardFlyout()">Cancel</button>
+    </div>
+</div>
+</div>

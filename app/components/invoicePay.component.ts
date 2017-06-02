@@ -11,6 +11,9 @@ import {CompaniesService} from "qCommon/app/services/Companies.service";
 import {InvoiceForm} from "../forms/Invoice.form";
 import {FormGroup, FormBuilder, FormArray} from "@angular/forms";
 import {InvoiceLineForm, InvoiceLineTaxesForm} from "../forms/InvoiceLine.form";
+import {YEARS, MONTHS} from "qCommon/app/constants/Date.constants";
+import {CreditCardType} from "qCommon/app/models/CreditCardType";
+import {CustomersService} from "qCommon/app/services/Customers.service";
 
 declare let _:any;
 declare let numeral:any;
@@ -24,17 +27,24 @@ declare let jQuery:any;
 export class InvoicePayComponent{
     routeSub:any;
     invoiceID:string;
-    newInvoice:boolean;
     invoiceForm: FormGroup;
     invoiceLineArray:FormArray = new FormArray([]);
     taxArray:Array<any> = [];
-    itemCodes:any;
-    taxesList:any;
     invoice:any;
+    isPaid:boolean;
+    card_number:string;
+    card_exp_month:string;
+    card_exp_year:string;
+    card_owner_name:string;
+    csc:string;
+    months:Array<string>=MONTHS;
+    years:Array<string>=YEARS;
+    publicKey:string;
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
-                private _invoiceForm:InvoiceForm, private _invoiceLineForm:InvoiceLineForm, private _invoiceLineTaxesForm:InvoiceLineTaxesForm){
+                private _invoiceForm:InvoiceForm, private _invoiceLineForm:InvoiceLineForm, private _invoiceLineTaxesForm:InvoiceLineTaxesForm
+                ,private customersService: CustomersService){
 
         let _form:any = this._invoiceForm.getForm();
         _form['invoiceLines'] = this.invoiceLineArray;
@@ -49,6 +59,9 @@ export class InvoicePayComponent{
         let base = this;
         this.invoiceService.getPaymentInvoice(this.invoiceID).subscribe(invoice=>{
             this.invoice = invoice;
+            if(this.invoice.state=='paid'){
+                this.isPaid=true;
+            }
             let _invoice = _.cloneDeep(invoice);
             delete _invoice.invoiceLines;
             _invoice.customer_name=_invoice.customer.customer_name;
@@ -145,21 +158,103 @@ export class InvoicePayComponent{
 
     payInvoice(event){
         if(this.invoice.payment_spring_customer_id){
-            let data={
-                "amountToPay":this.invoice.amount,
-                "action":"one_time_customer_charge ",
-                "payment_spring_token":this.invoice.payment_spring_customer_id
-            };
-            this.invoiceService.payInvoice(data,this.invoiceID).subscribe(res => {
-                this.toastService.pop(TOAST_TYPE.success, "Invoice paid successfully");
-            }, error=>{
-                this.toastService.pop(TOAST_TYPE.error, "Invoice Payemnt failed");
-            });
+            this.pay("one_time_customer_charge",this.invoice.payment_spring_customer_id);
+        }else {
+            this.openCreditCardFlyout();
         }
+    }
+
+    pay(action,paymentSpringToken){
+        let data={
+            "amountToPay":this.invoice.amount,
+            "action":action,
+            "payment_spring_token":paymentSpringToken
+        };
+        this.invoiceService.payInvoice(data,this.invoiceID).subscribe(res => {
+            this.loadingService.triggerLoadingEvent(false);
+            this.resetCardFields();
+            this.toastService.pop(TOAST_TYPE.success, "Invoice paid successfully");
+        }, error=>{
+            this.loadingService.triggerLoadingEvent(false);
+            this.resetCardFields();
+            this.toastService.pop(TOAST_TYPE.error, "Invoice Payemnt failed");
+        });
     }
 
     handleError(error) {
         this.loadingService.triggerLoadingEvent(false);
-        this._toastService.pop(TOAST_TYPE.error, "Failed to perform operation");
+        this.toastService.pop(TOAST_TYPE.error, "Failed to perform operation");
     }
+
+    openCreditCardFlyout(){
+        jQuery('#creditcard-details-conformation').foundation('open');
+    }
+
+    closeCreditCardFlyout(){
+        jQuery('#creditcard-details-conformation').foundation('close');
+    }
+
+    checkValidation(){
+        if(this.card_number&&this.card_exp_month&&this.card_exp_year&&this.csc&&this.card_owner_name)
+            return true;
+        else return false;
+    }
+
+    getToken(type){
+        this.customersService.getPaymentSpringToken(this.invoice.company_id)
+            .subscribe(res  => {
+                if(!_.isEmpty(res)){
+                    this.publicKey=res.public_key;
+                    this.getCardTokenDetails(type);
+                }else {
+                    this.loadingService.triggerLoadingEvent(false);
+                    this.toastService.pop(TOAST_TYPE.error, "Add company to payment spring");
+                }
+            }, error =>  this.handleError(error));
+    }
+
+    getCardTokenDetails(type){
+        let data={
+            "card_type": type,
+            "card_number": this.card_number,
+            "card_exp_month": this.card_exp_month,
+            "card_exp_year": this.card_exp_year,
+            "card_owner_name":this.card_owner_name,
+            "csc":this.csc
+        };
+        this.customersService.getCreditCardToken(data,this.publicKey)
+            .subscribe(res  => {
+                this.pay("one_time_charge",res.id);
+                this.closeCreditCardFlyout();
+            }, error =>  {
+                let err=JSON.parse(error);
+                this.loadingService.triggerLoadingEvent(false);
+                this.toastService.pop(TOAST_TYPE.error, err.errors[0].message);
+            });
+    }
+
+     saveCard(){
+         let res=new CreditCardType().validateCreditCard(this.card_number,this.csc);
+         if(res.valid){
+             this.loadingService.triggerLoadingEvent(true);
+             this.getToken(res.type);
+         }else{
+             this.toastService.pop(TOAST_TYPE.error, "Invalid card details");
+         }
+     }
+
+
+    ngOnDestroy(){
+        this.routeSub.unsubscribe();
+        jQuery('#creditcard-details-conformation').remove();
+    }
+
+    resetCardFields(){
+            this.card_number=null;
+            this.card_exp_month=null;
+            this.card_exp_year=null;
+            this.card_owner_name=null;
+            this.csc=null;
+    }
+
 }
