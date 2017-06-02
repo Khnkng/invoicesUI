@@ -6,7 +6,6 @@ import {LoadingService} from "qCommon/app/services/LoadingService";
 import {InvoicesService} from "../services/Invoices.service";
 import {ToastService} from "qCommon/app/services/Toast.service";
 import {TOAST_TYPE} from "qCommon/app/constants/Qount.constants";
-import {CustomersService} from "qCommon/app/services/Customers.service";
 import {CodesService} from "qCommon/app/services/CodesService.service";
 import {CompaniesService} from "qCommon/app/services/Companies.service";
 import {InvoiceForm} from "../forms/Invoice.form";
@@ -26,8 +25,6 @@ export class InvoicePayComponent{
     routeSub:any;
     invoiceID:string;
     newInvoice:boolean;
-    preference:any = {};
-    customers: Array<any> = [];
     invoiceForm: FormGroup;
     invoiceLineArray:FormArray = new FormArray([]);
     taxArray:Array<any> = [];
@@ -37,7 +34,7 @@ export class InvoicePayComponent{
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
-                private customerService: CustomersService, private _invoiceForm:InvoiceForm, private _invoiceLineForm:InvoiceLineForm, private _invoiceLineTaxesForm:InvoiceLineTaxesForm){
+                private _invoiceForm:InvoiceForm, private _invoiceLineForm:InvoiceLineForm, private _invoiceLineTaxesForm:InvoiceLineTaxesForm){
 
         let _form:any = this._invoiceForm.getForm();
         _form['invoiceLines'] = this.invoiceLineArray;
@@ -46,66 +43,27 @@ export class InvoicePayComponent{
             this.invoiceID=params['invoiceID'];
             this.loadInitialData();
         });
-
-
-    }
-
-    loadCustomers(companyId:any) {
-        this.customerService.customers(companyId)
-            .subscribe(customers => {
-                this.customers = customers;
-                this.loadItemCodes(companyId);
-            }, error =>{
-                this.toastService.pop(TOAST_TYPE.error, "Failed to load your customers");
-            });
-    }
-
-    loadItemCodes(companyId:any) {
-        this.codeService.itemCodes(companyId)
-            .subscribe(itemCodes => {
-                this.itemCodes = itemCodes;
-                this.loadTaxList(companyId);
-            });
-    }
-
-    loadTaxList(companyId:any) {
-        this.companyService.getTaxofCompany(companyId)
-            .subscribe(taxesList  => {
-                this.taxesList=taxesList;
-                this.setupForm();
-            });
     }
 
     setupForm() {
         let base = this;
-        if(!this.invoiceID){
-            this.newInvoice = true;
-            this.addInvoiceList();
-
-        } else {
-            this.invoiceService.getPaymentInvoice(this.invoiceID).subscribe(invoice=>{
-                this.invoice = invoice;
-                let _invoice = _.cloneDeep(invoice);
-                delete _invoice.invoiceLines;
-                _invoice.customer_name=_invoice.customer.customer_name;
-                this._invoiceForm.updateForm(this.invoiceForm, _invoice);
-                this.invoice.invoiceLines.forEach(function(invoiceLine:any){
-                    invoiceLine.name=invoiceLine.item.name;
-                    base.addInvoiceList(invoiceLine);
-                });
-                /*this.invoice.invoiceLines.forEach(function (invoiceLine:any) {
-                 this.addInvoiceList(invoiceLine);
-                 });*/
+        this.invoiceService.getPaymentInvoice(this.invoiceID).subscribe(invoice=>{
+            this.invoice = invoice;
+            let _invoice = _.cloneDeep(invoice);
+            delete _invoice.invoiceLines;
+            _invoice.customer_name=_invoice.customer.customer_name;
+            this._invoiceForm.updateForm(this.invoiceForm, _invoice);
+            this.invoice.invoiceLines.forEach(function(invoiceLine:any){
+                invoiceLine.name=invoiceLine.item.name;
+                base.addInvoiceList(invoiceLine);
             });
-        }
+            this.loadingService.triggerLoadingEvent(false);
+        },error=>this.handleError(error));
     }
 
-
-
     loadInitialData() {
-        let companyId = Session.getCurrentCompany();
+        this.loadingService.triggerLoadingEvent(true);
         this.setupForm();
-        //this.loadCustomers(companyId);
     }
 
     addInvoiceList(line?:any) {
@@ -132,44 +90,7 @@ export class InvoicePayComponent{
         this.taxArray[index].push(invoiceTaxForm);
     }
 
-    deleteInvoiceLine(index) {
-
-        this.invoiceLineArray.removeAt(index);
-        this.taxArray.splice(index,1);
-    }
-
-    deleteTaxLine(index, taxLineIndex){
-        this.taxArray[index].removeAt(taxLineIndex);
-    }
-
     ngOnInit(){
-
-
-
-
-
-        if(!this.newInvoice){
-            //Fetch existing invoice
-        }
-    }
-
-    setInvoiceDate(date){
-        let invoiceDateControl:any = this.invoiceForm.controls['invoice_date'];
-        invoiceDateControl.patchValue(date);
-    }
-
-    setPaymentDate(date){
-        let paymentDateControl:any = this.invoiceForm.controls['payment_date'];
-        paymentDateControl.patchValue(date);
-    }
-
-    populateCustomers(){
-
-    }
-
-    gotoCustomersPage() {
-        let link = ['/customers'];
-        this._router.navigate(link);
     }
 
     calcLineTax(tax_rate, price, quantity) {
@@ -222,52 +143,23 @@ export class InvoicePayComponent{
         return numeral(total).format('$00.00');
     }
 
-    submit($event){
-        $event.preventDefault();
-        $event.stopPropagation();
-
-
-        let invoiceData = this._invoiceForm.getData(this.invoiceForm);
-        let customer = _.find(this.customers, {customer_id: invoiceData.customer_id});
-        let base = this;
-        invoiceData.amount = this.calcTotal();
-        //invoiceData.customer_name = customer.customer_name;
-        //invoiceData.customer_email = customer.user_id;
-        invoiceData.description = "desc";
-        invoiceData.company_id = Session.getCurrentCompany();
-        //invoiceData.company_name = Session.getCurrentCompanyName();
-        invoiceData.invoiceLines.forEach(function(invoiceLine){
-
-            let item = _.find(base.itemCodes, {id: invoiceLine.item_id});
-            invoiceLine.item_name = item.name;
-
-            invoiceLine.invoiceLineTaxes.forEach(function(tax){
-                let taxItem = _.find(base.taxesList, {id: tax.tax_id});
-                tax.tax_rate = taxItem.tax_rate;
-            });
-        });
-
-        if(this.newInvoice) {
-
-            this.invoiceService.createInvoice(invoiceData).subscribe(resp => {
-                console.log("invoice created successfully", resp);
-                this.toastService.pop(TOAST_TYPE.success, "Invoice created successfully");
+    payInvoice(event){
+        if(this.invoice.payment_spring_customer_id){
+            let data={
+                "amountToPay":this.invoice.amount,
+                "action":"one_time_customer_charge ",
+                "payment_spring_token":this.invoice.payment_spring_customer_id
+            };
+            this.invoiceService.payInvoice(data,this.invoiceID).subscribe(res => {
+                this.toastService.pop(TOAST_TYPE.success, "Invoice paid successfully");
             }, error=>{
-                this.toastService.pop(TOAST_TYPE.error, "Invoice created failed");
-            });
-        } else {
-            this.invoiceService.updateInvoice(invoiceData).subscribe(resp => {
-                console.log("invoice created successfully", resp);
-                this.toastService.pop(TOAST_TYPE.success, "Invoice updated successfully");
-            }, error=>{
-                this.toastService.pop(TOAST_TYPE.error, "Invoice update failed");
+                this.toastService.pop(TOAST_TYPE.error, "Invoice Payemnt failed");
             });
         }
-        return false;
     }
 
-    getCustomerName(id){
-        let customer = _.find(this.customers, {'customer_id': id});
-        return customer? customer.customer_name: '';
+    handleError(error) {
+        this.loadingService.triggerLoadingEvent(false);
+        this._toastService.pop(TOAST_TYPE.error, "Failed to perform operation");
     }
 }

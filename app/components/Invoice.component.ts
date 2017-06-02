@@ -230,7 +230,7 @@ export class InvoiceComponent{
         let invoiceData = this._invoiceForm.getData(this.invoiceForm);
         let customer = _.find(this.customers, {customer_id: invoiceData.customer_id});
         let base = this;
-        invoiceData.amount = this.calcTotal();
+        invoiceData.amount = numeral(this.calcTotal()).value();
         //invoiceData.customer_name = customer.customer_name;
         //invoiceData.customer_email = customer.user_id;
         invoiceData.description = "desc";
@@ -250,19 +250,25 @@ export class InvoiceComponent{
         if(this.newInvoice) {
 
             this.invoiceService.createInvoice(invoiceData).subscribe(resp => {
-                console.log("invoice created successfully", resp);
                 this.toastService.pop(TOAST_TYPE.success, "Invoice created successfully");
+                this.navigateToDashborad();
             }, error=>{
                 this.toastService.pop(TOAST_TYPE.error, "Invoice created failed");
             });
         } else {
             this.invoiceService.updateInvoice(invoiceData).subscribe(resp => {
-                console.log("invoice created successfully", resp);
                 this.toastService.pop(TOAST_TYPE.success, "Invoice updated successfully");
+                this.navigateToDashborad();
             }, error=>{
                 this.toastService.pop(TOAST_TYPE.error, "Invoice update failed");
             });
         }
         return false;
     }
+
+    navigateToDashborad(){
+        let link = ['invoices/dashboard',2];
+        this._router.navigate(link);
+    }
+
 }

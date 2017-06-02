@@ -36,7 +36,9 @@ export class InvoiceDashboardComponent{
     expensesTableData:any = {};
     expensesTableOptions:any = {search:false, pageSize:10};
     invoiceTableData:any = {};
+    paidInvoiceTableData:any = {};
     invoiceTableOptions:any = {search:false, pageSize:10};
+    paidInvoiceTableOptions:any = {search:false, pageSize:10};
 
     tabHeight:string;
     badges:any = [];
@@ -48,36 +50,26 @@ export class InvoiceDashboardComponent{
     hideBoxes :boolean = true;
     selectedColor:any='red-tab';
     hasInvoices:boolean = false;
-    hasExpenses:boolean = false;
+    hasPaidInvoices:boolean = false;
     hasProposals:boolean = false;
-    allCompanies:Array<any>;
-    currentCompany:any;
     invoices:any;
 
     constructor(private _router:Router,private _route: ActivatedRoute,
                 private toastService: ToastService, private loadingService:LoadingService,
                 private companiesService: CompaniesService, private invoiceService: InvoicesService) {
-        let companyId = Session.getCurrentCompany();
-        this.companiesService.companies().subscribe(companies => {
-            this.allCompanies = companies;
-            if(companyId){
-                this.currentCompany = _.find(this.allCompanies, {id: companyId});
-            } else if(this.allCompanies.length> 0){
-                this.currentCompany = _.find(this.allCompanies, {id: this.allCompanies[0].id});
-            }
-            this.routeSub = this._route.params.subscribe(params => {
-                this.selectedTab=params['tabId'];
-                this.selectTab(this.selectedTab,"");
-                this.hasInvoices = false;
-            });
-            this.localBadges=JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
-            if(!this.localBadges){
-                this.localBadges = {'proposals':0,'invoices':0};
-                sessionStorage.setItem('localInvoicesBadges', JSON.stringify(this.localBadges));
-            } else{
-                this.localBadges = JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
-            }
-        }, error => this.handleError(error));
+
+        this.routeSub = this._route.params.subscribe(params => {
+            this.selectedTab=params['tabId'];
+            this.selectTab(this.selectedTab,"");
+            this.hasInvoices = false;
+        });
+        this.localBadges=JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
+        if(!this.localBadges){
+            this.localBadges = {proposal_count:0,invoice_unpaid:0,invoice_paid:0};
+            sessionStorage.setItem('localInvoicesBadges', JSON.stringify(this.localBadges));
+        } else{
+            this.localBadges = JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
+        }
     }
 
     animateBoxInfo(boxInfo) {
@@ -105,6 +97,7 @@ export class InvoiceDashboardComponent{
         this.selectedTab=tabNo;
         this.selectedColor=color;
         let base = this;
+        this.loadingService.triggerLoadingEvent(true);
         this.tabDisplay.forEach(function(tab, index){
             base.tabDisplay[index] = {'display':'none'}
         });
@@ -112,13 +105,24 @@ export class InvoiceDashboardComponent{
         this.tabBackground = this.bgColors[tabNo];
         if(this.selectedTab == 0){
             this.isLoading = false;
+            this.loadingService.triggerLoadingEvent(false);
         } else if(this.selectedTab == 1){
             this.isLoading = false;
+            this.invoiceService.invoices('paid').subscribe(invoices => {
+                if(invoices.invoices){
+                    this.buildPaidInvoiceTableData(invoices.invoices);
+                    sessionStorage.setItem("localInvoicesBadges",JSON.stringify(invoices.badges));
+                    this.localBadges=JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
+                }
+            }, error => this.handleError(error));
         } else if(this.selectedTab == 2){
             this.isLoading = false;
-            this.invoiceService.invoices('notpaid').subscribe(invoices => {
-                if(invoices.invoices)
-                this.buildInvoiceTableData(invoices.invoices);
+            this.invoiceService.invoices('unpaid').subscribe(invoices => {
+                if(invoices.invoices){
+                    this.buildInvoiceTableData(invoices.invoices);
+                    sessionStorage.setItem("localInvoicesBadges",JSON.stringify(invoices.badges));
+                    this.localBadges=JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
+                }
             }, error => this.handleError(error));
         }
     }
@@ -157,6 +161,7 @@ export class InvoiceDashboardComponent{
     }
 
     handleError(error){
+        this.loadingService.triggerLoadingEvent(false);
         this.toastService.pop(TOAST_TYPE.error, "Could not perform action.")
     }
 
@@ -246,5 +251,39 @@ export class InvoiceDashboardComponent{
         setTimeout(function(){
             base.hasInvoices = true;
         }, 0)
+        this.loadingService.triggerLoadingEvent(false);
     }
+
+    buildPaidInvoiceTableData(invoices) {
+        this.hasPaidInvoices = false;
+        this.invoices = invoices;
+        this.paidInvoiceTableData.rows = [];
+        this.paidInvoiceTableOptions.search = true;
+        this.paidInvoiceTableOptions.pageSize = 9;
+        this.paidInvoiceTableData.columns = [
+            {"name": "id", "title": "id", "visible": false},
+            {"name": "po_number", "title": "PO Number"},
+            {"name": "invoice_date", "title": "Invoice Date"},
+            {"name": "payment_date", "title": "Payment Date"},
+            {"name": "amount", "title": "amount"}/*,
+            {"name": "actions", "title": ""}*/
+        ];
+        let base = this;
+        invoices.forEach(function(invoice) {
+            let row:any = {};
+            row['id'] = invoice['id'];
+            row['po_number'] = invoice['po_number'];
+            row['invoice_date'] = invoice['invoice_date'];
+            row['payment_date'] = invoice['payment_date'];
+            row['amount'] = invoice['amount'];
+            /*row['actions'] = "<a class='action' data-action='edit' style='margin:0px 0px 0px 5px;'><i class='icon ion-edit'></i></a><a class='action' data-action='delete' style='margin:0px 0px 0px 5px;'><i class='icon ion-trash-b'></i></a>";*/
+            base.paidInvoiceTableData.rows.push(row);
+        });
+
+        setTimeout(function(){
+            base.hasPaidInvoices = true;
+        }, 0)
+        this.loadingService.triggerLoadingEvent(false);
+    }
+
 }
