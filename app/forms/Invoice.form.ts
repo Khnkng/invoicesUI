@@ -22,7 +22,11 @@ export class InvoiceForm extends abstractForm{
             "invoice_date": ["", Validators.required],
             "payment_date": ["", Validators.required],
             "locale": [""],
-            "customer_name":[""]
+            "customer_name":[""],
+            "amount":[""],
+            "term":[""],
+            "notes":[""],
+            "currency":[""]
         }
     }
 

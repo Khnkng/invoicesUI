@@ -53,6 +53,8 @@ export class InvoiceDashboardComponent{
     hasPaidInvoices:boolean = false;
     hasProposals:boolean = false;
     invoices:any;
+    companyCurrency:string='USD';
+    localeFortmat:string='en-US';
 
     constructor(private _router:Router,private _route: ActivatedRoute,
                 private toastService: ToastService, private loadingService:LoadingService,
@@ -62,6 +64,7 @@ export class InvoiceDashboardComponent{
             this.selectedTab=params['tabId'];
             this.selectTab(this.selectedTab,"");
             this.hasInvoices = false;
+            this.companyCurrency=Session.getCurrentCompanyCurrency();
         });
         this.localBadges=JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
         if(!this.localBadges){
@@ -113,6 +116,8 @@ export class InvoiceDashboardComponent{
                     this.buildPaidInvoiceTableData(invoices.invoices);
                     sessionStorage.setItem("localInvoicesBadges",JSON.stringify(invoices.badges));
                     this.localBadges=JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
+                }else {
+                    this.closeLoading();
                 }
             }, error => this.handleError(error));
         } else if(this.selectedTab == 2){
@@ -122,9 +127,15 @@ export class InvoiceDashboardComponent{
                     this.buildInvoiceTableData(invoices.invoices);
                     sessionStorage.setItem("localInvoicesBadges",JSON.stringify(invoices.badges));
                     this.localBadges=JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
+                }else {
+                    this.closeLoading();
                 }
             }, error => this.handleError(error));
         }
+    }
+
+    closeLoading(){
+        this.loadingService.triggerLoadingEvent(false);
     }
 
     handleAction($event){
@@ -233,7 +244,10 @@ export class InvoiceDashboardComponent{
             {"name": "po_number", "title": "PO Number"},
             {"name": "invoice_date", "title": "Invoice Date"},
             {"name": "payment_date", "title": "Payment Date"},
-            {"name": "amount", "title": "amount"},
+            {"name": "amount", "title": "amount",type:'number',"formatter": (amount)=>{
+                amount = parseFloat(amount);
+                return amount.toLocaleString(base.localeFortmat, { style: 'currency', currency: base.companyCurrency, minimumFractionDigits: 2, maximumFractionDigits: 2 })
+            }},
             {"name": "actions", "title": ""}
         ];
         let base = this;
@@ -265,7 +279,10 @@ export class InvoiceDashboardComponent{
             {"name": "po_number", "title": "PO Number"},
             {"name": "invoice_date", "title": "Invoice Date"},
             {"name": "payment_date", "title": "Payment Date"},
-            {"name": "amount", "title": "amount"}/*,
+            {"name": "amount", "title": "amount",type:'number',"formatter": (amount)=>{
+                amount = parseFloat(amount);
+                return amount.toLocaleString(base.localeFortmat, { style: 'currency', currency: base.companyCurrency, minimumFractionDigits: 2, maximumFractionDigits: 2 })
+            }}/*,
             {"name": "actions", "title": ""}*/
         ];
         let base = this;
