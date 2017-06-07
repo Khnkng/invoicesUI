@@ -40,6 +40,8 @@ export class InvoicePayComponent{
     months:Array<string>=MONTHS;
     years:Array<string>=YEARS;
     publicKey:string;
+    cards:Array<string>=[];
+    paymentCard:string;
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
@@ -61,6 +63,9 @@ export class InvoicePayComponent{
             this.invoice = invoice;
             if(this.invoice.state=='paid'){
                 this.isPaid=true;
+            }
+            if(invoice.payment_spring_customer_id){
+                this.getSavedOldCardDetails(invoice.company_id,invoice.payment_spring_customer_id)
             }
             let _invoice = _.cloneDeep(invoice);
             delete _invoice.invoiceLines;
@@ -148,7 +153,7 @@ export class InvoicePayComponent{
                 if(invoiceLine.invoiceLineTaxes) {
                     invoiceLine.invoiceLineTaxes.forEach(function (tax) {
                         let taxAmt = numeral(base.calcLineTax(tax.tax_rate, 1, total)).value();
-                        total = total - taxAmt;
+                        total = total + taxAmt;
                     });
                 }
             });
@@ -157,14 +162,11 @@ export class InvoicePayComponent{
     }
 
     payInvoice(event){
-        if(this.invoice.payment_spring_customer_id){
-            this.pay("one_time_customer_charge",this.invoice.payment_spring_customer_id);
-        }else {
             this.openCreditCardFlyout();
-        }
     }
 
     pay(action,paymentSpringToken){
+        this.loadingService.triggerLoadingEvent(true);
         let data={
             "amountToPay":this.invoice.amount,
             "action":action,
@@ -191,11 +193,15 @@ export class InvoicePayComponent{
     }
 
     closeCreditCardFlyout(){
+        this.resetCardFields();
         jQuery('#creditcard-details-conformation').foundation('close');
     }
 
     checkValidation(){
-        if(this.card_number&&this.card_exp_month&&this.card_exp_year&&this.csc&&this.card_owner_name)
+        if(this.paymentCard&&this.paymentCard!='newCard'){
+            return true;
+        }
+        else if(this.paymentCard&&this.paymentCard=='newCard'&&this.card_number&&this.card_exp_month&&this.card_exp_year&&this.csc&&this.card_owner_name)
             return true;
         else return false;
     }
@@ -234,13 +240,19 @@ export class InvoicePayComponent{
     }
 
      saveCard(){
-         let res=new CreditCardType().validateCreditCard(this.card_number,this.csc);
-         if(res.valid){
-             this.loadingService.triggerLoadingEvent(true);
-             this.getToken(res.type);
-         }else{
-             this.toastService.pop(TOAST_TYPE.error, "Invalid card details");
+         if(this.paymentCard=='newCard'){
+             let res=new CreditCardType().validateCreditCard(this.card_number,this.csc);
+             if(res.valid){
+                 this.loadingService.triggerLoadingEvent(true);
+                 this.getToken(res.type);
+             }else{
+                 this.toastService.pop(TOAST_TYPE.error, "Invalid card details");
+             }
+         }else {
+             this.closeCreditCardFlyout();
+             this.pay("one_time_customer_charge",this.invoice.payment_spring_customer_id);
          }
+
      }
 
 
@@ -255,6 +267,17 @@ export class InvoicePayComponent{
             this.card_exp_year=null;
             this.card_owner_name=null;
             this.csc=null;
+            this.paymentCard=null;
+    }
+
+    getSavedOldCardDetails(companyID,springToken){
+        this.customersService.getSavedCardDetails(companyID,springToken)
+            .subscribe(res  => {
+                if(res){
+                    this.cards.push("XXXX-XXXX-XXXX-"+res.last_4);
+                }
+
+            }, error =>  this.handleError(error));
     }
 
 }

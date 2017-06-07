@@ -231,7 +231,7 @@ export class InvoiceComponent{
                 if(invoiceLine.invoiceLineTaxes) {
                     invoiceLine.invoiceLineTaxes.forEach(function (tax) {
                         let taxAmt = numeral(base.calcLineTax(tax.tax_id, 1, total)).value();
-                        total = total - taxAmt;
+                        total = total + taxAmt;
                     });
                 }
             });

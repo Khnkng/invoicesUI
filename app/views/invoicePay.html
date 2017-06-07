@@ -3,7 +3,7 @@
     <div class="new-invoice row" foundation>
         <div class="column small-12 medium-12 large-12 qount-form-backgorund">
             <div class="qount-off-canvas-menu chart-of-accounts">
-                <div class="flyout expanded" [ngClass]="{'expanded':true}">
+                <div class="flyout expanded" [ngClass]="{'expanded':true}" style="left: 30px;">
                     <section class="flyout-placeholder">
                         <div class="row">
                             <div class="small-12 medium-12 columns">
@@ -43,6 +43,11 @@
                                     <div class="small-12 medium-3 columns">
                                         <label style="text-align: left;">Payment Date:
                                             <input type="text" formControlName="payment_date" readonly>
+                                        </label>
+                                    </div>
+                                    <div class="small-12 medium-3 columns">
+                                        <label style="text-align: left;">Pay Amount:
+                                            <input type="text" formControlName="amount" numeral [locale]="invoiceForm.controls.locale.value" [format]="'$00.00'">
                                         </label>
                                     </div>
                                     <!--
@@ -153,37 +158,49 @@
 <div class="reveal tiny bill-modal-container" id="creditcard-details-conformation" data-reveal foundation  data-close-on-click="false">
     <div class="row">
         <div class="small-12 medium-12 columns">
-            <label style="text-align: left;">Card Number
-                <input type="text" [(ngModel)]="card_number"/>
-            </label>
-        </div>
-    </div>
-    <div class="row">
-        <div class="small-12 medium-4 columns">
-            <label style="text-align: left;">Exp.Month
-                <select [(ngModel)]="card_exp_month">
-                    <option value="{{month}}" *ngFor="let month of months">{{month}}</option>
+            <label style="text-align: left;">Select Payment
+                <select [(ngModel)]="paymentCard">
+                    <option value="{{card}}" *ngFor="let card of cards">{{card}}</option>
+                    <option value="newCard">New Card</option>
                 </select>
             </label>
         </div>
-        <div class="small-12 medium-5 columns">
-            <label style="text-align: left;">Exp.Year
-                <select [(ngModel)]="card_exp_year">
-                    <option value="{{year}}" *ngFor="let year of years">{{year}}</option>
-                </select>
-            </label>
-        </div>
-        <div class="small-12 medium-3 columns">
-            <label style="text-align: left;">CVV
-                <input type="text" [(ngModel)]="csc" placeholder="CVV" />
-            </label>
-        </div>
     </div>
-    <div class="row">
-        <div class="small-12 medium-12 columns">
-            <label style="text-align: left;">Card Owner Name
-                <input type="text" [(ngModel)]="card_owner_name"/>
-            </label>
+    <div *ngIf="paymentCard=='newCard'">
+        <div class="row">
+            <div class="small-12 medium-12 columns">
+                <label style="text-align: left;">Card Number
+                    <input type="text" [(ngModel)]="card_number"/>
+                </label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="small-12 medium-4 columns">
+                <label style="text-align: left;">Exp.Month
+                    <select [(ngModel)]="card_exp_month">
+                        <option value="{{month}}" *ngFor="let month of months">{{month}}</option>
+                    </select>
+                </label>
+            </div>
+            <div class="small-12 medium-5 columns">
+                <label style="text-align: left;">Exp.Year
+                    <select [(ngModel)]="card_exp_year">
+                        <option value="{{year}}" *ngFor="let year of years">{{year}}</option>
+                    </select>
+                </label>
+            </div>
+            <div class="small-12 medium-3 columns">
+                <label style="text-align: left;">CVV
+                    <input type="text" [(ngModel)]="csc" placeholder="CVV" />
+                </label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="small-12 medium-12 columns">
+                <label style="text-align: left;">Card Owner Number
+                    <input type="text" [(ngModel)]="card_owner_name"/>
+                </label>
+            </div>
         </div>
     </div>
     <div class="text-right">
