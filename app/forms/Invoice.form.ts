@@ -26,7 +26,8 @@ export class InvoiceForm extends abstractForm{
             "amount":[""],
             "term":[""],
             "notes":[""],
-            "currency":[""]
+            "currency":[""],
+            "number":["", Validators.required]
         }
     }
 
