@@ -65,15 +65,15 @@
         <div class="row tabber ">
             <div class="column tab red-tab" (click)="reRoutePage(0)" [ngClass]="{'selected': tabDisplay[0].display == 'block'}">
                 <label>Proposals</label>
-                <span class="badge">{{badges.proposals ? badges.proposals : localBadges ? localBadges.proposals: 0 }}</span>
-            </div>
-            <div class="column tab orange-tab" (click)="reRoutePage(1)" [ngClass]="{'selected': tabDisplay[1].display == 'block'}">
-                <label>Expenses</label>
-                <span class="badge">{{badges.expenses ? badges.expenses : localBadges ? localBadges.expenses: 0 }}</span>
+                <span class="badge">{{badges.proposal_count ? badges.proposal_count : localBadges ? localBadges.proposal_count: 0 }}</span>
             </div>
             <div class="column tab blue-tab" (click)="reRoutePage(2)" [ngClass]="{'selected': tabDisplay[2].display == 'block'}">
                 <label>Invoices</label>
-                <span class="badge">{{badges.invoices ? badges.invoices : localBadges ? localBadges.invoices: 0 }}</span>
+                <span class="badge">{{badges.invoice_unpaid ? badges.invoice_unpaid : localBadges ? localBadges.invoice_unpaid: 0 }}</span>
+            </div>
+            <div class="column tab orange-tab" (click)="reRoutePage(1)" [ngClass]="{'selected': tabDisplay[1].display == 'block'}">
+                <label>Paid</label>
+                <span class="badge">{{badges.invoice_paid ? badges.invoice_paid : localBadges ? localBadges.invoice_paid: 0 }}</span>
             </div>
         </div>
         <div class="row collapse tab-content ">
@@ -93,17 +93,7 @@
                     </div>
                 </div>
             </div>
-            <div *ngIf="tabDisplay[1].display == 'block'" class="column small-12 medium-12 large-12" id="expenses">
-                <div class="row">
-                    <div class="column">
-                        <foo-table class="bigpay-dashboard bighalf-footable" *ngIf="hasExpenses" [data]="expensesTableData" [options]="expensesTableOptions" (onRowAction)="handleAction($event)"></foo-table>
-                        <div class=" callout text-center" [hidden]="isLoading" *ngIf="!hasExpenses">
-                            <div class="woo-woo">Woot Woot!</div>
-                            <p>There are no Expenses.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
             <div *ngIf="tabDisplay[2].display == 'block'" class="column small-12 medium-12 large-12" id="invoices">
                 <div class="row">
                     <div class="column">
@@ -114,6 +104,17 @@
                         </div>
                         <foo-table class="bigpay-dashboard bighalf-footable" *ngIf="hasInvoices" [data]="invoiceTableData" [options]="invoiceTableOptions" (onRowAction)="handleAction($event)"></foo-table>
                         <div class=" callout text-center" [hidden]="isLoading" *ngIf="!hasInvoices">
+                            <div class="woo-woo">Woot Woot!</div>
+                            <p>There are no Invoices.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="tabDisplay[1].display == 'block'" class="column small-12 medium-12 large-12" id="expenses">
+                <div class="row">
+                    <div class="column">
+                        <foo-table class="bigpay-dashboard bighalf-footable" *ngIf="hasPaidInvoices" [data]="paidInvoiceTableData" [options]="paidInvoiceTableOptions" (onRowAction)="handleAction($event)"></foo-table>
+                        <div class=" callout text-center" [hidden]="isLoading" *ngIf="!hasPaidInvoices">
                             <div class="woo-woo">Woot Woot!</div>
                             <p>There are no Invoices.</p>
                         </div>

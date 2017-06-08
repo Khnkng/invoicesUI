@@ -1,0 +1,211 @@
+<div foundation>
+<form (ngSubmit)="submit($event)" [formGroup]="invoiceForm">
+    <div class="new-invoice row" foundation>
+        <div class="column small-12 medium-12 large-12 qount-form-backgorund">
+            <div class="qount-off-canvas-menu chart-of-accounts">
+                <div class="flyout expanded" [ngClass]="{'expanded':true}" style="left: 30px;">
+                    <section class="flyout-placeholder">
+                        <div class="row">
+                            <div class="small-12 medium-12 columns">
+                                <header class="flyout-header">
+                                    Pay Invoice
+                                    <div class="button-wrapper float-right" *ngIf="!isPaid">
+                                        <button type="button" class="button small" (click)="payInvoice($event)">Pay</button>
+
+                                    </div>
+                                </header>
+                            </div>
+                        </div>
+                        <div class="flyout-body flyout-shadow-effect">
+                            <section class="form-section clearfix">
+                                <div class="row">
+
+                                    <div class="small-12 medium-3 columns">
+                                        <label style="text-align: left;">Customer
+                                            <input type="text" formControlName="customer_name" readonly/>
+                                        </label>
+                                    </div>
+                                    <div class="small-12 medium-3 columns">
+                                        <label style="text-align: left;">Invoice Number:
+                                            <input type="text" formControlName="id" readonly/>
+                                        </label>
+                                    </div>
+                                    <div class="small-12 medium-3 columns">
+                                        <label  style="text-align: left;">P.O.Number/S.O.Number:
+                                            <input type="text" formControlName="po_number" readonly/>
+                                        </label>
+                                    </div>
+                                    <div class="small-12 medium-3 columns">
+                                        <label style="text-align: left;">Invoice Date:
+                                            <input type="text" formControlName="invoice_date" readonly/>
+                                        </label>
+                                    </div>
+                                    <div class="small-12 medium-3 columns">
+                                        <label style="text-align: left;">Payment Date:
+                                            <input type="text" formControlName="payment_date" readonly>
+                                        </label>
+                                    </div>
+                                    <div class="small-12 medium-3 columns">
+                                        <label style="text-align: left;">Pay Amount:
+                                            <input type="text" formControlName="amount" numeral [locale]="invoiceForm.controls.locale.value" [format]="'$00.00'">
+                                        </label>
+                                    </div>
+                                    <!--
+
+                                    <div class="small-12 medium-6 columns">
+                                        <div style="width: 330px;">
+                                            <label style="text-align: left">
+                                                Customer
+                                                <input type="text" formControlName="customer_name" readonly/>
+                                            </label>
+                                        </div>
+                                    </div>-->
+
+                                </div>
+                                <div formArrayName="invoiceLines">
+                                    <div class="row items-table" *ngFor="let invoiceLine of invoiceForm.controls.invoiceLines.controls;let iindex=index;">
+                                        <div class="column column-12" [formGroupName]="iindex">
+
+                                            <div *ngIf="iindex == 0" class="row header">
+                                                <div class="column medium-4">
+                                                    <label>Items</label>
+                                                </div>
+                                                <div class="column medium-2">
+                                                    <label>Description</label>
+                                                </div>
+                                                <div class="column medium-4">
+                                                    <label style="width:50%;">Quantity</label>
+                                                    <label style="width:45%;">Price</label>
+                                                </div>
+                                                <div class="column medium-2">
+                                                    <label>Amount</label>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="column medium-6">
+                                                    <div class="row">
+                                                        <div class="column medium-8" style="padding: 0px 0.9375rem 0px 0px;">
+                                                            <!--<select class="jeSelect" [formControl]="invoiceLine.controls.item_id" disabled>
+                                                                <option *ngFor="let item of itemCodes" [value]="item.id">{{item.name}}</option>
+                                                            </select>-->
+                                                            <input type="text" [formControl]="invoiceLine.controls.name" readonly/>
+                                                        </div>
+                                                        <div class="column medium-4" style="padding: 0px 0.9375rem 0px 0px;">
+                                                            <input type="text" [formControl]="invoiceLine.controls.description" readonly/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="column medium-4">
+                                                    <div class="column medium-6" style="padding: 0px 0.9375rem 0px 0px;">
+                                                        <input type="text" [formControl]="invoiceLine.controls.quantity" readonly/>
+                                                    </div>
+                                                    <div class="column medium-6" style="padding: 0px 0px 0px 0px;">
+                                                        <input type="text" [formControl]="invoiceLine.controls.price" numeral [locale]="invoiceForm.controls.locale.value" [format]="'$00.00'" readonly/>
+                                                    </div>
+                                                </div>
+                                                <div class="column medium-2">
+                                                    <span>{{calcAmt(invoiceLine.controls.quantity.value, invoiceLine.controls.price.value)}}</span> <!--<span class="float-right"><a (click)="deleteInvoiceLine(iindex)"><i class="icon ion-trash-b"></i></a></span>-->
+                                                </div>
+
+                                            </div>
+                                            <div formArrayName="invoiceLineTaxes">
+                                                <div *ngFor="let invoiceTaxLine of invoiceLine.controls.invoiceLineTaxes.controls;let tindex=index;">
+                                                    <div class="row" [formGroupName]="tindex">
+                                                        <div class="column medium-6" style="padding-right:0px;">
+                                                            <label style="display: inline" class="float-right">Tax:</label>
+                                                        </div>
+                                                        <div class="column medium-4">
+                                                            <!--<select class="jeSelect" [formControl]="invoiceTaxLine.controls.tax_id" disabled>
+                                                                <option *ngFor="let taxItem of taxesList" [value]="taxItem.id">{{taxItem.name}} - {{taxItem.taxRate}}</option>
+                                                            </select>-->
+                                                            <input type="text" [formControl]="invoiceTaxLine.controls.name" readonly/>
+                                                        </div>
+                                                        <div class="column medium-2">
+                                                            <span>{{calcLineTax(invoiceTaxLine.controls.tax_rate.value, invoiceLine.controls.quantity.value, invoiceLine.controls.price.value)}}</span><!-- <span class="float-right"><a (click)="addTaxLine(iindex)"><i class="icon ion-ios-plus-outline"></i></a></span>-->
+                                                            <!--<span class="float-right"><a (click)="deleteTaxLine(iindex, tindex)"><i class="icon ion-trash-b"></i></a></span>-->
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--<div class="row">
+                                    <div class="column medium-12 text-center add-item">
+                                        <a (click)="addInvoiceList()"><i class="icon ion-ios-plus-outline"></i> Add an item</a>
+                                    </div>
+                                </div>-->
+                                <div class="row">
+                                    <div class="column medium-10"> <label>Subtotal</label></div>
+                                    <div class="column medium-2">{{calcSubTotal()}}</div>
+                                </div>
+                                <div class="row">
+                                    <div class="column medium-10"><label class="float-right" style="display:inline;">Total</label></div>
+                                    <div class="column medium-2">{{calcTotal()}}</div>
+                                </div>
+
+                            </section>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="reveal tiny bill-modal-container" id="creditcard-details-conformation" data-reveal foundation  data-close-on-click="false">
+    <div class="row">
+        <div class="small-12 medium-12 columns">
+            <label style="text-align: left;">Select Payment
+                <select [(ngModel)]="paymentCard">
+                    <option value="{{card}}" *ngFor="let card of cards">{{card}}</option>
+                    <option value="newCard">New Card</option>
+                </select>
+            </label>
+        </div>
+    </div>
+    <div *ngIf="paymentCard=='newCard'">
+        <div class="row">
+            <div class="small-12 medium-12 columns">
+                <label style="text-align: left;">Card Number
+                    <input type="text" [(ngModel)]="card_number"/>
+                </label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="small-12 medium-4 columns">
+                <label style="text-align: left;">Exp.Month
+                    <select [(ngModel)]="card_exp_month">
+                        <option value="{{month}}" *ngFor="let month of months">{{month}}</option>
+                    </select>
+                </label>
+            </div>
+            <div class="small-12 medium-5 columns">
+                <label style="text-align: left;">Exp.Year
+                    <select [(ngModel)]="card_exp_year">
+                        <option value="{{year}}" *ngFor="let year of years">{{year}}</option>
+                    </select>
+                </label>
+            </div>
+            <div class="small-12 medium-3 columns">
+                <label style="text-align: left;">CVV
+                    <input type="text" [(ngModel)]="csc" placeholder="CVV" />
+                </label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="small-12 medium-12 columns">
+                <label style="text-align: left;">Card Owner Number
+                    <input type="text" [(ngModel)]="card_owner_name"/>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="text-right">
+        <button class="button small" [disabled]="!checkValidation()" (click)="saveCard()">Submit</button>
+        <button class="button small" (click)="closeCreditCardFlyout()">Cancel</button>
+    </div>
+</div>
+</div>

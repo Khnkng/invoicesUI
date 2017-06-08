@@ -16,6 +16,7 @@ import {InvoiceLineForm, InvoiceLineTaxesForm} from "../forms/InvoiceLine.form";
 declare let _:any;
 declare let numeral:any;
 declare let jQuery:any;
+declare let moment:any;
 
 @Component({
     selector: 'invoice',
@@ -34,6 +35,8 @@ export class InvoiceComponent{
     itemCodes:any;
     taxesList:any;
     invoice:any;
+    defaultDate:string;
+
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
         private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
@@ -44,6 +47,7 @@ export class InvoiceComponent{
         this.invoiceForm = this._fb.group(_form);
         this.routeSub = this._route.params.subscribe(params => {
             this.invoiceID=params['invoiceID'];
+            this.defaultDate=moment(new Date()).format("MM/DD/YYYY");
             this.loadInitialData();
         });
 
@@ -51,13 +55,20 @@ export class InvoiceComponent{
     }
 
     loadCustomers(companyId:any) {
+        this.loadingService.triggerLoadingEvent(true);
         this.customerService.customers(companyId)
             .subscribe(customers => {
                 this.customers = customers;
                 this.loadItemCodes(companyId);
             }, error =>{
                 this.toastService.pop(TOAST_TYPE.error, "Failed to load your customers");
+                this.closeLoader();
             });
+    }
+
+
+    closeLoader(){
+        this.loadingService.triggerLoadingEvent(false);
     }
 
     loadItemCodes(companyId:any) {
@@ -65,6 +76,9 @@ export class InvoiceComponent{
             .subscribe(itemCodes => {
                 this.itemCodes = itemCodes;
                 this.loadTaxList(companyId);
+            },error=>{
+                this.toastService.pop(TOAST_TYPE.error, "Failed to load your Items");
+                this.closeLoader();
             });
     }
 
@@ -73,11 +87,16 @@ export class InvoiceComponent{
             .subscribe(taxesList  => {
                 this.taxesList=taxesList;
                 this.setupForm();
+            },error=>{
+                this.toastService.pop(TOAST_TYPE.error, "Failed to load your Taxes");
+                this.closeLoader();
             });
     }
 
     setupForm() {
         let base = this;
+        this.setInvoiceDate(this.defaultDate);
+        this.closeLoader();
         if(!this.invoiceID){
             this.newInvoice = true;
             this.addInvoiceList();
@@ -106,7 +125,6 @@ export class InvoiceComponent{
     }
 
     addInvoiceList(line?:any) {
-        debugger;
         let base = this;
         let _form:any = this._invoiceLineForm.getForm(line);
         let taxesLineArray:FormArray = new FormArray([]);
@@ -125,7 +143,6 @@ export class InvoiceComponent{
     }
 
     addTaxLine(index, tax?:any) {
-        debugger;
         let _form:any = this._invoiceLineTaxesForm.getForm(tax);
         let invoiceTaxForm = this._fb.group(_form);
         this.taxArray[index].push(invoiceTaxForm);
@@ -214,7 +231,7 @@ export class InvoiceComponent{
                 if(invoiceLine.invoiceLineTaxes) {
                     invoiceLine.invoiceLineTaxes.forEach(function (tax) {
                         let taxAmt = numeral(base.calcLineTax(tax.tax_id, 1, total)).value();
-                        total = total - taxAmt;
+                        total = total + taxAmt;
                     });
                 }
             });
@@ -230,7 +247,7 @@ export class InvoiceComponent{
         let invoiceData = this._invoiceForm.getData(this.invoiceForm);
         let customer = _.find(this.customers, {customer_id: invoiceData.customer_id});
         let base = this;
-        invoiceData.amount = this.calcTotal();
+        invoiceData.amount = numeral(this.calcTotal()).value();
         //invoiceData.customer_name = customer.customer_name;
         //invoiceData.customer_email = customer.user_id;
         invoiceData.description = "desc";
@@ -250,19 +267,55 @@ export class InvoiceComponent{
         if(this.newInvoice) {
 
             this.invoiceService.createInvoice(invoiceData).subscribe(resp => {
-                console.log("invoice created successfully", resp);
                 this.toastService.pop(TOAST_TYPE.success, "Invoice created successfully");
+                this.navigateToDashborad();
             }, error=>{
                 this.toastService.pop(TOAST_TYPE.error, "Invoice created failed");
             });
         } else {
             this.invoiceService.updateInvoice(invoiceData).subscribe(resp => {
-                console.log("invoice created successfully", resp);
                 this.toastService.pop(TOAST_TYPE.success, "Invoice updated successfully");
+                this.navigateToDashborad();
             }, error=>{
                 this.toastService.pop(TOAST_TYPE.error, "Invoice update failed");
             });
         }
         return false;
     }
+
+    navigateToDashborad(){
+        let link = ['invoices/dashboard',2];
+        this._router.navigate(link);
+    }
+
+    selectTerm(term) {
+        let days = term == 'custom' ? 0 : term.substring(3, term.length);
+        let new_date = moment(this.invoiceForm.controls['invoice_date'].value, 'MM/DD/YYYY').add(days, 'days');
+
+        let dueDateControl:any = this.invoiceForm.controls['payment_date'];
+        dueDateControl.patchValue(moment(new_date).format('MM/DD/YYYY'));
+    }
+
+    itemChange(item,index){
+        let itemCode = _.find(this.itemCodes, {'id': item});
+        if(itemCode){
+            let itemsControl:any = this.invoiceForm.controls['invoiceLines'];
+            let itemControl = itemsControl.controls[index];
+            itemControl.controls['description'].patchValue(itemCode.desc);
+            itemControl.controls['price'].patchValue(itemCode.sales_price);
+        }
+    }
+
+
+    onCustomerSelect(value){
+        let customer = _.find(this.customers, {'customer_id': value});
+        if(customer){
+            if(customer.term){
+                this.selectTerm(customer.term);
+                let term:any = this.invoiceForm.controls['term'];
+                term.patchValue(customer.term);
+            }
+        }
+    }
+
 }
