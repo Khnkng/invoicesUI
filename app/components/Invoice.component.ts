@@ -257,6 +257,7 @@ export class InvoiceComponent{
 
             let item = _.find(base.itemCodes, {id: invoiceLine.item_id});
             invoiceLine.item_name = item.name;
+            invoiceLine.amount=invoiceLine.quantity*invoiceLine.price;
 
             invoiceLine.invoiceLineTaxes.forEach(function(tax){
                 let taxItem = _.find(base.taxesList, {id: tax.tax_id});
