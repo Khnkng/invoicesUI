@@ -31,7 +31,7 @@ export class InvoicesComponent{
                 private toastService: ToastService, private loadingService:LoadingService,
                 private invoiceService: InvoicesService){
         let companyId = Session.getCurrentCompany();
-        this.invoiceService.invoices().subscribe(invoices => {
+        this.invoiceService.invoices("unpaid").subscribe(invoices => {
             debugger;
             this.invoices = invoices;
 
