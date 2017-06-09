@@ -1,3 +1,4 @@
+<div>
 <form (ngSubmit)="submit($event)" [formGroup]="invoiceForm">
 <div class="new-invoice row" foundation>
     <div class="column small-12 medium-12 large-12 qount-form-backgorund">
@@ -159,7 +160,11 @@
                                                 </div>
                                             </div>
                                             <div class="column medium-2">
-                                                <span>{{calcAmt(invoiceLine.controls.quantity.value, invoiceLine.controls.price.value)}}</span> <span class="float-right"><a (click)="deleteInvoiceLine(iindex)"><i class="icon ion-trash-b"></i></a></span>
+                                                <span>{{calcAmt(invoiceLine.controls.quantity.value, invoiceLine.controls.price.value)}}</span>
+                                                <span class="float-right"><a (click)="deleteInvoiceLine(iindex)"><i class="icon ion-trash-b"></i></a></span>
+                                                <span class="float-right" (click)="editInvoiceLine($event, iindex)">
+                                                    <i class="icon ion-edit"></i>
+                                                </span>
                                             </div>
 
                                         </div>
@@ -208,3 +213,79 @@
     </div>
 </div>
 </form>
+
+    <div class="report-wrapper journal-flyout">
+        <div class="sidenav customization-panel" [ngClass]="dimensionFlyoutCSS" foundation>
+            <button class="close-button " data-close aria-label="Close modal" type="button">
+                <span aria-hidden="true">
+                  <i class="ion-ios-close-empty" (click)="hideFlyout()"></i>
+                </span>
+            </button>
+            <div class="row collapse dimension-flyout">
+                <div class="row">
+                    <div class="small-12 medium-12 small-centered column">
+                        <h5>Invoice Details</h5>
+                    </div>
+                </div>
+            </div>
+            <form *ngIf="itemActive" novalidate [formGroup]="editItemForm">
+                <div class="row collapse dimension-flyout">
+                    <div class="row">
+                        <div class="column small-12 medium-3">
+                            <label>
+                                Item Code
+                                <select formControlName="item_id" (change)="displayItemCodeCOA($event.target.value)">
+                                    <option *ngFor="let item of itemCodes" [value]="item.id">{{item.name}}</option>
+                                </select>
+                            </label>
+                        </div>
+                        <div class="column small-12 medium-4">
+                            <label>
+                                Description
+                      <input type="text" formControlName="description" placeholder="Description" />
+                            </label>
+                        </div>
+
+                        <div class="small-12 medium-2">
+                            <label>
+                                Quantity
+                                <input type="text" formControlName="quantity" placeholder="Quantity">
+                            </label>
+                        </div>
+
+                        <div class="small-12 medium-2">
+                            <label>
+                                Price
+                                <input type="text" formControlName="price" numeral [format]="'$0,0.00'" [locale]="'en-US'" placeholder="Price">
+                            </label>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="row">
+                        <div class="small-12 medium-2">
+                            <label>
+                                Amount:{{calcAmt(editItemForm.controls.quantity.value, editItemForm.controls.price.value)}}
+                            </label>
+                        <div class="column small-12 medium-6 large-6">
+                            <label class="coa-description" [hidden]="!paymentCOAName">
+                                <span>Payment COA:</span> {{paymentCOAName}}
+                            </label>
+                            <label class="coa-description" [hidden]="!expenseCOAName">
+                                <span>Expense COA:</span> {{expenseCOAName}}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="small-12 medium-12 columns">
+                            <input type="button" class="button small float-right" value="Update" (click)="saveItem()"/>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+
+</div>

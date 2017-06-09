@@ -12,6 +12,7 @@ import {CompaniesService} from "qCommon/app/services/Companies.service";
 import {InvoiceForm} from "../forms/Invoice.form";
 import {FormGroup, FormBuilder, FormArray} from "@angular/forms";
 import {InvoiceLineForm, InvoiceLineTaxesForm} from "../forms/InvoiceLine.form";
+import {ChartOfAccountsService} from "qCommon/app/services/ChartOfAccounts.service";
 
 declare let _:any;
 declare let numeral:any;
@@ -36,11 +37,19 @@ export class InvoiceComponent{
     taxesList:any;
     invoice:any;
     defaultDate:string;
+    itemActive:boolean = false;
+    dimensionFlyoutCSS:any;
+    editItemForm: FormGroup;
+    editItemIndex:number;
+    paymentCOAName:string;
+    invoiceCOAName:string;
+    chartOfAccounts:Array<any> = [];
 
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
         private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
-                private customerService: CustomersService, private _invoiceForm:InvoiceForm, private _invoiceLineForm:InvoiceLineForm, private _invoiceLineTaxesForm:InvoiceLineTaxesForm){
+                private customerService: CustomersService, private _invoiceForm:InvoiceForm, private _invoiceLineForm:InvoiceLineForm, private _invoiceLineTaxesForm:InvoiceLineTaxesForm,
+                private coaService: ChartOfAccountsService){
 
         let _form:any = this._invoiceForm.getForm();
         _form['invoiceLines'] = this.invoiceLineArray;
@@ -49,6 +58,7 @@ export class InvoiceComponent{
             this.invoiceID=params['invoiceID'];
             this.defaultDate=moment(new Date()).format("MM/DD/YYYY");
             this.loadInitialData();
+            this.loadCOA();
         });
 
 
@@ -318,5 +328,77 @@ export class InvoiceComponent{
             }
         }
     }
+
+    loadCOA(){
+        this.coaService.chartOfAccounts(Session.getCurrentCompany())
+            .subscribe(chartOfAccounts => {
+                this.chartOfAccounts = chartOfAccounts;
+            }, error =>{
+
+            });
+    }
+
+    displayItemCodeCOA(itemId){
+        if(itemId){
+            let itemCode = _.find(this.itemCodes, {'id': itemId});
+            this.updateCOADisplay(itemId);
+            if(itemCode){
+                this.editItemForm.controls['description'].patchValue(itemCode.desc);
+                this.editItemForm.controls['price'].patchValue(itemCode.sales_price);
+            }
+        } else{
+            this.paymentCOAName = "";
+            this.invoiceCOAName = "";
+        }
+    }
+
+    updateCOADisplay(itemId){
+        let itemCode = _.find(this.itemCodes, {'id': itemId});
+        let paymentCOA = _.find(this.chartOfAccounts, {'id': itemCode.payment_coa_mapping});
+        let invoiceCOA = _.find(this.chartOfAccounts, {'id': itemCode.invoice_coa_mapping});
+        if(paymentCOA && paymentCOA.name){
+            this.paymentCOAName = paymentCOA.name;
+        }
+        if(invoiceCOA && invoiceCOA.name){
+            this.invoiceCOAName = invoiceCOA.name;
+        }
+    }
+
+
+
+    editInvoiceLine($event, index) {
+        $event && $event.preventDefault();
+        $event && $event.stopImmediatePropagation();
+        let base = this,data,itemsControl:any;
+        this.itemActive = true;
+        this.dimensionFlyoutCSS = "expanded";
+        itemsControl = this.invoiceForm.controls['invoiceLines'];
+        data =this._invoiceLineForm.getData(itemsControl.controls[index]);
+        this.updateCOADisplay(data.item_id);
+        this.editItemForm = this._fb.group(this._invoiceLineForm.getForm(data));
+        this.editItemIndex = index;
+    }
+
+    hideFlyout(){
+        this.dimensionFlyoutCSS = "collapsed";
+        this.itemActive = false;
+        this.editItemIndex = null;
+    }
+
+    saveItem(){
+        let itemData = this._invoiceLineForm.getData(this.editItemForm);
+        this.updateLineInView(itemData);
+        this.hideFlyout();
+    }
+
+    updateLineInView(item){
+        let itemsControl=this.invoiceForm.controls['invoiceLines'];
+        let itemControl = itemsControl.controls[this.editItemIndex];
+        itemControl.controls['description'].patchValue(item.description);
+        itemControl.controls['price'].patchValue(item.price);
+        itemControl.controls['quantity'].patchValue(item.quantity);
+        itemControl.controls['item_id'].patchValue(item.item_id);
+    }
+
 
 }
