@@ -10,6 +10,7 @@ import {TOAST_TYPE} from "qCommon/app/constants/Qount.constants";
 import {CompaniesService} from "qCommon/app/services/Companies.service";
 import {LoadingService} from "qCommon/app/services/LoadingService";
 import {InvoicesService} from "../services/Invoices.service";
+import {CustomersService} from "qCommon/app/services/Customers.service";
 
 declare let _:any;
 declare let jQuery:any;
@@ -55,16 +56,18 @@ export class InvoiceDashboardComponent{
     invoices:any;
     companyCurrency:string='USD';
     localeFortmat:string='en-US';
+    customers: Array<any> = [];
 
     constructor(private _router:Router,private _route: ActivatedRoute,
                 private toastService: ToastService, private loadingService:LoadingService,
-                private companiesService: CompaniesService, private invoiceService: InvoicesService) {
+                private companiesService: CompaniesService, private invoiceService: InvoicesService,private customerService: CustomersService) {
 
         this.routeSub = this._route.params.subscribe(params => {
             this.selectedTab=params['tabId'];
             this.selectTab(this.selectedTab,"");
             this.hasInvoices = false;
             this.companyCurrency=Session.getCurrentCompanyCurrency();
+            this.loadCustomers(Session.getCurrentCompany());
         });
         this.localBadges=JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
         if(!this.localBadges){
@@ -73,6 +76,16 @@ export class InvoiceDashboardComponent{
         } else{
             this.localBadges = JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
         }
+    }
+
+    loadCustomers(companyId:any) {
+        this.customerService.customers(companyId)
+            .subscribe(customers => {
+                this.customers = customers;
+            }, error =>{
+                this.toastService.pop(TOAST_TYPE.error, "Failed to load your customers");
+                this.loadingService.triggerLoadingEvent(false);
+            });
     }
 
     animateBoxInfo(boxInfo) {
@@ -162,7 +175,10 @@ export class InvoiceDashboardComponent{
 
     removeInvoice(invoice){
         let base = this;
-        this.invoiceService.deleteInvoice(invoice.id).subscribe(success => {this.toastService.pop(TOAST_TYPE.success, "Invoice deleted successfully.");},
+        this.invoiceService.deleteInvoice(invoice.id).subscribe(success => {this.toastService.pop(TOAST_TYPE.success, "Invoice deleted successfully.");
+                this.hasInvoices = false;
+                this.selectTab(2,"");
+        },
             error => {this.toastService.pop(TOAST_TYPE.error, "Invoice deletion failed.")});
     }
 
@@ -241,23 +257,30 @@ export class InvoiceDashboardComponent{
         this.invoiceTableOptions.pageSize = 9;
         this.invoiceTableData.columns = [
             {"name": "id", "title": "id", "visible": false},
-            {"name": "po_number", "title": "PO Number"},
-            {"name": "invoice_date", "title": "Invoice Date"},
-            {"name": "payment_date", "title": "Payment Date"},
-            {"name": "amount", "title": "amount",type:'number',"formatter": (amount)=>{
+            {"name": "number", "title": "Number"},
+            {"name": "customer", "title": "Customer"},
+            {"name": "payment_date", "title": "Due Date"},
+            {"name": "amount", "title": "Invoice Amount",type:'number',"formatter": (amount)=>{
                 amount = parseFloat(amount);
                 return amount.toLocaleString(base.localeFortmat, { style: 'currency', currency: base.companyCurrency, minimumFractionDigits: 2, maximumFractionDigits: 2 })
             }},
+            {"name": "amount_due", "title": "Due Amount",type:'number',"formatter": (amount)=>{
+                amount = parseFloat(amount);
+                return amount.toLocaleString(base.localeFortmat, { style: 'currency', currency: base.companyCurrency, minimumFractionDigits: 2, maximumFractionDigits: 2 })
+            }},
+            {"name": "status", "title": "Status"},
             {"name": "actions", "title": ""}
         ];
         let base = this;
         invoices.forEach(function(invoice) {
             let row:any = {};
             row['id'] = invoice['id'];
-            row['po_number'] = invoice['po_number'];
-            row['invoice_date'] = invoice['invoice_date'];
+            row['number'] = invoice['number'];
+            row['customer']=base.getCustomerName(invoice['customer_id']);
             row['payment_date'] = invoice['payment_date'];
             row['amount'] = invoice['amount'];
+            row['amount_due'] = invoice['amount_due'];
+            row['status'] = invoice['status'];
             row['actions'] = "<a class='action' data-action='edit' style='margin:0px 0px 0px 5px;'><i class='icon ion-edit'></i></a><a class='action' data-action='delete' style='margin:0px 0px 0px 5px;'><i class='icon ion-trash-b'></i></a>";
             base.invoiceTableData.rows.push(row);
         });
@@ -276,10 +299,10 @@ export class InvoiceDashboardComponent{
         this.paidInvoiceTableOptions.pageSize = 9;
         this.paidInvoiceTableData.columns = [
             {"name": "id", "title": "id", "visible": false},
-            {"name": "po_number", "title": "PO Number"},
-            {"name": "invoice_date", "title": "Invoice Date"},
-            {"name": "payment_date", "title": "Payment Date"},
-            {"name": "amount", "title": "amount",type:'number',"formatter": (amount)=>{
+            {"name": "number", "title": "Number"},
+            {"name": "customer", "title": "Customer"},
+            {"name": "payment_date", "title": "Due Date"},
+            {"name": "amount", "title": "Amount",type:'number',"formatter": (amount)=>{
                 amount = parseFloat(amount);
                 return amount.toLocaleString(base.localeFortmat, { style: 'currency', currency: base.companyCurrency, minimumFractionDigits: 2, maximumFractionDigits: 2 })
             }}/*,
@@ -289,8 +312,8 @@ export class InvoiceDashboardComponent{
         invoices.forEach(function(invoice) {
             let row:any = {};
             row['id'] = invoice['id'];
-            row['po_number'] = invoice['po_number'];
-            row['invoice_date'] = invoice['invoice_date'];
+            row['number'] = invoice['number'];
+            row['customer']=base.getCustomerName(invoice['customer_id']);
             row['payment_date'] = invoice['payment_date'];
             row['amount'] = invoice['amount'];
             /*row['actions'] = "<a class='action' data-action='edit' style='margin:0px 0px 0px 5px;'><i class='icon ion-edit'></i></a><a class='action' data-action='delete' style='margin:0px 0px 0px 5px;'><i class='icon ion-trash-b'></i></a>";*/
@@ -302,5 +325,11 @@ export class InvoiceDashboardComponent{
         }, 0)
         this.loadingService.triggerLoadingEvent(false);
     }
+
+    getCustomerName(id){
+        let customer = _.find(this.customers, {'customer_id': id});
+        return customer? customer.customer_name: '';
+    }
+
 
 }
