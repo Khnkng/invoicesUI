@@ -114,10 +114,18 @@ export class InvoiceComponent{
 
         } else {
             this.invoiceService.getInvoice(this.invoiceID).subscribe(invoice=>{
+                let base=this;
                 this.invoice = invoice;
                 let _invoice = _.cloneDeep(invoice);
                 delete _invoice.invoiceLines;
                 this._invoiceForm.updateForm(this.invoiceForm, _invoice);
+                this.maillIds=invoice.recepientsMails;
+                if(invoice.recepientsMails.length>0){
+                    this.hasMilIds=false;
+                    setTimeout(function(){
+                        base.hasMilIds=true;
+                    })
+                }
                 this.invoice.invoiceLines.forEach(function(invoiceLine:any){
                     base.addInvoiceList(invoiceLine);
                 });
@@ -267,7 +275,6 @@ export class InvoiceComponent{
         invoiceData.company_id = Session.getCurrentCompany();
         //invoiceData.company_name = Session.getCurrentCompanyName();
         invoiceData.invoiceLines.forEach(function(invoiceLine){
-
             let item = _.find(base.itemCodes, {id: invoiceLine.item_id});
             invoiceLine.item_name = item.name;
             invoiceLine.amount=invoiceLine.quantity*invoiceLine.price;
@@ -280,7 +287,6 @@ export class InvoiceComponent{
         invoiceData.sendMail=sendMail;
         this.loadingService.triggerLoadingEvent(true);
         if(this.newInvoice) {
-
             this.invoiceService.createInvoice(invoiceData).subscribe(resp => {
                 this.toastService.pop(TOAST_TYPE.success, "Invoice created successfully");
                 this.navigateToDashborad();
