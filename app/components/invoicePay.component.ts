@@ -207,12 +207,12 @@ export class InvoicePayComponent{
         else return false;
     }
 
-    getToken(type){
+    getToken(){
         this.customersService.getPaymentSpringToken(this.invoice.company_id)
             .subscribe(res  => {
                 if(!_.isEmpty(res)){
                     this.publicKey=res.public_key;
-                    this.getCardTokenDetails(type);
+                    this.getCardTokenDetails();
                 }else {
                     this.loadingService.triggerLoadingEvent(false);
                     this.toastService.pop(TOAST_TYPE.error, "Add company to payment spring");
@@ -220,9 +220,8 @@ export class InvoicePayComponent{
             }, error =>  this.handleError(error));
     }
 
-    getCardTokenDetails(type){
+    getCardTokenDetails(){
         let data={
-            "card_type": type,
             "card_number": this.card_number,
             "card_exp_month": this.card_exp_month,
             "card_exp_year": this.card_exp_year,
@@ -242,13 +241,7 @@ export class InvoicePayComponent{
 
      saveCard(){
          if(this.paymentCard=='newCard'){
-             let res=new CreditCardType().validateCreditCard(this.card_number,this.csc);
-             if(res.valid){
-                 this.loadingService.triggerLoadingEvent(true);
-                 this.getToken(res.type);
-             }else{
-                 this.toastService.pop(TOAST_TYPE.error, "Invalid card details");
-             }
+             this.getToken();
          }else {
              this.closeCreditCardFlyout();
              this.pay("one_time_customer_charge",this.invoice.payment_spring_customer_id);
