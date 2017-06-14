@@ -176,6 +176,7 @@ export class InvoicePayComponent{
             this.loadingService.triggerLoadingEvent(false);
             this.resetCardFields();
             this.toastService.pop(TOAST_TYPE.success, "Invoice paid successfully");
+            this.isPaid=true;
         }, error=>{
             this.loadingService.triggerLoadingEvent(false);
             this.resetCardFields();
@@ -274,7 +275,7 @@ export class InvoicePayComponent{
         this.customersService.getSavedCardDetails(companyID,springToken)
             .subscribe(res  => {
                 if(res){
-                    this.cards.push("XXXX-XXXX-XXXX-"+res.last_4);
+                    this.cards.push(this.invoice.customer.card_name+"(XXXX-XXXX-XXXX-"+res.last_4+")");
                 }
 
             }, error =>  this.handleError(error));

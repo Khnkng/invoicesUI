@@ -278,6 +278,7 @@ export class InvoiceComponent{
             });
         });
         invoiceData.sendMail=sendMail;
+        this.loadingService.triggerLoadingEvent(true);
         if(this.newInvoice) {
 
             this.invoiceService.createInvoice(invoiceData).subscribe(resp => {
@@ -285,6 +286,7 @@ export class InvoiceComponent{
                 this.navigateToDashborad();
             }, error=>{
                 this.toastService.pop(TOAST_TYPE.error, "Invoice created failed");
+                this.closeLoader();
             });
         } else {
             this.invoiceService.updateInvoice(invoiceData).subscribe(resp => {
@@ -292,9 +294,9 @@ export class InvoiceComponent{
                 this.navigateToDashborad();
             }, error=>{
                 this.toastService.pop(TOAST_TYPE.error, "Invoice update failed");
+                this.closeLoader();
             });
         }
-        return false;
     }
 
     navigateToDashborad(){
