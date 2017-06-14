@@ -280,7 +280,7 @@ export class InvoiceDashboardComponent{
             row['payment_date'] = invoice['payment_date'];
             row['amount'] = invoice['amount'];
             row['amount_due'] = invoice['amount_due'];
-            row['status'] = invoice['status'];
+            row['status'] = invoice['state'];
             row['actions'] = "<a class='action' data-action='edit' style='margin:0px 0px 0px 5px;'><i class='icon ion-edit'></i></a><a class='action' data-action='delete' style='margin:0px 0px 0px 5px;'><i class='icon ion-trash-b'></i></a>";
             base.invoiceTableData.rows.push(row);
         });

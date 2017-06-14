@@ -44,6 +44,8 @@ export class InvoiceComponent{
     paymentCOAName:string;
     invoiceCOAName:string;
     chartOfAccounts:Array<any> = [];
+    maillIds:Array<string>=[];
+    hasMilIds:boolean=true;
 
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
@@ -60,7 +62,6 @@ export class InvoiceComponent{
             this.loadInitialData();
             this.loadCOA();
         });
-
 
     }
 
@@ -249,15 +250,17 @@ export class InvoiceComponent{
         return numeral(total).format('$00.00');
     }
 
-    submit($event){
+    submit($event,sendMail){
         $event.preventDefault();
         $event.stopPropagation();
 
 
         let invoiceData = this._invoiceForm.getData(this.invoiceForm);
         let customer = _.find(this.customers, {customer_id: invoiceData.customer_id});
+        let recepientsMails = jQuery('#invoice-emails').tagit("assignedTags");
         let base = this;
         invoiceData.amount = numeral(this.calcTotal()).value();
+        invoiceData.recepientsMails=recepientsMails;
         //invoiceData.customer_name = customer.customer_name;
         //invoiceData.customer_email = customer.user_id;
         invoiceData.description = "desc";
@@ -274,7 +277,7 @@ export class InvoiceComponent{
                 tax.tax_rate = taxItem.tax_rate;
             });
         });
-
+        invoiceData.sendMail=sendMail;
         if(this.newInvoice) {
 
             this.invoiceService.createInvoice(invoiceData).subscribe(resp => {
@@ -321,6 +324,12 @@ export class InvoiceComponent{
     onCustomerSelect(value){
         let customer = _.find(this.customers, {'customer_id': value});
         if(customer){
+            this.maillIds=customer.email_ids;
+            this.hasMilIds=false;
+            let base=this;
+            setTimeout(function(){
+                base.hasMilIds=true;
+            });
             if(customer.term){
                 this.selectTerm(customer.term);
                 let term:any = this.invoiceForm.controls['term'];
