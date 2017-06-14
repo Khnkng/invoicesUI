@@ -15,7 +15,7 @@ gulp.task('typescript-compile', ['js'], function () {
 
 gulp.task('copy', ['typescript-compile'], function(){
   return gulp.src(['build/**/*.*'])
-      .pipe(gulp.dest('../QountUI/node_modules/invoicesUI'));
+      .pipe(gulp.dest('../angular4/QountUI/node_modules/invoicesUI'));
 });
 
 gulp.task('clean', function () {
