@@ -44,6 +44,8 @@ export class InvoiceComponent{
     paymentCOAName:string;
     invoiceCOAName:string;
     chartOfAccounts:Array<any> = [];
+    maillIds:Array<string>=[];
+    hasMilIds:boolean=true;
 
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
@@ -60,7 +62,6 @@ export class InvoiceComponent{
             this.loadInitialData();
             this.loadCOA();
         });
-
 
     }
 
@@ -113,10 +114,18 @@ export class InvoiceComponent{
 
         } else {
             this.invoiceService.getInvoice(this.invoiceID).subscribe(invoice=>{
+                let base=this;
                 this.invoice = invoice;
                 let _invoice = _.cloneDeep(invoice);
                 delete _invoice.invoiceLines;
                 this._invoiceForm.updateForm(this.invoiceForm, _invoice);
+                this.maillIds=invoice.recepientsMails;
+                if(invoice.recepientsMails.length>0){
+                    this.hasMilIds=false;
+                    setTimeout(function(){
+                        base.hasMilIds=true;
+                    })
+                }
                 this.invoice.invoiceLines.forEach(function(invoiceLine:any){
                     base.addInvoiceList(invoiceLine);
                 });
@@ -249,22 +258,23 @@ export class InvoiceComponent{
         return numeral(total).format('$00.00');
     }
 
-    submit($event){
+    submit($event,sendMail){
         $event.preventDefault();
         $event.stopPropagation();
 
 
         let invoiceData = this._invoiceForm.getData(this.invoiceForm);
         let customer = _.find(this.customers, {customer_id: invoiceData.customer_id});
+        let recepientsMails = jQuery('#invoice-emails').tagit("assignedTags");
         let base = this;
         invoiceData.amount = numeral(this.calcTotal()).value();
+        invoiceData.recepientsMails=recepientsMails;
         //invoiceData.customer_name = customer.customer_name;
         //invoiceData.customer_email = customer.user_id;
         invoiceData.description = "desc";
         invoiceData.company_id = Session.getCurrentCompany();
         //invoiceData.company_name = Session.getCurrentCompanyName();
         invoiceData.invoiceLines.forEach(function(invoiceLine){
-
             let item = _.find(base.itemCodes, {id: invoiceLine.item_id});
             invoiceLine.item_name = item.name;
             invoiceLine.amount=invoiceLine.quantity*invoiceLine.price;
@@ -274,14 +284,15 @@ export class InvoiceComponent{
                 tax.tax_rate = taxItem.tax_rate;
             });
         });
-
+        invoiceData.sendMail=sendMail;
+        this.loadingService.triggerLoadingEvent(true);
         if(this.newInvoice) {
-
             this.invoiceService.createInvoice(invoiceData).subscribe(resp => {
                 this.toastService.pop(TOAST_TYPE.success, "Invoice created successfully");
                 this.navigateToDashborad();
             }, error=>{
                 this.toastService.pop(TOAST_TYPE.error, "Invoice created failed");
+                this.closeLoader();
             });
         } else {
             this.invoiceService.updateInvoice(invoiceData).subscribe(resp => {
@@ -289,9 +300,9 @@ export class InvoiceComponent{
                 this.navigateToDashborad();
             }, error=>{
                 this.toastService.pop(TOAST_TYPE.error, "Invoice update failed");
+                this.closeLoader();
             });
         }
-        return false;
     }
 
     navigateToDashborad(){
@@ -321,6 +332,12 @@ export class InvoiceComponent{
     onCustomerSelect(value){
         let customer = _.find(this.customers, {'customer_id': value});
         if(customer){
+            this.maillIds=customer.email_ids;
+            this.hasMilIds=false;
+            let base=this;
+            setTimeout(function(){
+                base.hasMilIds=true;
+            });
             if(customer.term){
                 this.selectTerm(customer.term);
                 let term:any = this.invoiceForm.controls['term'];

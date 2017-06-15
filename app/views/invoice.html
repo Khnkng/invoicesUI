@@ -11,8 +11,8 @@
                                 {{newInvoice? "New Invoice" : "Edit Invoice"}}
                                 <div class="button-wrapper float-right">
                                     <button class="hollow button small">Preview</button>
-                                    <button type="submit" (click)="submit($event)" class="button small">Save</button>
-
+                                    <button type="submit" (click)="submit($event,false)" class="button small">Save</button>
+                                    <button type="submit" (click)="submit($event,true)" class="button small">Submit</button>
                                 </div>
                             </header>
                         </div>
@@ -117,6 +117,14 @@
                                     <div class="invoice-address float-right">
                                         <input type="text"/>
                                     </div>-->
+                                </div>
+                            </div>
+                            <div class="row" *ngIf="hasMilIds">
+                                <div class="small-12 medium-12 columns">
+                                    <label style="text-align: left">
+                                        Email
+                                        <ul class="bighalf-tags" [tagsList]="maillIds" id="invoice-emails" type="text" custom-tags></ul>
+                                    </label>
                                 </div>
                             </div>
                             <div formArrayName="invoiceLines">
