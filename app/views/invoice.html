@@ -11,8 +11,8 @@
                                 {{newInvoice? "New Invoice" : "Edit Invoice"}}
                                 <div class="button-wrapper float-right">
                                     <button class="hollow button small">Preview</button>
-                                    <button type="submit" (click)="submit($event,false)" class="button small">Save</button>
-                                    <button type="submit" (click)="submit($event,true)" class="button small">Submit</button>
+                                    <button type="submit" [disabled]="!invoiceForm.valid" (click)="submit($event,false)" class="button small">Save</button>
+                                    <button type="submit" [disabled]="!invoiceForm.valid" (click)="submit($event,true)" class="button small">Submit</button>
                                 </div>
                             </header>
                         </div>

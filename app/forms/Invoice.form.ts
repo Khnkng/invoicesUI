@@ -17,7 +17,7 @@ export class InvoiceForm extends abstractForm{
         return {
             "id":[""],
             "customer_id": ["", Validators.required],
-            "company_id": ["", Validators.required],
+            "company_id": [""],
             "po_number": ["", Validators.required],
             "invoice_date": ["", Validators.required],
             "payment_date": ["", Validators.required],
