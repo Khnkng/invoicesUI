@@ -120,7 +120,7 @@ export class InvoiceComponent{
                 delete _invoice.invoiceLines;
                 this._invoiceForm.updateForm(this.invoiceForm, _invoice);
                 this.maillIds=invoice.recepientsMails;
-                if(invoice.recepientsMails.length>0){
+                if(invoice.recepientsMails&&invoice.recepientsMails.length>0){
                     this.hasMilIds=false;
                     setTimeout(function(){
                         base.hasMilIds=true;
@@ -278,11 +278,15 @@ export class InvoiceComponent{
             let item = _.find(base.itemCodes, {id: invoiceLine.item_id});
             invoiceLine.item_name = item.name;
             invoiceLine.amount=invoiceLine.quantity*invoiceLine.price;
-
+            let taxList=[];
             invoiceLine.invoiceLineTaxes.forEach(function(tax){
-                let taxItem = _.find(base.taxesList, {id: tax.tax_id});
-                tax.tax_rate = taxItem.tax_rate;
+                if(tax.tax_id){
+                    let taxItem = _.find(base.taxesList, {id: tax.tax_id});
+                    tax.tax_rate = taxItem.tax_rate;
+                    taxList.push(tax);
+                }
             });
+            invoiceLine.invoiceLineTaxes=taxList;
         });
         invoiceData.sendMail=sendMail;
         this.loadingService.triggerLoadingEvent(true);
@@ -391,8 +395,11 @@ export class InvoiceComponent{
         this.dimensionFlyoutCSS = "expanded";
         itemsControl = this.invoiceForm.controls['invoiceLines'];
         data =this._invoiceLineForm.getData(itemsControl.controls[index]);
-        this.updateCOADisplay(data.item_id);
         this.editItemForm = this._fb.group(this._invoiceLineForm.getForm(data));
+        if(data.item_id){
+            this.updateCOADisplay(data.item_id);
+        }
+
         this.editItemIndex = index;
     }
 
