@@ -88,69 +88,70 @@
                                             </label>
                                         </div>
                                     </div>
-                                    <div class="small-12 medium-2 columns" style="margin-top: 2rem;">
-                                        <label>
-                                            Create Payment Plan
-                                            <input type="checkbox" formControlName="createPlan"/>
-                                        </label>
+                                    <div class="row">
+                                        <div class="small-12 medium-2 columns" style="margin-top: 2rem;">
+                                            <label>
+                                                Create Payment Plan
+                                                <input type="checkbox" formControlName="createPlan"/>
+                                            </label>
+                                        </div>
+                                        <div class="small-12 medium-2 columns" *ngIf="invoiceForm.controls.createPlan.value">
+                                            <label>
+                                                Plan Name
+                                                <input type="text" formControlName="planName"/>
+                                            </label>
+                                        </div>
+                                        <div class="small-12 medium-2 columns" *ngIf="invoiceForm.controls.createPlan.value">
+                                            <label>
+                                                Frequency
+                                                <select formControlName="frequency" placeholder="frequency">
+                                                    <option [value]="'daily'">Daily</option>
+                                                    <option [value]="'weekly'">Weekly</option>
+                                                    <option [value]="'monthly'">Monthly</option>
+                                                    <option [value]="'quarterly'">Quarterly</option>
+                                                    <option [value]="'yearly'">Yearly</option>
+                                                </select>
+                                            </label>
+                                        </div>
+                                        <div class="small-12 medium-2 columns" *ngIf="invoiceForm.controls.createPlan.value&&invoiceForm.controls.frequency.value=='weekly'">
+                                            <label>
+                                                Day of week
+                                                <select formControlName="day">
+                                                    <option *ngFor="let day of dayOfWeek" value="{{day}}">{{day}}</option>
+                                                </select>
+                                            </label>
+                                        </div>
+                                        <div class="small-12 medium-2 columns" *ngIf="invoiceForm.controls.createPlan.value&&invoiceForm.controls.frequency.value=='quarterly'">
+                                            <label>
+                                                Month of Quarter
+                                                <select formControlName="month">
+                                                    <option *ngFor="let month of monthOfQuarter" value="{{month}}">{{month}}</option>
+                                                </select>
+                                            </label>
+                                        </div>
+                                        <div class="small-12 medium-2 columns" *ngIf="invoiceForm.controls.createPlan.value&&invoiceForm.controls.frequency.value=='yearly'">
+                                            <label>
+                                                Month of year
+                                                <select formControlName="month">
+                                                    <option *ngFor="let month of monthOfYear" value="{{month}}">{{month}}</option>
+                                                </select>
+                                            </label>
+                                        </div>
+                                        <div class="small-12 medium-2 columns" *ngIf="invoiceForm.controls.createPlan.value&&(invoiceForm.controls.frequency.value=='monthly'||invoiceForm.controls.frequency.value=='quarterly'||invoiceForm.controls.frequency.value=='yearly')">
+                                            <label>
+                                                Day of month
+                                                <select formControlName="day">
+                                                    <option *ngFor="let day of dayOfMonth" value="{{day}}">{{day}}</option>
+                                                </select>
+                                            </label>
+                                        </div>
+                                        <div class="small-12 medium-2 columns" *ngIf="invoiceForm.controls.createPlan.value&&invoiceForm.controls.frequency.value">
+                                            <label>
+                                                Plan end date
+                                                <input type="text" formControlName="ends_after" invoice-custom-datepicker atepicker1 [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setPlanEndDate($event)" placeholder="End Date*">
+                                            </label>
+                                        </div>
                                     </div>
-                                    <div class="small-12 medium-2 columns" *ngIf="invoiceForm.controls.createPlan.value">
-                                        <label>
-                                            Plan Name
-                                            <input type="text" formControlName="planName"/>
-                                        </label>
-                                    </div>
-                                    <div class="small-12 medium-2 columns" *ngIf="invoiceForm.controls.createPlan.value">
-                                        <label>
-                                            Frequency
-                                            <select formControlName="frequency" placeholder="frequency">
-                                                <option [value]="'daily'">Daily</option>
-                                                <option [value]="'weekly'">Weekly</option>
-                                                <option [value]="'monthly'">Monthly</option>
-                                                <option [value]="'quarterly'">Quarterly</option>
-                                                <option [value]="'yearly'">Yearly</option>
-                                            </select>
-                                        </label>
-                                    </div>
-                                    <div class="small-12 medium-2 columns" *ngIf="invoiceForm.controls.createPlan.value&&invoiceForm.controls.frequency.value=='weekly'">
-                                        <label>
-                                            Day of week
-                                            <select formControlName="day">
-                                                <option *ngFor="let day of dayOfWeek" value="{{day}}">{{day}}</option>
-                                            </select>
-                                        </label>
-                                    </div>
-                                    <div class="small-12 medium-2 columns" *ngIf="invoiceForm.controls.createPlan.value&&invoiceForm.controls.frequency.value=='quarterly'">
-                                        <label>
-                                            Month of Quarter
-                                            <select formControlName="month">
-                                                <option *ngFor="let month of monthOfQuarter" value="{{month}}">{{month}}</option>
-                                            </select>
-                                        </label>
-                                    </div>
-                                    <div class="small-12 medium-2 columns" *ngIf="invoiceForm.controls.createPlan.value&&invoiceForm.controls.frequency.value=='yearly'">
-                                        <label>
-                                            Month of year
-                                            <select formControlName="month">
-                                                <option *ngFor="let month of monthOfYear" value="{{month}}">{{month}}</option>
-                                            </select>
-                                        </label>
-                                    </div>
-                                    <div class="small-12 medium-2 columns" *ngIf="invoiceForm.controls.createPlan.value&&(invoiceForm.controls.frequency.value=='monthly'||invoiceForm.controls.frequency.value=='quarterly'||invoiceForm.controls.frequency.value=='yearly')">
-                                        <label>
-                                            Day of month
-                                            <select formControlName="day">
-                                                <option *ngFor="let day of dayOfMonth" value="{{day}}">{{day}}</option>
-                                            </select>
-                                        </label>
-                                    </div>
-                                    <div class="small-12 medium-2 columns" *ngIf="invoiceForm.controls.createPlan.value&&invoiceForm.controls.frequency.value">
-                                        <label>
-                                            Plan end date
-                                            <input type="text" formControlName="ends_after" invoice-custom-datepicker atepicker1 [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setPlanEndDate($event)" placeholder="End Date*">
-                                        </label>
-                                    </div>
-
                                     <div formArrayName="invoiceLines">
                                         <div class="row items-table" *ngFor="let invoiceLine of invoiceForm.controls.invoiceLines.controls;let iindex=index;">
                                             <div class="column column-12" [formGroupName]="iindex">
