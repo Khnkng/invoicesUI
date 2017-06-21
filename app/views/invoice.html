@@ -1,226 +1,250 @@
 <div>
-<form (ngSubmit)="submit($event)" [formGroup]="invoiceForm">
-<div class="new-invoice row" foundation>
-    <div class="column small-12 medium-12 large-12 qount-form-backgorund">
-        <div class="qount-off-canvas-menu chart-of-accounts">
-            <div class="flyout expanded" [ngClass]="{'expanded':true}">
-                <section class="flyout-placeholder">
-                    <div class="row">
-                        <div class="small-12 medium-12 columns">
-                            <header class="flyout-header">
-                                {{newInvoice? "New Invoice" : "Edit Invoice"}}
-                                <div class="button-wrapper float-right">
-                                    <button class="hollow button small">Preview</button>
-                                    <button type="submit" [disabled]="!invoiceForm.valid" (click)="submit($event,false)" class="button small">Save</button>
-                                    <button type="submit" [disabled]="!invoiceForm.valid" (click)="submit($event,true)" class="button small">Submit</button>
-                                </div>
-                            </header>
-                        </div>
-                    </div>
-                    <div class="flyout-body flyout-shadow-effect">
-                        <section class="form-section clearfix">
-                            <div class="row">
-
-                                <div class="small-12 medium-6 columns">
-                                    <!--<div class="addCustomerLogo">
-                                        <div class="addCustomerLink">
-                                            <a (click)="gotoCustomersPage()">
-                                                <i class="icon ion-ios-personadd-outline"></i>Add Customer
-                                            </a>
-                                        </div>
-                                    </div>-->
-                                    <div style="width: 330px;">
-                                        <label style="text-align: left">
-                                            Select Customer
-                                            <select formControlName="customer_id" (change)="onCustomerSelect($event.target.value,customer)">
-                                                <option *ngFor="let customer of customers" value="{{customer.customer_id}}">{{customer.customer_name}}</option>
-                                            </select>
-                                        </label>
-                                    </div>
-                                    <div style="width: 330px;">
-                                        <label style="text-align: left">
-                                            Select Currency
-                                            <select formControlName="currency">
-                                                <option value="USD">$</option>
-                                                <option value="INR">₹</option>
-                                            </select>
-                                        </label>
-                                    </div>
-                                    <div style="width: 330px;">
-                                        <label style="text-align: left">
-                                            Notes
-                                            <textarea formControlName="notes" style="height: 50px;"></textarea>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="small-12 medium-6 columns">
-
-                                    <div class="row">
-                                        <div class="small-12 medium-6 columns">
-                                            <label>Invoice Number:</label>
-                                        </div>
-                                        <div class="small-12 medium-6 columns">
-                                            <input type="text" formControlName="number"/>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="small-12 medium-6 columns">
-                                            <label>P.O.Number/S.O.Number: </label>
-                                        </div>
-                                        <div class="small-12 medium-6 columns">
-                                            <input type="text" formControlName="po_number"/>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="row">
-                                        <div class="small-12 medium-6 columns">
-                                            <label>Invoice Date: </label>
-                                        </div>
-                                        <div class="small-12 medium-6 columns">
-                                            <input type="text" formControlName="invoice_date" invoice-custom-datepicker [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setInvoiceDate($event)" placeholder="Invoice Date*"/>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="small-12 medium-6 columns">
-                                            <label>Term: </label>
-                                        </div>
-                                        <div class="small-12 medium-6 columns">
-                                            <select formControlName="term" placeholder="Terms" (change)="selectTerm($event.target.value)">
-                                                <option [value]="'net30'">Net 30</option>
-                                                <option [value]="'net45'">Net 45</option>
-                                                <option [value]="'net60'">Net 60</option>
-                                                <option [value]="'net30'">Net 90</option>
-                                                <option [value]="'custom'">Custom</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="row">
-                                        <div class="small-12 medium-6 columns">
-                                            <label>Payment Date: </label>
-                                        </div>
-                                        <div class="small-12 medium-6 columns">
-                                            <input type="text" formControlName="payment_date" invoice-custom-datepicker atepicker1 [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setPaymentDate($event)" placeholder="Payment Date*">
-                                        </div>
-                                    </div>
-
-                                    <!--<div class="invoice-title float-right">
-                                        <input type="text" [(ngModel)]="preference.defaultTitle"/>
-                                    </div>
-                                    <div class="invoice-sub-heading float-right">
-                                        <input type="text" [(ngModel)]="preference.defaultSubHeading"/>
-                                    </div>
-                                    <div class="invoice-address float-right">
-                                        <input type="text"/>
-                                    </div>-->
-                                </div>
-                            </div>
-                            <div class="row" *ngIf="hasMilIds">
+    <form (ngSubmit)="submit($event)" [formGroup]="invoiceForm">
+        <div class="new-invoice row" foundation>
+            <div class="column small-12 medium-12 large-12 qount-form-backgorund">
+                <div class="qount-off-canvas-menu chart-of-accounts">
+                    <div class="flyout expanded" [ngClass]="{'expanded':true}">
+                        <section class="flyout-placeholder">
+                            <div class="row" style="margin-top: 5px;">
                                 <div class="small-12 medium-12 columns">
-                                    <label style="text-align: left">
-                                        Email
-                                        <ul class="bighalf-tags" [tagsList]="maillIds" id="invoice-emails" type="text" custom-tags></ul>
-                                    </label>
+                                    <header class="flyout-header">
+                                        {{newInvoice? "New Invoice" : "Edit Invoice"}}
+                                        <div class="button-wrapper float-right">
+                                            <button class="hollow button small">Preview</button>
+                                            <button type="submit" [disabled]="!invoiceForm.valid" (click)="submit($event,false)" class="button small">Save</button>
+                                            <button type="submit" [disabled]="!invoiceForm.valid" (click)="submit($event,true)" class="button small">Submit</button>
+                                        </div>
+                                    </header>
                                 </div>
                             </div>
-                            <div formArrayName="invoiceLines">
-                                <div class="row items-table" *ngFor="let invoiceLine of invoiceForm.controls.invoiceLines.controls;let iindex=index;">
-                                    <div class="column column-12" [formGroupName]="iindex">
-
-                                        <div *ngIf="iindex == 0" class="row header">
-                                            <div class="column medium-4">
-                                                <label>Items</label>
-                                            </div>
-                                            <div class="column medium-2">
-                                                <label>Description</label>
-                                            </div>
-                                            <div class="column medium-4">
-                                                <label style="width:50%;">Quantity</label>
-                                                <label style="width:45%;">Price</label>
-                                            </div>
-                                            <div class="column medium-2">
-                                                <label>Amount</label>
-                                            </div>
+                            <div class="flyout-body flyout-shadow-effect">
+                                <section class="form-section clearfix">
+                                    <div class="row">
+                                        <div class="small-12 medium-3 columns">
+                                            <label>
+                                                Select Customer
+                                                <select formControlName="customer_id" (change)="onCustomerSelect($event.target.value,customer)">
+                                                    <option *ngFor="let customer of customers" value="{{customer.customer_id}}">{{customer.customer_name}}</option>
+                                                </select>
+                                            </label>
                                         </div>
-                                        <div class="row">
-                                            <div class="column medium-6">
+                                        <div class="small-12 medium-3 columns">
+                                            <label>
+                                                Invoice Number
+                                                <input type="text" formControlName="number"/>
+                                            </label>
+                                        </div>
+                                        <div class="small-12 medium-3 columns">
+                                            <label>
+                                                P.O.Number/S.O.Number
+                                                <input type="text" formControlName="po_number"/>
+                                            </label>
+                                        </div>
+                                        <div class="small-12 medium-3 columns">
+                                            <label>
+                                                Select Currency
+                                                <select formControlName="currency">
+                                                    <option value="USD">$</option>
+                                                    <option value="INR">₹</option>
+                                                </select>
+                                            </label>
+                                        </div>
+                                        <div class="small-12 medium-3 columns">
+                                            <label>
+                                                Invoice Date
+                                                <input type="text" formControlName="invoice_date" invoice-custom-datepicker [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setInvoiceDate($event)" placeholder="Invoice Date*"/>
+                                            </label>
+                                        </div>
+                                        <div class="small-12 medium-3 columns">
+                                            <label>
+                                                Term
+                                                <select formControlName="term" placeholder="Terms" (change)="selectTerm($event.target.value)">
+                                                    <option [value]="'net30'">Net 30</option>
+                                                    <option [value]="'net45'">Net 45</option>
+                                                    <option [value]="'net60'">Net 60</option>
+                                                    <option [value]="'net30'">Net 90</option>
+                                                    <option [value]="'custom'">Custom</option>
+                                                </select>
+                                            </label>
+                                        </div>
+                                        <div class="small-12 medium-3 columns">
+                                            <label>
+                                                Payment Date
+                                                <input type="text" formControlName="payment_date" invoice-custom-datepicker atepicker1 [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setPaymentDate($event)" placeholder="Payment Date*">
+                                            </label>
+                                        </div>
+                                        <div class="small-12 medium-3 columns">
+                                            <label>
+                                                Notes
+                                                <textarea formControlName="notes" style="height: 50px;"></textarea>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="row" *ngIf="hasMilIds">
+                                        <div class="small-12 medium-12 columns">
+                                            <label style="text-align: left">
+                                                Email
+                                                <ul class="bighalf-tags" [tagsList]="maillIds" id="invoice-emails" type="text" custom-tags></ul>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="small-12 medium-2 columns" style="margin-top: 2rem;">
+                                        <label>
+                                            Create Payment Plan
+                                            <input type="checkbox" formControlName="createPlan"/>
+                                        </label>
+                                    </div>
+                                    <div class="small-12 medium-2 columns" *ngIf="invoiceForm.controls.createPlan.value">
+                                        <label>
+                                            Plan Name
+                                            <input type="text" formControlName="planName"/>
+                                        </label>
+                                    </div>
+                                    <div class="small-12 medium-2 columns" *ngIf="invoiceForm.controls.createPlan.value">
+                                        <label>
+                                            Frequency
+                                            <select formControlName="frequency" placeholder="frequency">
+                                                <option [value]="'daily'">Daily</option>
+                                                <option [value]="'weekly'">Weekly</option>
+                                                <option [value]="'monthly'">Monthly</option>
+                                                <option [value]="'quarterly'">Quarterly</option>
+                                                <option [value]="'yearly'">Yearly</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                    <div class="small-12 medium-2 columns" *ngIf="invoiceForm.controls.createPlan.value&&invoiceForm.controls.frequency.value=='weekly'">
+                                        <label>
+                                            Day of week
+                                            <select formControlName="day">
+                                                <option *ngFor="let day of dayOfWeek" value="{{day}}">{{day}}</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                    <div class="small-12 medium-2 columns" *ngIf="invoiceForm.controls.createPlan.value&&invoiceForm.controls.frequency.value=='quarterly'">
+                                        <label>
+                                            Month of Quarter
+                                            <select formControlName="month">
+                                                <option *ngFor="let month of monthOfQuarter" value="{{month}}">{{month}}</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                    <div class="small-12 medium-2 columns" *ngIf="invoiceForm.controls.createPlan.value&&invoiceForm.controls.frequency.value=='yearly'">
+                                        <label>
+                                            Month of year
+                                            <select formControlName="month">
+                                                <option *ngFor="let month of monthOfYear" value="{{month}}">{{month}}</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                    <div class="small-12 medium-2 columns" *ngIf="invoiceForm.controls.createPlan.value&&(invoiceForm.controls.frequency.value=='monthly'||invoiceForm.controls.frequency.value=='quarterly'||invoiceForm.controls.frequency.value=='yearly')">
+                                        <label>
+                                            Day of month
+                                            <select formControlName="day">
+                                                <option *ngFor="let day of dayOfMonth" value="{{day}}">{{day}}</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                    <div class="small-12 medium-2 columns" *ngIf="invoiceForm.controls.createPlan.value&&invoiceForm.controls.frequency.value">
+                                        <label>
+                                            Plan end date
+                                            <input type="text" formControlName="ends_after" invoice-custom-datepicker atepicker1 [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setPlanEndDate($event)" placeholder="End Date*">
+                                        </label>
+                                    </div>
+
+                                    <div formArrayName="invoiceLines">
+                                        <div class="row items-table" *ngFor="let invoiceLine of invoiceForm.controls.invoiceLines.controls;let iindex=index;">
+                                            <div class="column column-12" [formGroupName]="iindex">
+
+                                                <div *ngIf="iindex == 0" class="row header">
+                                                    <div class="column medium-4">
+                                                        <label>Items</label>
+                                                    </div>
+                                                    <div class="column medium-2">
+                                                        <label>Description</label>
+                                                    </div>
+                                                    <div class="column medium-4">
+                                                        <label style="width:50%;">Quantity</label>
+                                                        <label style="width:45%;">Price</label>
+                                                    </div>
+                                                    <div class="column medium-2">
+                                                        <label>Amount</label>
+                                                    </div>
+                                                </div>
                                                 <div class="row">
-                                                    <div class="column medium-8" style="padding: 0px 0.9375rem 0px 0px;">
-                                                        <select [formControl]="invoiceLine.controls.item_id" (change)="itemChange($event.target.value,iindex)">
-                                                            <option *ngFor="let item of itemCodes" [value]="item.id">{{item.name}}</option>
-                                                        </select>
+                                                    <div class="column medium-6">
+                                                        <div class="row">
+                                                            <div class="column medium-8" style="padding: 0px 0.9375rem 0px 0px;">
+                                                                <select [formControl]="invoiceLine.controls.item_id" (change)="itemChange($event.target.value,iindex)">
+                                                                    <option *ngFor="let item of itemCodes" [value]="item.id">{{item.name}}</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="column medium-4" style="padding: 0px 0.9375rem 0px 0px;">
+                                                                <input type="text" [formControl]="invoiceLine.controls.description"/>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <div class="column medium-4" style="padding: 0px 0.9375rem 0px 0px;">
-                                                        <input type="text" [formControl]="invoiceLine.controls.description"/>
+                                                    <div class="column medium-4">
+                                                        <div class="column medium-6" style="padding: 0px 0.9375rem 0px 0px;">
+                                                            <input type="text" [formControl]="invoiceLine.controls.quantity"/>
+                                                        </div>
+                                                        <div class="column medium-6" style="padding: 0px 0px 0px 0px;">
+                                                            <input type="text" [formControl]="invoiceLine.controls.price" numeral [locale]="invoiceForm.controls.locale.value" [format]="'$00.00'"/>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <div class="column medium-4">
-                                                <div class="column medium-6" style="padding: 0px 0.9375rem 0px 0px;">
-                                                    <input type="text" [formControl]="invoiceLine.controls.quantity"/>
-                                                </div>
-                                                <div class="column medium-6" style="padding: 0px 0px 0px 0px;">
-                                                    <input type="text" [formControl]="invoiceLine.controls.price" numeral [locale]="invoiceForm.controls.locale.value" [format]="'$00.00'"/>
-                                                </div>
-                                            </div>
-                                            <div class="column medium-2">
-                                                <span>{{calcAmt(invoiceLine.controls.quantity.value, invoiceLine.controls.price.value)}}</span>
-                                                <span class="float-right"><a (click)="deleteInvoiceLine(iindex)"><i class="icon ion-trash-b"></i></a></span>
+                                                    <div class="column medium-2">
+                                                        <span>{{calcAmt(invoiceLine.controls.quantity.value, invoiceLine.controls.price.value)}}</span>
+                                                        <span class="float-right"><a (click)="deleteInvoiceLine(iindex)"><i class="icon ion-trash-b"></i></a></span>
                                                 <span class="float-right" (click)="editInvoiceLine($event, iindex)">
                                                     <i class="icon ion-edit"></i>
                                                 </span>
-                                            </div>
+                                                    </div>
 
-                                        </div>
-                                        <div formArrayName="invoiceLineTaxes">
-                                            <div *ngFor="let invoiceTaxLine of invoiceLine.controls.invoiceLineTaxes.controls;let tindex=index;">
-                                                <div class="row" [formGroupName]="tindex">
-                                                    <div class="column medium-6" style="padding-right:0px;">
-                                                        <label style="display: inline" class="float-right">Tax:</label>
-                                                    </div>
-                                                    <div class="column medium-4">
-                                                        <select [formControl]="invoiceTaxLine.controls.tax_id">
-                                                            <option *ngFor="let taxItem of taxesList" [value]="taxItem.id">{{taxItem.name}} - {{taxItem.taxRate}}</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="column medium-2">
-                                                        <span>{{calcLineTax(invoiceTaxLine.controls.tax_id.value, invoiceLine.controls.quantity.value, invoiceLine.controls.price.value)}}</span> <span class="float-right"><a (click)="addTaxLine(iindex)"><i class="icon ion-ios-plus-outline"></i></a></span>
-                                                        <span class="float-right"><a (click)="deleteTaxLine(iindex, tindex)"><i class="icon ion-trash-b"></i></a></span>
-                                                    </div>
                                                 </div>
+                                                <div formArrayName="invoiceLineTaxes">
+                                                    <div *ngFor="let invoiceTaxLine of invoiceLine.controls.invoiceLineTaxes.controls;let tindex=index;">
+                                                        <div class="row" [formGroupName]="tindex">
+                                                            <div class="column medium-6" style="padding-right:0px;">
+                                                                <label style="display: inline" class="float-right">Tax:</label>
+                                                            </div>
+                                                            <div class="column medium-4">
+                                                                <select [formControl]="invoiceTaxLine.controls.tax_id">
+                                                                    <option *ngFor="let taxItem of taxesList" [value]="taxItem.id">{{taxItem.name}} - {{taxItem.taxRate}}</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="column medium-2">
+                                                                <span>{{calcLineTax(invoiceTaxLine.controls.tax_id.value, invoiceLine.controls.quantity.value, invoiceLine.controls.price.value)}}</span> <span class="float-right"><a (click)="addTaxLine(iindex)"><i class="icon ion-ios-plus-outline"></i></a></span>
+                                                                <span class="float-right"><a (click)="deleteTaxLine(iindex, tindex)"><i class="icon ion-trash-b"></i></a></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
                                             </div>
-
                                         </div>
-
                                     </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="column medium-12 text-center add-item">
-                                    <a (click)="addInvoiceList()"><i class="icon ion-ios-plus-outline"></i> Add an item</a>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="column medium-10"> <label>Subtotal</label></div>
-                                <div class="column medium-2">{{calcSubTotal()}}</div>
-                            </div>
-                            <div class="row">
-                                <div class="column medium-10"><label class="float-right" style="display:inline;">Total</label></div>
-                                <div class="column medium-2">{{calcTotal()}}</div>
-                            </div>
+                                    <div class="row">
+                                        <div class="column medium-12 text-center add-item">
+                                            <a (click)="addInvoiceList()"><i class="icon ion-ios-plus-outline"></i> Add an item</a>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="column medium-10"> <label class="float-right" style="display:inline;">Subtotal</label></div>
+                                        <div class="column medium-2">{{calcSubTotal()}}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="column medium-10"><label class="float-right" style="display:inline;">Total</label></div>
+                                        <div class="column medium-2">{{calcTotal()}}</div>
+                                    </div>
 
+                                </section>
+                            </div>
                         </section>
                     </div>
-                </section>
+                </div>
             </div>
         </div>
-    </div>
-</div>
-</form>
+    </form>
 
     <div class="report-wrapper journal-flyout">
         <div class="sidenav customization-panel" [ngClass]="dimensionFlyoutCSS" foundation>
@@ -250,7 +274,7 @@
                         <div class="column small-12 medium-4">
                             <label>
                                 Description
-                      <input type="text" formControlName="description" placeholder="Description" />
+                                <input type="text" formControlName="description" placeholder="Description" />
                             </label>
                         </div>
 
@@ -268,12 +292,12 @@
                             </label>
                         </div>
                     </div>
-                    </div>
-                    <div class="row">
-                        <div class="small-12 medium-2">
-                            <label>
-                                Amount:{{calcAmt(editItemForm.controls.quantity.value, editItemForm.controls.price.value)}}
-                            </label>
+                </div>
+                <div class="row">
+                    <div class="small-12 medium-2">
+                        <label>
+                            Amount:{{calcAmt(editItemForm.controls.quantity.value, editItemForm.controls.price.value)}}
+                        </label>
                         <div class="column small-12 medium-6 large-6">
                             <label class="coa-description" [hidden]="!paymentCOAName">
                                 <span>Payment COA:</span> {{paymentCOAName}}
