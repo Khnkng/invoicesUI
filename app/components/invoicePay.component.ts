@@ -42,6 +42,7 @@ export class InvoicePayComponent{
     publicKey:string;
     cards:Array<string>=[];
     paymentCard:string;
+    hasInvoice:boolen=false;
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
@@ -60,21 +61,24 @@ export class InvoicePayComponent{
     setupForm() {
         let base = this;
         this.invoiceService.getPaymentInvoice(this.invoiceID).subscribe(invoice=>{
-            this.invoice = invoice;
-            if(this.invoice.state=='paid'){
-                this.isPaid=true;
+            if(invoice){
+                this.hasInvoice=true;
+                this.invoice = invoice;
+                if(this.invoice.state=='paid'){
+                    this.isPaid=true;
+                }
+                if(invoice.payment_spring_customer_id){
+                    this.getSavedOldCardDetails(invoice.company_id,invoice.payment_spring_customer_id)
+                }
+                let _invoice = _.cloneDeep(invoice);
+                delete _invoice.invoiceLines;
+                _invoice.customer_name=_invoice.customer.customer_name;
+                this._invoiceForm.updateForm(this.invoiceForm, _invoice);
+                this.invoice.invoiceLines.forEach(function(invoiceLine:any){
+                    invoiceLine.name=invoiceLine.item.name;
+                    base.addInvoiceList(invoiceLine);
+                });
             }
-            if(invoice.payment_spring_customer_id){
-                this.getSavedOldCardDetails(invoice.company_id,invoice.payment_spring_customer_id)
-            }
-            let _invoice = _.cloneDeep(invoice);
-            delete _invoice.invoiceLines;
-            _invoice.customer_name=_invoice.customer.customer_name;
-            this._invoiceForm.updateForm(this.invoiceForm, _invoice);
-            this.invoice.invoiceLines.forEach(function(invoiceLine:any){
-                invoiceLine.name=invoiceLine.item.name;
-                base.addInvoiceList(invoiceLine);
-            });
             this.loadingService.triggerLoadingEvent(false);
         },error=>this.handleError(error));
     }

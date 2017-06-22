@@ -5,7 +5,7 @@
             <div class="qount-off-canvas-menu chart-of-accounts">
                 <div class="flyout expanded" [ngClass]="{'expanded':true}" style="left: 30px;">
                     <section class="flyout-placeholder">
-                        <div class="row">
+                        <div class="row" *ngIf="hasInvoice">
                             <div class="small-12 medium-12 columns">
                                 <header class="flyout-header">
                                     Pay Invoice
@@ -16,7 +16,7 @@
                                 </header>
                             </div>
                         </div>
-                        <div class="flyout-body flyout-shadow-effect">
+                        <div class="flyout-body flyout-shadow-effect" *ngIf="hasInvoice">
                             <section class="form-section clearfix">
                                 <div class="row">
 
@@ -27,7 +27,7 @@
                                     </div>
                                     <div class="small-12 medium-3 columns">
                                         <label style="text-align: left;">Invoice Number:
-                                            <input type="text" formControlName="id" readonly/>
+                                            <input type="text" formControlName="number" readonly/>
                                         </label>
                                     </div>
                                     <div class="small-12 medium-3 columns">
@@ -147,6 +147,10 @@
                                 </div>
 
                             </section>
+                        </div>
+                        <div class=" callout text-center" *ngIf="!hasInvoice">
+                            <div class="woo-woo">Woot Woot!</div>
+                            <p>Invoice is deleted.</p>
                         </div>
                     </section>
                 </div>
