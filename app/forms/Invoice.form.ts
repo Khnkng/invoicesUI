@@ -26,8 +26,16 @@ export class InvoiceForm extends abstractForm{
             "amount":[""],
             "term":[""],
             "notes":[""],
-            "currency":[""],
-            "number":["", Validators.required]
+            "currency":["",Validators.required],
+            "number":["", Validators.required],
+            "createPlan":[false],
+            "planName":[""],
+            "frequency":[""],
+            "day":[""],
+            "week":[""],
+            "month":[""],
+            "quarter":[""],
+            "ends_after":[""]
         }
     }
 

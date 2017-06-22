@@ -13,6 +13,7 @@ import {InvoiceForm} from "../forms/Invoice.form";
 import {FormGroup, FormBuilder, FormArray} from "@angular/forms";
 import {InvoiceLineForm, InvoiceLineTaxesForm} from "../forms/InvoiceLine.form";
 import {ChartOfAccountsService} from "qCommon/app/services/ChartOfAccounts.service";
+import {DAYS_OF_WEEK, DAYS_OF_MONTH,WEEK_OF_MONTH,MONTH_OF_QUARTER,MONTH_OF_YEAR} from "qCommon/app/constants/Date.constants";
 
 declare let _:any;
 declare let numeral:any;
@@ -46,7 +47,11 @@ export class InvoiceComponent{
     chartOfAccounts:Array<any> = [];
     maillIds:Array<string>=[];
     hasMilIds:boolean=true;
-
+    dayOfWeek:Array<string>=DAYS_OF_WEEK;
+    dayOfMonth:Array<string>=DAYS_OF_MONTH;
+    weekOfMonth:Array<string>=WEEK_OF_MONTH;
+    monthOfQuarter:Array<string>=MONTH_OF_QUARTER;
+    monthOfYear:Array<string>=MONTH_OF_YEAR;
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
         private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
@@ -118,6 +123,12 @@ export class InvoiceComponent{
                 this.invoice = invoice;
                 let _invoice = _.cloneDeep(invoice);
                 delete _invoice.invoiceLines;
+                if(!_.isEmpty(this.invoice.paymentSpringPlan)){
+                    _invoice.createPlan=true;
+                    _invoice.frequency=this.invoice.paymentSpringPlan.frequency;
+                    _invoice.ends_after=this.invoice.paymentSpringPlan.ends_after;
+                    _invoice.planName=this.invoice.paymentSpringPlan.name;
+                }
                 this._invoiceForm.updateForm(this.invoiceForm, _invoice);
                 this.maillIds=invoice.recepientsMails;
                 if(invoice.recepientsMails&&invoice.recepientsMails.length>0){
@@ -198,6 +209,11 @@ export class InvoiceComponent{
         paymentDateControl.patchValue(date);
     }
 
+    setPlanEndDate(date){
+        let planEndDateControl:any = this.invoiceForm.controls['ends_after'];
+        planEndDateControl.patchValue(date);
+    }
+
     populateCustomers(){
 
     }
@@ -268,6 +284,43 @@ export class InvoiceComponent{
         let recepientsMails = jQuery('#invoice-emails').tagit("assignedTags");
         let base = this;
         invoiceData.amount = numeral(this.calcTotal()).value();
+        if(invoiceData.createPlan){
+            if(!invoiceData.planName){
+                this.toastService.pop(TOAST_TYPE.error, "Please give plan name");
+                return
+            }else if(!invoiceData.frequency){
+                this.toastService.pop(TOAST_TYPE.error, "Please select frequency");
+                return
+            }else if(invoiceData.frequency!='daily'&&!invoiceData.day){
+                this.toastService.pop(TOAST_TYPE.error, "Please select day");
+                return
+            }else if((invoiceData.frequency=='quarterly'||invoiceData.frequency=='yearly')&&!invoiceData.month){
+                this.toastService.pop(TOAST_TYPE.error, "Please select month");
+                return
+            }else if(!invoiceData.ends_after){
+                this.toastService.pop(TOAST_TYPE.error, "Please select end date");
+                return
+            }
+            invoiceData.action="create_plan";
+            let paymentSpringPlan:any={};
+            paymentSpringPlan.frequency=invoiceData.frequency;
+            paymentSpringPlan.name=invoiceData.planName;
+            paymentSpringPlan.amount=invoiceData.amount+"";
+            paymentSpringPlan.ends_after=moment(invoiceData.ends_after,'MM/DD/YYYY').format("YYYY-MM-DD");
+            if(invoiceData.frequency=='weekly'||invoiceData.frequency=='monthly'){
+                paymentSpringPlan.day=invoiceData.day;
+            }else if(invoiceData.frequency=='quarterly'||invoiceData.frequency=='yearly'){
+                let dayObj:any={};
+                dayObj.month=invoiceData.month;
+                dayObj.day=invoiceData.day;
+                paymentSpringPlan.day_map=dayObj;
+            }
+            invoiceData.paymentSpringPlan=paymentSpringPlan;
+            delete invoiceData.day;
+            delete invoiceData.month;
+            delete invoiceData.week;
+            delete invoiceData.quarter;
+        }
         invoiceData.recepientsMails=recepientsMails;
         //invoiceData.customer_name = customer.customer_name;
         //invoiceData.customer_email = customer.user_id;
@@ -295,7 +348,10 @@ export class InvoiceComponent{
                 this.toastService.pop(TOAST_TYPE.success, "Invoice created successfully");
                 this.navigateToDashborad();
             }, error=>{
-                this.toastService.pop(TOAST_TYPE.error, "Invoice created failed");
+                if(error&&JSON.parse(error))
+                this.toastService.pop(TOAST_TYPE.error, JSON.parse(error).message);
+                else
+                    this.toastService.pop(TOAST_TYPE.error, "Invoice creation  failed");
                 this.closeLoader();
             });
         } else {
@@ -416,7 +472,7 @@ export class InvoiceComponent{
     }
 
     updateLineInView(item){
-        let itemsControl:any=this.invoiceForm.controls['invoiceLines'];
+        let itemsControl=this.invoiceForm.controls['invoiceLines'];
         let itemControl = itemsControl.controls[this.editItemIndex];
         itemControl.controls['description'].patchValue(item.description);
         itemControl.controls['price'].patchValue(item.price);
