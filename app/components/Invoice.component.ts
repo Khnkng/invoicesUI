@@ -472,7 +472,7 @@ export class InvoiceComponent{
     }
 
     updateLineInView(item){
-        let itemsControl=this.invoiceForm.controls['invoiceLines'];
+        let itemsControl:any=this.invoiceForm.controls['invoiceLines'];
         let itemControl = itemsControl.controls[this.editItemIndex];
         itemControl.controls['description'].patchValue(item.description);
         itemControl.controls['price'].patchValue(item.price);
