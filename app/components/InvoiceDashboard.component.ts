@@ -24,7 +24,7 @@ declare let moment:any;
 export class InvoiceDashboardComponent{
     tabBackground:string = "#d45945";
     selectedTabColor:string = "#d45945";
-    tabDisplay:Array<any> = [{'display':'none'},{'display':'none'},{'display':'none'},{'display':'none'}];
+    tabDisplay:Array<any> = [{'display':'none'},{'display':'none'},{'display':'none'}];
     bgColors:Array<string>=[
         '#d45945',
         '#d47e47',
@@ -34,8 +34,8 @@ export class InvoiceDashboardComponent{
 
     proposalsTableData:any = {};
     proposalsTableOptions:any = {search:false, pageSize:10};
-    expensesTableData:any = {};
-    expensesTableOptions:any = {search:false, pageSize:10};
+    paidInvoiceTableData:any = {};
+    piadInvoiceTableOptions:any = {search:false, pageSize:10};
     invoiceTableData:any = {};
     paidInvoiceTableData:any = {};
     invoiceTableOptions:any = {search:false, pageSize:10};
@@ -221,7 +221,7 @@ export class InvoiceDashboardComponent{
                 base.proposalsTableOptions.pageSize = Math.floor((bottomOfVisibleWindow - topOfDiv - 75)/42)-3;
                 break;
             case 1:
-                base.expensesTableOptions.pageSize = Math.floor((bottomOfVisibleWindow - topOfDiv - 75)/42)-3;
+                base.piadInvoiceTableOptions.pageSize = Math.floor((bottomOfVisibleWindow - topOfDiv - 75)/42)-3;
                 break;
             case 2:
                 base.invoiceTableOptions.pageSize = Math.floor((bottomOfVisibleWindow - topOfDiv - 75)/42)-3;

@@ -70,7 +70,7 @@
                                         <div class="small-12 medium-3 columns">
                                             <label>
                                                 Payment Date
-                                                <input type="text" formControlName="payment_date" invoice-custom-datepicker atepicker1 [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setPaymentDate($event)" placeholder="Payment Date*">
+                                                <input type="text" formControlName="payment_date" invoice-custom-datepicker datepicker1 [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setPaymentDate($event)" placeholder="Payment Date*">
                                             </label>
                                         </div>
                                         <div class="small-12 medium-3 columns">
@@ -148,7 +148,7 @@
                                         <div class="small-12 medium-2 columns" *ngIf="invoiceForm.controls.createPlan.value&&invoiceForm.controls.frequency.value">
                                             <label>
                                                 Plan end date
-                                                <input type="text" formControlName="ends_after" invoice-custom-datepicker atepicker1 [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setPlanEndDate($event)" placeholder="End Date*">
+                                                <input type="text" formControlName="ends_after" invoice-custom-datepicker datepicker1 [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setPlanEndDate($event)" placeholder="End Date*">
                                             </label>
                                         </div>
                                     </div>
