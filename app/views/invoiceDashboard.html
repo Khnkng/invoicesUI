@@ -27,7 +27,7 @@
               <i class=" icon ion-ios-plus-outline"></i>
               <span >Proposal</span>
             </span>
-            <span class="pointer" *ngIf="tabDisplay[2].display == 'block'" (click)="addNewInvoice()">
+                        <span class="pointer" *ngIf="tabDisplay[2].display == 'block'" (click)="addNewInvoice()">
               <i class=" icon ion-ios-plus-outline"></i>
               <span >Invoice</span>
             </span>
@@ -50,7 +50,7 @@
             <div *ngIf="tabDisplay[2].display == 'block'" class="column small-12 medium-12 large-12" id="invoices">
                 <div class="row">
                     <div class="column">
-                        <foo-table class="bigpay-dashboard bighalf-footable" *ngIf="hasInvoices" [data]="invoiceTableData" [options]="invoiceTableOptions" (onRowAction)="handleAction($event)"></foo-table>
+                        <foo-table class="bigpay-dashboard bighalf-footable" *ngIf="hasInvoices" [data]="invoiceTableData" [options]="invoiceTableOptions" (onRowAction)="handleAction($event)" (onRowSelect)="handleSelect($event)"></foo-table>
                         <div class=" callout text-center" [hidden]="isLoading" *ngIf="!hasInvoices">
                             <div class="woo-woo">Woot Woot!</div>
                             <p>There are no Invoices.</p>

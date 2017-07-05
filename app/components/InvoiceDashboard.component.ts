@@ -37,8 +37,7 @@ export class InvoiceDashboardComponent{
     paidInvoiceTableData:any = {};
     piadInvoiceTableOptions:any = {search:false, pageSize:10};
     invoiceTableData:any = {};
-    paidInvoiceTableData:any = {};
-    invoiceTableOptions:any = {search:false, pageSize:10};
+    invoiceTableOptions:any = {search:false, pageSize:10,selectable:false};
     paidInvoiceTableOptions:any = {search:false, pageSize:10};
 
     tabHeight:string;
@@ -77,6 +76,8 @@ export class InvoiceDashboardComponent{
             this.localBadges = JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
         }
     }
+
+
 
     loadCustomers(companyId:any) {
         this.customerService.customers(companyId)
@@ -257,6 +258,7 @@ export class InvoiceDashboardComponent{
         this.invoiceTableOptions.pageSize = 9;
         this.invoiceTableData.columns = [
             {"name": "id", "title": "id", "visible": false},
+            {"name": "selectCol", "title": "<input type='checkbox' class='global-checkbox'>","type": "html","sortable": false, "filterable": false},
             {"name": "number", "title": "Number"},
             {"name": "customer", "title": "Customer"},
             {"name": "payment_date", "title": "Due Date"},
@@ -275,6 +277,7 @@ export class InvoiceDashboardComponent{
         invoices.forEach(function(invoice) {
             let row:any = {};
             row['id'] = invoice['id'];
+            row['selectCol'] = "<input type='checkbox' class='checkbox'/>";
             row['number'] = invoice['number'];
             row['customer']=base.getCustomerName(invoice['customer_id']);
             row['payment_date'] = invoice['payment_date'];
@@ -330,6 +333,12 @@ export class InvoiceDashboardComponent{
         let customer = _.find(this.customers, {'customer_id': id});
         return customer? customer.customer_name: '';
     }
+
+    handleSelect(event:any) {
+        let base = this;
+        console.log(base);
+    }
+
 
 
 }
