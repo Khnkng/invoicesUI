@@ -14,6 +14,9 @@ import {FormGroup, FormBuilder, FormArray} from "@angular/forms";
 import {InvoiceLineForm, InvoiceLineTaxesForm} from "../forms/InvoiceLine.form";
 import {ChartOfAccountsService} from "qCommon/app/services/ChartOfAccounts.service";
 import {DAYS_OF_WEEK, DAYS_OF_MONTH,WEEK_OF_MONTH,MONTH_OF_QUARTER,MONTH_OF_YEAR} from "qCommon/app/constants/Date.constants";
+import {SwitchBoard} from "qCommon/app/services/SwitchBoard";
+import {StateService} from "qCommon/app/services/StateService";
+import {pageTitleService} from "qCommon/app/services/PageTitle";
 
 declare let _:any;
 declare let numeral:any;
@@ -52,12 +55,14 @@ export class InvoiceComponent{
     weekOfMonth:Array<string>=WEEK_OF_MONTH;
     monthOfQuarter:Array<string>=MONTH_OF_QUARTER;
     monthOfYear:Array<string>=MONTH_OF_YEAR;
+    routeSubscribe:any;
+
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
-        private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
+                private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
                 private customerService: CustomersService, private _invoiceForm:InvoiceForm, private _invoiceLineForm:InvoiceLineForm, private _invoiceLineTaxesForm:InvoiceLineTaxesForm,
-                private coaService: ChartOfAccountsService){
-
+                private coaService: ChartOfAccountsService,private switchBoard:SwitchBoard,private stateService: StateService,private titleService:pageTitleService){
+        this.titleService.setPageTitle("new invoice");
         let _form:any = this._invoiceForm.getForm();
         _form['invoiceLines'] = this.invoiceLineArray;
         this.invoiceForm = this._fb.group(_form);
@@ -67,7 +72,17 @@ export class InvoiceComponent{
             this.loadInitialData();
             this.loadCOA();
         });
+        this.routeSubscribe = switchBoard.onClickPrev.subscribe(title => {
+            this.gotoPreviousState();
+        });
 
+    }
+
+    gotoPreviousState() {
+        let prevState = this.stateService.getPrevState();
+        if (prevState) {
+            this._router.navigate([prevState.url]);
+        }
     }
 
     loadCustomers(companyId:any) {
@@ -189,14 +204,13 @@ export class InvoiceComponent{
     }
 
     ngOnInit(){
-
-
-
-
-
         if(!this.newInvoice){
             //Fetch existing invoice
         }
+    }
+
+    ngOnDestroy(){
+        this.routeSubscribe.unsubscribe();
     }
 
     setInvoiceDate(date){
@@ -349,7 +363,7 @@ export class InvoiceComponent{
                 this.navigateToDashborad();
             }, error=>{
                 if(error&&JSON.parse(error))
-                this.toastService.pop(TOAST_TYPE.error, JSON.parse(error).message);
+                    this.toastService.pop(TOAST_TYPE.error, JSON.parse(error).message);
                 else
                     this.toastService.pop(TOAST_TYPE.error, "Invoice creation  failed");
                 this.closeLoader();

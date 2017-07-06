@@ -70,9 +70,15 @@ export class InvoicesService extends QountServices {
             .catch(this.handleError)
     }
 
-    deleteInvoice(invoiceId) : Observable<any> {
-        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE,null,{id: Session.getUser().id,companyId:Session.getCurrentCompany()});
-        return this.delete(url+"/"+invoiceId, SOURCE_TYPE.JAVA).map(res => <any> res.json())
+    deleteInvoice(invoiceIds) : Observable<any> {
+        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE_DELETE,null,{id: Session.getUser().id,companyId:Session.getCurrentCompany()});
+        return this.create(url,invoiceIds,SOURCE_TYPE.JAVA).map(res => <any> res.json())
+            .catch(this.handleError)
+    }
+
+    markAsSentInvoice(invoiceIds) : Observable<any> {
+        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE_SENT,null,{id: Session.getUser().id,companyId:Session.getCurrentCompany()});
+        return this.update(url,invoiceIds,SOURCE_TYPE.JAVA).map(res => <any> res.json())
             .catch(this.handleError)
     }
 

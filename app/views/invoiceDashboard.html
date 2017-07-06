@@ -14,7 +14,7 @@
                         </label>
                     </div>
                     <div class="column medium-4 tab" (click)="reRoutePage(1)" [ngClass]="{'selected': tabDisplay[1].display == 'block'}">
-                        <label [ngClass]="{'whiteColor': tabDisplay[1].display == 'block'}"><span>Paid</span>
+                        <label [ngClass]="{'whiteColor': tabDisplay[1].display == 'block'}"><span>Payments</span>
                             <span>({{badges.invoice_paid ? badges.invoice_paid : localBadges ? localBadges.invoice_paid: 0 }})</span>
                         </label>
                     </div>
@@ -36,10 +36,20 @@
             </div>
         </div>
         <div class="row collapse tab-content ">
-            <div *ngIf="tabDisplay[0].display == 'block'" class="column small-12 medium-12 large-12" id="proposals">
+            <div *ngIf="tabDisplay[0].display == 'block'" class="column small-12 medium-12 large-12 invoices" id="proposals">
                 <div class="row">
                     <div class="column">
-                        <foo-table class="bigpay-dashboard bighalf-footable" *ngIf="hasProposals" [data]="proposalsTableData" [options]="proposalsTableOptions" (onRowAction)="handleProposalAction($event)"></foo-table>
+                        <div class="row add-share-buttons" [ngStyle]="{'visibility': selectedTableRows.length>0 ? 'visible':'hidden'}">
+                            <div class="medium-2 small-12 text-right">
+                                <label>
+                                    <select data-placeholder="Action" (change)="handlePaidStateChange($event)">
+                                        <option *ngFor="let action of paidActions" [value]="action.value"><span><i class="icon" [ngClass]="action.className"></i></span><span>{{action.name}}</span></option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="column medium-2 selection-count"><span>{{selectedTableRows.length}}</span><span>selected</span></div>
+                        </div>
+                        <foo-table class="bigpay-dashboard bighalf-footable invoice-table" *ngIf="hasProposals" [data]="proposalsTableData" [options]="proposalsTableOptions" (onRowAction)="handleProposalAction($event)" (onRowSelect)="handleSelect($event)" #proposalsTable></foo-table>
                         <div class=" callout text-center" [hidden]="isLoading" *ngIf="!hasProposals">
                             <div class="woo-woo">Woot Woot!</div>
                             <p>There are no Proposals.</p>
@@ -47,10 +57,21 @@
                     </div>
                 </div>
             </div>
-            <div *ngIf="tabDisplay[2].display == 'block'" class="column small-12 medium-12 large-12" id="invoices">
+            <div *ngIf="tabDisplay[2].display == 'block'" class="column small-12 medium-12 large-12 invoices" id="invoices">
                 <div class="row">
                     <div class="column">
-                        <foo-table class="bigpay-dashboard bighalf-footable" *ngIf="hasInvoices" [data]="invoiceTableData" [options]="invoiceTableOptions" (onRowAction)="handleAction($event)" (onRowSelect)="handleSelect($event)"></foo-table>
+                        <div class="row add-share-buttons" [ngStyle]="{'visibility': selectedTableRows.length>0 ? 'visible':'hidden'}">
+                            <div class="medium-2 small-12 text-right">
+                                <label>
+                                    <select data-placeholder="Action" (change)="handleInvoiceStateChange($event)">
+                                        <option *ngFor="let action of invoiceActions" [value]="action.value"><span><i class="icon" [ngClass]="action.className"></i></span><span>{{action.name}}</span></option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="column medium-2 selection-count"><span>{{selectedTableRows.length}}</span><span>selected</span></div>
+                        </div>
+
+                        <foo-table class="bigpay-dashboard bighalf-footable invoice-table" *ngIf="hasInvoices" [data]="invoiceTableData" [options]="invoiceTableOptions" (onRowAction)="handleAction($event)" (onRowSelect)="handleSelect($event)" #invoicesTable></foo-table>
                         <div class=" callout text-center" [hidden]="isLoading" *ngIf="!hasInvoices">
                             <div class="woo-woo">Woot Woot!</div>
                             <p>There are no Invoices.</p>
@@ -58,10 +79,20 @@
                     </div>
                 </div>
             </div>
-            <div *ngIf="tabDisplay[1].display == 'block'" class="column small-12 medium-12 large-12" id="paidInvoices">
+            <div *ngIf="tabDisplay[1].display == 'block'" class="column small-12 medium-12 large-12 invoices" id="paidInvoices">
                 <div class="row">
                     <div class="column">
-                        <foo-table class="bigpay-dashboard bighalf-footable" *ngIf="hasPaidInvoices" [data]="paidInvoiceTableData" [options]="paidInvoiceTableOptions" (onRowAction)="handleAction($event)"></foo-table>
+                        <div class="row add-share-buttons" [ngStyle]="{'visibility': selectedTableRows.length>0 ? 'visible':'hidden'}">
+                            <div class="medium-2 small-12 text-right">
+                                <label>
+                                    <select data-placeholder="Action" (change)="handlePaidStateChange($event)">
+                                        <option *ngFor="let action of paidActions" [value]="action.value"><span><i class="icon" [ngClass]="action.className"></i></span><span>{{action.name}}</span></option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="column medium-2 selection-count"><span>{{selectedTableRows.length}}</span><span>selected</span></div>
+                        </div>
+                        <foo-table class="bigpay-dashboard bighalf-footable invoice-table" *ngIf="hasPaidInvoices" [data]="paidInvoiceTableData" [options]="paidInvoiceTableOptions" (onRowAction)="handleAction($event)" (onRowSelect)="handleSelect($event)" #paidTable></foo-table>
                         <div class=" callout text-center" [hidden]="isLoading" *ngIf="!hasPaidInvoices">
                             <div class="woo-woo">Woot Woot!</div>
                             <p>There are no Invoices.</p>
