@@ -40,12 +40,11 @@
                 <div class="row">
                     <div class="column">
                         <div class="row add-share-buttons" [ngStyle]="{'visibility': selectedTableRows.length>0 ? 'visible':'hidden'}">
-                            <div class="medium-2 small-12 text-right">
-                                <label>
-                                    <select data-placeholder="Action" (change)="handlePaidStateChange($event)">
-                                        <option *ngFor="let action of paidActions" [value]="action.value"><span><i class="icon" [ngClass]="action.className"></i></span><span>{{action.name}}</span></option>
-                                    </select>
-                                </label>
+                            <div class="medium-2 small-12 invoice-dropdown" foundation>
+                                <button class="dropdown button" type="button" data-toggle="invoice-dropdown">Action</button>
+                                <ul class="dropdown-pane" id="invoice-dropdown" data-dropdown>
+                                    <li  class="pointer" *ngFor="let action of actions" (click)="handleInvoiceStateChange(action.value)"><span class="icon" [ngClass]="action.className"></span><span>{{action.name}}</span></li>
+                                </ul>
                             </div>
                             <div class="column medium-2 selection-count"><span>{{selectedTableRows.length}}</span><span>selected</span></div>
                         </div>
@@ -61,16 +60,14 @@
                 <div class="row">
                     <div class="column">
                         <div class="row add-share-buttons" [ngStyle]="{'visibility': selectedTableRows.length>0 ? 'visible':'hidden'}">
-                            <div class="medium-2 small-12 text-right">
-                                <label>
-                                    <select data-placeholder="Action" (change)="handleInvoiceStateChange($event)">
-                                        <option *ngFor="let action of invoiceActions" [value]="action.value"><span><i class="icon" [ngClass]="action.className"></i></span><span>{{action.name}}</span></option>
-                                    </select>
-                                </label>
+                            <div class="medium-2 small-12 invoice-dropdown" foundation>
+                                <button class="dropdown button" type="button" data-toggle="invoice-dropdown">Action</button>
+                                <ul class="dropdown-pane" id="invoice-dropdown" data-dropdown>
+                                    <li  class="pointer" *ngFor="let action of actions" (click)="handleInvoiceStateChange(action.value)"><span class="icon" [ngClass]="action.className"></span><span>{{action.name}}</span></li>
+                                </ul>
                             </div>
                             <div class="column medium-2 selection-count"><span>{{selectedTableRows.length}}</span><span>selected</span></div>
                         </div>
-
                         <foo-table class="bigpay-dashboard bighalf-footable invoice-table" *ngIf="hasInvoices" [data]="invoiceTableData" [options]="invoiceTableOptions" (onRowAction)="handleAction($event)" (onRowSelect)="handleSelect($event)" #invoicesTable></foo-table>
                         <div class=" callout text-center" [hidden]="isLoading" *ngIf="!hasInvoices">
                             <div class="woo-woo">Woot Woot!</div>
@@ -83,12 +80,11 @@
                 <div class="row">
                     <div class="column">
                         <div class="row add-share-buttons" [ngStyle]="{'visibility': selectedTableRows.length>0 ? 'visible':'hidden'}">
-                            <div class="medium-2 small-12 text-right">
-                                <label>
-                                    <select data-placeholder="Action" (change)="handlePaidStateChange($event)">
-                                        <option *ngFor="let action of paidActions" [value]="action.value"><span><i class="icon" [ngClass]="action.className"></i></span><span>{{action.name}}</span></option>
-                                    </select>
-                                </label>
+                            <div class="medium-2 small-12 invoice-dropdown" foundation>
+                                <button class="dropdown button" type="button" data-toggle="invoice-dropdown">Action</button>
+                                <ul class="dropdown-pane" id="invoice-dropdown" data-dropdown>
+                                    <li  class="pointer" *ngFor="let action of actions" (click)="handleInvoiceStateChange(action.value)"><span class="icon" [ngClass]="action.className"></span><span>{{action.name}}</span></li>
+                                </ul>
                             </div>
                             <div class="column medium-2 selection-count"><span>{{selectedTableRows.length}}</span><span>selected</span></div>
                         </div>

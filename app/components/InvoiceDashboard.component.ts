@@ -59,9 +59,50 @@ export class InvoiceDashboardComponent {
     companyCurrency: string = 'USD';
     localeFortmat: string = 'en-US';
     customers: Array<any> = [];
-    invoiceActions: Array<any> = [{'className': 'ion-ios-checkmark-outline', 'type':'single', 'name': 'Edit', 'value': 'edit'}, {'className': 'ion-ios-minus-outline', 'type':'single', 'name': 'Duplicate', 'value': 'duplicate'}, {'className': 'ion-ios-trash-outline', 'type':'multiple', 'name': 'Mark as sent', 'value': 'sent'}, {'className': 'ion-ios-trash-outline', 'type':'single', 'name': 'Mark as paid', 'value': 'paid'}, {'className': 'ion-ios-trash-outline', 'type':'multiple', 'name': 'Delete', 'value': 'delete'}];
-    paidActions: Array<any> = [{'className': 'ion-ios-checkmark-outline', 'type':'single', 'name': 'Edit', 'value': 'edit'}, {'className': 'ion-ios-minus-outline', 'type':'single', 'name': 'Duplicate', 'value': 'duplicate'}, {'className': 'ion-ios-trash-outline', 'type':'multiple', 'name': 'Mark as sent', 'value': 'sent'}, {'className': 'ion-ios-trash-outline', 'type':'single', 'name': 'Mark as paid', 'value': 'paid'}, {'className': 'ion-ios-trash-outline', 'type':'multiple', 'name': 'Delete', 'value': 'delete'}];
-    selectedTableRows:Array<any> = [];
+    actions:Array<any> = [];
+    invoiceActions: Array<any> = [{
+        'className': 'ion-ios-checkmark-outline',
+        'name': 'Edit',
+        'value': 'edit'
+    }, {
+        'className': 'ion-ios-minus-outline',
+        'name': 'Duplicate',
+        'value': 'duplicate'
+    }, {
+        'className': 'ion-ios-trash-outline',
+        'name': 'Mark as paid',
+        'value': 'paid'
+    }, {
+        'className': 'ion-ios-trash-outline',
+        'name': 'Mark as sent',
+        'value': 'sent'
+    }, {'className': 'ion-ios-trash-outline', 'name': 'Delete', 'value': 'delete'}];
+    invoiceMultipleSelect: Array<any> = [ {
+        'className': 'ion-ios-trash-outline',
+        'name': 'Mark as sent',
+        'value': 'sent'
+    }, {'className': 'ion-ios-trash-outline','name': 'Delete', 'value': 'delete'}];
+    paidActions: Array<any> = [{
+        'className': 'ion-ios-checkmark-outline',
+        'name': 'Edit',
+        'value': 'edit'
+    }, {
+        'className': 'ion-ios-minus-outline',
+        'type': 'single',
+        'name': 'Duplicate',
+        'value': 'duplicate'
+    }, {
+        'className': 'ion-ios-trash-outline',
+        'type': 'multiple',
+        'name': 'Mark as sent',
+        'value': 'sent'
+    }, {
+        'className': 'ion-ios-trash-outline',
+        'type': 'single',
+        'name': 'Mark as paid',
+        'value': 'paid'
+    }, {'className': 'ion-ios-trash-outline', 'type': 'multiple', 'name': 'Delete', 'value': 'delete'}];
+    selectedTableRows: Array<any> = [];
     @ViewChild('invoicesTable') invoicesTable;
     @ViewChild('paidTable') paidTable;
     @ViewChild('proposalsTable') proposalsTable;
@@ -70,7 +111,7 @@ export class InvoiceDashboardComponent {
     constructor(private _router: Router, private _route: ActivatedRoute,
                 private toastService: ToastService, private loadingService: LoadingService,
                 private companiesService: CompaniesService, private invoiceService: InvoicesService,
-                private customerService: CustomersService,private titleService:pageTitleService,
+                private customerService: CustomersService, private titleService: pageTitleService,
                 private stateService: StateService) {
         this.routeSub = this._route.params.subscribe(params => {
             this.selectedTab = params['tabId'];
@@ -89,9 +130,10 @@ export class InvoiceDashboardComponent {
 
     }
 
-    addInvoiceDashboardState(){
+    addInvoiceDashboardState() {
         this.stateService.addState(new State('Invoices', this._router.url, null, this.selectedTab));
     }
+
     loadCustomers(companyId: any) {
         this.customerService.customers(companyId)
             .subscribe(customers => {
@@ -170,31 +212,9 @@ export class InvoiceDashboardComponent {
         this.loadingService.triggerLoadingEvent(false);
     }
 
-    handleAction($event) {
-        let action = $event.action;
-        delete $event.action;
-        delete $event.actions;
-        if (action == 'edit') {
-            this.showInvoice($event);
-        } else if (action == 'delete') {
-            this.removeInvoice($event);
-        }
-    }
-
-    handleProposalAction($event) {
-        let action = $event.action;
-        delete $event.action;
-        delete $event.actions;
-        if (action == 'edit') {
-            //Show proposal
-        } else if (action == 'delete') {
-            //delete proposal
-        }
-    }
-
-    removeInvoice(invoices) {
+    removeInvoice() {
         let base = this;
-        let selectedIds = _.map(invoices, 'id');
+        let selectedIds = _.map(this.selectedTableRows, 'id');
         this.invoiceService.deleteInvoice(selectedIds).subscribe(success => {
                 this.toastService.pop(TOAST_TYPE.success, "Invoice deleted successfully.");
                 this.hasInvoices = false;
@@ -205,9 +225,9 @@ export class InvoiceDashboardComponent {
             });
     }
 
-    invoiceMarkAsSent(invoices) {
+    invoiceMarkAsSent() {
         let base = this;
-        let selectedIds = _.map(invoices, 'id');
+        let selectedIds = _.map(this.selectedTableRows, 'id');
         this.invoiceService.markAsSentInvoice(selectedIds).subscribe(success => {
                 this.toastService.pop(TOAST_TYPE.success, "Invoice deleted successfully.");
                 this.hasInvoices = false;
@@ -294,7 +314,13 @@ export class InvoiceDashboardComponent {
         this.invoiceTableOptions.pageSize = 9;
         this.invoiceTableData.columns = [
             {"name": "id", "title": "id", "visible": false},
-            {"name": "selectCol", "title": "<input type='checkbox' class='global-checkbox'>", "type": "html", "sortable": false, "filterable": false},
+            {
+                "name": "selectCol",
+                "title": "<input type='checkbox' class='global-checkbox'>",
+                "type": "html",
+                "sortable": false,
+                "filterable": false
+            },
             {"name": "number", "title": "Number"},
             {"name": "customer", "title": "Customer"},
             {"name": "payment_date", "title": "Due Date"},
@@ -350,7 +376,13 @@ export class InvoiceDashboardComponent {
         this.paidInvoiceTableOptions.pageSize = 9;
         this.paidInvoiceTableData.columns = [
             {"name": "id", "title": "id", "visible": false},
-            {"name": "selectCol", "title": "<input type='checkbox' class='global-checkbox'>", "type": "html", "sortable": false, "filterable": false},
+            {
+                "name": "selectCol",
+                "title": "<input type='checkbox' class='global-checkbox'>",
+                "type": "html",
+                "sortable": false,
+                "filterable": false
+            },
             {"name": "number", "title": "Number"},
             {"name": "customer", "title": "Customer"},
             {"name": "payment_date", "title": "Due Date"},
@@ -391,34 +423,45 @@ export class InvoiceDashboardComponent {
         return customer ? customer.customer_name : '';
     }
 
+    updateOptions(actions) {
+        let base = this;
+        if (this.selectedTableRows.length > 1) {
+            base.actions = base.invoiceMultipleSelect;
+        }else{
+            base.actions = base.invoiceActions;
+        }
+    }
+
     handleSelect(event: any) {
         let base = this;
         if (typeof  event !== "object") {
             this.selectedTableRows = [];
-            this.updateIncoicesTable(event);
-        }else{
-            this.handleInvoiceSelect(event)
+            this.updateDashboardTable(event);
+        } else {
+            this.handleRowSelect(event)
         }
     }
-    getSelectedTabData(){
-        if(this.selectedTab == 2){
-            return  this.invoiceTableData;
-        }else if(this.selectedTab == 1){
+
+    getSelectedTabData() {
+        if (this.selectedTab == 2) {
+            return this.invoiceTableData;
+        } else if (this.selectedTab == 1) {
             return this.paidInvoiceTableData;
-        }else{
+        } else {
             return this.proposalsTableData;
         }
     }
 
-    getNativeElement(){
-        if(this.selectedTab == 2){
-            return  this.invoicesTable.nativeElement;
-        }else if(this.selectedTab == 1){
+    getNativeElement() {
+        if (this.selectedTab == 2) {
+            return this.invoicesTable.nativeElement;
+        } else if (this.selectedTab == 1) {
             return this.paidTable.nativeElement;
-        }else{
+        } else {
             return this.proposalsTable.nativeElement;
         }
     }
+
     updateTableData(tableData) {
         let base = this;
         if (this.selectedTab == 2) {
@@ -433,47 +476,48 @@ export class InvoiceDashboardComponent {
         }
     }
 
-    updateIncoicesTable(state) {
+    updateDashboardTable(state) {
         let tableData = this.getSelectedTabData();
         if (state) {
             for (var i in tableData.rows) {
                 tableData.rows[i].selectCol = "<input type='checkbox' checked  class='checkbox'/>";
                 tableData.rows[i].tempIsSelected = true;
             }
-            this.handleInvoiceSelect(tableData.rows);
+            this.handleRowSelect(tableData.rows);
             tableData.columns[1].title = "<input type='checkbox' class='global-checkbox' checked>";
         } else {
             for (var i in tableData.rows) {
                 tableData.rows[i].selectCol = "<input type='checkbox' class='checkbox'/>";
                 tableData.rows[i].tempIsSelected = false;
             }
-            this.handleInvoiceSelect([]);
+            this.handleRowSelect([]);
             tableData.columns[1].title = "<input type='checkbox' class='global-checkbox'>";
         }
         this.updateTableData(tableData);
     }
 
-    handleInvoiceSelect(selectedRows) {
+    handleRowSelect(selectedRows) {
         let base = this;
         let unCheckedRowsInPage = [];
         let selectedTable = this.getNativeElement();
-        jQuery(selectedTable).find("tbody tr input.checkbox").each(function(idx,cbox) {
+        jQuery(selectedTable).find("tbody tr input.checkbox").each(function (idx, cbox) {
             let row = jQuery(cbox).closest('tr').data('__FooTableRow__');
             var obj = row.val();
-            if(!jQuery(cbox).is(":checked")) {
-                _.remove(base.selectedTableRows,{id:obj.id})
+            if (!jQuery(cbox).is(":checked")) {
+                _.remove(base.selectedTableRows, {id: obj.id})
             }
         });
-        _.each(selectedRows, function(invoices){
+        _.each(selectedRows, function (invoices) {
             base.selectedTableRows.push(invoices);
         });
         this.selectedTableRows = _.uniqBy(this.selectedTableRows, 'id');
         _.remove(this.selectedTableRows, {'tempIsSelected': false});
+        this.updateOptions(this.invoiceActions);
     }
 
-    handleInvoiceStateChange(action){
-        let selected = action.target.value;
-        switch (selected) {
+
+    handleInvoiceStateChange(action) {
+        switch (action) {
             case 'edit':
                 this.showInvoice(this.selectedTableRows[0]);
                 break;
@@ -481,13 +525,16 @@ export class InvoiceDashboardComponent {
                 this.showInvoice(this.selectedTableRows[0]);
                 break;
             case 'sent':
-                this.invoiceMarkAsSent(selected)
+                this.invoiceMarkAsSent();
                 break;
             case 'paid':
+                let link = ['invoicePayment'];
+                this._router.navigate(link);
                 break;
             case 'delete':
-                this.removeInvoice(selected);
+                this.removeInvoice();
                 break;
         }
     }
 }
+
