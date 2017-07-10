@@ -13,12 +13,15 @@ export class InvoiceLineForm extends abstractForm{
 
     getForm(model?:any) {
         return {
-            item_id:[model ? model.item_id : '', Validators.required],
-            description:[model ? model.description : '', Validators.required],
-            quantity:[model ? model.quantity : 0, Validators.required],
-            price:[model ? model.price : 0, Validators.required],
+            item_id:[model ? model.item_id : ''],
+            description:[model ? model.description : ''],
+            quantity:[model ? model.quantity : 0],
+            price:[model ? model.price : 0],
             name:[model?model.name:''],
-            amount:[model?model.amount:0]
+            amount:[model?model.amount:0],
+            destroy: [model? model.destroy: false],
+            type: [model? model.type: ''],
+            tax_id:[model? model.tax_id: '']
         };
     }
 
