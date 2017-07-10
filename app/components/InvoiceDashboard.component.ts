@@ -83,7 +83,7 @@ export class InvoiceDashboardComponent {
         'name': 'Mark as sent',
         'value': 'sent'
     }, {'className': 'ion-ios-trash','name': 'Delete', 'value': 'delete'}];
-    paidActions: Array<any> = [{
+    paymentActions: Array<any> = [{
         'className': 'ion-edit',
         'name': 'Edit',
         'value': 'edit'
@@ -103,6 +103,7 @@ export class InvoiceDashboardComponent {
             this.selectedTab = params['tabId'];
             this.selectTab(this.selectedTab, "");
             this.hasInvoices = false;
+            this.hasPaidInvoices = false;
             this.companyCurrency = Session.getCurrentCompanyCurrency();
             this.loadCustomers(Session.getCurrentCompany());
         });
@@ -217,6 +218,11 @@ export class InvoiceDashboardComponent {
             error => {
                 this.toastService.pop(TOAST_TYPE.error, "Invoice deletion failed.")
             });
+    }
+
+    showPayment(){
+        let link = ['payments/edit', this.selectedTableRows[0].id];
+        this._router.navigate(link);
     }
 
     showInvoice(invoice) {
@@ -413,7 +419,7 @@ export class InvoiceDashboardComponent {
         this.loadingService.triggerLoadingEvent(false);
     }
 
-    buildPaidInvoiceTableData(invoices) {
+    /*buildPaidInvoiceTableData(invoices) {
         this.hasPaidInvoices = false;
         this.invoices = invoices;
         this.paidInvoiceTableData.rows = [];
@@ -427,8 +433,8 @@ export class InvoiceDashboardComponent {
             {"name": "amount", "title": "Amount",type:'number',"formatter": (amount)=>{
                 amount = parseFloat(amount);
                 return amount.toLocaleString(base.localeFortmat, { style: 'currency', currency: base.companyCurrency, minimumFractionDigits: 2, maximumFractionDigits: 2 })
-            }}/*,
-            {"name": "actions", "title": ""}*/
+            }}/!*,
+            {"name": "actions", "title": ""}*!/
         ];
         let base = this;
         invoices.forEach(function (invoice) {
@@ -440,7 +446,7 @@ export class InvoiceDashboardComponent {
             row['customer'] = base.getCustomerName(invoice['customer_id']);
             row['payment_date'] = invoice['payment_date'];
             row['amount'] = invoice['amount'];
-            /*row['actions'] = "<a class='action' data-action='edit' style='margin:0px 0px 0px 5px;'><i class='icon ion-edit'></i></a><a class='action' data-action='delete' style='margin:0px 0px 0px 5px;'><i class='icon ion-trash-b'></i></a>";*/
+            /!*row['actions'] = "<a class='action' data-action='edit' style='margin:0px 0px 0px 5px;'><i class='icon ion-edit'></i></a><a class='action' data-action='delete' style='margin:0px 0px 0px 5px;'><i class='icon ion-trash-b'></i></a>";*!/
             base.paidInvoiceTableData.rows.push(row);
         });
 
@@ -448,20 +454,39 @@ export class InvoiceDashboardComponent {
             base.hasPaidInvoices = true;
         }, 0)
         this.loadingService.triggerLoadingEvent(false);
-    }
+    }*/
 
     getCustomerName(id) {
         let customer = _.find(this.customers, {'customer_id': id});
         return customer ? customer.customer_name : '';
     }
 
-    updateOptions(actions) {
+    updateOptions() {
         let base = this;
-        if (this.selectedTableRows.length > 1) {
-            base.actions = base.invoiceMultipleSelect;
-        }else{
-            base.actions = base.invoiceActions;
+        switch (this.selectedTab) {
+            case "2":
+                if (this.selectedTableRows.length > 1) {
+                    base.actions = base.invoiceMultipleSelect;
+                }else{
+                    base.actions = base.invoiceActions;
+                }
+                break;
+            case "1":
+                if (this.selectedTableRows.length > 1) {
+                    base.actions = base.paymentActions;
+                }else{
+                    base.actions = base.paymentActions;
+                }
+                break;
+            case "0":
+                if (this.selectedTableRows.length > 1) {
+                    base.actions = base.invoiceMultipleSelect;
+                }else{
+                    base.actions = base.invoiceActions;
+                }
+                break;
         }
+
     }
 
     handleSelect(event: any) {
@@ -475,9 +500,9 @@ export class InvoiceDashboardComponent {
     }
 
     getSelectedTabData() {
-        if (this.selectedTab == 2) {
+        if (this.selectedTab == "2") {
             return this.invoiceTableData;
-        } else if (this.selectedTab == 1) {
+        } else if (this.selectedTab == "1") {
             return this.paidInvoiceTableData;
         } else {
             return this.proposalsTableData;
@@ -485,9 +510,9 @@ export class InvoiceDashboardComponent {
     }
 
     getNativeElement() {
-        if (this.selectedTab == 2) {
+        if (this.selectedTab == "2") {
             return this.invoicesTable.nativeElement;
-        } else if (this.selectedTab == 1) {
+        } else if (this.selectedTab == "1") {
             return this.paidTable.nativeElement;
         } else {
             return this.proposalsTable.nativeElement;
@@ -496,14 +521,14 @@ export class InvoiceDashboardComponent {
 
     updateTableData(tableData) {
         let base = this;
-        if (this.selectedTab == 2) {
+        if (this.selectedTab == "2") {
             this.invoiceTableData.rows = tableData.rows;
             this.invoiceTableData = _.clone(base.invoiceTableData);
-        } else if (this.selectedTab == 1) {
-            this.paidInvoiceTableData = tableData.rows;
+        } else if (this.selectedTab == "1") {
+            this.paidInvoiceTableData.rows = tableData.rows;
             this.paidInvoiceTableData = _.clone(base.paidInvoiceTableData);
         } else {
-            this.paidInvoiceTableData = tableData.rows;
+            this.paidInvoiceTableData.rows = tableData.rows;
             this.paidInvoiceTableData = _.clone(base.paidInvoiceTableData);
         }
     }
@@ -544,7 +569,7 @@ export class InvoiceDashboardComponent {
         });
         this.selectedTableRows = _.uniqBy(this.selectedTableRows, 'id');
         _.remove(this.selectedTableRows, {'tempIsSelected': false});
-        this.updateOptions(this.invoiceActions);
+        this.updateOptions();
     }
 
 
@@ -568,5 +593,9 @@ export class InvoiceDashboardComponent {
                 break;
         }
     }
+
+
+
+
 }
 

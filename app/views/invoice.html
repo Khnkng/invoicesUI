@@ -289,7 +289,7 @@
                                                 <button class="button small" (click)="submit($event,true,'email')" [disabled]="!invoiceForm.valid||!validateTaskLines()" style="width: 140px;height: 44px;background: #4b4b9e;color: white;font-size: 14px;">Email Invoice</button>
                                             </div>
                                             <div class="row" style="margin-top: 15px">
-                                                <button (click)="submit($event,false,'download')" [disabled]="!invoiceForm.valid||!validateTaskLines()" style="width: 140px;height: 44px;background: white;color: #00B1A9;font-size: 14px;border: 1px solid;">Download PDF</button>
+                                                <button (click)="submit($event,false,'download')" [disabled]="!invoiceForm.valid||!validateTaskLines()" style="width: 140px;height: 44px;background: white;color: #4b4b9e;font-size: 14px;border: 1px solid;">Download PDF</button>
                                             </div>
                                             <div class="row" style="margin-top: 1.2rem" *ngIf="!showPreview">
                                                 <div class="small-12 medium-12 columns" style="padding: 0px">
