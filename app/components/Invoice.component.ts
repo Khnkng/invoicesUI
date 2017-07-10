@@ -727,7 +727,7 @@ export class InvoiceComponent{
                 link[0].download= "Invoice.pdf";
                 link[0].click();
             }, error =>{
-                this._toastService.pop(TOAST_TYPE.error, "Failed to Export report into PDF");
+                this.toastService.pop(TOAST_TYPE.error, "Failed to Export report into PDF");
             });
     }
 
