@@ -65,6 +65,7 @@ export class InvoiceComponent{
     invoiceProcessedData:any;
     additionalMails:String;
     showPreview:boolean;
+    preViewText:string="Preview Invoice";
 
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
@@ -335,6 +336,11 @@ export class InvoiceComponent{
             this.saveInvoiceDetails(invoiceData);
         }else if(action=='preview'){
             this.showPreview=!this.showPreview;
+            if(this.showPreview){
+                this.preViewText="Close Preview"
+            }else {
+                this.preViewText="Preview Invoice"
+            }
         }
 
     }
@@ -628,6 +634,24 @@ export class InvoiceComponent{
             let lineData = base._invoiceLineForm.getData(lineListForm);
             if(!base.invoiceID){
                 if(!_.isEqual(lineData, defaultLine)){
+                    let item={};
+                    lineData.item=item;
+                    lineData.item.name=base.getItemCodeName(lineData.item_id);
+                    lineData.type=type;
+                    lineData.amount=lineData.quantity*lineData.price;
+                    lines.push(lineData);
+                }
+            }else {
+                if (lineData.id) {
+                    let item={};
+                    lineData.item=item;
+                    lineData.item.name=base.getItemCodeName(lineData.item_id);
+                    lineData.amount=lineData.quantity*lineData.price;
+                    lines.push(lineData);
+                } else if (!_.isEqual(lineData, defaultLine)) {
+                    let item={};
+                    lineData.item=item;
+                    lineData.item.name=base.getItemCodeName(lineData.item_id);
                     lineData.type=type;
                     lineData.amount=lineData.quantity*lineData.price;
                     lines.push(lineData);

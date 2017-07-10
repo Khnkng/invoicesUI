@@ -264,11 +264,10 @@
                                                         </tbody>
                                                     </table>
                                                 </div>
-
                                             </div>
                                         </div>
-                                        <div class="small-12 medium-9 columns" *ngIf="showPreview">
-                                            Invoice Preview
+                                        <div class="small-12 medium-8 columns" *ngIf="showPreview" style="margin-bottom:2rem">
+                                            <invoicePaymentPreview [invoices]="invoiceProcessedData"></invoicePaymentPreview>
                                         </div>
 
                                         <div class="small-12 medium-3 columns">
@@ -277,7 +276,7 @@
                                                     <button (click)="submit($event,false,'draft')" class="button small" [disabled]="!invoiceForm.valid||!validateTaskLines()" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;height: 25px;">Save as Draft</button>
                                                 </div>
                                                 <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;">
-                                                    <button [disabled]="!invoiceForm.valid||!validateTaskLines()" (click)="submit($event,false,'preview')" class="button small" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;">Preview Invoice</button>
+                                                    <button [disabled]="!invoiceForm.valid||!validateTaskLines()" (click)="submit($event,false,'preview')" class="button small" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;">{{preViewText}}</button>
                                                 </div>
                                                 <!--<div *ngIf="showPreview" class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;">
                                                     <button (click)="submit($event,false,'preview')" class="button small" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;">Close Preview</button>
