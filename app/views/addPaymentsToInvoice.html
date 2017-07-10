@@ -1,0 +1,41 @@
+<div class="row" *ngIf="hasInvoiceData">
+    <div class="column medium-7" >
+        <invoicePaymentPreview [invoices]="invoiceData"></invoicePaymentPreview>
+    </div>
+    <div class="column medium-1"></div>
+    <div class="column medium-3">
+        <div>save as draft</div>
+        <div>close preview</div>
+        <h5>Apply Payment</h5>
+        <div class="row applyPayment">
+            <div class="medium-6">
+                <label>Reference Number
+                    <input type="text" placeholder="Title*" [value]="invoiceData.number"/>
+                </label>
+            </div>
+            <div class="column medium-6">
+                <label>Invoice Date
+                    <input type="text"  placeholder="Date*" [value]="invoiceData.invoice_date">
+                </label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="medium-6">
+                <label>Add Payment Method
+                    <select combo-box data-placeholder="Select">
+                        <option value="cash">cash</option>
+                        <option value="card">card</option>
+                    </select>
+                </label>
+            </div>
+        </div>
+        <div class="row">
+            <label>Amount
+                <input type="text" placeholder="Amount" [value]="invoiceData.number"/>
+            </label>
+        </div>
+        <button class="button create small" type="submit">Apply Payment</button>
+    </div>
+    <div class="column medium-1"></div>
+
+</div>

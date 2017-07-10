@@ -13,7 +13,9 @@ import {InvoiceForm} from "../forms/Invoice.form";
 import {FormGroup, FormBuilder, FormArray} from "@angular/forms";
 import {InvoiceLineForm, InvoiceLineTaxesForm} from "../forms/InvoiceLine.form";
 import {ChartOfAccountsService} from "qCommon/app/services/ChartOfAccounts.service";
-import {DAYS_OF_WEEK, DAYS_OF_MONTH,WEEK_OF_MONTH,MONTH_OF_QUARTER,MONTH_OF_YEAR} from "qCommon/app/constants/Date.constants";
+import {pageTitleService} from "qCommon/app/services/PageTitle";
+import {ReportService} from "reportsUI/app/services/Reports.service";
+import {PAYMENTSPATHS} from "reportsUI/app/constants/payments.constants";
 
 declare let _:any;
 declare let numeral:any;
@@ -46,20 +48,37 @@ export class InvoiceComponent{
     invoiceCOAName:string;
     chartOfAccounts:Array<any> = [];
     maillIds:Array<string>=[];
-    hasMilIds:boolean=true;
-    dayOfWeek:Array<string>=DAYS_OF_WEEK;
-    dayOfMonth:Array<string>=DAYS_OF_MONTH;
-    weekOfMonth:Array<string>=WEEK_OF_MONTH;
-    monthOfQuarter:Array<string>=MONTH_OF_QUARTER;
-    monthOfYear:Array<string>=MONTH_OF_YEAR;
+    //hasMilIds:boolean=true;
+    tasksLineArray:FormArray = new FormArray([]);
+    taskTaxArray:Array<any>=[];
+    amount:number=0;
+    contact:any;
+    customerContacts:Array<any>=[];
+    selectedContact:any={};
+    selectedCustomer:any={};
+    companyCurrency: string;
+    taxTotal:number=0;
+    subTotal:number=0;
+    localeFormat:string='en-us';
+    taskItemCodes:Array<any>=[];
+    itemItemCodes:Array<any>=[];
+    discountEditMode:boolean=false;
+    amountPaidEditMode:boolean=false;
+    invoiceProcessedData:any;
+    additionalMails:String;
+    showPreview:boolean;
+    preViewText:string="Preview Invoice";
+
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
-        private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
+                private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
                 private customerService: CustomersService, private _invoiceForm:InvoiceForm, private _invoiceLineForm:InvoiceLineForm, private _invoiceLineTaxesForm:InvoiceLineTaxesForm,
-                private coaService: ChartOfAccountsService){
-
+                private coaService: ChartOfAccountsService,private titleService:pageTitleService, private reportService: ReportService){
+        this.titleService.setPageTitle("Invoices");
         let _form:any = this._invoiceForm.getForm();
         _form['invoiceLines'] = this.invoiceLineArray;
+        _form['taskLines'] = this.tasksLineArray;
+        this.companyCurrency=Session.getCurrentCompanyCurrency();
         this.invoiceForm = this._fb.group(_form);
         this.routeSub = this._route.params.subscribe(params => {
             this.invoiceID=params['invoiceID'];
@@ -91,6 +110,8 @@ export class InvoiceComponent{
         this.codeService.itemCodes(companyId)
             .subscribe(itemCodes => {
                 this.itemCodes = itemCodes;
+                this.taskItemCodes = _.filter(itemCodes, {'is_service': true});
+                this.itemItemCodes = _.filter(itemCodes, {'is_service': false});
                 this.loadTaxList(companyId);
             },error=>{
                 this.toastService.pop(TOAST_TYPE.error, "Failed to load your Items");
@@ -115,34 +136,23 @@ export class InvoiceComponent{
         this.closeLoader();
         if(!this.invoiceID){
             this.newInvoice = true;
-            this.addInvoiceList();
-
+            for(let i=0; i<2; i++){
+                this.addInvoiceList(null,'item');
+                this.addInvoiceList(null,'task');
+            }
+            this.titleService.setPageTitle("New Invoice");
         } else {
+            this.titleService.setPageTitle("Edit Invoice");
             this.invoiceService.getInvoice(this.invoiceID).subscribe(invoice=>{
                 let base=this;
                 this.invoice = invoice;
                 let _invoice = _.cloneDeep(invoice);
                 delete _invoice.invoiceLines;
-                if(!_.isEmpty(this.invoice.paymentSpringPlan)){
-                    _invoice.createPlan=true;
-                    _invoice.frequency=this.invoice.paymentSpringPlan.frequency;
-                    _invoice.ends_after=this.invoice.paymentSpringPlan.ends_after;
-                    _invoice.planName=this.invoice.paymentSpringPlan.name;
-                }
+                this.onCustomerSelect(invoice.customer_id);
                 this._invoiceForm.updateForm(this.invoiceForm, _invoice);
-                this.maillIds=invoice.recepientsMails;
-                if(invoice.recepientsMails&&invoice.recepientsMails.length>0){
-                    this.hasMilIds=false;
-                    setTimeout(function(){
-                        base.hasMilIds=true;
-                    })
-                }
                 this.invoice.invoiceLines.forEach(function(invoiceLine:any){
-                    base.addInvoiceList(invoiceLine);
+                    base.addInvoiceList(invoiceLine,invoiceLine.type);
                 });
-                /*this.invoice.invoiceLines.forEach(function (invoiceLine:any) {
-                 this.addInvoiceList(invoiceLine);
-                 });*/
             });
         }
     }
@@ -154,46 +164,40 @@ export class InvoiceComponent{
         this.loadCustomers(companyId);
     }
 
-    addInvoiceList(line?:any) {
+    addInvoiceList(line?:any,type?:any) {
         let base = this;
-        let _form:any = this._invoiceLineForm.getForm(line);
-        let taxesLineArray:FormArray = new FormArray([]);
-
-        _form['invoiceLineTaxes'] = taxesLineArray;
-        let invoiceListForm = this._fb.group(_form);
-        this.invoiceLineArray.push(invoiceListForm);
-        this.taxArray.push(taxesLineArray);
-        if(line && line.invoiceLineTaxes) {
-            line.invoiceLineTaxes.forEach(function(taxLine){
-                base.addTaxLine(base.taxArray.length-1, taxLine);
-            });
-        } else {
-            this.addTaxLine(this.taxArray.length-1);
+        if(type=='task'){
+            let _taskForm:any = this._invoiceLineForm.getForm(line);
+            let tasksListForm = this._fb.group(_taskForm);
+            this.tasksLineArray.push(tasksListForm);
+        }else if(type=='item'){
+            let _form:any = this._invoiceLineForm.getForm(line);
+            let invoiceListForm = this._fb.group(_form);
+            this.invoiceLineArray.push(invoiceListForm);
         }
     }
 
-    addTaxLine(index, tax?:any) {
-        let _form:any = this._invoiceLineTaxesForm.getForm(tax);
-        let invoiceTaxForm = this._fb.group(_form);
-        this.taxArray[index].push(invoiceTaxForm);
+    deleteInvoiceLine(index,type) {
+        if(type=='item'){
+            this.invoiceLineArray.removeAt(index);
+            this.taxArray.splice(index,1);
+        }else if (type=='task'){
+            this.tasksLineArray.removeAt(index);
+            this.taskTaxArray.splice(index,1);
+        }
+
     }
 
-    deleteInvoiceLine(index) {
+    deleteTaxLine(index, taxLineIndex,type){
+        if(type=='task'){
+            this.taskTaxArray[index].removeAt(taxLineIndex);
+        }else if(type=='item'){
+            this.taxArray[index].removeAt(taxLineIndex);
+        }
 
-        this.invoiceLineArray.removeAt(index);
-        this.taxArray.splice(index,1);
-    }
-
-    deleteTaxLine(index, taxLineIndex){
-        this.taxArray[index].removeAt(taxLineIndex);
     }
 
     ngOnInit(){
-
-
-
-
-
         if(!this.newInvoice){
             //Fetch existing invoice
         }
@@ -228,120 +232,154 @@ export class InvoiceComponent{
         if(taxId && price && quantity) {
             let priceVal = numeral(price).value();
             let quantityVal = numeral(quantity).value();
-            return numeral((tax.taxRate * parseFloat(priceVal) * parseFloat(quantityVal))/100).format('$00.00');
+            return numeral((tax.taxRate * parseFloat(priceVal) * parseFloat(quantityVal))/100).value();
         }
-        return numeral(0).format('$00.00');
+        return numeral(0).value();
     }
 
     calcAmt(price, quantity){
         if(price && quantity) {
             let priceVal = numeral(price).value();
             let quantityVal = numeral(quantity).value();
-            return numeral(parseFloat(priceVal) * parseFloat(quantityVal)).format('$00.00');
+            return numeral(parseFloat(priceVal) * parseFloat(quantityVal)).value();
         }
-        return numeral(0).format('$00.00');
+        return numeral(0).value();
     }
+
+    /*calcSubTotal() {
+     let invoiceData = this._invoiceForm.getData(this.invoiceForm);
+     let subTotal = 0;
+     let base = this;
+     if(invoiceData.invoiceLines) {
+     invoiceData.invoiceLines.forEach(function(invoiceLine){
+     subTotal = subTotal + numeral(base.calcAmt(invoiceLine.price, invoiceLine.quantity)).value();
+     });
+     }
+     return numeral(subTotal).format('$00.00');
+     }*/
 
     calcSubTotal() {
         let invoiceData = this._invoiceForm.getData(this.invoiceForm);
-        let subTotal = 0;
-        let base = this;
-        if(invoiceData.invoiceLines) {
-            invoiceData.invoiceLines.forEach(function(invoiceLine){
-                subTotal = subTotal + numeral(base.calcAmt(invoiceLine.price, invoiceLine.quantity)).value();
-            });
-        }
-        return numeral(subTotal).format('$00.00');
-    }
-
-    calcTotal() {
-        let invoiceData = this._invoiceForm.getData(this.invoiceForm);
         let total = 0;
         let base = this;
+        let taskTotal=0;
 
         if(invoiceData.invoiceLines) {
             invoiceData.invoiceLines.forEach(function (invoiceLine) {
-                total = total + numeral(base.calcAmt(invoiceLine.price, invoiceLine.quantity)).value();
-
-                if(invoiceLine.invoiceLineTaxes) {
-                    invoiceLine.invoiceLineTaxes.forEach(function (tax) {
-                        let taxAmt = numeral(base.calcLineTax(tax.tax_id, 1, total)).value();
-                        total = total + taxAmt;
-                    });
-                }
+                total = total +base.calcAmt(invoiceLine.price, invoiceLine.quantity);
             });
         }
-        return numeral(total).format('$00.00');
+        if(invoiceData.taskLines) {
+            invoiceData.taskLines.forEach(function (invoiceLine) {
+                taskTotal = taskTotal + base.calcAmt(invoiceLine.price, invoiceLine.quantity);
+            });
+        }
+        this.subTotal=numeral(total+taskTotal).value();
+        return this.subTotal;
     }
 
-    submit($event,sendMail){
-        $event.preventDefault();
-        $event.stopPropagation();
-
-
+    calTaxTotal(){
         let invoiceData = this._invoiceForm.getData(this.invoiceForm);
-        let customer = _.find(this.customers, {customer_id: invoiceData.customer_id});
-        let recepientsMails = jQuery('#invoice-emails').tagit("assignedTags");
         let base = this;
-        invoiceData.amount = numeral(this.calcTotal()).value();
-        if(invoiceData.createPlan){
-            if(!invoiceData.planName){
-                this.toastService.pop(TOAST_TYPE.error, "Please give plan name");
-                return
-            }else if(!invoiceData.frequency){
-                this.toastService.pop(TOAST_TYPE.error, "Please select frequency");
-                return
-            }else if(invoiceData.frequency!='daily'&&!invoiceData.day){
-                this.toastService.pop(TOAST_TYPE.error, "Please select day");
-                return
-            }else if((invoiceData.frequency=='quarterly'||invoiceData.frequency=='yearly')&&!invoiceData.month){
-                this.toastService.pop(TOAST_TYPE.error, "Please select month");
-                return
-            }else if(!invoiceData.ends_after){
-                this.toastService.pop(TOAST_TYPE.error, "Please select end date");
-                return
-            }
-            invoiceData.action="create_plan";
-            let paymentSpringPlan:any={};
-            paymentSpringPlan.frequency=invoiceData.frequency;
-            paymentSpringPlan.name=invoiceData.planName;
-            paymentSpringPlan.amount=invoiceData.amount+"";
-            paymentSpringPlan.ends_after=moment(invoiceData.ends_after,'MM/DD/YYYY').format("YYYY-MM-DD");
-            if(invoiceData.frequency=='weekly'||invoiceData.frequency=='monthly'){
-                paymentSpringPlan.day=invoiceData.day;
-            }else if(invoiceData.frequency=='quarterly'||invoiceData.frequency=='yearly'){
-                let dayObj:any={};
-                dayObj.month=invoiceData.month;
-                dayObj.day=invoiceData.day;
-                paymentSpringPlan.day_map=dayObj;
-            }
-            invoiceData.paymentSpringPlan=paymentSpringPlan;
-            delete invoiceData.day;
-            delete invoiceData.month;
-            delete invoiceData.week;
-            delete invoiceData.quarter;
-        }
-        invoiceData.recepientsMails=recepientsMails;
-        //invoiceData.customer_name = customer.customer_name;
-        //invoiceData.customer_email = customer.user_id;
-        invoiceData.description = "desc";
-        invoiceData.company_id = Session.getCurrentCompany();
-        //invoiceData.company_name = Session.getCurrentCompanyName();
-        invoiceData.invoiceLines.forEach(function(invoiceLine){
-            let item = _.find(base.itemCodes, {id: invoiceLine.item_id});
-            invoiceLine.item_name = item.name;
-            invoiceLine.amount=invoiceLine.quantity*invoiceLine.price;
-            let taxList=[];
-            invoiceLine.invoiceLineTaxes.forEach(function(tax){
-                if(tax.tax_id){
-                    let taxItem = _.find(base.taxesList, {id: tax.tax_id});
-                    tax.tax_rate = taxItem.tax_rate;
-                    taxList.push(tax);
+        let lineTaxTotal=0;
+        let itemTaxTotal=0;
+
+        if(invoiceData.invoiceLines) {
+            invoiceData.invoiceLines.forEach(function (invoiceLine) {
+                let total =  base.calcAmt(invoiceLine.price, invoiceLine.quantity);
+                if(invoiceLine.tax_id) {
+                    let taxAmt=base.calcLineTax(invoiceLine.tax_id, 1, total);
+                    itemTaxTotal=itemTaxTotal+taxAmt;
                 }
             });
-            invoiceLine.invoiceLineTaxes=taxList;
-        });
+        }
+        if(invoiceData.taskLines) {
+            invoiceData.taskLines.forEach(function (invoiceLine) {
+                let total = base.calcAmt(invoiceLine.price, invoiceLine.quantity);
+                if(invoiceLine.tax_id) {
+                    let taxAmt=base.calcLineTax(invoiceLine.tax_id, 1, total);
+                    lineTaxTotal=lineTaxTotal+taxAmt;
+                }
+            });
+        }
+        this.taxTotal=numeral(lineTaxTotal+itemTaxTotal).value();
+        return this.taxTotal;
+    }
+
+
+    submit($event,sendMail,action){
+        $event.preventDefault();
+        $event.stopPropagation();
+        let itemLines=[];
+        let taskLines=[];
+        let invoiceData = this._invoiceForm.getData(this.invoiceForm);
+        let base = this;
+        invoiceData.amount = this.amount;
+        delete invoiceData.invoiceLines;
+        taskLines=this.getInvoiceLines('task');
+        itemLines=this.getInvoiceLines('item');
+
+        if(taskLines.length==0&&itemLines.length==0){
+            this.toastService.pop(TOAST_TYPE.error, "Please Tasks or Item Lines");
+            return
+        }
+
+        if(this.validateLines(itemLines,'item')||this.validateLines(taskLines,'task')){
+            return;
+        }
+        invoiceData.sub_total=this.subTotal;
+        invoiceData.invoiceLines=itemLines.concat(taskLines);
+        invoiceData.recepientsMails=this.maillIds;
         invoiceData.sendMail=sendMail;
+        this.invoiceProcessedData=invoiceData;
+        if(action=='email'){
+            this.openEmailDailog();
+        }else if (action=='draft'){
+            this.saveInvoiceDetails(invoiceData);
+        }else if(action=='preview'){
+         this.togelPreview()
+        }else if(action=='download'){
+            this.togelPreview();
+            let base=this;
+            setTimeout(function(){
+                base.exportToPDF();
+            })
+        }
+    }
+
+    togelPreview(){
+        this.showPreview=!this.showPreview;
+        if(this.showPreview){
+            this.preViewText="Close Preview"
+        }else {
+            this.preViewText="Preview Invoice"
+        }
+    }
+
+
+    openEmailDailog(){
+        jQuery('#invoice-email-conformation').foundation('open');
+    }
+
+    closeEmailDailog(){
+        this.resetEmailDailogFields();
+        jQuery('#invoice-email-conformation').foundation('close');
+    }
+    resetEmailDailogFields(){
+        this.additionalMails=null;
+    }
+
+    sendInvoiceMails(){
+        if(this.additionalMails){
+            this.invoiceProcessedData.recepientsMails.push(this.additionalMails);
+        }
+        this.saveInvoiceDetails(this.invoiceProcessedData);
+        this.closeEmailDailog();
+    }
+
+
+
+    saveInvoiceDetails(invoiceData){
         this.loadingService.triggerLoadingEvent(true);
         if(this.newInvoice) {
             this.invoiceService.createInvoice(invoiceData).subscribe(resp => {
@@ -349,7 +387,7 @@ export class InvoiceComponent{
                 this.navigateToDashborad();
             }, error=>{
                 if(error&&JSON.parse(error))
-                this.toastService.pop(TOAST_TYPE.error, JSON.parse(error).message);
+                    this.toastService.pop(TOAST_TYPE.error, JSON.parse(error).message);
                 else
                     this.toastService.pop(TOAST_TYPE.error, "Invoice creation  failed");
                 this.closeLoader();
@@ -365,6 +403,9 @@ export class InvoiceComponent{
         }
     }
 
+
+
+
     navigateToDashborad(){
         let link = ['invoices/dashboard',2];
         this._router.navigate(link);
@@ -378,11 +419,17 @@ export class InvoiceComponent{
         dueDateControl.patchValue(moment(new_date).format('MM/DD/YYYY'));
     }
 
-    itemChange(item,index){
+    itemChange(item,index,type){
         let itemCode = _.find(this.itemCodes, {'id': item});
+        let itemsControl:any;
+        let itemControl:any;
+        if(type=='item'){
+            itemsControl=this.invoiceForm.controls['invoiceLines'];
+        }else if(type=='task'){
+            itemsControl=this.invoiceForm.controls['taskLines'];
+        }
         if(itemCode){
-            let itemsControl:any = this.invoiceForm.controls['invoiceLines'];
-            let itemControl = itemsControl.controls[index];
+            itemControl= itemsControl.controls[index];
             itemControl.controls['description'].patchValue(itemCode.desc);
             itemControl.controls['price'].patchValue(itemCode.sales_price);
         }
@@ -390,20 +437,35 @@ export class InvoiceComponent{
 
 
     onCustomerSelect(value){
+        this.getCustomerContacts(value);
         let customer = _.find(this.customers, {'customer_id': value});
+        this.selectedCustomer=customer;
         if(customer){
-            this.maillIds=customer.email_ids;
-            this.hasMilIds=false;
-            let base=this;
-            setTimeout(function(){
-                base.hasMilIds=true;
-            });
             if(customer.term){
                 this.selectTerm(customer.term);
                 let term:any = this.invoiceForm.controls['term'];
                 term.patchValue(customer.term);
             }
         }
+    }
+    onCustomerContactSelect(id){
+        let contact = _.find(this.customerContacts, {'id': id});
+        this.selectedContact=contact;
+        this.maillIds.push(contact.email);
+    }
+
+    getCustomerContacts(id){
+        this.loadingService.triggerLoadingEvent(true);
+        this.customerService.customer(id,Session.getCurrentCompany())
+            .subscribe(customers => {
+                this.loadingService.triggerLoadingEvent(false);
+                if(customers.customer_contact_details){
+                    this.customerContacts=customers.customer_contact_details;
+                }
+            }, error =>{
+                this.toastService.pop(TOAST_TYPE.error, "Failed to load your customers");
+                this.closeLoader();
+            });
     }
 
     loadCOA(){
@@ -480,5 +542,193 @@ export class InvoiceComponent{
         itemControl.controls['item_id'].patchValue(item.item_id);
     }
 
+
+    /*Table implementation*/
+
+    editItem(index, itemForm,type){
+        let linesControl:any;
+        if(type=='item'){
+            linesControl= this.invoiceForm.controls['invoiceLines'];
+            this.resetAllLinesFromEditing(linesControl);
+            itemForm.editable = !itemForm.editable;
+        }else if(type=='task'){
+            linesControl= this.invoiceForm.controls['taskLines'];
+            this.resetAllLinesFromEditing(linesControl);
+            itemForm.editable = !itemForm.editable;
+        }
+        /*if(index == this.getLastActiveLineIndex(linesControl)){
+         this.addInvoiceList(null,type);
+         }*/
+    }
+
+    resetAllLinesFromEditing(linesControl){
+        _.each(linesControl.controls, function(lineControl){
+            lineControl.editable = false;
+        });
+    }
+
+    getLastActiveLineIndex(linesControl){
+        let result = false;
+        _.each(linesControl.controls, function(lineControl, index){
+            if(!lineControl.controls['destroy'].value){
+                result = index;
+            }
+        });
+        return result;
+    }
+
+    getLineCount(){
+        let linesControl:any = this.invoiceForm.controls['invoiceLines'];
+        let activeLines = [];
+        _.each(linesControl.controls, function(lineControl){
+            if(!lineControl.controls['destroy'].value){
+                activeLines.push(lineControl);
+            }
+        });
+        return activeLines.length;
+    }
+
+    deleteItem($event,index){
+        $event && $event.stopImmediatePropagation();
+        let itemsList:any = this.invoiceForm.controls['invoiceLines'];
+        let itemControl = itemsList.controls[index];
+        itemControl.controls['destroy'].patchValue(true);
+        /*let base=this;
+         setTimeout(function(){
+         base.updateLineTotal();
+         });*/
+    }
+
+    getTaxName(taxId){
+        let tax = _.find(this.taxesList, {'id': taxId});
+        return tax? tax.name+"-"+tax.taxRate: '';
+    }
+
+    getItemCodeName(id){
+        let itemcode = _.find(this.itemCodes, {'id': id});
+        return itemcode? itemcode.name: '';
+    }
+
+    onCurrencySelect(currency){
+        this.companyCurrency=currency;
+        if(currency=='USD'){
+            this.localeFormat='en-Us';
+        }else if(currency=='INR'){
+            this.localeFormat='ind';
+        }
+    }
+
+    calculateAmount(discount,paidAmount){
+        this.amount=numeral(this.subTotal+this.taxTotal-(numeral(discount+paidAmount).value())).value();
+        return this.amount;
+    }
+
+
+    validateTaskLines() {
+        let status = true;
+        if(this.subTotal<=0){
+            status = false;
+        }
+        return status;
+    }
+
+    getInvoiceLines(type){
+        let base = this;
+        let lines = [];
+        let lineListControl:any;
+        if(type=='task'){
+            lineListControl=this.invoiceForm.controls['taskLines'];
+        }else if(type=='item'){
+            lineListControl=this.invoiceForm.controls['invoiceLines'];
+        }
+        let defaultLine = this._invoiceLineForm.getData(this._fb.group(this._invoiceLineForm.getForm()));
+        _.each(lineListControl.controls, function(lineListForm){
+            let lineData = base._invoiceLineForm.getData(lineListForm);
+            if(!base.invoiceID){
+                if(!_.isEqual(lineData, defaultLine)){
+                    let item={};
+                    lineData.item=item;
+                    lineData.item.name=base.getItemCodeName(lineData.item_id);
+                    lineData.type=type;
+                    lineData.amount=lineData.quantity*lineData.price;
+                    lines.push(lineData);
+                }
+            }else {
+                if (lineData.id) {
+                    let item={};
+                    lineData.item=item;
+                    lineData.item.name=base.getItemCodeName(lineData.item_id);
+                    lineData.amount=lineData.quantity*lineData.price;
+                    lines.push(lineData);
+                } else if (!_.isEqual(lineData, defaultLine)) {
+                    let item={};
+                    lineData.item=item;
+                    lineData.item.name=base.getItemCodeName(lineData.item_id);
+                    lineData.type=type;
+                    lineData.amount=lineData.quantity*lineData.price;
+                    lines.push(lineData);
+                }
+            }
+        });
+        return lines;
+    }
+
+    validateLines(lines,type){
+        let base = this;
+        let result = false;
+        _.each(lines, function(line){
+            if(!line.destroy){
+                if(!line.item_id){
+                    if(type=='task'){
+                        base.toastService.pop(TOAST_TYPE.error, "Please select task");
+                    }else {
+                        base.toastService.pop(TOAST_TYPE.error, "Please select item");
+                    }
+                    result = true;
+                    return false;
+                }
+                if(!line.quantity){
+                    if(type=='task'){
+                        base.toastService.pop(TOAST_TYPE.error, "Hours should grater than zero");
+                    }else {
+                        base.toastService.pop(TOAST_TYPE.error, "Quantity should grater than zero");
+                    }
+                    result = true;
+                    return false;
+                }
+                if(!line.price){
+                    if(type=='task'){
+                        base.toastService.pop(TOAST_TYPE.error, "Rate should grater than zero");
+                    }else {
+                        base.toastService.pop(TOAST_TYPE.error, "Unit cost grater than zero");
+                    }
+                    result = true;
+                    return false;
+                }
+            }
+        });
+        return result;
+    }
+
+
+    exportToPDF(){
+        let html = jQuery('<div>').append(jQuery('style').clone()).append(jQuery('#paymentsPreview').clone()).html();
+        let pdfReq={
+            "version" : "1.1",
+            "genericReport": {
+                "payload": html
+            }
+        };
+        this.reportService.exportReportIntoFile(PAYMENTSPATHS.PDF_SERVICE, pdfReq)
+            .subscribe(data =>{
+                var blob=new Blob([data._body], {type:"application/pdf"});
+                var link= jQuery('<a></a>');
+                link[0].href= URL.createObjectURL(blob);
+                link[0].download= "Invoice.pdf";
+                link[0].click();
+            }, error =>{
+                this._toastService.pop(TOAST_TYPE.error, "Failed to Export report into PDF");
+            });
+    }
 
 }

@@ -1,243 +1,306 @@
 <div>
-    <form (ngSubmit)="submit($event)" [formGroup]="invoiceForm">
+    <form [formGroup]="invoiceForm">
         <div class="new-invoice row" foundation>
             <div class="column small-12 medium-12 large-12 qount-form-backgorund">
                 <div class="qount-off-canvas-menu chart-of-accounts">
                     <div class="flyout expanded" [ngClass]="{'expanded':true}">
                         <section class="flyout-placeholder">
-                            <div class="row" style="margin-top: 5px;">
-                                <div class="small-12 medium-12 columns">
-                                    <header class="flyout-header">
-                                        {{newInvoice? "New Invoice" : "Edit Invoice"}}
-                                        <div class="button-wrapper float-right">
-                                            <button class="hollow button small">Preview</button>
-                                            <button type="submit" [disabled]="!invoiceForm.valid" (click)="submit($event,false)" class="button small">Save</button>
-                                            <button type="submit" [disabled]="!invoiceForm.valid" (click)="submit($event,true)" class="button small">Submit</button>
-                                        </div>
-                                    </header>
-                                </div>
-                            </div>
                             <div class="flyout-body flyout-shadow-effect">
                                 <section class="form-section clearfix">
                                     <div class="row">
-                                        <div class="small-12 medium-3 columns">
-                                            <label>
-                                                Select Customer
-                                                <select formControlName="customer_id" (change)="onCustomerSelect($event.target.value,customer)">
-                                                    <option *ngFor="let customer of customers" value="{{customer.customer_id}}">{{customer.customer_name}}</option>
-                                                </select>
-                                            </label>
-                                        </div>
-                                        <div class="small-12 medium-3 columns">
-                                            <label>
-                                                Invoice Number
-                                                <input type="text" formControlName="number"/>
-                                            </label>
-                                        </div>
-                                        <div class="small-12 medium-3 columns">
-                                            <label>
-                                                P.O.Number/S.O.Number
-                                                <input type="text" formControlName="po_number"/>
-                                            </label>
-                                        </div>
-                                        <div class="small-12 medium-3 columns">
-                                            <label>
-                                                Select Currency
-                                                <select formControlName="currency">
-                                                    <option value="USD">$</option>
-                                                    <option value="INR">₹</option>
-                                                </select>
-                                            </label>
-                                        </div>
-                                        <div class="small-12 medium-3 columns">
-                                            <label>
-                                                Invoice Date
-                                                <input type="text" formControlName="invoice_date" invoice-custom-datepicker [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setInvoiceDate($event)" placeholder="Invoice Date*"/>
-                                            </label>
-                                        </div>
-                                        <div class="small-12 medium-3 columns">
-                                            <label>
-                                                Term
-                                                <select formControlName="term" placeholder="Terms" (change)="selectTerm($event.target.value)">
-                                                    <option [value]="'net30'">Net 30</option>
-                                                    <option [value]="'net45'">Net 45</option>
-                                                    <option [value]="'net60'">Net 60</option>
-                                                    <option [value]="'net30'">Net 90</option>
-                                                    <option [value]="'custom'">Custom</option>
-                                                </select>
-                                            </label>
-                                        </div>
-                                        <div class="small-12 medium-3 columns">
-                                            <label>
-                                                Payment Date
-                                                <input type="text" formControlName="payment_date" invoice-custom-datepicker datepicker1 [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setPaymentDate($event)" placeholder="Payment Date*">
-                                            </label>
-                                        </div>
-                                        <div class="small-12 medium-3 columns">
-                                            <label>
-                                                Notes
-                                                <textarea formControlName="notes" style="height: 50px;"></textarea>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="row" *ngIf="hasMilIds">
-                                        <div class="small-12 medium-12 columns">
-                                            <label style="text-align: left">
-                                                Email
-                                                <ul class="bighalf-tags" [tagsList]="maillIds" id="invoice-emails" type="text" custom-tags></ul>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="small-12 medium-2 columns" style="margin-top: 2rem;">
-                                            <label>
-                                                Create Payment Plan
-                                                <input type="checkbox" formControlName="createPlan"/>
-                                            </label>
-                                        </div>
-                                        <div class="small-12 medium-2 columns" *ngIf="invoiceForm.controls.createPlan.value">
-                                            <label>
-                                                Plan Name
-                                                <input type="text" formControlName="planName"/>
-                                            </label>
-                                        </div>
-                                        <div class="small-12 medium-2 columns" *ngIf="invoiceForm.controls.createPlan.value">
-                                            <label>
-                                                Frequency
-                                                <select formControlName="frequency" placeholder="frequency">
-                                                    <option [value]="'daily'">Daily</option>
-                                                    <option [value]="'weekly'">Weekly</option>
-                                                    <option [value]="'monthly'">Monthly</option>
-                                                    <option [value]="'quarterly'">Quarterly</option>
-                                                    <option [value]="'yearly'">Yearly</option>
-                                                </select>
-                                            </label>
-                                        </div>
-                                        <div class="small-12 medium-2 columns" *ngIf="invoiceForm.controls.createPlan.value&&invoiceForm.controls.frequency.value=='weekly'">
-                                            <label>
-                                                Day of week
-                                                <select formControlName="day">
-                                                    <option *ngFor="let day of dayOfWeek" value="{{day}}">{{day}}</option>
-                                                </select>
-                                            </label>
-                                        </div>
-                                        <div class="small-12 medium-2 columns" *ngIf="invoiceForm.controls.createPlan.value&&invoiceForm.controls.frequency.value=='quarterly'">
-                                            <label>
-                                                Month of Quarter
-                                                <select formControlName="month">
-                                                    <option *ngFor="let month of monthOfQuarter" value="{{month}}">{{month}}</option>
-                                                </select>
-                                            </label>
-                                        </div>
-                                        <div class="small-12 medium-2 columns" *ngIf="invoiceForm.controls.createPlan.value&&invoiceForm.controls.frequency.value=='yearly'">
-                                            <label>
-                                                Month of year
-                                                <select formControlName="month">
-                                                    <option *ngFor="let month of monthOfYear" value="{{month}}">{{month}}</option>
-                                                </select>
-                                            </label>
-                                        </div>
-                                        <div class="small-12 medium-2 columns" *ngIf="invoiceForm.controls.createPlan.value&&(invoiceForm.controls.frequency.value=='monthly'||invoiceForm.controls.frequency.value=='quarterly'||invoiceForm.controls.frequency.value=='yearly')">
-                                            <label>
-                                                Day of month
-                                                <select formControlName="day">
-                                                    <option *ngFor="let day of dayOfMonth" value="{{day}}">{{day}}</option>
-                                                </select>
-                                            </label>
-                                        </div>
-                                        <div class="small-12 medium-2 columns" *ngIf="invoiceForm.controls.createPlan.value&&invoiceForm.controls.frequency.value">
-                                            <label>
-                                                Plan end date
-                                                <input type="text" formControlName="ends_after" invoice-custom-datepicker datepicker1 [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setPlanEndDate($event)" placeholder="End Date*">
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div formArrayName="invoiceLines">
-                                        <div class="row items-table" *ngFor="let invoiceLine of invoiceForm.controls.invoiceLines.controls;let iindex=index;">
-                                            <div class="column column-12" [formGroupName]="iindex">
 
-                                                <div *ngIf="iindex == 0" class="row header">
-                                                    <div class="column medium-4">
-                                                        <label>Items</label>
+                                        <div class="small-12 medium-9 columns" *ngIf="!showPreview">
+                                            <div class="row">
+                                                <div class="small-12 medium-6 columns">
+                                                    <div class="row">
+                                                        <div class="small-12 medium-8 columns" style="padding:0">
+                                                            <label>
+                                                                Select Customer*
+                                                                <select formControlName="customer_id" (change)="onCustomerSelect($event.target.value,customer)">
+                                                                    <option *ngFor="let customer of customers" value="{{customer.customer_id}}">{{customer.customer_name}}</option>
+                                                                </select>
+                                                            </label>
+                                                        </div>
                                                     </div>
-                                                    <div class="column medium-2">
-                                                        <label>Description</label>
+                                                    <div class="row">
+                                                        <div class="small-12 medium-6 columns" style="padding:0">
+                                                            <label>
+                                                                Send To*
+                                                                <select formControlName="send_to" (change)="onCustomerContactSelect($event.target.value)">
+                                                                    <option *ngFor="let customerContact of customerContacts" value="{{customerContact.id}}">{{customerContact.first_name +" "+ customerContact.last_name}}</option>
+                                                                </select>
+                                                            </label>
+                                                        </div>
                                                     </div>
-                                                    <div class="column medium-4">
-                                                        <label style="width:50%;">Quantity</label>
-                                                        <label style="width:45%;">Price</label>
-                                                    </div>
-                                                    <div class="column medium-2">
-                                                        <label>Amount</label>
+                                                    <div class="row">
+                                                        <div class="small-12 medium-5 columns" style="padding: 0px">
+                                                            <label>
+                                                                Address
+                                                                <div style="color:grey">
+                                                                    {{selectedCustomer.street_1?selectedCustomer.street_1:""}}
+                                                                </div>
+                                                                <div style="color:grey">
+                                                                    {{selectedCustomer.customer_city?selectedCustomer.customer_city:""}},{{selectedCustomer.customer_zipcode?selectedCustomer.customer_zipcode:""}}
+                                                                </div >
+                                                                <div style="color:grey">
+                                                                    {{selectedCustomer.customer_country?selectedCustomer.customer_country:""}}
+                                                                </div>
+                                                            </label>
+                                                        </div>
+                                                        <div class="small-12 medium-5 columns">
+                                                            <label>
+                                                                Contact
+                                                                <div style="color:grey">
+                                                                    {{selectedContact.mobile?selectedContact.mobile:""}}
+                                                                </div>
+                                                                <div style="color:grey">
+                                                                    {{selectedContact.email?selectedContact.email:""}}
+                                                                </div>
+                                                            </label>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div class="row">
-                                                    <div class="column medium-6">
-                                                        <div class="row">
-                                                            <div class="column medium-8" style="padding: 0px 0.9375rem 0px 0px;">
-                                                                <select [formControl]="invoiceLine.controls.item_id" (change)="itemChange($event.target.value,iindex)">
-                                                                    <option *ngFor="let item of itemCodes" [value]="item.id">{{item.name}}</option>
-                                                                </select>
+                                                <div class="small-12 medium-5 columns">
+                                                    <div class="row">
+                                                        <div class="small-12 medium-6 columns">
+                                                            <div class="row">
+                                                                <label>
+                                                                    Invoice Number*
+                                                                    <input type="text" formControlName="number"/>
+                                                                </label>
                                                             </div>
-                                                            <div class="column medium-4" style="padding: 0px 0.9375rem 0px 0px;">
-                                                                <input type="text" [formControl]="invoiceLine.controls.description"/>
+                                                            <div class="row">
+                                                                <label>
+                                                                    Invoice Date*
+                                                                    <input type="text" formControlName="invoice_date" invoice-custom-datepicker [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setInvoiceDate($event)" placeholder="Invoice Date*"/>
+                                                                </label>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="small-12 medium-12 columns" style="padding: 0px">
+                                                                    <label>
+                                                                        Select Currency*
+                                                                        <select formControlName="currency" (change)="onCurrencySelect($event.target.value)">
+                                                                            <option value="USD">USD</option>
+                                                                            <option value="INR">INR</option>
+                                                                        </select>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="small-12 medium-6 columns">
+                                                            <div class="row">
+
+                                                                <div class="small-12 medium-12 columns" style="padding: 0px">
+                                                                    <label>
+                                                                        Terms*
+                                                                        <select formControlName="term" placeholder="Terms" (change)="selectTerm($event.target.value)">
+                                                                            <option [value]="'net30'">Net 30</option>
+                                                                            <option [value]="'net45'">Net 45</option>
+                                                                            <option [value]="'net60'">Net 60</option>
+                                                                            <option [value]="'net30'">Net 90</option>
+                                                                            <option [value]="'custom'">Custom</option>
+                                                                        </select>
+                                                                    </label>
+                                                                </div>
+
+                                                            </div>
+                                                            <div class="row">
+                                                                <label>
+                                                                    Payment Date*
+                                                                    <input type="text" formControlName="payment_date" invoice-custom-datepicker datepicker1 [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setPaymentDate($event)" placeholder="Payment Date*">
+                                                                </label>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="column medium-4">
-                                                        <div class="column medium-6" style="padding: 0px 0.9375rem 0px 0px;">
+                                                </div>
+                                            </div>
+                                            <div class="row" style="margin-top: 1rem;">
+                                                <table border="1" formArrayName="taskLines">
+                                                    <thead>
+                                                    <tr>
+                                                        <th width="13%;">Task</th>
+                                                        <th width="13%;">Description</th>
+                                                        <th width="7%;">Rate</th>
+                                                        <th width="7%;">Hours</th>
+                                                        <th width="13%;">Tax</th>
+                                                        <th width="7%;">Tax Amount</th>
+                                                        <th width="7%;">Line Total</th>
+                                                    </tr>
+                                                    </thead>
+
+                                                    <tbody  *ngFor="let invoiceLine of invoiceForm.controls.taskLines.controls;let iindex=index;" [hidden]="invoiceLine.controls.destroy.value" (click)="editItem(iindex, invoiceLine,'task')">
+                                                    <tr [formGroupName]="iindex">
+                                                        <td class="truncate" *ngIf="!invoiceLine.editable">{{getItemCodeName(invoiceLine.controls.item_id.value)}}</td>
+                                                        <td *ngIf="invoiceLine.editable" class="combo-box-field">
+                                                            <select [formControl]="invoiceLine.controls.item_id" (change)="itemChange($event.target.value,iindex,'task')">
+                                                                <option *ngFor="let item of taskItemCodes" [value]="item.id">{{item.name}}</option>
+                                                            </select>
+                                                        </td>
+                                                        <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.description.value}}</td>
+
+                                                        <td *ngIf="invoiceLine.editable">
+                                                            <input type="text" [formControl]="invoiceLine.controls.description"/>
+                                                        </td>
+
+                                                        <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.price.value?(invoiceLine.controls.price.value| currency:companyCurrency:true:'1.2-2'):null}}</td>
+
+                                                        <td *ngIf="invoiceLine.editable">
+                                                            <input type="text" [formControl]="invoiceLine.controls.price" numeral [locale]="localeFormat" [format]="'$00.00'"/>
+                                                        </td>
+
+                                                        <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.quantity.value?invoiceLine.controls.quantity.value:''}}</td>
+
+                                                        <td *ngIf="invoiceLine.editable">
                                                             <input type="text" [formControl]="invoiceLine.controls.quantity"/>
-                                                        </div>
-                                                        <div class="column medium-6" style="padding: 0px 0px 0px 0px;">
-                                                            <input type="text" [formControl]="invoiceLine.controls.price" numeral [locale]="invoiceForm.controls.locale.value" [format]="'$00.00'"/>
-                                                        </div>
-                                                    </div>
-                                                    <div class="column medium-2">
-                                                        <span>{{calcAmt(invoiceLine.controls.quantity.value, invoiceLine.controls.price.value)}}</span>
-                                                        <span class="float-right"><a (click)="deleteInvoiceLine(iindex)"><i class="icon ion-trash-b"></i></a></span>
-                                                <span class="float-right" (click)="editInvoiceLine($event, iindex)">
-                                                    <i class="icon ion-edit"></i>
-                                                </span>
-                                                    </div>
+                                                        </td>
+                                                        <td class="truncate" *ngIf="!invoiceLine.editable">{{getTaxName(invoiceLine.controls.tax_id.value)}}</td>
+                                                        <td class="combo-box-field" *ngIf="invoiceLine.editable">
+                                                            <select [formControl]="invoiceLine.controls.tax_id">
+                                                                <option *ngFor="let taxItem of taxesList" [value]="taxItem.id">{{taxItem.name}} - {{taxItem.taxRate}}</option>
+                                                            </select>
+                                                        </td>
+                                                        <td style="text-align: right;background-color:#E3F7F6;">
+                                                            {{calcLineTax(invoiceLine.controls.tax_id.value,invoiceLine.controls.price.value,invoiceLine.controls.quantity.value)| currency:companyCurrency:true:'1.2-2'}}
+                                                        </td>
+                                                        <td style="text-align: right;background-color: #E3F7F6">
+                                                            {{calcAmt(invoiceLine.controls.price.value,invoiceLine.controls.quantity.value)| currency:companyCurrency:true:'1.2-2'}}
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
 
+
+                                                <table border="1" style="margin-top: 2rem;" formArrayName="invoiceLines">
+                                                    <thead>
+                                                    <tr>
+                                                        <th width="13%;">Item</th>
+                                                        <th width="13%;">Description</th>
+                                                        <th width="7%;">Unit Cost</th>
+                                                        <th width="7%;">Quantity</th>
+                                                        <th width="13%;">Tax</th>
+                                                        <th width="7%">Tax Amount</th>
+                                                        <th width="7%;">Line Total</th>
+                                                    </tr>
+                                                    </thead>
+
+                                                    <tbody  *ngFor="let invoiceLine of invoiceForm.controls.invoiceLines.controls;let iindex=index;" [hidden]="invoiceLine.controls.destroy.value" (click)="editItem(iindex, invoiceLine,'item')">
+                                                    <tr [formGroupName]="iindex">
+                                                        <td class="truncate" *ngIf="!invoiceLine.editable">{{getItemCodeName(invoiceLine.controls.item_id.value)}}</td>
+                                                        <td *ngIf="invoiceLine.editable" class="combo-box-field">
+                                                            <select [formControl]="invoiceLine.controls.item_id" (change)="itemChange($event.target.value,iindex,'item')">
+                                                                <option *ngFor="let item of itemItemCodes" [value]="item.id">{{item.name}}</option>
+                                                            </select>
+                                                        </td>
+                                                        <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.description.value}}</td>
+
+                                                        <td *ngIf="invoiceLine.editable">
+                                                            <input type="text" [formControl]="invoiceLine.controls.description"/>
+                                                        </td>
+
+                                                        <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.price.value?(invoiceLine.controls.price.value| currency:companyCurrency:true:'1.2-2'):null}}</td>
+
+                                                        <td *ngIf="invoiceLine.editable">
+                                                            <input type="text" [formControl]="invoiceLine.controls.price" numeral [locale]="localeFormat" [format]="'$00.00'"/>
+                                                        </td>
+
+                                                        <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.quantity.value?invoiceLine.controls.quantity.value:''}}</td>
+
+                                                        <td *ngIf="invoiceLine.editable">
+                                                            <input type="text" [formControl]="invoiceLine.controls.quantity"/>
+                                                        </td>
+                                                        <td class="truncate" *ngIf="!invoiceLine.editable">{{getTaxName(invoiceLine.controls.tax_id.value)}}</td>
+                                                        <td class="combo-box-field" *ngIf="invoiceLine.editable">
+                                                            <select [formControl]="invoiceLine.controls.tax_id">
+                                                                <option *ngFor="let taxItem of taxesList" [value]="taxItem.id">{{taxItem.name}} - {{taxItem.taxRate}}</option>
+                                                            </select>
+                                                        </td>
+                                                        <td style="text-align: right;background-color: #E3F7F6">
+                                                            {{calcLineTax(invoiceLine.controls.tax_id.value,invoiceLine.controls.price.value,invoiceLine.controls.quantity.value)| currency:companyCurrency:true:'1.2-2'}}
+                                                        </td>
+                                                        <td style="text-align: right;background-color: #E3F7F6">
+                                                            {{calcAmt(invoiceLine.controls.price.value,invoiceLine.controls.quantity.value)| currency:companyCurrency:true:'1.2-2'}}
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="row" style="margin-bottom: 2rem;margin-top: 2rem;">
+                                                <div class="small-12 medium-7 columns"></div>
+                                                <div class="small-12 medium-5 columns" style="padding: 0;">
+                                                    <table>
+                                                        <tbody>
+                                                        <tr>
+                                                            <td style="background: #E5E5E5;">
+                                                                Subtotal
+                                                            </td>
+                                                            <td style="text-align:right;">{{calcSubTotal()|currency:companyCurrency:true:'1.2-2'}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="background: #E5E5E5;">
+                                                                Tax
+                                                            </td>
+                                                            <td style="text-align:right;">{{calTaxTotal()|currency:companyCurrency:true:'1.2-2'}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="background: #E5E5E5;">
+                                                                Discount
+                                                            </td>
+                                                            <td><input type="text" formControlName="discount" numeral [format]="'$0,0.00'" [locale]="localeFormat" placeholder="Discount"></td>
+                                                        </tr>
+                                                        <tr >
+                                                            <td style="background: #E5E5E5;">
+                                                                Amount Paid
+                                                            </td>
+                                                            <td><input type="text" formControlName="amount_paid" numeral [format]="'$0,0.00'" [locale]="localeFormat" placeholder="Amount Paid"></td>
+                                                        </tr>
+                                                        <tr style="background:#E3F7F6">
+                                                            <td>
+                                                                Total
+                                                            </td>
+                                                            <td style="text-align:right;">
+                                                                {{calculateAmount(invoiceForm.controls.discount.value,invoiceForm.controls.amount_paid.value)| currency:companyCurrency:true:'1.2-2'}}
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
                                                 </div>
-                                                <div formArrayName="invoiceLineTaxes">
-                                                    <div *ngFor="let invoiceTaxLine of invoiceLine.controls.invoiceLineTaxes.controls;let tindex=index;">
-                                                        <div class="row" [formGroupName]="tindex">
-                                                            <div class="column medium-6" style="padding-right:0px;">
-                                                                <label style="display: inline" class="float-right">Tax:</label>
-                                                            </div>
-                                                            <div class="column medium-4">
-                                                                <select [formControl]="invoiceTaxLine.controls.tax_id">
-                                                                    <option *ngFor="let taxItem of taxesList" [value]="taxItem.id">{{taxItem.name}} - {{taxItem.taxRate}}</option>
-                                                                </select>
-                                                            </div>
-                                                            <div class="column medium-2">
-                                                                <span>{{calcLineTax(invoiceTaxLine.controls.tax_id.value, invoiceLine.controls.quantity.value, invoiceLine.controls.price.value)}}</span> <span class="float-right"><a (click)="addTaxLine(iindex)"><i class="icon ion-ios-plus-outline"></i></a></span>
-                                                                <span class="float-right"><a (click)="deleteTaxLine(iindex, tindex)"><i class="icon ion-trash-b"></i></a></span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                            </div>
+                                        </div>
+                                        <div class="small-12 medium-8 columns" *ngIf="showPreview" style="margin-bottom:2rem">
+                                            <invoicePaymentPreview [invoices]="invoiceProcessedData"></invoicePaymentPreview>
+                                        </div>
 
+                                        <div class="small-12 medium-3 columns">
+                                            <div class="row">
+                                                <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;">
+                                                    <button (click)="submit($event,false,'draft')" class="button small" [disabled]="!invoiceForm.valid||!validateTaskLines()" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;height: 25px;">Save as Draft</button>
                                                 </div>
-
+                                                <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;">
+                                                    <button [disabled]="!invoiceForm.valid||!validateTaskLines()" (click)="submit($event,false,'preview')" class="button small" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;">{{preViewText}}</button>
+                                                </div>
+                                                <!--<div *ngIf="showPreview" class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;">
+                                                    <button (click)="submit($event,false,'preview')" class="button small" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;">Close Preview</button>
+                                                </div>-->
+                                            </div>
+                                            <div class="row" style="margin-top: 10px">
+                                                <span style="font-weight: 600;font-size: 12px;">Send invoice to {{selectedContact.first_name?selectedContact.first_name:""}} {{selectedContact.last_name?selectedContact.last_name:""}}</span>
+                                            </div>
+                                            <div class="row">
+                                                <button class="button small" (click)="submit($event,true,'email')" [disabled]="!invoiceForm.valid||!validateTaskLines()" style="width: 140px;height: 44px;background: #4b4b9e;color: white;font-size: 14px;">Email Invoice</button>
+                                            </div>
+                                            <div class="row" style="margin-top: 15px">
+                                                <button (click)="submit($event,false,'download')" [disabled]="!invoiceForm.valid||!validateTaskLines()" style="width: 140px;height: 44px;background: white;color: #00B1A9;font-size: 14px;border: 1px solid;">Download PDF</button>
+                                            </div>
+                                            <div class="row" style="margin-top: 1.2rem" *ngIf="!showPreview">
+                                                <div class="small-12 medium-12 columns" style="padding: 0px">
+                                                    <label>
+                                                        Notes
+                                                        <textarea formControlName="notes" style="height: 130px;width: 80%;"></textarea>
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="column medium-12 text-center add-item">
-                                            <a (click)="addInvoiceList()"><i class="icon ion-ios-plus-outline"></i> Add an item</a>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="column medium-10"> <label class="float-right" style="display:inline;">Subtotal</label></div>
-                                        <div class="column medium-2">{{calcSubTotal()}}</div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="column medium-10"><label class="float-right" style="display:inline;">Total</label></div>
-                                        <div class="column medium-2">{{calcTotal()}}</div>
-                                    </div>
-
                                 </section>
                             </div>
                         </section>
@@ -289,7 +352,7 @@
                         <div class="small-12 medium-2">
                             <label>
                                 Price
-                                <input type="text" formControlName="price" numeral [format]="'$0,0.00'" [locale]="'en-US'" placeholder="Price">
+                                <input type="text" formControlName="price" numeral [format]="'$0,0.00'" [locale]="localeFormat" placeholder="Price">
                             </label>
                         </div>
                     </div>
@@ -317,8 +380,32 @@
             </form>
         </div>
     </div>
+</div>
 
 
-
-
+<div class="reveal small bill-modal-container" style="width: 40%;padding: 0;border: 1px" id="invoice-email-conformation" data-reveal foundation  data-close-on-click="false">
+    <div class="row">
+        <div class="small-12 medium-12 columns" style="padding: 0; background: #00B1A9;height: 3rem;">
+            <label style="margin-left: 1rem;text-align: left;margin-top: 0.5rem;color: white;font-size: 13pt;">Send Invoice to the {{selectedContact.first_name?selectedContact.first_name:""}} {{selectedContact.last_name?selectedContact.last_name:""}} ({{selectedContact.email?selectedContact.email:""}})?
+            </label>
+        </div>
+    </div>
+    <div class="row" style="padding: 1rem 1rem 0 1rem;margin-top: 1rem;">
+        <div class="small-12 medium-12 columns">
+            <input type="text" [(ngModel)]="additionalMails" placeholder="Please enter comma separated mails">
+        </div>
+    </div>
+    <div class="row" style="padding: 0rem 1rem;" >
+        <div class="small-12 medium-9 columns">
+            <label style="text-align: left; font-size: 13pt;color: #878787">Set email alerts when invoice is due ?
+                <select >
+                    <option></option>
+                </select>
+            </label>
+        </div>
+    </div>
+    <div class="text-right" style="padding-right:1rem">
+        <button class="button small" style="height: 45px;background: #00B1A9;background-color: #00B1A9 !important;width: 125px;" (click)="sendInvoiceMails()">Send Invoice</button>
+        <button class="button small" style="height: 45px;background-color: white !important;color: #878787;font-size: 14px;" (click)="closeEmailDailog()">Cancel</button>
+    </div>
 </div>
