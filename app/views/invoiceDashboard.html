@@ -14,7 +14,7 @@
                         </label>
                     </div>
                     <div class="column medium-4 tab" (click)="reRoutePage(1)" [ngClass]="{'selected': tabDisplay[1].display == 'block'}">
-                        <label [ngClass]="{'whiteColor': tabDisplay[1].display == 'block'}"><span>Paid</span>
+                        <label [ngClass]="{'whiteColor': tabDisplay[1].display == 'block'}"><span>Payments</span>
                             <span>({{badges.invoice_paid ? badges.invoice_paid : localBadges ? localBadges.invoice_paid: 0 }})</span>
                         </label>
                     </div>
@@ -23,14 +23,18 @@
             <div class="columns medium-3 resetPaddings">
                 <div class="row add-share-buttons">
                     <div class="column medium-12 text-right">
-            <span class="pointer" *ngIf="tabDisplay[0].display == 'block'" (click)="addNewProposal()">
-              <i class=" icon ion-ios-plus-outline"></i>
-              <span >Proposal</span>
-            </span>
-            <span class="pointer" *ngIf="tabDisplay[2].display == 'block'" (click)="addNewInvoice()">
-              <i class=" icon ion-ios-plus-outline"></i>
-              <span >Invoice</span>
-            </span>
+                        <span class="pointer" *ngIf="tabDisplay[0].display == 'block'" (click)="addNewProposal()">
+                          <i class=" icon ion-ios-plus-outline"></i>
+                          <span>Proposal</span>
+                        </span>
+                        <span class="pointer" *ngIf="tabDisplay[2].display == 'block'" (click)="addNewInvoice()">
+                          <i class=" icon ion-ios-plus-outline"></i>
+                          <span>Invoice</span>
+                        </span>
+                        <span class="pointer" *ngIf="tabDisplay[1].display == 'block'" (click)="addNewPayment()">
+                          <i class=" icon ion-ios-plus-outline"></i>
+                          <span>Payment</span>
+                        </span>
                     </div>
                 </div>
             </div>

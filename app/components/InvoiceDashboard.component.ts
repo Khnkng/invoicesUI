@@ -37,7 +37,6 @@ export class InvoiceDashboardComponent{
     paidInvoiceTableData:any = {};
     piadInvoiceTableOptions:any = {search:false, pageSize:10};
     invoiceTableData:any = {};
-    paidInvoiceTableData:any = {};
     invoiceTableOptions:any = {search:false, pageSize:10};
     paidInvoiceTableOptions:any = {search:false, pageSize:10};
 
@@ -57,10 +56,12 @@ export class InvoiceDashboardComponent{
     companyCurrency:string='USD';
     localeFortmat:string='en-US';
     customers: Array<any> = [];
+    payments: Array<any> = [];
 
     constructor(private _router:Router,private _route: ActivatedRoute,
                 private toastService: ToastService, private loadingService:LoadingService,
-                private companiesService: CompaniesService, private invoiceService: InvoicesService,private customerService: CustomersService) {
+                private companiesService: CompaniesService, private invoiceService: InvoicesService,
+                private customerService: CustomersService) {
 
         this.routeSub = this._route.params.subscribe(params => {
             this.selectedTab=params['tabId'];
@@ -87,6 +88,7 @@ export class InvoiceDashboardComponent{
                 this.loadingService.triggerLoadingEvent(false);
             });
     }
+
 
     animateBoxInfo(boxInfo) {
         this.animateValue('payables', boxInfo.payables);
@@ -124,14 +126,9 @@ export class InvoiceDashboardComponent{
             this.loadingService.triggerLoadingEvent(false);
         } else if(this.selectedTab == 1){
             this.isLoading = false;
-            this.invoiceService.invoices('paid').subscribe(invoices => {
-                if(invoices.invoices){
-                    this.buildPaidInvoiceTableData(invoices.invoices);
-                    sessionStorage.setItem("localInvoicesBadges",JSON.stringify(invoices.badges));
-                    this.localBadges=JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
-                }else {
-                    this.closeLoading();
-                }
+            this.invoiceService.getPayments().subscribe(payments => {
+                this.payments = payments;
+                this.buildPaymentsTableData();
             }, error => this.handleError(error));
         } else if(this.selectedTab == 2){
             this.isLoading = false;
@@ -249,6 +246,11 @@ export class InvoiceDashboardComponent{
         this._router.navigate(link);
     }
 
+    addNewPayment(){
+        let link = ['invoices/addPayment'];
+        this._router.navigate(link);
+    }
+
     buildInvoiceTableData(invoices) {
         this.hasInvoices = false;
         this.invoices = invoices;
@@ -287,6 +289,57 @@ export class InvoiceDashboardComponent{
 
         setTimeout(function(){
             base.hasInvoices = true;
+        }, 0)
+        this.loadingService.triggerLoadingEvent(false);
+    }
+
+    buildPaymentsTableData() {
+        this.hasPaidInvoices = false;
+        this.paidInvoiceTableData.rows = [];
+        this.paidInvoiceTableOptions.search = true;
+        this.paidInvoiceTableOptions.pageSize = 9;
+        this.paidInvoiceTableData.columns = [
+            {"name": "id", "title": "id", "visible": false},
+            {"name": "type", "title": "Payment type/#"},
+            {"name": "receivedFrom", "title": "Received From"},
+            {"name": "dateReceived", "title": "Date Received"},
+            {"name": "amount", "title": "Amount/Status"}
+        ];
+
+        let base = this;
+        this.payments.forEach(function(payment) {
+            let row:any = {};
+            row['id'] = payment['id'];
+            row['type'] = "<div>"+payment.type+"</div><div><small>"+payment.referenceNo+"</small></div>";
+            row['receivedFrom'] = base.getCustomerName(payment.receivedFrom);
+            row['dateReceived'] = payment.paymentDate;
+            let assignStatus = "";
+            let assignedAmount = 0;
+            payment.paymentLines.forEach((line) => {
+                assignedAmount += line.amount ? parseFloat(line.amount) : 0;
+            });
+            let assignmentHtml = "";
+
+                if(assignedAmount >= payment.paymentAmount) {
+                    assignStatus = "Assigned";
+                    assignmentHtml = "<small style='color:#00B1A9'>"+assignStatus+"</small>"
+
+                } else if(assignedAmount > 0) {
+                    assignStatus = "Partially Assigned";
+                    assignmentHtml = "<small style='color:#ff3219'>"+assignStatus+"</small>"
+                } else {
+                    assignStatus = "Unassigned";
+                    assignmentHtml = "<small style='color:#ff3219'>"+assignStatus+"</small>"
+                }
+
+
+
+            row['amount'] = "<div>"+payment.paymentAmount+"</div><div>"+assignmentHtml+"</div>";
+            base.paidInvoiceTableData.rows.push(row);
+        });
+
+        setTimeout(function(){
+            base.hasPaidInvoices = true;
         }, 0)
         this.loadingService.triggerLoadingEvent(false);
     }
