@@ -16,6 +16,7 @@ export class InvoicePaymentForm extends abstractForm{
         numberValidator.push(Validators.required);
 
         return {
+            "id": [""],
             "receivedFrom": ["", Validators.required],
             "paymentAmount": ["", numberValidator],
             "currencyCode": ["", Validators.required],
