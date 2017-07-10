@@ -528,7 +528,7 @@ export class InvoiceDashboardComponent {
                 this.invoiceMarkAsSent();
                 break;
             case 'paid':
-                let link = ['invoicePayment'];
+                let link = ['invoices',this.selectedTableRows[0].id];
                 this._router.navigate(link);
                 break;
             case 'delete':
