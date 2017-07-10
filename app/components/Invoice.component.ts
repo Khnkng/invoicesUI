@@ -148,7 +148,8 @@ export class InvoiceComponent{
                 this.invoice = invoice;
                 let _invoice = _.cloneDeep(invoice);
                 delete _invoice.invoiceLines;
-                this.onCustomerSelect(invoice.customer_id);
+                this.getCustomrtDetails(invoice.customer_id);
+                this.loadContacts(invoice.customer_id);
                 this._invoiceForm.updateForm(this.invoiceForm, _invoice);
                 this.invoice.invoiceLines.forEach(function(invoiceLine:any){
                     base.addInvoiceList(invoiceLine,invoiceLine.type);
@@ -209,7 +210,7 @@ export class InvoiceComponent{
     }
 
     setPaymentDate(date){
-        let paymentDateControl:any = this.invoiceForm.controls['payment_date'];
+        let paymentDateControl:any = this.invoiceForm.controls['due_date'];
         paymentDateControl.patchValue(date);
     }
 
@@ -415,7 +416,7 @@ export class InvoiceComponent{
         let days = term == 'custom' ? 0 : term.substring(3, term.length);
         let new_date = moment(this.invoiceForm.controls['invoice_date'].value, 'MM/DD/YYYY').add(days, 'days');
 
-        let dueDateControl:any = this.invoiceForm.controls['payment_date'];
+        let dueDateControl:any = this.invoiceForm.controls['due_date'];
         dueDateControl.patchValue(moment(new_date).format('MM/DD/YYYY'));
     }
 
@@ -448,6 +449,13 @@ export class InvoiceComponent{
             }
         }
     }
+
+    getCustomrtDetails(value){
+        this.getCustomerContacts(value);
+        let customer = _.find(this.customers, {'customer_id': value});
+        this.selectedCustomer=customer;
+    }
+
     onCustomerContactSelect(id){
         let contact = _.find(this.customerContacts, {'id': id});
         this.selectedContact=contact;
@@ -456,11 +464,21 @@ export class InvoiceComponent{
 
     getCustomerContacts(id){
         this.loadingService.triggerLoadingEvent(true);
+        this.loadContacts(id);
+    }
+
+    loadContacts(id){
+        this.loadingService.triggerLoadingEvent(true);
         this.customerService.customer(id,Session.getCurrentCompany())
             .subscribe(customers => {
                 this.loadingService.triggerLoadingEvent(false);
                 if(customers.customer_contact_details){
                     this.customerContacts=customers.customer_contact_details;
+                    if(this.invoiceID){
+                        let contact = _.find(this.customerContacts, {'id': this.invoice.send_to});
+                        this.selectedContact=contact;
+                        this.maillIds.push(contact.email);
+                    }
                 }
             }, error =>{
                 this.toastService.pop(TOAST_TYPE.error, "Failed to load your customers");
@@ -730,5 +748,12 @@ export class InvoiceComponent{
                 this.toastService.pop(TOAST_TYPE.error, "Failed to Export report into PDF");
             });
     }
+
+
+    ngOnDestroy(){
+        if(jQuery('#invoice-email-conformation'))
+        jQuery('#invoice-email-conformation').remove();
+    }
+
 
 }
