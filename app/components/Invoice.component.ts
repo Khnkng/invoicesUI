@@ -210,7 +210,7 @@ export class InvoiceComponent{
     }
 
     setPaymentDate(date){
-        let paymentDateControl:any = this.invoiceForm.controls['payment_date'];
+        let paymentDateControl:any = this.invoiceForm.controls['due_date'];
         paymentDateControl.patchValue(date);
     }
 
@@ -416,7 +416,7 @@ export class InvoiceComponent{
         let days = term == 'custom' ? 0 : term.substring(3, term.length);
         let new_date = moment(this.invoiceForm.controls['invoice_date'].value, 'MM/DD/YYYY').add(days, 'days');
 
-        let dueDateControl:any = this.invoiceForm.controls['payment_date'];
+        let dueDateControl:any = this.invoiceForm.controls['due_date'];
         dueDateControl.patchValue(moment(new_date).format('MM/DD/YYYY'));
     }
 

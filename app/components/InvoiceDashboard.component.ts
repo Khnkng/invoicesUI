@@ -315,7 +315,7 @@ export class InvoiceDashboardComponent {
             },
             {"name": "number", "title": "Number"},
             {"name": "customer", "title": "Customer"},
-            {"name": "payment_date", "title": "Due Date"},
+            {"name": "due_date", "title": "Due Date"},
             {
                 "name": "amount", "title": "Invoice Amount", type: 'number', "formatter": (amount) => {
                 amount = parseFloat(amount);
@@ -347,7 +347,7 @@ export class InvoiceDashboardComponent {
             row['selectCol'] = "<input type='checkbox' class='checkbox'/>";
             row['number'] = invoice['number'];
             row['customer'] = base.getCustomerName(invoice['customer_id']);
-            row['payment_date'] = invoice['payment_date'];
+            row['due_date'] = invoice['due_date'];
             row['amount'] = invoice['amount'];
             row['amount_due'] = invoice['amount_due'];
             row['status'] = invoice['state'];
@@ -429,7 +429,7 @@ export class InvoiceDashboardComponent {
             {"name": "id", "title": "id", "visible": false},
             {"name": "number", "title": "Number"},
             {"name": "customer", "title": "Customer"},
-            {"name": "payment_date", "title": "Due Date"},
+            {"name": "due_date", "title": "Due Date"},
             {"name": "amount", "title": "Amount",type:'number',"formatter": (amount)=>{
                 amount = parseFloat(amount);
                 return amount.toLocaleString(base.localeFortmat, { style: 'currency', currency: base.companyCurrency, minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -444,7 +444,7 @@ export class InvoiceDashboardComponent {
             row['selectCol'] = "<input type='checkbox' class='checkbox'/>";
             row['number'] = invoice['number'];
             row['customer'] = base.getCustomerName(invoice['customer_id']);
-            row['payment_date'] = invoice['payment_date'];
+            row['due_date'] = invoice['due_date'];
             row['amount'] = invoice['amount'];
             /!*row['actions'] = "<a class='action' data-action='edit' style='margin:0px 0px 0px 5px;'><i class='icon ion-edit'></i></a><a class='action' data-action='delete' style='margin:0px 0px 0px 5px;'><i class='icon ion-trash-b'></i></a>";*!/
             base.paidInvoiceTableData.rows.push(row);
