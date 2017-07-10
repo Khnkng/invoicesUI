@@ -12,7 +12,7 @@ import {Session} from "qCommon/app/services/Session";
 import {InvoicesService} from "../services/Invoices.service";
 import {FormBuilder, FormGroup} from "@angular/forms";
 import {InvoicePaymentForm} from "../forms/invoicePayment.form";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 
 declare let _:any;
 declare let numeral:any;
@@ -34,13 +34,33 @@ export class InvoiceAddPaymentComponent {
     showInvoices: boolean = false;
     currentClientName:string = "";
     currentLocale:string = "";
+    routeSub:any;
+    paymentId:string;
+    payment:any;
 
     constructor(private _fb: FormBuilder, private loadingService:LoadingService,
                 private customerService:CustomersService,
                 private toastService: ToastService, private invoiceService: InvoicesService,
-                private _invoicePaymentForm:InvoicePaymentForm, private _router:Router, private numeralService:NumeralService) {
+                private _invoicePaymentForm:InvoicePaymentForm, private _router:Router,
+                private numeralService:NumeralService, private _route: ActivatedRoute) {
         this.loadCustomers(Session.getCurrentCompany());
         this.invoicePaymentForm = _fb.group(_invoicePaymentForm.getForm());
+        this.routeSub = this._route.params.subscribe(params => {
+            this.paymentId = params['paymentID'];
+            if(this.paymentId) {
+              this.loadPayment();
+            }
+        });
+    }
+
+    loadPayment() {
+        this.loadingService.triggerLoadingEvent(true);
+        this.invoiceService.payment(this.paymentId).subscribe(payment => {
+            this.payment = payment;
+            let paymentFormValues = this.payment;
+
+            this.invoicePaymentForm.setValue(paymentFormValues);
+        })
     }
 
     loadCustomers(companyId:any) {
@@ -117,7 +137,7 @@ export class InvoiceAddPaymentComponent {
         this.paymentLines = [];
         invoices.forEach((invoice) => {
             let paymentLine:any = {};
-            paymentLine.invoiceId = invoice.id;
+            paymentLine.number = invoice.number;
             paymentLine.invoiceAmount = invoice.amount;
             paymentLine.amount = "";
             paymentLine.invoiceDate = invoice.invoice_date;

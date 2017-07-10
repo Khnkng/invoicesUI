@@ -44,7 +44,7 @@ export class InvoicePayComponent{
     publicKey:string;
     cards:Array<string>=[];
     paymentCard:string;
-    hasInvoice:boolen=false;
+    hasInvoice:boolean=false;
     invoiceData:any;
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
