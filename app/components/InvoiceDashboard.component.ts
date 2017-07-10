@@ -87,22 +87,7 @@ export class InvoiceDashboardComponent {
         'className': 'ion-edit',
         'name': 'Edit',
         'value': 'edit'
-    }, {
-        'className': 'ion-ios-minus-outline',
-        'type': 'single',
-        'name': 'Duplicate',
-        'value': 'duplicate'
-    }, {
-        'className': 'ion-ios-trash-outline',
-        'type': 'multiple',
-        'name': 'Mark as sent',
-        'value': 'sent'
-    }, {
-        'className': 'ion-ios-trash-outline',
-        'type': 'single',
-        'name': 'Mark as paid',
-        'value': 'paid'
-    }, {'className': 'ion-ios-trash-outline', 'type': 'multiple', 'name': 'Delete', 'value': 'delete'}];
+    }];
     selectedTableRows: Array<any> = [];
     @ViewChild('invoicesTable') invoicesTable;
     @ViewChild('paidTable') paidTable;
@@ -393,6 +378,7 @@ export class InvoiceDashboardComponent {
         this.payments.forEach(function(payment) {
             let row:any = {};
             row['id'] = payment['id'];
+            row['selectCol'] = "<input type='checkbox' class='checkbox'/>";
             row['type'] = "<div>"+payment.type+"</div><div><small>"+payment.referenceNo+"</small></div>";
             row['receivedFrom'] = base.getCustomerName(payment.receivedFrom);
             row['dateReceived'] = payment.paymentDate;
