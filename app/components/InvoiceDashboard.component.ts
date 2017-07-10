@@ -59,6 +59,7 @@ export class InvoiceDashboardComponent {
     companyCurrency: string = 'USD';
     localeFortmat: string = 'en-US';
     customers: Array<any> = [];
+    payments: Array<any> = [];
     actions:Array<any> = [];
     invoiceActions: Array<any> = [{
         'className': 'ion-edit',
@@ -82,26 +83,11 @@ export class InvoiceDashboardComponent {
         'name': 'Mark as sent',
         'value': 'sent'
     }, {'className': 'ion-ios-trash','name': 'Delete', 'value': 'delete'}];
-    paidActions: Array<any> = [{
+    paymentActions: Array<any> = [{
         'className': 'ion-edit',
         'name': 'Edit',
         'value': 'edit'
-    }, {
-        'className': 'ion-ios-minus-outline',
-        'type': 'single',
-        'name': 'Duplicate',
-        'value': 'duplicate'
-    }, {
-        'className': 'ion-ios-trash-outline',
-        'type': 'multiple',
-        'name': 'Mark as sent',
-        'value': 'sent'
-    }, {
-        'className': 'ion-ios-trash-outline',
-        'type': 'single',
-        'name': 'Mark as paid',
-        'value': 'paid'
-    }, {'className': 'ion-ios-trash-outline', 'type': 'multiple', 'name': 'Delete', 'value': 'delete'}];
+    }];
     selectedTableRows: Array<any> = [];
     @ViewChild('invoicesTable') invoicesTable;
     @ViewChild('paidTable') paidTable;
@@ -117,6 +103,7 @@ export class InvoiceDashboardComponent {
             this.selectedTab = params['tabId'];
             this.selectTab(this.selectedTab, "");
             this.hasInvoices = false;
+            this.hasPaidInvoices = false;
             this.companyCurrency = Session.getCurrentCompanyCurrency();
             this.loadCustomers(Session.getCurrentCompany());
         });
@@ -183,15 +170,10 @@ export class InvoiceDashboardComponent {
             this.titleService.setPageTitle("Proposals");
         } else if (this.selectedTab == 1) {
             this.isLoading = false;
-            this.titleService.setPageTitle("Paid");
-            this.invoiceService.invoices('paid').subscribe(invoices => {
-                if (invoices.invoices) {
-                    this.buildPaidInvoiceTableData(invoices.invoices);
-                    sessionStorage.setItem("localInvoicesBadges", JSON.stringify(invoices.badges));
-                    this.localBadges = JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
-                } else {
-                    this.closeLoading();
-                }
+            this.titleService.setPageTitle("Payments");
+            this.invoiceService.getPayments().subscribe(payments => {
+                this.payments = payments;
+                this.buildPaymentsTableData();
             }, error => this.handleError(error));
         } else if (this.selectedTab == 2) {
             this.isLoading = false;
@@ -236,6 +218,11 @@ export class InvoiceDashboardComponent {
             error => {
                 this.toastService.pop(TOAST_TYPE.error, "Invoice deletion failed.")
             });
+    }
+
+    showPayment(){
+        let link = ['payments/edit', this.selectedTableRows[0].id];
+        this._router.navigate(link);
     }
 
     showInvoice(invoice) {
@@ -306,6 +293,11 @@ export class InvoiceDashboardComponent {
         this._router.navigate(link);
     }
 
+    addNewPayment(){
+        let link = ['invoices/addPayment'];
+        this._router.navigate(link);
+    }
+
     buildInvoiceTableData(invoices) {
         this.hasInvoices = false;
         this.invoices = invoices;
@@ -368,9 +360,8 @@ export class InvoiceDashboardComponent {
         this.loadingService.triggerLoadingEvent(false);
     }
 
-    buildPaidInvoiceTableData(invoices) {
+    buildPaymentsTableData() {
         this.hasPaidInvoices = false;
-        this.invoices = invoices;
         this.paidInvoiceTableData.rows = [];
         this.paidInvoiceTableOptions.search = true;
         this.paidInvoiceTableOptions.pageSize = 9;
@@ -383,32 +374,79 @@ export class InvoiceDashboardComponent {
                 "sortable": false,
                 "filterable": false
             },
+            {"name": "type", "title": "Payment type/#"},
+            {"name": "receivedFrom", "title": "Received From"},
+            {"name": "dateReceived", "title": "Date Received"},
+            {"name": "amount", "title": "Amount/Status"}
+        ];
+
+        let base = this;
+        this.payments.forEach(function(payment) {
+            let row:any = {};
+            row['id'] = payment['id'];
+            row['selectCol'] = "<input type='checkbox' class='checkbox'/>";
+            row['type'] = "<div>"+payment.type+"</div><div><small>"+payment.referenceNo+"</small></div>";
+            row['receivedFrom'] = base.getCustomerName(payment.receivedFrom);
+            row['dateReceived'] = payment.paymentDate;
+            let assignStatus = "";
+            let assignedAmount = 0;
+            payment.paymentLines.forEach((line) => {
+                assignedAmount += line.amount ? parseFloat(line.amount) : 0;
+            });
+            let assignmentHtml = "";
+
+                if(assignedAmount >= payment.paymentAmount) {
+                    assignStatus = "Assigned";
+                    assignmentHtml = "<small style='color:#00B1A9'>"+assignStatus+"</small>"
+
+                } else if(assignedAmount > 0) {
+                    assignStatus = "Partially Assigned";
+                    assignmentHtml = "<small style='color:#ff3219'>"+assignStatus+"</small>"
+                } else {
+                    assignStatus = "Unassigned";
+                    assignmentHtml = "<small style='color:#ff3219'>"+assignStatus+"</small>"
+                }
+
+
+
+            row['amount'] = "<div>"+payment.paymentAmount+"</div><div>"+assignmentHtml+"</div>";
+            base.paidInvoiceTableData.rows.push(row);
+        });
+
+        setTimeout(function(){
+            base.hasPaidInvoices = true;
+        }, 0)
+        this.loadingService.triggerLoadingEvent(false);
+    }
+
+    /*buildPaidInvoiceTableData(invoices) {
+        this.hasPaidInvoices = false;
+        this.invoices = invoices;
+        this.paidInvoiceTableData.rows = [];
+        this.paidInvoiceTableOptions.search = true;
+        this.paidInvoiceTableOptions.pageSize = 9;
+        this.paidInvoiceTableData.columns = [
+            {"name": "id", "title": "id", "visible": false},
             {"name": "number", "title": "Number"},
             {"name": "customer", "title": "Customer"},
             {"name": "payment_date", "title": "Due Date"},
-            {
-                "name": "amount", "title": "Amount", type: 'number', "formatter": (amount) => {
+            {"name": "amount", "title": "Amount",type:'number',"formatter": (amount)=>{
                 amount = parseFloat(amount);
-                return amount.toLocaleString(base.localeFortmat, {
-                    style: 'currency',
-                    currency: base.companyCurrency,
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                })
-            }
-            }/*,
-             {"name": "actions", "title": ""}*/
+                return amount.toLocaleString(base.localeFortmat, { style: 'currency', currency: base.companyCurrency, minimumFractionDigits: 2, maximumFractionDigits: 2 })
+            }}/!*,
+            {"name": "actions", "title": ""}*!/
         ];
         let base = this;
         invoices.forEach(function (invoice) {
             let row: any = {};
             row['id'] = invoice['id'];
             row['selectCol'] = "<input type='checkbox' class='checkbox'/>";
+            row['selectCol'] = "<input type='checkbox' class='checkbox'/>";
             row['number'] = invoice['number'];
             row['customer'] = base.getCustomerName(invoice['customer_id']);
             row['payment_date'] = invoice['payment_date'];
             row['amount'] = invoice['amount'];
-            /*row['actions'] = "<a class='action' data-action='edit' style='margin:0px 0px 0px 5px;'><i class='icon ion-edit'></i></a><a class='action' data-action='delete' style='margin:0px 0px 0px 5px;'><i class='icon ion-trash-b'></i></a>";*/
+            /!*row['actions'] = "<a class='action' data-action='edit' style='margin:0px 0px 0px 5px;'><i class='icon ion-edit'></i></a><a class='action' data-action='delete' style='margin:0px 0px 0px 5px;'><i class='icon ion-trash-b'></i></a>";*!/
             base.paidInvoiceTableData.rows.push(row);
         });
 
@@ -416,20 +454,39 @@ export class InvoiceDashboardComponent {
             base.hasPaidInvoices = true;
         }, 0)
         this.loadingService.triggerLoadingEvent(false);
-    }
+    }*/
 
     getCustomerName(id) {
         let customer = _.find(this.customers, {'customer_id': id});
         return customer ? customer.customer_name : '';
     }
 
-    updateOptions(actions) {
+    updateOptions() {
         let base = this;
-        if (this.selectedTableRows.length > 1) {
-            base.actions = base.invoiceMultipleSelect;
-        }else{
-            base.actions = base.invoiceActions;
+        switch (this.selectedTab) {
+            case "2":
+                if (this.selectedTableRows.length > 1) {
+                    base.actions = base.invoiceMultipleSelect;
+                }else{
+                    base.actions = base.invoiceActions;
+                }
+                break;
+            case "1":
+                if (this.selectedTableRows.length > 1) {
+                    base.actions = base.paymentActions;
+                }else{
+                    base.actions = base.paymentActions;
+                }
+                break;
+            case "0":
+                if (this.selectedTableRows.length > 1) {
+                    base.actions = base.invoiceMultipleSelect;
+                }else{
+                    base.actions = base.invoiceActions;
+                }
+                break;
         }
+
     }
 
     handleSelect(event: any) {
@@ -443,9 +500,9 @@ export class InvoiceDashboardComponent {
     }
 
     getSelectedTabData() {
-        if (this.selectedTab == 2) {
+        if (this.selectedTab == "2") {
             return this.invoiceTableData;
-        } else if (this.selectedTab == 1) {
+        } else if (this.selectedTab == "1") {
             return this.paidInvoiceTableData;
         } else {
             return this.proposalsTableData;
@@ -453,9 +510,9 @@ export class InvoiceDashboardComponent {
     }
 
     getNativeElement() {
-        if (this.selectedTab == 2) {
+        if (this.selectedTab == "2") {
             return this.invoicesTable.nativeElement;
-        } else if (this.selectedTab == 1) {
+        } else if (this.selectedTab == "1") {
             return this.paidTable.nativeElement;
         } else {
             return this.proposalsTable.nativeElement;
@@ -464,14 +521,14 @@ export class InvoiceDashboardComponent {
 
     updateTableData(tableData) {
         let base = this;
-        if (this.selectedTab == 2) {
+        if (this.selectedTab == "2") {
             this.invoiceTableData.rows = tableData.rows;
             this.invoiceTableData = _.clone(base.invoiceTableData);
-        } else if (this.selectedTab == 1) {
-            this.paidInvoiceTableData = tableData.rows;
+        } else if (this.selectedTab == "1") {
+            this.paidInvoiceTableData.rows = tableData.rows;
             this.paidInvoiceTableData = _.clone(base.paidInvoiceTableData);
         } else {
-            this.paidInvoiceTableData = tableData.rows;
+            this.paidInvoiceTableData.rows = tableData.rows;
             this.paidInvoiceTableData = _.clone(base.paidInvoiceTableData);
         }
     }
@@ -512,7 +569,7 @@ export class InvoiceDashboardComponent {
         });
         this.selectedTableRows = _.uniqBy(this.selectedTableRows, 'id');
         _.remove(this.selectedTableRows, {'tempIsSelected': false});
-        this.updateOptions(this.invoiceActions);
+        this.updateOptions();
     }
 
 
@@ -536,5 +593,9 @@ export class InvoiceDashboardComponent {
                 break;
         }
     }
+
+
+
+
 }
 

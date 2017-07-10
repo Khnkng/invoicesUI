@@ -64,6 +64,19 @@ export class InvoicesService extends QountServices {
             .catch(this.handleError)
     }
 
+    invoicesByClientId(clientID): Observable<any> {
+        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE_BY_CLIENTID,
+            null,{id: Session.getUser().id,companyId:Session.getCurrentCompany(),clientId:clientID});
+        return this.query(url, SOURCE_TYPE.JAVA).map(res => <any> res.json())
+            .catch(this.handleError)
+    }
+
+    allInvoices(): Observable<any> {
+        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE,null,{id: Session.getUser().id,companyId:Session.getCurrentCompany()});
+        return this.query(url, SOURCE_TYPE.JAVA).map(res => <any> res.json())
+            .catch(this.handleError)
+    }
+
     getInvoice(invoiceId) : Observable<any> {
         let url = this.interpolateUrl(INVOICE_PATHS.INVOICE,null,{id: Session.getUser().id,companyId:Session.getCurrentCompany()});
         return this.query(url+"/"+invoiceId, SOURCE_TYPE.JAVA).map(res => <any> res.json())
@@ -94,6 +107,17 @@ export class InvoicesService extends QountServices {
             .catch(this.handleError)
     }
 
+    addPayment(payment:any) {
+        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE_PAYMENTS,null,{id: Session.getUser().id,companyId:Session.getCurrentCompany()});
+        return this.create(url, payment, SOURCE_TYPE.JAVA).map(res => <any> res.json())
+            .catch(this.handleError)
+    }
+
+    getPayments() {
+        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE_PAYMENTS,null,{id: Session.getUser().id,companyId:Session.getCurrentCompany()});
+        return this.query(url, SOURCE_TYPE.JAVA).map(res => <any> res.json())
+            .catch(this.handleError)
+    }
 
     private handleError (error: Response) {
         return Observable.throw(error.text());

@@ -23,14 +23,18 @@
             <div class="columns medium-3 resetPaddings">
                 <div class="row add-share-buttons">
                     <div class="column medium-12 text-right">
-            <span class="pointer" *ngIf="tabDisplay[0].display == 'block'" (click)="addNewProposal()">
-              <i class=" icon ion-ios-plus-outline"></i>
-              <span >Proposal</span>
-            </span>
+                        <span class="pointer" *ngIf="tabDisplay[0].display == 'block'" (click)="addNewProposal()">
+                          <i class=" icon ion-ios-plus-outline"></i>
+                          <span>Proposal</span>
+                        </span>
                         <span class="pointer" *ngIf="tabDisplay[2].display == 'block'" (click)="addNewInvoice()">
-              <i class=" icon ion-ios-plus-outline"></i>
-              <span >Invoice</span>
-            </span>
+                          <i class=" icon ion-ios-plus-outline"></i>
+                          <span>Invoice</span>
+                        </span>
+                        <span class="pointer" *ngIf="tabDisplay[1].display == 'block'" (click)="addNewPayment()">
+                          <i class=" icon ion-ios-plus-outline"></i>
+                          <span>Payment</span>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -83,7 +87,7 @@
                             <div class="medium-2 small-12 invoice-dropdown" foundation>
                                 <button class="dropdown button" type="button" data-toggle="invoice-dropdown">Action</button>
                                 <ul class="dropdown-pane" id="invoice-dropdown" data-dropdown>
-                                    <li  class="pointer" *ngFor="let action of actions" (click)="handleInvoiceStateChange(action.value)"><span class="icon" [ngClass]="action.className"></span><span>{{action.name}}</span></li>
+                                    <li  class="pointer" *ngFor="let action of actions" (click)="showPayment()"><span class="icon" [ngClass]="action.className"></span><span>{{action.name}}</span></li>
                                 </ul>
                             </div>
                             <div class="column medium-2 selection-count"><span>{{selectedTableRows.length}}</span><span>selected</span></div>
