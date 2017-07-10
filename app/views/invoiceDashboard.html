@@ -87,7 +87,7 @@
                             <div class="medium-2 small-12 invoice-dropdown" foundation>
                                 <button class="dropdown button" type="button" data-toggle="invoice-dropdown">Action</button>
                                 <ul class="dropdown-pane" id="invoice-dropdown" data-dropdown>
-                                    <li  class="pointer" *ngFor="let action of actions" (click)="handleInvoiceStateChange(action.value)"><span class="icon" [ngClass]="action.className"></span><span>{{action.name}}</span></li>
+                                    <li  class="pointer" *ngFor="let action of actions" (click)="showPayment()"><span class="icon" [ngClass]="action.className"></span><span>{{action.name}}</span></li>
                                 </ul>
                             </div>
                             <div class="column medium-2 selection-count"><span>{{selectedTableRows.length}}</span><span>selected</span></div>
