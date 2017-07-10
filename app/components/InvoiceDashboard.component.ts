@@ -61,29 +61,29 @@ export class InvoiceDashboardComponent {
     customers: Array<any> = [];
     actions:Array<any> = [];
     invoiceActions: Array<any> = [{
-        'className': 'ion-ios-checkmark-outline',
+        'className': 'ion-edit',
         'name': 'Edit',
         'value': 'edit'
-    }, {
-        'className': 'ion-ios-minus-outline',
+    },
+        {'className': 'ion-ios-copy-outline',
         'name': 'Duplicate',
         'value': 'duplicate'
     }, {
-        'className': 'ion-ios-trash-outline',
+        'className': 'ion-social-usd',
         'name': 'Mark as paid',
         'value': 'paid'
     }, {
-        'className': 'ion-ios-trash-outline',
+        'className': 'ion-android-send',
         'name': 'Mark as sent',
         'value': 'sent'
-    }, {'className': 'ion-ios-trash-outline', 'name': 'Delete', 'value': 'delete'}];
+    }, {'className': 'ion-ios-trash', 'name': 'Delete', 'value': 'delete'}];
     invoiceMultipleSelect: Array<any> = [ {
-        'className': 'ion-ios-trash-outline',
+        'className': 'ion-android-send',
         'name': 'Mark as sent',
         'value': 'sent'
-    }, {'className': 'ion-ios-trash-outline','name': 'Delete', 'value': 'delete'}];
+    }, {'className': 'ion-ios-trash','name': 'Delete', 'value': 'delete'}];
     paidActions: Array<any> = [{
-        'className': 'ion-ios-checkmark-outline',
+        'className': 'ion-edit',
         'name': 'Edit',
         'value': 'edit'
     }, {
