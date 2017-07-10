@@ -9,6 +9,7 @@ import {InvoicesService} from "../services/Invoices.service";
 import {TOAST_TYPE} from "qCommon/app/constants/Qount.constants";
 import {CustomersService} from "qCommon/app/services/Customers.service";
 import {Session} from "qCommon/app/services/Session";
+import {DateFormater} from "qCommon/app/services/DateFormatter.service";
 
 
 declare let jQuery:any;
@@ -26,11 +27,13 @@ export class InvoiceAddPayment{
     invoiceID:string;
     invoiceData:any;
     hasInvoiceData: boolean = false;
+    dateFormat:string;
 
 
     constructor(private switchBoard: SwitchBoard, private _router:Router, private _route: ActivatedRoute, private toastService: ToastService,
-                private loadingService:LoadingService, private titleService:pageTitleService, private invoiceService: InvoicesService,private customerService: CustomersService){
+                private loadingService:LoadingService, private titleService:pageTitleService, private invoiceService: InvoicesService,private customerService: CustomersService,private dateFormater:DateFormater){
         this.titleService.setPageTitle("Add Payment To Invoice");
+        this.dateFormat = dateFormater.getFormat();
         this.routeSub = this._route.params.subscribe(params => {
             //this.invoiceID=params['invoiceID'];
             this.invoiceID='88f194d9-6712-48d7-afc3-f2d6699fe8f9';
@@ -48,6 +51,10 @@ export class InvoiceAddPayment{
             }
             this.loadingService.triggerLoadingEvent(false);
         },error=>this.handleError(error));
+    }
+
+    setDueDate(date){
+        console.log(date);
     }
 
     handleError(error) {
