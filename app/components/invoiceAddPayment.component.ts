@@ -58,6 +58,8 @@ export class InvoiceAddPaymentComponent {
         this.invoiceService.payment(this.paymentId).subscribe(payment => {
             this.payment = payment;
             let paymentFormValues = this.payment;
+            this.paymentLines = this.payment.paymentLines;
+            delete paymentFormValues['paymentLines'];
 
             this.invoicePaymentForm.setValue(paymentFormValues);
         })
