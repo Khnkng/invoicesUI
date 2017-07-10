@@ -14,6 +14,8 @@ import {FormGroup, FormBuilder, FormArray} from "@angular/forms";
 import {InvoiceLineForm, InvoiceLineTaxesForm} from "../forms/InvoiceLine.form";
 import {ChartOfAccountsService} from "qCommon/app/services/ChartOfAccounts.service";
 import {pageTitleService} from "qCommon/app/services/PageTitle";
+import {ReportService} from "reportsUI/app/services/Reports.service";
+import {PAYMENTSPATHS} from "reportsUI/app/constants/payments.constants";
 
 declare let _:any;
 declare let numeral:any;
@@ -71,7 +73,7 @@ export class InvoiceComponent{
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
                 private customerService: CustomersService, private _invoiceForm:InvoiceForm, private _invoiceLineForm:InvoiceLineForm, private _invoiceLineTaxesForm:InvoiceLineTaxesForm,
-                private coaService: ChartOfAccountsService,private titleService:pageTitleService){
+                private coaService: ChartOfAccountsService,private titleService:pageTitleService, private reportService: ReportService){
         this.titleService.setPageTitle("Invoices");
         let _form:any = this._invoiceForm.getForm();
         _form['invoiceLines'] = this.invoiceLineArray;
@@ -335,15 +337,25 @@ export class InvoiceComponent{
         }else if (action=='draft'){
             this.saveInvoiceDetails(invoiceData);
         }else if(action=='preview'){
-            this.showPreview=!this.showPreview;
-            if(this.showPreview){
-                this.preViewText="Close Preview"
-            }else {
-                this.preViewText="Preview Invoice"
-            }
+         this.togelPreview()
+        }else if(action=='download'){
+            this.togelPreview();
+            let base=this;
+            setTimeout(function(){
+                base.exportToPDF();
+            })
         }
-
     }
+
+    togelPreview(){
+        this.showPreview=!this.showPreview;
+        if(this.showPreview){
+            this.preViewText="Close Preview"
+        }else {
+            this.preViewText="Preview Invoice"
+        }
+    }
+
 
     openEmailDailog(){
         jQuery('#invoice-email-conformation').foundation('open');
@@ -697,4 +709,26 @@ export class InvoiceComponent{
         });
         return result;
     }
+
+
+    exportToPDF(){
+        let html = jQuery('<div>').append(jQuery('style').clone()).append(jQuery('#paymentsPreview').clone()).html();
+        let pdfReq={
+            "version" : "1.1",
+            "genericReport": {
+                "payload": html
+            }
+        };
+        this.reportService.exportReportIntoFile(PAYMENTSPATHS.PDF_SERVICE, pdfReq)
+            .subscribe(data =>{
+                var blob=new Blob([data._body], {type:"application/pdf"});
+                var link= jQuery('<a></a>');
+                link[0].href= URL.createObjectURL(blob);
+                link[0].download= "Invoice.pdf";
+                link[0].click();
+            }, error =>{
+                this._toastService.pop(TOAST_TYPE.error, "Failed to Export report into PDF");
+            });
+    }
+
 }
