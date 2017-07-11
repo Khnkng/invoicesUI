@@ -135,9 +135,9 @@ export class InvoiceComponent{
 
     setupForm() {
         let base = this;
-        this.setInvoiceDate(this.defaultDate);
-        this.closeLoader();
         if(!this.invoiceID){
+            this.closeLoader();
+            this.setInvoiceDate(this.defaultDate);
             this.newInvoice = true;
             for(let i=0; i<2; i++){
                 this.addInvoiceList(null,'item');
