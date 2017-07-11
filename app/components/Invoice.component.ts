@@ -16,6 +16,7 @@ import {ChartOfAccountsService} from "qCommon/app/services/ChartOfAccounts.servi
 import {pageTitleService} from "qCommon/app/services/PageTitle";
 import {ReportService} from "reportsUI/app/services/Reports.service";
 import {PAYMENTSPATHS} from "reportsUI/app/constants/payments.constants";
+import {SwitchBoard} from "qCommon/app/services/SwitchBoard";
 
 declare let _:any;
 declare let numeral:any;
@@ -69,12 +70,14 @@ export class InvoiceComponent{
     showPreview:boolean;
     preViewText:string="Preview Invoice";
     isDuplicate:boolean;
+    routeSubscribe:any;
 
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
                 private customerService: CustomersService, private _invoiceForm:InvoiceForm, private _invoiceLineForm:InvoiceLineForm, private _invoiceLineTaxesForm:InvoiceLineTaxesForm,
-                private coaService: ChartOfAccountsService,private titleService:pageTitleService, private reportService: ReportService){
+                private coaService: ChartOfAccountsService,private titleService:pageTitleService, private reportService: ReportService,
+                private _switchBoard:SwitchBoard){
         this.titleService.setPageTitle("Invoices");
         let _form:any = this._invoiceForm.getForm();
         _form['invoiceLines'] = this.invoiceLineArray;
@@ -90,6 +93,16 @@ export class InvoiceComponent{
         if(this._router.url.indexOf('duplicate')!=-1){
             this.isDuplicate=true;
         };
+
+        this.routeSubscribe = _switchBoard.onClickPrev.subscribe(title => {
+                this.navigateToDashboard()
+        });
+
+    }
+
+    navigateToDashboard(){
+        let link = ['invoices/dashboard', 2];
+        this._router.navigate(link);
     }
 
     loadCustomers(companyId:any) {
@@ -764,6 +777,9 @@ export class InvoiceComponent{
     ngOnDestroy(){
         if(jQuery('#invoice-email-conformation'))
         jQuery('#invoice-email-conformation').remove();
+        if(this.routeSubscribe){
+            this.routeSubscribe.unsubscribe();
+        }
     }
 
 
