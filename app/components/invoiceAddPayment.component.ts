@@ -58,6 +58,8 @@ export class InvoiceAddPaymentComponent {
         this.invoiceService.payment(this.paymentId).subscribe(payment => {
             this.payment = payment;
             let paymentFormValues = this.payment;
+            this.paymentLines = this.payment.paymentLines;
+            delete paymentFormValues['paymentLines'];
 
             this.invoicePaymentForm.setValue(paymentFormValues);
         })
@@ -137,6 +139,7 @@ export class InvoiceAddPaymentComponent {
         this.paymentLines = [];
         invoices.forEach((invoice) => {
             let paymentLine:any = {};
+            paymentLine.invoiceId = invoice.id;
             paymentLine.number = invoice.number;
             paymentLine.invoiceAmount = invoice.amount;
             paymentLine.amount = "";
@@ -157,7 +160,7 @@ export class InvoiceAddPaymentComponent {
         })
         let text = this.numeralService.format("$0,0.00", appliedAmount);
         text += " of ";
-        let paymentAmount = this.invoicePaymentForm.controls['paymentAmount'] || 0;
+        let paymentAmount = this.invoicePaymentForm.controls['paymentAmount'].value || 0;
         text += this.numeralService.format("$0,0.00", paymentAmount) +" applied";
         return text;
     }
