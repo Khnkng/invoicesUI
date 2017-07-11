@@ -211,7 +211,7 @@ export class InvoiceDashboardComponent {
         let base = this;
         let selectedIds = _.map(this.selectedTableRows, 'id');
         this.invoiceService.markAsSentInvoice(selectedIds).subscribe(success => {
-                this.toastService.pop(TOAST_TYPE.success, "Invoice deleted successfully.");
+                this.toastService.pop(TOAST_TYPE.success, "Invoice mark as sent successfully.");
                 this.hasInvoices = false;
                 this.selectTab(2, "");
             },

@@ -16,6 +16,8 @@ import {ChartOfAccountsService} from "qCommon/app/services/ChartOfAccounts.servi
 import {pageTitleService} from "qCommon/app/services/PageTitle";
 import {ReportService} from "reportsUI/app/services/Reports.service";
 import {PAYMENTSPATHS} from "reportsUI/app/constants/payments.constants";
+import {StateService} from "qCommon/app/services/StateService";
+import {SwitchBoard} from "qCommon/app/services/SwitchBoard";
 
 declare let _:any;
 declare let numeral:any;
@@ -69,12 +71,13 @@ export class InvoiceComponent{
     showPreview:boolean;
     preViewText:string="Preview Invoice";
     isDuplicate:boolean;
+    routeSubscribe:any;
 
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
                 private customerService: CustomersService, private _invoiceForm:InvoiceForm, private _invoiceLineForm:InvoiceLineForm, private _invoiceLineTaxesForm:InvoiceLineTaxesForm,
-                private coaService: ChartOfAccountsService,private titleService:pageTitleService, private reportService: ReportService){
+                private coaService: ChartOfAccountsService,private titleService:pageTitleService,private stateService: StateService, private reportService: ReportService,private switchBoard: SwitchBoard){
         this.titleService.setPageTitle("Invoices");
         let _form:any = this._invoiceForm.getForm();
         _form['invoiceLines'] = this.invoiceLineArray;
@@ -90,6 +93,16 @@ export class InvoiceComponent{
         if(this._router.url.indexOf('duplicate')!=-1){
             this.isDuplicate=true;
         };
+        this.routeSubscribe = switchBoard.onClickPrev.subscribe(title => {
+            this.gotoPreviousState();
+        });
+    }
+
+    gotoPreviousState() {
+        let prevState = this.stateService.getPrevState();
+        if (prevState) {
+            this._router.navigate([prevState.url]);
+        }
     }
 
     loadCustomers(companyId:any) {
@@ -205,6 +218,10 @@ export class InvoiceComponent{
         if(!this.newInvoice){
             //Fetch existing invoice
         }
+    }
+
+    ngOnDestroy(){
+        this.routeSubscribe.unsubscribe();
     }
 
     setInvoiceDate(date){
