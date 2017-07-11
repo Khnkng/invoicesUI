@@ -104,10 +104,6 @@ export class InvoiceComponent{
             this._router.navigate([prevState.url]);
         }
     }
-    navigateToDashboard(){
-        let link = ['invoices/dashboard', 2];
-        this._router.navigate(link);
-    }
 
     loadCustomers(companyId:any) {
         this.loadingService.triggerLoadingEvent(true);
