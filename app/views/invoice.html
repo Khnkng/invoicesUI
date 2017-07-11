@@ -51,10 +51,10 @@
                                                             <label>
                                                                 Contact
                                                                 <div style="color:grey">
-                                                                    {{selectedContact.mobile?selectedContact.mobile:""}}
+                                                                    {{selectedContact?selectedContact.mobile:""}}
                                                                 </div>
                                                                 <div style="color:grey">
-                                                                    {{selectedContact.email?selectedContact.email:""}}
+                                                                    {{selectedContact?selectedContact.email:""}}
                                                                 </div>
                                                             </label>
                                                         </div>
@@ -283,7 +283,7 @@
                                                 </div>-->
                                             </div>
                                             <div class="row" style="margin-top: 10px">
-                                                <span style="font-weight: 600;font-size: 12px;">Send invoice to {{selectedContact.first_name?selectedContact.first_name:""}} {{selectedContact.last_name?selectedContact.last_name:""}}</span>
+                                                <span style="font-weight: 600;font-size: 12px;">Send invoice to {{selectedContact?selectedContact.first_name:""}} {{selectedContact?selectedContact.last_name:""}}</span>
                                             </div>
                                             <div class="row">
                                                 <button class="button small" (click)="submit($event,true,'email')" [disabled]="!invoiceForm.valid||!validateTaskLines()" style="width: 140px;height: 44px;background: #4b4b9e;color: white;font-size: 14px;">Email Invoice</button>
@@ -386,7 +386,7 @@
 <div class="reveal small bill-modal-container" style="width: 40%;padding: 0;border: 1px" id="invoice-email-conformation" data-reveal foundation  data-close-on-click="false">
     <div class="row">
         <div class="small-12 medium-12 columns" style="padding: 0; background: #00B1A9;height: 3rem;">
-            <label style="margin-left: 1rem;text-align: left;margin-top: 0.5rem;color: white;font-size: 13pt;">Send Invoice to the {{selectedContact.first_name?selectedContact.first_name:""}} {{selectedContact.last_name?selectedContact.last_name:""}} ({{selectedContact.email?selectedContact.email:""}})?
+            <label style="margin-left: 1rem;text-align: left;margin-top: 0.5rem;color: white;font-size: 13pt;">Send Invoice to the {{selectedContact?selectedContact.first_name:""}} {{selectedContact?selectedContact.last_name:""}} ({{selectedContact?selectedContact.email:""}})?
             </label>
         </div>
     </div>

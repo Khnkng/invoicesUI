@@ -26,6 +26,7 @@ import {InvoicePaymentPreview} from "./components/InvoicePaymentPreview.componen
     imports: [CommonModule, FormsModule, ReactiveFormsModule, ShareModule, RouterModule.forChild([
         {path: 'invoices/dashboard/:tabId', component: InvoiceDashboardComponent, canActivate: [LoggedInActivator]},
         {path: 'invoices/edit/:invoiceID', component: InvoiceComponent, canActivate: [LoggedInActivator]},
+        {path: 'invoices/duplicate/:invoiceID', component: InvoiceComponent, canActivate: [LoggedInActivator]},
         {path: 'invoices/NewInvoice', component: InvoiceComponent, canActivate: [LoggedInActivator]},
         {path: 'invoices/', component: InvoicesComponent, canActivate: [LoggedInActivator]},
         {path: 'invoices/invoiceSettings', component: InvoiceSettingsComponent, canActivate: [LoggedInActivator]},

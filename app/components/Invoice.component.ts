@@ -68,6 +68,7 @@ export class InvoiceComponent{
     additionalMails:String;
     showPreview:boolean;
     preViewText:string="Preview Invoice";
+    isDuplicate:boolean;
 
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
@@ -86,7 +87,9 @@ export class InvoiceComponent{
             this.loadInitialData();
             this.loadCOA();
         });
-
+        if(this._router.url.indexOf('duplicate')!=-1){
+            this.isDuplicate=true;
+        };
     }
 
     loadCustomers(companyId:any) {
@@ -382,7 +385,7 @@ export class InvoiceComponent{
 
     saveInvoiceDetails(invoiceData){
         this.loadingService.triggerLoadingEvent(true);
-        if(this.newInvoice) {
+        if(this.newInvoice||this.isDuplicate) {
             this.invoiceService.createInvoice(invoiceData).subscribe(resp => {
                 this.toastService.pop(TOAST_TYPE.success, "Invoice created successfully");
                 this.navigateToDashborad();
@@ -438,6 +441,8 @@ export class InvoiceComponent{
 
 
     onCustomerSelect(value){
+        this.selectedContact=null;
+        this.maillIds=[];
         this.getCustomerContacts(value);
         let customer = _.find(this.customers, {'customer_id': value});
         this.selectedCustomer=customer;
@@ -476,8 +481,11 @@ export class InvoiceComponent{
                     this.customerContacts=customers.customer_contact_details;
                     if(this.invoiceID){
                         let contact = _.find(this.customerContacts, {'id': this.invoice.send_to});
-                        this.selectedContact=contact;
-                        this.maillIds.push(contact.email);
+                        if(contact){
+                            this.selectedContact=contact;
+                            this.maillIds.push(contact.email);
+                        }
+
                     }
                 }
             }, error =>{
@@ -574,9 +582,9 @@ export class InvoiceComponent{
             this.resetAllLinesFromEditing(linesControl);
             itemForm.editable = !itemForm.editable;
         }
-        /*if(index == this.getLastActiveLineIndex(linesControl)){
+         if(index == this.getLastActiveLineIndex(linesControl)){
          this.addInvoiceList(null,type);
-         }*/
+         }
     }
 
     resetAllLinesFromEditing(linesControl){
