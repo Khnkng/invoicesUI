@@ -661,7 +661,7 @@ export class InvoiceComponent{
     }
 
     calculateAmount(discount,paidAmount){
-        this.amount=numeral(this.subTotal+this.taxTotal-(numeral(discount+paidAmount).value())).value();
+        this.amount=numeral(this.subTotal+this.taxTotal-(numeral(numeral(discount).value()+numeral(paidAmount).value()).value())).value();
         return this.amount;
     }
 
