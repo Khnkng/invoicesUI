@@ -135,6 +135,8 @@ export class InvoiceAddPaymentComponent {
         console.log("pament--", payment);
         this.invoiceService.addPayment(payment).subscribe(response => {
             this.toastService.pop(TOAST_TYPE.success, "Payment created successfully");
+            let link = ['invoices/dashboard',1];
+            this._router.navigate(link);
         }, error => {
             this.toastService.pop(TOAST_TYPE.error, "Failed to create payment");
         })

@@ -14,6 +14,7 @@ import {CustomersService} from "qCommon/app/services/Customers.service";
 import {pageTitleService} from "qCommon/app/services/PageTitle";
 import {StateService} from "qCommon/app/services/StateService";
 import {State} from "qCommon/app/models/State";
+import {NumeralService} from "qCommon/app/services/Numeral.service";
 
 declare let _:any;
 declare let jQuery:any;
@@ -98,7 +99,7 @@ export class InvoiceDashboardComponent {
                 private toastService: ToastService, private loadingService: LoadingService,
                 private companiesService: CompaniesService, private invoiceService: InvoicesService,
                 private customerService: CustomersService, private titleService: pageTitleService,
-                private stateService: StateService) {
+                private stateService: StateService,private numeralService:NumeralService) {
         this.routeSub = this._route.params.subscribe(params => {
             this.selectedTab = params['tabId'];
             this.selectTab(this.selectedTab, "");
@@ -350,7 +351,7 @@ export class InvoiceDashboardComponent {
             row['due_date'] = invoice['due_date'];
             row['amount'] = invoice['amount'];
             row['amount_due'] = invoice['amount_due'];
-            row['status'] = invoice['state'];
+            row['status'] = invoice['state']?_.capitalize(invoice['state']):"";
             base.invoiceTableData.rows.push(row);
         });
 
@@ -409,7 +410,7 @@ export class InvoiceDashboardComponent {
 
 
 
-            row['amount'] = "<div>"+payment.paymentAmount+"</div><div>"+assignmentHtml+"</div>";
+            row['amount'] = "<div>"+base.numeralService.format("$0,0.00", payment.paymentAmount)+"</div><div>"+assignmentHtml+"</div>";
             base.paidInvoiceTableData.rows.push(row);
         });
 

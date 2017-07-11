@@ -63,10 +63,10 @@
                     <tbody>
                     <tr>
                         <td>
-                            <div>Invoice From</div>
-                            <div>Name</div>
-                            <div>City</div>
-                            <div>State</div>
+                            <div>{{invoiceData.company?invoiceData.company.name:""}}</div>
+                            <div>{{invoiceData.company?invoiceData.company.address:""}}</div>
+                            <div>{{invoiceData.company?invoiceData.company.state:""}}, {{invoiceData.company?invoiceData.company.zipcode:""}}</div>
+                            <div>{{invoiceData.company?invoiceData.company.country:""}}</div>
                         </td>
                     </tr>
                     </tbody>
@@ -83,9 +83,10 @@
                     <tbody>
                     <tr>
                         <td valign="top" colspan="3">
-                            <div>Name</div>
-                            <div>City</div>
-                            <div>State</div>
+                            <div>{{invoiceData.customer?invoiceData.customer.customer_name:""}}</div>
+                            <div>{{invoiceData.customer?invoiceData.customer.street_1:""}}</div>
+                            <div>{{invoiceData.customer?invoiceData.customer.customer_city:""}}, {{invoiceData.customer?invoiceData.customer.customer_zipcode:""}}</div>
+                            <div>{{invoiceData.customer?invoiceData.customer.customer_country:""}}</div>
                         </td>
                         <td valign="top">{{invoiceData.invoice_date}}</td>
                         <td valign="top">{{invoiceData.number}}</td>

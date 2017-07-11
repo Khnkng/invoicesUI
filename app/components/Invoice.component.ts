@@ -72,6 +72,7 @@ export class InvoiceComponent{
     preViewText:string="Preview Invoice";
     isDuplicate:boolean;
     routeSubscribe:any;
+    companyAddress:any;
 
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
@@ -89,6 +90,7 @@ export class InvoiceComponent{
             this.defaultDate=moment(new Date()).format("MM/DD/YYYY");
             this.loadInitialData();
             this.loadCOA();
+            this.getCompanyDetails();
         });
         if(this._router.url.indexOf('duplicate')!=-1){
             this.isDuplicate=true;
@@ -179,6 +181,26 @@ export class InvoiceComponent{
     loadInitialData() {
         let companyId = Session.getCurrentCompany();
         this.loadCustomers(companyId);
+    }
+
+    getCompanyDetails(){
+        this.companyService.company(Session.getCurrentCompany())
+            .subscribe(companyAddress => {
+                if(companyAddress){
+                    let address={
+                        name:companyAddress.name,
+                        address:companyAddress.addresses[0].line,
+                        country:companyAddress.addresses[0].country,
+                        state:companyAddress.addresses[0].stateCode,
+                        zipcode:companyAddress.addresses[0].zipcode
+                    };
+                    this.companyAddress=address;
+                }
+
+            },error=>{
+                this.toastService.pop(TOAST_TYPE.error, "Failed to load your Company details");
+            });
+
     }
 
     addInvoiceList(line?:any,type?:any) {
@@ -349,6 +371,8 @@ export class InvoiceComponent{
         invoiceData.invoiceLines=itemLines.concat(taskLines);
         invoiceData.recepientsMails=this.maillIds;
         invoiceData.sendMail=sendMail;
+        invoiceData.company=this.companyAddress;
+        invoiceData.customer=this.selectedCustomer;
         this.invoiceProcessedData=invoiceData;
         if(action=='email'){
             this.openEmailDailog();
@@ -402,6 +426,8 @@ export class InvoiceComponent{
 
     saveInvoiceDetails(invoiceData){
         this.loadingService.triggerLoadingEvent(true);
+        delete invoiceData.company;
+        delete invoiceData.customer;
         if(this.newInvoice||this.isDuplicate) {
             this.invoiceService.createInvoice(invoiceData).subscribe(resp => {
                 this.toastService.pop(TOAST_TYPE.success, "Invoice created successfully");
