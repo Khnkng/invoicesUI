@@ -1,178 +1,201 @@
 <style>
-    .paymentPreview {
-        -webkit-box-shadow: 0 0 5px #ccc;
-        box-shadow: 0 0 5px #ccc;
-        margin:5px 0;
-        width:100%;
-    }
-
-    .from-address {
-        padding:50px 0 30px 0;
-    }
-
     table{
-        border-top:5px solid #808cc5;
-        margin:50px 0;
-    }
-
-    tbody {
-        border: none;
-    }
-
-    tr {
+        width: 100%;
         border:none;
     }
-
-    tr td {
+    table.middle-tables{
+        margin-top: 50px;
+    }
+    table.items{
+        border-top:5px solid #384986;
+    }
+    table thead {
+        background: none;
+        border:none;
+    }
+    table tbody {
+        border:none;
+    }
+    table tbody tr:hover{
+        background: none !important;
+    }
+    table tbody tr{
+        border:none !important;
+    }
+    tr td{
         color: #0a0a0a;
     }
-
-    tr td:first-child{
-        padding-left:0;
-    }
-    tr td:last-child {
-        text-align: right;
-        padding-right:0;
-    }
-
     .heading-color td{
-        color: #808CC5;
+        color: #384986;
     }
-
     .heading-color {
-        color: #808CC5;
+        color: #384986;
     }
-
     .separator {
-        border-top:1px solid #808cc5;
-        padding:0;
+        border-top:1px solid #384986;
+        padding:0px;
     }
-
     .emptyCol{
-        padding:0;
+        padding:0px;
     }
-
+    #payment-preview{
+        margin-top: 5px;
+        -webkit-box-shadow: 0 0 5px #ccc;
+        box-shadow: 0 0 5px #ccc;
+        padding-top: 50px;
+    }
+    .text-right{
+        text-align: right;
+    }
+    .invoice-amount{
+        font-size: 20pt;
+    }
 </style>
-
-<div class="paymentPreview" id="paymentsPreview">
-    <div class="row from-address">
-        <div class="column medium-12">
-            <div class="heading-color">Invoice From</div>
-            <div>Qwerty Software company</div>
-            <div>51 Rainey Street</div>
-            <div>#2209</div>
-            <div><span>Austin</span><span>,</span><span>TX 78701</span></div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="column medium-3 to-address">
-            <div class="heading-color">Prepared For</div>
-            <div>Qwerty Software company</div>
-            <div>51 Rainey Street</div>
-            <div>#2209</div>
-            <div><span>Austin</span><span>,</span><span>TX 78701</span></div>
-        </div>
-        <div class="column medium-3">
-            <div class="heading-color">Invoice Date</div>
-            <div>{{invoiceData.invoice_date}}</div>
-        </div>
-        <div class="column medium-3">
-            <div class="heading-color">Invoice Number</div>
-            <div>{{invoiceData.number}}</div>
-        </div>
-        <div class="column medium-3">
-            <div class="heading-color"><span>Invoice Total</span><span>({{invoiceData.currency}})</span></div>
-            <div>{{invoiceData.amount | currency:invoiceData.currency:true:'1.2-2'}}</div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="column medium-12">
-            <table>
-                <tbody>
-                <tr class="heading-color">
-                    <td>Item</td>
-                    <td>Description</td>
-                    <td></td>
-                    <td>Rate</td>
-                    <td>Hours</td>
-                    <td>Line Total</td>
-                </tr>
-                <tr *ngFor="let task of taskInvoices">
-                    <td>{{task.item.name}}</td>
-                    <td>{{task.description}}</td>
-                    <td></td>
-                    <td>{{task.price | currency:invoiceData.currency:true:'1.2-2'}}</td>
-                    <td>{{task.quantity}}</td>
-                    <td>{{task.amount | currency:invoiceData.currency:true:'1.2-2'}}</td>
-                </tr>
-                <tr>
-                    <td colspan="6" class="separator"></td>
-                </tr>
-
-                <tr class="heading-color">
-                    <td>Item</td>
-                    <td>Description</td>
-                    <td></td>
-                    <td>Unit Cost</td>
-                    <td>Quantity</td>
-                    <td>Line Total</td>
-                </tr>
-                <tr *ngFor="let item of itemInvoices">
-                    <td>{{item.item.name}}</td>
-                    <td>{{item.description}}</td>
-                    <td></td>
-                    <td>{{item.price | currency:invoiceData.currency:true:'1.2-2'}}</td>
-                    <td>{{item.quantity}}</td>
-                    <td>{{item.amount | currency:invoiceData.currency:true:'1.2-2'}}</td>
-                </tr>
-                <tr>
-                    <td colspan="2" class="emptyCol"></td>
-                    <td colspan="4" class="separator"></td>
-                </tr>
-                <tr>
-                    <td colspan="2"></td>
-                    <td>Subtotal</td>
-                    <td colspan="2"></td>
-                    <td>{{invoiceData.sub_totoal | currency:invoiceData.currency:true:'1.2-2'}}</td>
-                </tr>
-                <tr>
-                    <td colspan="2" class="emptyCol"></td>
-                    <td>Tax</td>
-                    <td colspan="2" class="emptyCol"></td>
-                    <td>{{invoiceData.tax | currency:invoiceData.currency:true:'1.2-2'}}</td>
-                </tr>
-                <tr>
-                    <td colspan="2" class="emptyCol"></td>
-                    <td colspan="4" class="separator"></td>
-                </tr>
-                <tr class="heading-color">
-                    <td colspan="2" class="emptyCol"></td>
-                    <td>Total</td>
-                    <td colspan="2" class="emptyCol"></td>
-                    <td>{{invoiceData.amount | currency:invoiceData.currency:true:'1.2-2'}}</td>
-                </tr>
-                <tr>
-                    <td colspan="2" class="emptyCol"></td>
-                    <td colspan="4" class="separator"></td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="row">
-        <div class="column medium-6">
-            <div class="heading-color">Payment Terms</div>
-            <div>Payment is due with in 30 days of receiving this invoice</div>
-        </div>
-        <div class="column medium-6">
-            <div class="heading-color">Notes</div>
-            <div>{{invoiceData.notes}}</div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="column medium-12">
-            <div class="heading-color">Payment Terms</div>
-            <div>Payment is due with in 30 days of receiving this invoice</div>
-        </div>
-    </div>
+<div id="payment-preview">
+    <table style='width:100%;' cellpadding='10'>
+        <tbody>
+        <tr>
+            <td style="width: 100%;">
+                <table>
+                    <thead>
+                    <tr><th class="heading-color">Invoice From</th></tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>
+                            <div>Invoice From</div>
+                            <div>Name</div>
+                            <div>City</div>
+                            <div>State</div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table class="middle-tables">
+                    <thead>
+                    <tr>
+                        <th class="heading-color" colspan="3">Prepared For</th>
+                        <th class="heading-color">Invoice Date</th>
+                        <th class="heading-color">Invoice Date</th>
+                        <th class="heading-color text-right">Invoice Total(USD)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td valign="top" colspan="3">
+                            <div>Name</div>
+                            <div>City</div>
+                            <div>State</div>
+                        </td>
+                        <td valign="top">07/01/2017</td>
+                        <td valign="top">INV-1000</td>
+                        <td valign="top" class="text-right invoice-amount">$100.00</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table class='items middle-tables'>
+                    <tbody  cellpadding=5 cellspacing=5>
+                    <tr  class="heading-color">
+                        <td >Item</td>
+                        <td >Description</td>
+                        <td ></td>
+                        <td >Rate</td>
+                        <td >Hours</td>
+                        <td >Line Total</td>
+                    </tr>
+                    <tr >
+                        <td >Delivery  Service</td>
+                        <td >Desc</td>
+                        <td ></td>
+                        <td >$5.00</td>
+                        <td >7</td>
+                        <td >$35.00</td>
+                    </tr>
+                    <tr >
+                        <td  class="separator" colspan="6"></td>
+                    </tr>
+                    <tr  class="heading-color">
+                        <td >Item</td>
+                        <td >Description</td>
+                        <td ></td>
+                        <td >Unit Cost</td>
+                        <td >Quantity</td>
+                        <td >Line Total</td>
+                    </tr>
+                    <tr >
+                        <td >Delivery  Service</td>
+                        <td >Desc</td>
+                        <td ></td>
+                        <td >$5.00</td>
+                        <td >7</td>
+                        <td >$35.00</td>
+                    </tr>
+                    <tr >
+                        <td  class="emptyCol" colspan="2"></td>
+                        <td  class="separator" colspan="4"></td>
+                    </tr>
+                    <tr >
+                        <td  colspan="2"></td>
+                        <td >Subtotal</td>
+                        <td  colspan="2"></td>
+                        <td ></td>
+                    </tr>
+                    <tr >
+                        <td  class="emptyCol" colspan="2"></td>
+                        <td >Tax</td>
+                        <td  class="emptyCol" colspan="2"></td>
+                        <td ></td>
+                    </tr>
+                    <tr >
+                        <td  class="emptyCol" colspan="2"></td>
+                        <td  class="separator" colspan="4"></td>
+                    </tr>
+                    <tr  class="heading-color">
+                        <td  class="emptyCol" colspan="2"></td>
+                        <td >Total</td>
+                        <td  class="emptyCol" colspan="2"></td>
+                        <td >$35.00</td>
+                    </tr>
+                    <tr >
+                        <td  class="emptyCol" colspan="2"></td>
+                        <td  class="separator" colspan="4"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table class="middle-tables">
+                    <thead>
+                    <tr>
+                        <th class="heading-color">Payment Terms</th>
+                        <th class="heading-color">Notes</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>
+                            <span>Payment is due with in 30 days of receiving this invoice</span>
+                        </td>
+                        <td>
+                            <span>Payment is due with in 30 days of receiving this invoice</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table class="middle-tables">
+                    <thead>
+                    <tr>
+                        <th class="heading-color">Payment Terms</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td colspan="3">
+                            <span>Payment is due with in 30 days of receiving this invoice</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </div>

@@ -45,8 +45,8 @@
                     <div class="column">
                         <div class="row add-share-buttons" [ngStyle]="{'visibility': selectedTableRows.length>0 ? 'visible':'hidden'}">
                             <div class="medium-2 small-12 invoice-dropdown" foundation>
-                                <button class="dropdown button" type="button" data-toggle="invoice-dropdown">Action</button>
-                                <ul class="dropdown-pane" id="invoice-dropdown" data-dropdown>
+                                <button class="dropdown button" type="button" data-toggle="proposal-dropdown">Action</button>
+                                <ul class="dropdown-pane" id="proposal-dropdown" data-dropdown data-dropdown data-close-on-click="true">
                                     <li  class="pointer" *ngFor="let action of actions" (click)="handleInvoiceStateChange(action.value)"><span class="icon" [ngClass]="action.className"></span><span>{{action.name}}</span></li>
                                 </ul>
                             </div>
@@ -66,7 +66,7 @@
                         <div class="row add-share-buttons" [ngStyle]="{'visibility': selectedTableRows.length>0 ? 'visible':'hidden'}">
                             <div class="medium-2 small-12 invoice-dropdown" foundation>
                                 <button class="dropdown button" type="button" data-toggle="invoice-dropdown">Action</button>
-                                <ul class="dropdown-pane" id="invoice-dropdown" data-dropdown>
+                                <ul class="dropdown-pane" id="invoice-dropdown" data-dropdown data-close-on-click="true">
                                     <li  class="pointer" *ngFor="let action of actions" (click)="handleInvoiceStateChange(action.value)"><span class="icon" [ngClass]="action.className"></span><span>{{action.name}}</span></li>
                                 </ul>
                             </div>
@@ -85,8 +85,8 @@
                     <div class="column">
                         <div class="row add-share-buttons" [ngStyle]="{'visibility': selectedTableRows.length>0 ? 'visible':'hidden'}">
                             <div class="medium-2 small-12 invoice-dropdown" foundation>
-                                <button class="dropdown button" type="button" data-toggle="invoice-dropdown">Action</button>
-                                <ul class="dropdown-pane" id="invoice-dropdown" data-dropdown>
+                                <button class="dropdown button" type="button" data-toggle="payments-dropdown">Action</button>
+                                <ul class="dropdown-pane" id="payments-dropdown" data-dropdown data-close-on-click="true">
                                     <li  class="pointer" *ngFor="let action of actions" (click)="showPayment()"><span class="icon" [ngClass]="action.className"></span><span>{{action.name}}</span></li>
                                 </ul>
                             </div>
