@@ -18,9 +18,8 @@ export class InvoiceForm extends abstractForm{
             "id":[""],
             "customer_id": ["", Validators.required],
             "company_id": [""],
-            "po_number": ["", Validators.required],
             "invoice_date": ["", Validators.required],
-            "payment_date": ["", Validators.required],
+            "due_date": ["", Validators.required],
             "locale": [""],
             "customer_name":[""],
             "amount":[""],
@@ -28,14 +27,11 @@ export class InvoiceForm extends abstractForm{
             "notes":[""],
             "currency":["",Validators.required],
             "number":["", Validators.required],
-            "createPlan":[false],
-            "planName":[""],
-            "frequency":[""],
-            "day":[""],
-            "week":[""],
-            "month":[""],
-            "quarter":[""],
-            "ends_after":[""]
+            "discount":[""],
+            "amount_paid":[""],
+            "sub_total":[""],
+            "send_to":["",Validators.required],
+            "tax_amount":[""]
         }
     }
 
