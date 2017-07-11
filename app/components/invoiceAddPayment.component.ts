@@ -57,8 +57,16 @@ export class InvoiceAddPaymentComponent {
         this.loadingService.triggerLoadingEvent(true);
         this.invoiceService.payment(this.paymentId).subscribe(payment => {
             this.payment = payment;
-            let paymentFormValues = this.payment;
+            let paymentFormValues:any = this.payment;
             this.paymentLines = this.payment.paymentLines;
+            if(!paymentFormValues.memo) {
+                paymentFormValues.memo = "";
+            }
+            if(!paymentFormValues.id) {
+                paymentFormValues.id = "";
+            }if(!paymentFormValues.paymentNote) {
+                paymentFormValues.paymentNote = "";
+            }
             delete paymentFormValues['paymentLines'];
 
             this.invoicePaymentForm.setValue(paymentFormValues);
