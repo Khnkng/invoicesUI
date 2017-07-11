@@ -104,6 +104,10 @@ export class InvoiceComponent{
             this._router.navigate([prevState.url]);
         }
     }
+    navigateToDashboard(){
+        let link = ['invoices/dashboard', 2];
+        this._router.navigate(link);
+    }
 
     loadCustomers(companyId:any) {
         this.loadingService.triggerLoadingEvent(true);
@@ -220,9 +224,6 @@ export class InvoiceComponent{
         }
     }
 
-    ngOnDestroy(){
-        this.routeSubscribe.unsubscribe();
-    }
 
     setInvoiceDate(date){
         let invoiceDateControl:any = this.invoiceForm.controls['invoice_date'];
@@ -665,7 +666,7 @@ export class InvoiceComponent{
     }
 
     calculateAmount(discount,paidAmount){
-        this.amount=numeral(this.subTotal+this.taxTotal-(numeral(discount+paidAmount).value())).value();
+        this.amount=numeral(this.subTotal+this.taxTotal-(numeral(numeral(discount).value()+numeral(paidAmount).value()).value())).value();
         return this.amount;
     }
 
@@ -781,6 +782,9 @@ export class InvoiceComponent{
     ngOnDestroy(){
         if(jQuery('#invoice-email-conformation'))
         jQuery('#invoice-email-conformation').remove();
+        if(this.routeSubscribe){
+            this.routeSubscribe.unsubscribe();
+        }
     }
 
 
