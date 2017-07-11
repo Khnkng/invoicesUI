@@ -68,6 +68,7 @@ export class InvoiceComponent{
     additionalMails:String;
     showPreview:boolean;
     preViewText:string="Preview Invoice";
+    isDuplicate:boolean;
 
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
@@ -86,7 +87,9 @@ export class InvoiceComponent{
             this.loadInitialData();
             this.loadCOA();
         });
-
+        if(this._router.url.indexOf('duplicate')!=-1){
+            this.isDuplicate=true;
+        };
     }
 
     loadCustomers(companyId:any) {
@@ -132,9 +135,9 @@ export class InvoiceComponent{
 
     setupForm() {
         let base = this;
-        this.setInvoiceDate(this.defaultDate);
-        this.closeLoader();
         if(!this.invoiceID){
+            this.closeLoader();
+            this.setInvoiceDate(this.defaultDate);
             this.newInvoice = true;
             for(let i=0; i<2; i++){
                 this.addInvoiceList(null,'item');
@@ -148,7 +151,8 @@ export class InvoiceComponent{
                 this.invoice = invoice;
                 let _invoice = _.cloneDeep(invoice);
                 delete _invoice.invoiceLines;
-                this.onCustomerSelect(invoice.customer_id);
+                this.getCustomrtDetails(invoice.customer_id);
+                this.loadContacts(invoice.customer_id);
                 this._invoiceForm.updateForm(this.invoiceForm, _invoice);
                 this.invoice.invoiceLines.forEach(function(invoiceLine:any){
                     base.addInvoiceList(invoiceLine,invoiceLine.type);
@@ -209,7 +213,7 @@ export class InvoiceComponent{
     }
 
     setPaymentDate(date){
-        let paymentDateControl:any = this.invoiceForm.controls['payment_date'];
+        let paymentDateControl:any = this.invoiceForm.controls['due_date'];
         paymentDateControl.patchValue(date);
     }
 
@@ -381,7 +385,7 @@ export class InvoiceComponent{
 
     saveInvoiceDetails(invoiceData){
         this.loadingService.triggerLoadingEvent(true);
-        if(this.newInvoice) {
+        if(this.newInvoice||this.isDuplicate) {
             this.invoiceService.createInvoice(invoiceData).subscribe(resp => {
                 this.toastService.pop(TOAST_TYPE.success, "Invoice created successfully");
                 this.navigateToDashborad();
@@ -415,7 +419,7 @@ export class InvoiceComponent{
         let days = term == 'custom' ? 0 : term.substring(3, term.length);
         let new_date = moment(this.invoiceForm.controls['invoice_date'].value, 'MM/DD/YYYY').add(days, 'days');
 
-        let dueDateControl:any = this.invoiceForm.controls['payment_date'];
+        let dueDateControl:any = this.invoiceForm.controls['due_date'];
         dueDateControl.patchValue(moment(new_date).format('MM/DD/YYYY'));
     }
 
@@ -437,6 +441,8 @@ export class InvoiceComponent{
 
 
     onCustomerSelect(value){
+        this.selectedContact=null;
+        this.maillIds=[];
         this.getCustomerContacts(value);
         let customer = _.find(this.customers, {'customer_id': value});
         this.selectedCustomer=customer;
@@ -448,6 +454,13 @@ export class InvoiceComponent{
             }
         }
     }
+
+    getCustomrtDetails(value){
+        this.getCustomerContacts(value);
+        let customer = _.find(this.customers, {'customer_id': value});
+        this.selectedCustomer=customer;
+    }
+
     onCustomerContactSelect(id){
         let contact = _.find(this.customerContacts, {'id': id});
         this.selectedContact=contact;
@@ -456,11 +469,24 @@ export class InvoiceComponent{
 
     getCustomerContacts(id){
         this.loadingService.triggerLoadingEvent(true);
+        this.loadContacts(id);
+    }
+
+    loadContacts(id){
+        this.loadingService.triggerLoadingEvent(true);
         this.customerService.customer(id,Session.getCurrentCompany())
             .subscribe(customers => {
                 this.loadingService.triggerLoadingEvent(false);
                 if(customers.customer_contact_details){
                     this.customerContacts=customers.customer_contact_details;
+                    if(this.invoiceID){
+                        let contact = _.find(this.customerContacts, {'id': this.invoice.send_to});
+                        if(contact){
+                            this.selectedContact=contact;
+                            this.maillIds.push(contact.email);
+                        }
+
+                    }
                 }
             }, error =>{
                 this.toastService.pop(TOAST_TYPE.error, "Failed to load your customers");
@@ -556,9 +582,9 @@ export class InvoiceComponent{
             this.resetAllLinesFromEditing(linesControl);
             itemForm.editable = !itemForm.editable;
         }
-        /*if(index == this.getLastActiveLineIndex(linesControl)){
+         if(index == this.getLastActiveLineIndex(linesControl)){
          this.addInvoiceList(null,type);
-         }*/
+         }
     }
 
     resetAllLinesFromEditing(linesControl){
@@ -727,8 +753,15 @@ export class InvoiceComponent{
                 link[0].download= "Invoice.pdf";
                 link[0].click();
             }, error =>{
-                this._toastService.pop(TOAST_TYPE.error, "Failed to Export report into PDF");
+                this.toastService.pop(TOAST_TYPE.error, "Failed to Export report into PDF");
             });
     }
+
+
+    ngOnDestroy(){
+        if(jQuery('#invoice-email-conformation'))
+        jQuery('#invoice-email-conformation').remove();
+    }
+
 
 }

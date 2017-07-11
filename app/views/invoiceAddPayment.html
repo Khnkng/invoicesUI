@@ -81,9 +81,12 @@
             </div>
             <div class="row">
                 <div class="medium-8 columns" *ngIf="invoicePaymentForm.controls.receivedFrom.value">
-                   <textarea style="height: 120px;" formControlName="paymentNote">
+                    <label>Payment Note (only you can see these)
+                    <textarea style="height: 120px;" placeholder="Add payment details here to help you
+remember them later…" formControlName="paymentNote">
 
                    </textarea>
+                    </label>
                 </div>
             </div>
         </div>
