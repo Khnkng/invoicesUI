@@ -285,7 +285,7 @@ export class InvoicePayComponent{
     }
 
     downloadInvoice(){
-        let html = jQuery('<div>').append(jQuery('style').clone()).append(jQuery('#paymentsPreview').clone()).html();
+        let html = jQuery('<div>').append(jQuery('style').clone()).append(jQuery('#payment-preview').clone()).html();
         let pdfReq={
             "version" : "1.1",
             "genericReport": {
