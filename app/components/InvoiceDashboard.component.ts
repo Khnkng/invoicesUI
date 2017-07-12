@@ -35,6 +35,7 @@ export class InvoiceDashboardComponent {
         '#2980b9',
         '#3dc36f'
     ];
+    statesOrder:Array<string>=["draft","sent","opened","partially_Paid","paid"];
 
     proposalsTableData: any = {};
     proposalsTableOptions: any = {search: false, pageSize: 10};
@@ -190,11 +191,12 @@ export class InvoiceDashboardComponent {
         } else if (this.selectedTab == 2) {
             this.isLoading = false;
             this.titleService.setPageTitle("invoices");
-            this.invoiceService.invoices('unpaid').subscribe(invoices => {
+            this.invoiceService.allInvoices().subscribe(invoices => {
                 if (invoices.invoices) {
-                    this.buildInvoiceTableData(invoices.invoices);
-                    //sessionStorage.setItem("localInvoicesBadges", JSON.stringify(invoices.badges));
-                    //this.localBadges = JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
+                    var sortedCollection = _.sortBy(invoices.invoices, function(item){
+                        return base.statesOrder.indexOf(item.state)
+                    });
+                    this.buildInvoiceTableData(sortedCollection);
                 } else {
                     this.closeLoading();
                 }
@@ -367,7 +369,12 @@ export class InvoiceDashboardComponent {
             row['due_date'] = invoice['due_date'];
             row['amount'] = invoice['amount'];
             row['amount_due'] = invoice['amount_due'];
-            row['status'] = invoice['state']?_.startCase((invoice['state'])):"";
+            if(invoice['state']=='partially_Paid'){
+                row['status']="Partially Paid"
+            }else {
+                row['status'] = invoice['state']?_.startCase((invoice['state'])):"";
+            }
+
             base.invoiceTableData.rows.push(row);
         });
 
