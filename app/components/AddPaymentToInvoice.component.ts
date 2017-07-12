@@ -27,7 +27,7 @@ export class InvoiceAddPayment{
     invoiceData:any;
     hasInvoiceData: boolean = false;
     dateFormat:string;
-    applyObject:any={'reference_number':'','invoice_date':'','payment_method':'','amount':''};
+    applyObject:any={'reference_number':'','invoice_date':'','payment_method':'cash','amount':''};
     paymentOptions:Array<any>=[{'name':'Cash','value':'cash'},{'name':'Credit/Debit','value':'card'},{'name':'Cheque','value':'cheque'},{'name':'PayPal','value':'paypal'}];
     routeSubscribe:any;
 
@@ -81,11 +81,11 @@ export class InvoiceAddPayment{
         this.applyObject['currency'] = this.invoiceData.currency;
         this.applyObject['customer_id'] = this.invoiceData.customer_id;
         this.invoiceService.markAsPaid(this.applyObject,this.invoiceID).subscribe(success => {
-                this.toastService.pop(TOAST_TYPE.success, "Invoice deleted successfully.");
+                this.toastService.pop(TOAST_TYPE.success, "Invoice paid successfully.");
                 this.navigateToDashborad();
             },
             error => {
-                this.toastService.pop(TOAST_TYPE.error, "Invoice deletion failed.")
+                this.toastService.pop(TOAST_TYPE.error, "Invoice payment failed.")
             });
     }
 

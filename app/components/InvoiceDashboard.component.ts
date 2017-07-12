@@ -230,7 +230,7 @@ export class InvoiceDashboardComponent {
                 this.selectTab(2, "");
             },
             error => {
-                this.toastService.pop(TOAST_TYPE.error, "Invoice deletion failed.")
+                this.toastService.pop(TOAST_TYPE.error, "Invoice mark as sent failed.")
             });
     }
 
