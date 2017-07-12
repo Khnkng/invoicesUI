@@ -100,13 +100,13 @@ export class InvoiceDashboardComponent {
                 private companiesService: CompaniesService, private invoiceService: InvoicesService,
                 private customerService: CustomersService, private titleService: pageTitleService,
                 private stateService: StateService,private numeralService:NumeralService) {
+        this.loadCustomers(Session.getCurrentCompany());
         this.routeSub = this._route.params.subscribe(params => {
             this.selectedTab = params['tabId'];
             this.selectTab(this.selectedTab, "");
             this.hasInvoices = false;
             this.hasPaidInvoices = false;
             this.companyCurrency = Session.getCurrentCompanyCurrency();
-            this.loadCustomers(Session.getCurrentCompany());
         });
         this.localBadges = JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
         if (!this.localBadges) {

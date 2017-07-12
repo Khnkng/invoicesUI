@@ -61,10 +61,12 @@ export class InvoiceAddPaymentComponent {
     }
 
     gotoPreviousState() {
-        let prevState = this.stateService.getPrevState();
+        /*let prevState = this.stateService.getPrevState();
         if (prevState) {
             this._router.navigate([prevState.url]);
-        }
+        }*/
+        let link = ['invoices/dashboard', 1];
+        this._router.navigate(link);
     }
 
     loadPayment() {

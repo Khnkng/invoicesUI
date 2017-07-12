@@ -101,10 +101,12 @@ export class InvoiceComponent{
     }
 
     gotoPreviousState() {
-        let prevState = this.stateService.getPrevState();
+        /*let prevState = this.stateService.getPrevState();
         if (prevState) {
             this._router.navigate([prevState.url]);
-        }
+        }*/
+        let link = ['invoices/dashboard', 2];
+        this._router.navigate(link);
     }
 
     loadCustomers(companyId:any) {
