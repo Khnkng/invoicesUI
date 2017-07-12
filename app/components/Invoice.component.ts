@@ -170,8 +170,8 @@ export class InvoiceComponent{
                 delete _invoice.invoiceLines;
                 let taskLines:Array<any> = [];
                 let itemLines:Array<any> = [];
-                let taskLines =  _.filter(this.invoice.invoiceLines, function(invoice) { return invoice.type == 'task'; });
-                let itemLines =  _.filter(this.invoice.invoiceLines, function(invoice) { return invoice.type == 'item'; });
+                 taskLines =  _.filter(this.invoice.invoiceLines, function(invoice) { return invoice.type == 'task'; });
+                 itemLines =  _.filter(this.invoice.invoiceLines, function(invoice) { return invoice.type == 'item'; });
 
                 if(taskLines.length==0){
                     for(let i=0; i<2; i++){

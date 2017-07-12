@@ -194,7 +194,7 @@ export class InvoiceDashboardComponent {
             this.invoiceService.allInvoices().subscribe(invoices => {
                 if (invoices.invoices) {
                     var sortedCollection = _.sortBy(invoices.invoices, function(item){
-                        return base.statesOrder.indexOf(item.state)
+                        return base.statesOrder.indexOf(item.state);
                     });
                     this.buildInvoiceTableData(sortedCollection);
                 } else {
