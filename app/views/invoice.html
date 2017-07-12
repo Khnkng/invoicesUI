@@ -307,6 +307,11 @@
                                                     </label>
                                                 </div>
                                             </div>
+                                            <div class="row" style="margin-top: 0.5rem" *ngIf="!showPreview">
+                                                <div class="small-12 medium-12 columns" style="padding: 0px" *ngIf="invoiceID">
+                                                    <span class="label warning">{{coreValue}}</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </section>

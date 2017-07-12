@@ -73,6 +73,7 @@ export class InvoiceComponent{
     isDuplicate:boolean;
     routeSubscribe:any;
     companyAddress:any;
+    coreValue:number=0;
 
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
@@ -182,7 +183,7 @@ export class InvoiceComponent{
                         this.addInvoiceList(null,'item');
                     }
                 }
-
+                this.coreValue=_.random(50,75)+'%';
                 this.getCustomrtDetails(invoice.customer_id);
                 this.loadContacts(invoice.customer_id);
                 this._invoiceForm.updateForm(this.invoiceForm, _invoice);
