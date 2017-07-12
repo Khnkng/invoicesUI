@@ -63,10 +63,10 @@
                     <tbody>
                     <tr>
                         <td>
-                            <div>Invoice From</div>
-                            <div>Name</div>
-                            <div>City</div>
-                            <div>State</div>
+                            <div>{{invoiceData.company?invoiceData.company.name:""}}</div>
+                            <div>{{invoiceData.company?invoiceData.company.address:""}}</div>
+                            <div>{{invoiceData.company?invoiceData.company.state:""}}, {{invoiceData.company?invoiceData.company.zipcode:""}}</div>
+                            <div>{{invoiceData.company?invoiceData.company.country:""}}</div>
                         </td>
                     </tr>
                     </tbody>
@@ -76,26 +76,27 @@
                     <tr>
                         <th class="heading-color" colspan="3">Prepared For</th>
                         <th class="heading-color">Invoice Date</th>
-                        <th class="heading-color">Invoice Date</th>
-                        <th class="heading-color text-right">Invoice Total(USD)</th>
+                        <th class="heading-color">Invoice Number</th>
+                        <th class="heading-color text-right"><span>Invoice Total</span><span>({{invoiceData.currency}})</span></th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr>
                         <td valign="top" colspan="3">
-                            <div>Name</div>
-                            <div>City</div>
-                            <div>State</div>
+                            <div>{{invoiceData.customer?invoiceData.customer.customer_name:""}}</div>
+                            <div>{{invoiceData.customer?invoiceData.customer.street_1:""}}</div>
+                            <div>{{invoiceData.customer?invoiceData.customer.customer_city:""}}, {{invoiceData.customer?invoiceData.customer.customer_zipcode:""}}</div>
+                            <div>{{invoiceData.customer?invoiceData.customer.customer_country:""}}</div>
                         </td>
-                        <td valign="top">07/01/2017</td>
-                        <td valign="top">INV-1000</td>
-                        <td valign="top" class="text-right invoice-amount">$100.00</td>
+                        <td valign="top">{{invoiceData.invoice_date}}</td>
+                        <td valign="top">{{invoiceData.number}}</td>
+                        <td valign="top" class="text-right invoice-amount">{{invoiceData.amount | currency:invoiceData.currency:true:'1.2-2'}}</td>
                     </tr>
                     </tbody>
                 </table>
                 <table class='items middle-tables'>
                     <tbody  cellpadding=5 cellspacing=5>
-                    <tr  class="heading-color">
+                    <tr  class="heading-color" *ngIf="taskInvoices.length>0">
                         <td >Item</td>
                         <td >Description</td>
                         <td ></td>
@@ -103,18 +104,18 @@
                         <td >Hours</td>
                         <td >Line Total</td>
                     </tr>
-                    <tr >
-                        <td >Delivery  Service</td>
-                        <td >Desc</td>
+                    <tr *ngFor="let taskInvoice of taskInvoices" [hidden]="taskInvoices.length<0">
+                        <td >{{taskInvoice.item.name}}</td>
+                        <td >{{taskInvoice.description}}</td>
                         <td ></td>
-                        <td >$5.00</td>
-                        <td >7</td>
-                        <td >$35.00</td>
+                        <td >{{taskInvoice.price | currency:invoiceData.currency:true:'1.2-2'}}</td>
+                        <td >{{taskInvoice.quantity}}</td>
+                        <td >{{taskInvoice.amount | currency:invoiceData.currency:true:'1.2-2'}}</td>
                     </tr>
                     <tr >
                         <td  class="separator" colspan="6"></td>
                     </tr>
-                    <tr  class="heading-color">
+                    <tr class="heading-color" *ngIf="itemInvoices.length>0">
                         <td >Item</td>
                         <td >Description</td>
                         <td ></td>
@@ -122,14 +123,15 @@
                         <td >Quantity</td>
                         <td >Line Total</td>
                     </tr>
-                    <tr >
-                        <td >Delivery  Service</td>
-                        <td >Desc</td>
+                    <tr *ngFor="let itemInvoice of itemInvoices" [hidden]="itemInvoices.length<0">
+                        <td >{{itemInvoice.item.name}}</td>
+                        <td >{{itemInvoice.description}}</td>
                         <td ></td>
-                        <td >$5.00</td>
-                        <td >7</td>
-                        <td >$35.00</td>
+                        <td >{{itemInvoice.price | currency:invoiceData.currency:true:'1.2-2'}}</td>
+                        <td >{{itemInvoice.quantity}}</td>
+                        <td >{{itemInvoice.amount | currency:invoiceData.currency:true:'1.2-2'}}</td>
                     </tr>
+
                     <tr >
                         <td  class="emptyCol" colspan="2"></td>
                         <td  class="separator" colspan="4"></td>
@@ -138,13 +140,13 @@
                         <td  colspan="2"></td>
                         <td >Subtotal</td>
                         <td  colspan="2"></td>
-                        <td ></td>
+                        <td>{{invoiceData.sub_totoal | currency:invoiceData.currency:true:'1.2-2'}}</td>
                     </tr>
                     <tr >
                         <td  class="emptyCol" colspan="2"></td>
                         <td >Tax</td>
                         <td  class="emptyCol" colspan="2"></td>
-                        <td ></td>
+                        <td>$0</td>
                     </tr>
                     <tr >
                         <td  class="emptyCol" colspan="2"></td>
@@ -154,7 +156,7 @@
                         <td  class="emptyCol" colspan="2"></td>
                         <td >Total</td>
                         <td  class="emptyCol" colspan="2"></td>
-                        <td >$35.00</td>
+                        <td >{{invoiceData.amount | currency:invoiceData.currency:true:'1.2-2'}}</td>
                     </tr>
                     <tr >
                         <td  class="emptyCol" colspan="2"></td>
@@ -172,10 +174,10 @@
                     <tbody>
                     <tr>
                         <td>
-                            <span>Payment is due with in 30 days of receiving this invoice</span>
+                            <span>{{invoiceData.term}}</span>
                         </td>
                         <td>
-                            <span>Payment is due with in 30 days of receiving this invoice</span>
+                            <span>{{invoiceData.notes}}</span>
                         </td>
                     </tr>
                     </tbody>
@@ -183,7 +185,7 @@
                 <table class="middle-tables">
                     <thead>
                     <tr>
-                        <th class="heading-color">Payment Terms</th>
+                        <th class="heading-color">Payment Options</th>
                     </tr>
                     </thead>
                     <tbody>

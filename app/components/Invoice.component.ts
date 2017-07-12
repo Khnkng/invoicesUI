@@ -16,6 +16,8 @@ import {ChartOfAccountsService} from "qCommon/app/services/ChartOfAccounts.servi
 import {pageTitleService} from "qCommon/app/services/PageTitle";
 import {ReportService} from "reportsUI/app/services/Reports.service";
 import {PAYMENTSPATHS} from "reportsUI/app/constants/payments.constants";
+import {StateService} from "qCommon/app/services/StateService";
+import {SwitchBoard} from "qCommon/app/services/SwitchBoard";
 
 declare let _:any;
 declare let numeral:any;
@@ -69,12 +71,14 @@ export class InvoiceComponent{
     showPreview:boolean;
     preViewText:string="Preview Invoice";
     isDuplicate:boolean;
+    routeSubscribe:any;
+    companyAddress:any;
 
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
                 private customerService: CustomersService, private _invoiceForm:InvoiceForm, private _invoiceLineForm:InvoiceLineForm, private _invoiceLineTaxesForm:InvoiceLineTaxesForm,
-                private coaService: ChartOfAccountsService,private titleService:pageTitleService, private reportService: ReportService){
+                private coaService: ChartOfAccountsService,private titleService:pageTitleService,private stateService: StateService, private reportService: ReportService,private switchBoard: SwitchBoard){
         this.titleService.setPageTitle("Invoices");
         let _form:any = this._invoiceForm.getForm();
         _form['invoiceLines'] = this.invoiceLineArray;
@@ -86,10 +90,23 @@ export class InvoiceComponent{
             this.defaultDate=moment(new Date()).format("MM/DD/YYYY");
             this.loadInitialData();
             this.loadCOA();
+            this.getCompanyDetails();
         });
         if(this._router.url.indexOf('duplicate')!=-1){
             this.isDuplicate=true;
         };
+        this.routeSubscribe = switchBoard.onClickPrev.subscribe(title => {
+            this.gotoPreviousState();
+        });
+    }
+
+    gotoPreviousState() {
+        /*let prevState = this.stateService.getPrevState();
+        if (prevState) {
+            this._router.navigate([prevState.url]);
+        }*/
+        let link = ['invoices/dashboard', 2];
+        this._router.navigate(link);
     }
 
     loadCustomers(companyId:any) {
@@ -151,6 +168,21 @@ export class InvoiceComponent{
                 this.invoice = invoice;
                 let _invoice = _.cloneDeep(invoice);
                 delete _invoice.invoiceLines;
+                let taskLines:Array<any> = [];
+                let itemLines:Array<any> = [];
+                let taskLines =  _.filter(this.invoice.invoiceLines, function(invoice) { return invoice.type == 'task'; });
+                let itemLines =  _.filter(this.invoice.invoiceLines, function(invoice) { return invoice.type == 'item'; });
+
+                if(taskLines.length==0){
+                    for(let i=0; i<2; i++){
+                        this.addInvoiceList(null,'task');
+                    }
+                }if(itemLines.length==0){
+                    for(let i=0; i<2; i++){
+                        this.addInvoiceList(null,'item');
+                    }
+                }
+
                 this.getCustomrtDetails(invoice.customer_id);
                 this.loadContacts(invoice.customer_id);
                 this._invoiceForm.updateForm(this.invoiceForm, _invoice);
@@ -166,6 +198,26 @@ export class InvoiceComponent{
     loadInitialData() {
         let companyId = Session.getCurrentCompany();
         this.loadCustomers(companyId);
+    }
+
+    getCompanyDetails(){
+        this.companyService.company(Session.getCurrentCompany())
+            .subscribe(companyAddress => {
+                if(companyAddress){
+                    let address={
+                        name:companyAddress.name,
+                        address:companyAddress.addresses[0].line,
+                        country:companyAddress.addresses[0].country,
+                        state:companyAddress.addresses[0].stateCode,
+                        zipcode:companyAddress.addresses[0].zipcode
+                    };
+                    this.companyAddress=address;
+                }
+
+            },error=>{
+                this.toastService.pop(TOAST_TYPE.error, "Failed to load your Company details");
+            });
+
     }
 
     addInvoiceList(line?:any,type?:any) {
@@ -206,6 +258,7 @@ export class InvoiceComponent{
             //Fetch existing invoice
         }
     }
+
 
     setInvoiceDate(date){
         let invoiceDateControl:any = this.invoiceForm.controls['invoice_date'];
@@ -323,8 +376,13 @@ export class InvoiceComponent{
         taskLines=this.getInvoiceLines('task');
         itemLines=this.getInvoiceLines('item');
 
+        if(this.amount<0){
+            this.toastService.pop(TOAST_TYPE.error, "Invoice amount should grater than or equal to zero");
+            return
+        }
+
         if(taskLines.length==0&&itemLines.length==0){
-            this.toastService.pop(TOAST_TYPE.error, "Please Tasks or Item Lines");
+            this.toastService.pop(TOAST_TYPE.error, "Please add Tasks or Item Lines");
             return
         }
 
@@ -335,6 +393,8 @@ export class InvoiceComponent{
         invoiceData.invoiceLines=itemLines.concat(taskLines);
         invoiceData.recepientsMails=this.maillIds;
         invoiceData.sendMail=sendMail;
+        invoiceData.company=this.companyAddress;
+        invoiceData.customer=this.selectedCustomer;
         this.invoiceProcessedData=invoiceData;
         if(action=='email'){
             this.openEmailDailog();
@@ -388,6 +448,8 @@ export class InvoiceComponent{
 
     saveInvoiceDetails(invoiceData){
         this.loadingService.triggerLoadingEvent(true);
+        delete invoiceData.company;
+        delete invoiceData.customer;
         if(this.newInvoice||this.isDuplicate) {
             this.invoiceService.createInvoice(invoiceData).subscribe(resp => {
                 this.toastService.pop(TOAST_TYPE.success, "Invoice created successfully");
@@ -459,7 +521,7 @@ export class InvoiceComponent{
     }
 
     getCustomrtDetails(value){
-        this.getCustomerContacts(value);
+        //this.getCustomerContacts(value);
         let customer = _.find(this.customers, {'customer_id': value});
         this.selectedCustomer=customer;
     }
@@ -648,7 +710,7 @@ export class InvoiceComponent{
     }
 
     calculateAmount(discount,paidAmount){
-        this.amount=numeral(this.subTotal+this.taxTotal-(numeral(discount+paidAmount).value())).value();
+        this.amount=numeral(this.subTotal+this.taxTotal-(numeral(numeral(discount).value()+numeral(paidAmount).value()).value())).value();
         return this.amount;
     }
 
@@ -764,6 +826,9 @@ export class InvoiceComponent{
     ngOnDestroy(){
         if(jQuery('#invoice-email-conformation'))
         jQuery('#invoice-email-conformation').remove();
+        if(this.routeSubscribe){
+            this.routeSubscribe.unsubscribe();
+        }
     }
 
 

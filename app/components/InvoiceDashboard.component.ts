@@ -14,6 +14,7 @@ import {CustomersService} from "qCommon/app/services/Customers.service";
 import {pageTitleService} from "qCommon/app/services/PageTitle";
 import {StateService} from "qCommon/app/services/StateService";
 import {State} from "qCommon/app/models/State";
+import {NumeralService} from "qCommon/app/services/Numeral.service";
 
 declare let _:any;
 declare let jQuery:any;
@@ -34,6 +35,7 @@ export class InvoiceDashboardComponent {
         '#2980b9',
         '#3dc36f'
     ];
+    statesOrder:Array<string>=["draft","sent","opened","partially_Paid","paid"];
 
     proposalsTableData: any = {};
     proposalsTableOptions: any = {search: false, pageSize: 10};
@@ -98,24 +100,35 @@ export class InvoiceDashboardComponent {
                 private toastService: ToastService, private loadingService: LoadingService,
                 private companiesService: CompaniesService, private invoiceService: InvoicesService,
                 private customerService: CustomersService, private titleService: pageTitleService,
-                private stateService: StateService) {
+                private stateService: StateService,private numeralService:NumeralService) {
+        this.loadCustomers(Session.getCurrentCompany());
         this.routeSub = this._route.params.subscribe(params => {
             this.selectedTab = params['tabId'];
             this.selectTab(this.selectedTab, "");
             this.hasInvoices = false;
             this.hasPaidInvoices = false;
             this.companyCurrency = Session.getCurrentCompanyCurrency();
-            this.loadCustomers(Session.getCurrentCompany());
         });
         this.localBadges = JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
         if (!this.localBadges) {
-            this.localBadges = {proposal_count: 0, invoice_unpaid: 0, invoice_paid: 0};
+            this.localBadges = {proposal_count: 0, payment_count: 0, invoice_count: 0};
             sessionStorage.setItem('localInvoicesBadges', JSON.stringify(this.localBadges));
         } else {
             this.localBadges = JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
         }
 
+        this.getBadgesCount();
+
     }
+
+
+    getBadgesCount(){
+        this.invoiceService.getInvoicesCount().subscribe(badges => {
+            sessionStorage.setItem("localInvoicesBadges", JSON.stringify(badges.badges));
+            this.localBadges = JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
+        }, error => this.handleError(error));
+    }
+
 
     addInvoiceDashboardState() {
         this.stateService.addState(new State('Invoices', this._router.url, null, this.selectedTab));
@@ -178,11 +191,12 @@ export class InvoiceDashboardComponent {
         } else if (this.selectedTab == 2) {
             this.isLoading = false;
             this.titleService.setPageTitle("invoices");
-            this.invoiceService.invoices('unpaid').subscribe(invoices => {
+            this.invoiceService.allInvoices().subscribe(invoices => {
                 if (invoices.invoices) {
-                    this.buildInvoiceTableData(invoices.invoices);
-                    sessionStorage.setItem("localInvoicesBadges", JSON.stringify(invoices.badges));
-                    this.localBadges = JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
+                    var sortedCollection = _.sortBy(invoices.invoices, function(item){
+                        return base.statesOrder.indexOf(item.state)
+                    });
+                    this.buildInvoiceTableData(sortedCollection);
                 } else {
                     this.closeLoading();
                 }
@@ -211,7 +225,7 @@ export class InvoiceDashboardComponent {
         let base = this;
         let selectedIds = _.map(this.selectedTableRows, 'id');
         this.invoiceService.markAsSentInvoice(selectedIds).subscribe(success => {
-                this.toastService.pop(TOAST_TYPE.success, "Invoice deleted successfully.");
+                this.toastService.pop(TOAST_TYPE.success, "Invoice mark as sent successfully.");
                 this.hasInvoices = false;
                 this.selectTab(2, "");
             },
@@ -227,6 +241,11 @@ export class InvoiceDashboardComponent {
 
     showInvoice(invoice) {
         let link = ['invoices/edit', invoice.id];
+        this._router.navigate(link);
+    }
+
+    showDuplicate(invoice) {
+        let link = ['invoices/duplicate', invoice.id];
         this._router.navigate(link);
     }
 
@@ -350,7 +369,12 @@ export class InvoiceDashboardComponent {
             row['due_date'] = invoice['due_date'];
             row['amount'] = invoice['amount'];
             row['amount_due'] = invoice['amount_due'];
-            row['status'] = invoice['state'];
+            if(invoice['state']=='partially_Paid'){
+                row['status']="Partially Paid"
+            }else {
+                row['status'] = invoice['state']?_.startCase((invoice['state'])):"";
+            }
+
             base.invoiceTableData.rows.push(row);
         });
 
@@ -409,7 +433,7 @@ export class InvoiceDashboardComponent {
 
 
 
-            row['amount'] = "<div>"+payment.paymentAmount+"</div><div>"+assignmentHtml+"</div>";
+            row['amount'] = "<div>"+base.numeralService.format("$0,0.00", payment.paymentAmount)+"</div><div>"+assignmentHtml+"</div>";
             base.paidInvoiceTableData.rows.push(row);
         });
 
@@ -579,7 +603,7 @@ export class InvoiceDashboardComponent {
                 this.showInvoice(this.selectedTableRows[0]);
                 break;
             case 'duplicate':
-                this.showInvoice(this.selectedTableRows[0]);
+                this.showDuplicate(this.selectedTableRows[0]);
                 break;
             case 'sent':
                 this.invoiceMarkAsSent();

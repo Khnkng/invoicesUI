@@ -13,6 +13,8 @@ import {InvoicesService} from "../services/Invoices.service";
 import {FormBuilder, FormGroup} from "@angular/forms";
 import {InvoicePaymentForm} from "../forms/invoicePayment.form";
 import {ActivatedRoute, Router} from "@angular/router";
+import {StateService} from "qCommon/app/services/StateService";
+import {SwitchBoard} from "qCommon/app/services/SwitchBoard";
 
 declare let _:any;
 declare let numeral:any;
@@ -37,12 +39,14 @@ export class InvoiceAddPaymentComponent {
     routeSub:any;
     paymentId:string;
     payment:any;
+    routeSubscribe:any;
 
     constructor(private _fb: FormBuilder, private loadingService:LoadingService,
                 private customerService:CustomersService,
                 private toastService: ToastService, private invoiceService: InvoicesService,
                 private _invoicePaymentForm:InvoicePaymentForm, private _router:Router,
-                private numeralService:NumeralService, private _route: ActivatedRoute) {
+                private numeralService:NumeralService, private _route: ActivatedRoute,
+                private stateService: StateService,private switchBoard: SwitchBoard) {
         this.loadCustomers(Session.getCurrentCompany());
         this.invoicePaymentForm = _fb.group(_invoicePaymentForm.getForm());
         this.routeSub = this._route.params.subscribe(params => {
@@ -51,6 +55,18 @@ export class InvoiceAddPaymentComponent {
               this.loadPayment();
             }
         });
+        this.routeSubscribe = switchBoard.onClickPrev.subscribe(title => {
+            this.gotoPreviousState();
+        });
+    }
+
+    gotoPreviousState() {
+        /*let prevState = this.stateService.getPrevState();
+        if (prevState) {
+            this._router.navigate([prevState.url]);
+        }*/
+        let link = ['invoices/dashboard', 1];
+        this._router.navigate(link);
     }
 
     loadPayment() {
@@ -124,6 +140,8 @@ export class InvoiceAddPaymentComponent {
         console.log("pament--", payment);
         this.invoiceService.addPayment(payment).subscribe(response => {
             this.toastService.pop(TOAST_TYPE.success, "Payment created successfully");
+            let link = ['invoices/dashboard',1];
+            this._router.navigate(link);
         }, error => {
             this.toastService.pop(TOAST_TYPE.error, "Failed to create payment");
         })
@@ -200,6 +218,10 @@ export class InvoiceAddPaymentComponent {
         this.invoicePaymentForm.controls['type'].setValue("cheque");
         this.invoicePaymentForm.controls['currencyCode'].setValue("USD");
         this.numeralService.switchLocale("USD")
+    }
+
+    ngOnDestroy(){
+        this.routeSubscribe.unsubscribe();
     }
 
 }
