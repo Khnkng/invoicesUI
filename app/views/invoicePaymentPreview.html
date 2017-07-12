@@ -112,7 +112,7 @@
                         <td >{{taskInvoice.quantity}}</td>
                         <td >{{taskInvoice.amount | currency:invoiceData.currency:true:'1.2-2'}}</td>
                     </tr>
-                    <tr >
+                    <tr *ngIf="taskInvoices.length>0 && itemInvoices.length>0">
                         <td  class="separator" colspan="6"></td>
                     </tr>
                     <tr class="heading-color" *ngIf="itemInvoices.length>0">
@@ -146,7 +146,7 @@
                         <td  class="emptyCol" colspan="2"></td>
                         <td >Tax</td>
                         <td  class="emptyCol" colspan="2"></td>
-                        <td>$0</td>
+                        <td>{{invoiceData.tax_amount}}</td>
                     </tr>
                     <tr >
                         <td  class="emptyCol" colspan="2"></td>
