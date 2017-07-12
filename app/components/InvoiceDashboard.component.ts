@@ -242,6 +242,11 @@ export class InvoiceDashboardComponent {
         this._router.navigate(link);
     }
 
+    showDuplicate(invoice) {
+        let link = ['invoices/duplicate', invoice.id];
+        this._router.navigate(link);
+    }
+
     handleError(error) {
         this.loadingService.triggerLoadingEvent(false);
         this.toastService.pop(TOAST_TYPE.error, "Could not perform action.")
@@ -591,7 +596,7 @@ export class InvoiceDashboardComponent {
                 this.showInvoice(this.selectedTableRows[0]);
                 break;
             case 'duplicate':
-                this.showInvoice(this.selectedTableRows[0]);
+                this.showDuplicate(this.selectedTableRows[0]);
                 break;
             case 'sent':
                 this.invoiceMarkAsSent();

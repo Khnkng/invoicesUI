@@ -168,6 +168,21 @@ export class InvoiceComponent{
                 this.invoice = invoice;
                 let _invoice = _.cloneDeep(invoice);
                 delete _invoice.invoiceLines;
+                let taskLines:Array<any> = [];
+                let itemLines:Array<any> = [];
+                let taskLines =  _.filter(this.invoice.invoiceLines, function(invoice) { return invoice.type == 'task'; });
+                let itemLines =  _.filter(this.invoice.invoiceLines, function(invoice) { return invoice.type == 'item'; });
+
+                if(taskLines.length==0){
+                    for(let i=0; i<2; i++){
+                        this.addInvoiceList(null,'task');
+                    }
+                }if(itemLines.length==0){
+                    for(let i=0; i<2; i++){
+                        this.addInvoiceList(null,'item');
+                    }
+                }
+
                 this.getCustomrtDetails(invoice.customer_id);
                 this.loadContacts(invoice.customer_id);
                 this._invoiceForm.updateForm(this.invoiceForm, _invoice);
@@ -361,8 +376,13 @@ export class InvoiceComponent{
         taskLines=this.getInvoiceLines('task');
         itemLines=this.getInvoiceLines('item');
 
+        if(this.amount<0){
+            this.toastService.pop(TOAST_TYPE.error, "Invoice amount should grater than or equal to zero");
+            return
+        }
+
         if(taskLines.length==0&&itemLines.length==0){
-            this.toastService.pop(TOAST_TYPE.error, "Please Tasks or Item Lines");
+            this.toastService.pop(TOAST_TYPE.error, "Please add Tasks or Item Lines");
             return
         }
 
@@ -501,7 +521,7 @@ export class InvoiceComponent{
     }
 
     getCustomrtDetails(value){
-        this.getCustomerContacts(value);
+        //this.getCustomerContacts(value);
         let customer = _.find(this.customers, {'customer_id': value});
         this.selectedCustomer=customer;
     }
