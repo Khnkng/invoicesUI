@@ -110,13 +110,24 @@ export class InvoiceDashboardComponent {
         });
         this.localBadges = JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
         if (!this.localBadges) {
-            this.localBadges = {proposal_count: 0, invoice_unpaid: 0, invoice_paid: 0};
+            this.localBadges = {proposal_count: 0, payment_count: 0, invoice_count: 0};
             sessionStorage.setItem('localInvoicesBadges', JSON.stringify(this.localBadges));
         } else {
             this.localBadges = JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
         }
 
+        this.getBadgesCount();
+
     }
+
+
+    getBadgesCount(){
+        this.invoiceService.getInvoicesCount().subscribe(badges => {
+            sessionStorage.setItem("localInvoicesBadges", JSON.stringify(badges.badges));
+            this.localBadges = JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
+        }, error => this.handleError(error));
+    }
+
 
     addInvoiceDashboardState() {
         this.stateService.addState(new State('Invoices', this._router.url, null, this.selectedTab));

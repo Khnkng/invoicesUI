@@ -131,6 +131,13 @@ export class InvoicesService extends QountServices {
             .catch(this.handleError)
     }
 
+    getInvoicesCount(){
+        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE,null,{id: Session.getUser().id,companyId:Session.getCurrentCompany()});
+        return this.query(url+"/count", SOURCE_TYPE.JAVA).map(res => <any> res.json())
+            .catch(this.handleError)
+    }
+
+
     private handleError (error: Response) {
         return Observable.throw(error.text());
     }
