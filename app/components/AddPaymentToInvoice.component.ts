@@ -38,8 +38,7 @@ export class InvoiceAddPayment{
         this.titleService.setPageTitle("Add Payment To Invoice");
         this.dateFormat = dateFormater.getFormat();
         this.routeSub = this._route.params.subscribe(params => {
-            //this.invoiceID=params['invoiceID'];
-            this.invoiceID='179f602c-1545-461b-869d-7d11631c5b78';
+            this.invoiceID=params['invoiceID'];
             this.loadInvoiceData();
         });
         this.routeSubscribe = switchBoard.onClickPrev.subscribe(title => {
