@@ -182,8 +182,8 @@ export class InvoiceDashboardComponent {
             this.invoiceService.invoices('unpaid').subscribe(invoices => {
                 if (invoices.invoices) {
                     this.buildInvoiceTableData(invoices.invoices);
-                    sessionStorage.setItem("localInvoicesBadges", JSON.stringify(invoices.badges));
-                    this.localBadges = JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
+                    //sessionStorage.setItem("localInvoicesBadges", JSON.stringify(invoices.badges));
+                    //this.localBadges = JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
                 } else {
                     this.closeLoading();
                 }
@@ -351,7 +351,7 @@ export class InvoiceDashboardComponent {
             row['due_date'] = invoice['due_date'];
             row['amount'] = invoice['amount'];
             row['amount_due'] = invoice['amount_due'];
-            row['status'] = invoice['state']?_.capitalize(invoice['state']):"";
+            row['status'] = invoice['state']?_.startCase((invoice['state'])):"";
             base.invoiceTableData.rows.push(row);
         });
 
