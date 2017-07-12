@@ -74,7 +74,7 @@ export class InvoiceAddPaymentComponent {
         this.invoiceService.payment(this.paymentId).subscribe(payment => {
             this.payment = payment;
             let paymentFormValues:any = this.payment;
-            this.paymentLines = this.payment.paymentLines;
+
             if(!paymentFormValues.memo) {
                 paymentFormValues.memo = "";
             }
@@ -86,6 +86,9 @@ export class InvoiceAddPaymentComponent {
             delete paymentFormValues['paymentLines'];
 
             this.invoicePaymentForm.setValue(paymentFormValues);
+            setTimeout(() => {
+                this.loadInvoices();
+            }, 50);
         })
     }
 
@@ -168,8 +171,9 @@ export class InvoiceAddPaymentComponent {
             paymentLine.invoiceId = invoice.id;
             paymentLine.number = invoice.number;
             paymentLine.invoiceAmount = invoice.amount;
-            paymentLine.amount = "";
+            paymentLine.amount = invoice.amount_paid || "";
             paymentLine.invoiceDate = invoice.invoice_date;
+            paymentLine.state = invoice.state;
             let date:any = new Date(invoice.invoice_date);
             let termDays =  invoice.term ? parseInt(invoice.term.replace("net")) : 0;
             date.setDate(date + termDays);
