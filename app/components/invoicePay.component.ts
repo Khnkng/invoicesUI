@@ -192,7 +192,7 @@ export class InvoicePayComponent{
         }, error=>{
             this.loadingService.triggerLoadingEvent(false);
             this.resetCardFields();
-            this.toastService.pop(TOAST_TYPE.error, "Invoice Payemnt failed");
+            this.toastService.pop(TOAST_TYPE.error, "Invoice Payment failed");
         });
     }
 
