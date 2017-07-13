@@ -38,12 +38,11 @@ export class InvoiceDashboardComponent {
     statesOrder:Array<string>=["draft","sent","opened","partially_Paid","paid"];
 
     proposalsTableData: any = {};
-    proposalsTableOptions: any = {search: false, pageSize: 10};
+    proposalsTableOptions: any = {search: true, pageSize: 10};
     paidInvoiceTableData: any = {};
-    piadInvoiceTableOptions: any = {search: false, pageSize: 10};
+    paidInvoiceTableOptions: any = {search: true, pageSize: 10};
     invoiceTableData: any = {};
-    invoiceTableOptions: any = {search: false, pageSize: 10, selectable: false};
-    paidInvoiceTableOptions: any = {search: false, pageSize: 10};
+    invoiceTableOptions: any = {search: true, pageSize: 10, selectable: false};
 
     tabHeight: string;
     badges: any = [];
@@ -69,17 +68,17 @@ export class InvoiceDashboardComponent {
         'value': 'edit'
     },
         {'className': 'ion-ios-copy-outline',
-        'name': 'Duplicate',
-        'value': 'duplicate'
-    }, {
-        'className': 'ion-social-usd',
-        'name': 'Mark as paid',
-        'value': 'paid'
-    }, {
-        'className': 'ion-android-send',
-        'name': 'Mark as sent',
-        'value': 'sent'
-    }, {'className': 'ion-ios-trash', 'name': 'Delete', 'value': 'delete'}];
+            'name': 'Duplicate',
+            'value': 'duplicate'
+        }, {
+            'className': 'ion-social-usd',
+            'name': 'Mark as paid',
+            'value': 'paid'
+        }, {
+            'className': 'ion-android-send',
+            'name': 'Mark as sent',
+            'value': 'sent'
+        }, {'className': 'ion-ios-trash', 'name': 'Delete', 'value': 'delete'}];
     invoiceMultipleSelect: Array<any> = [ {
         'className': 'ion-android-send',
         'name': 'Mark as sent',
@@ -274,21 +273,13 @@ export class InvoiceDashboardComponent {
     updateTabHeight() {
         let base = this;
         let topOfDiv = jQuery('.tab-content').offset().top;
-        topOfDiv = topOfDiv < 150 ? 170 : topOfDiv;
+        topOfDiv = topOfDiv < 150 ? 150 : topOfDiv;
         let bottomOfVisibleWindow = Math.max(jQuery(document).height(), jQuery(window).height());
         base.tabHeight = (bottomOfVisibleWindow - topOfDiv - 25) + "px";
         jQuery('.tab-content').css('height', base.tabHeight);
-        switch (this.selectedTab) {
-            case 0:
-                base.proposalsTableOptions.pageSize = Math.floor((bottomOfVisibleWindow - topOfDiv - 75) / 42) - 3;
-                break;
-            case 1:
-                base.piadInvoiceTableOptions.pageSize = Math.floor((bottomOfVisibleWindow - topOfDiv - 75) / 42) - 3;
-                break;
-            case 2:
-                base.invoiceTableOptions.pageSize = Math.floor((bottomOfVisibleWindow - topOfDiv - 75) / 42) - 3;
-                break;
-        }
+        base.proposalsTableOptions.pageSize = Math.floor((bottomOfVisibleWindow - topOfDiv - 75) / 42) - 3;
+        base.paidInvoiceTableOptions.pageSize = Math.floor((bottomOfVisibleWindow - topOfDiv - 75) / 62) - 3;
+        base.invoiceTableOptions.pageSize = Math.floor((bottomOfVisibleWindow - topOfDiv - 75) / 42) - 3;
     }
 
     ngAfterViewInit() {
@@ -321,8 +312,6 @@ export class InvoiceDashboardComponent {
         this.hasInvoices = false;
         this.invoices = invoices;
         this.invoiceTableData.rows = [];
-        this.invoiceTableOptions.search = true;
-        this.invoiceTableOptions.pageSize = 9;
         this.invoiceTableData.columns = [
             {"name": "id", "title": "id", "visible": false},
             {
@@ -387,8 +376,6 @@ export class InvoiceDashboardComponent {
     buildPaymentsTableData() {
         this.hasPaidInvoices = false;
         this.paidInvoiceTableData.rows = [];
-        this.paidInvoiceTableOptions.search = true;
-        this.paidInvoiceTableOptions.pageSize = 9;
         this.paidInvoiceTableData.columns = [
             {"name": "id", "title": "id", "visible": false},
             {
@@ -419,17 +406,17 @@ export class InvoiceDashboardComponent {
             });
             let assignmentHtml = "";
 
-                if(assignedAmount >= payment.paymentAmount) {
-                    assignStatus = "Assigned";
-                    assignmentHtml = "<small style='color:#00B1A9'>"+assignStatus+"</small>"
+            if(assignedAmount >= payment.paymentAmount) {
+                assignStatus = "Assigned";
+                assignmentHtml = "<small style='color:#00B1A9'>"+assignStatus+"</small>"
 
-                } else if(assignedAmount > 0) {
-                    assignStatus = "Partially Assigned";
-                    assignmentHtml = "<small style='color:#ff3219'>"+assignStatus+"</small>"
-                } else {
-                    assignStatus = "Unassigned";
-                    assignmentHtml = "<small style='color:#ff3219'>"+assignStatus+"</small>"
-                }
+            } else if(assignedAmount > 0) {
+                assignStatus = "Partially Assigned";
+                assignmentHtml = "<small style='color:#ff3219'>"+assignStatus+"</small>"
+            } else {
+                assignStatus = "Unassigned";
+                assignmentHtml = "<small style='color:#ff3219'>"+assignStatus+"</small>"
+            }
 
 
 
@@ -444,41 +431,41 @@ export class InvoiceDashboardComponent {
     }
 
     /*buildPaidInvoiceTableData(invoices) {
-        this.hasPaidInvoices = false;
-        this.invoices = invoices;
-        this.paidInvoiceTableData.rows = [];
-        this.paidInvoiceTableOptions.search = true;
-        this.paidInvoiceTableOptions.pageSize = 9;
-        this.paidInvoiceTableData.columns = [
-            {"name": "id", "title": "id", "visible": false},
-            {"name": "number", "title": "Number"},
-            {"name": "customer", "title": "Customer"},
-            {"name": "due_date", "title": "Due Date"},
-            {"name": "amount", "title": "Amount",type:'number',"formatter": (amount)=>{
-                amount = parseFloat(amount);
-                return amount.toLocaleString(base.localeFortmat, { style: 'currency', currency: base.companyCurrency, minimumFractionDigits: 2, maximumFractionDigits: 2 })
-            }}/!*,
-            {"name": "actions", "title": ""}*!/
-        ];
-        let base = this;
-        invoices.forEach(function (invoice) {
-            let row: any = {};
-            row['id'] = invoice['id'];
-            row['selectCol'] = "<input type='checkbox' class='checkbox'/>";
-            row['selectCol'] = "<input type='checkbox' class='checkbox'/>";
-            row['number'] = invoice['number'];
-            row['customer'] = base.getCustomerName(invoice['customer_id']);
-            row['due_date'] = invoice['due_date'];
-            row['amount'] = invoice['amount'];
-            /!*row['actions'] = "<a class='action' data-action='edit' style='margin:0px 0px 0px 5px;'><i class='icon ion-edit'></i></a><a class='action' data-action='delete' style='margin:0px 0px 0px 5px;'><i class='icon ion-trash-b'></i></a>";*!/
-            base.paidInvoiceTableData.rows.push(row);
-        });
+     this.hasPaidInvoices = false;
+     this.invoices = invoices;
+     this.paidInvoiceTableData.rows = [];
+     this.paidInvoiceTableOptions.search = true;
+     this.paidInvoiceTableOptions.pageSize = 9;
+     this.paidInvoiceTableData.columns = [
+     {"name": "id", "title": "id", "visible": false},
+     {"name": "number", "title": "Number"},
+     {"name": "customer", "title": "Customer"},
+     {"name": "due_date", "title": "Due Date"},
+     {"name": "amount", "title": "Amount",type:'number',"formatter": (amount)=>{
+     amount = parseFloat(amount);
+     return amount.toLocaleString(base.localeFortmat, { style: 'currency', currency: base.companyCurrency, minimumFractionDigits: 2, maximumFractionDigits: 2 })
+     }}/!*,
+     {"name": "actions", "title": ""}*!/
+     ];
+     let base = this;
+     invoices.forEach(function (invoice) {
+     let row: any = {};
+     row['id'] = invoice['id'];
+     row['selectCol'] = "<input type='checkbox' class='checkbox'/>";
+     row['selectCol'] = "<input type='checkbox' class='checkbox'/>";
+     row['number'] = invoice['number'];
+     row['customer'] = base.getCustomerName(invoice['customer_id']);
+     row['due_date'] = invoice['due_date'];
+     row['amount'] = invoice['amount'];
+     /!*row['actions'] = "<a class='action' data-action='edit' style='margin:0px 0px 0px 5px;'><i class='icon ion-edit'></i></a><a class='action' data-action='delete' style='margin:0px 0px 0px 5px;'><i class='icon ion-trash-b'></i></a>";*!/
+     base.paidInvoiceTableData.rows.push(row);
+     });
 
-        setTimeout(function () {
-            base.hasPaidInvoices = true;
-        }, 0)
-        this.loadingService.triggerLoadingEvent(false);
-    }*/
+     setTimeout(function () {
+     base.hasPaidInvoices = true;
+     }, 0)
+     this.loadingService.triggerLoadingEvent(false);
+     }*/
 
     getCustomerName(id) {
         let customer = _.find(this.customers, {'customer_id': id});
