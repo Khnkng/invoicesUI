@@ -22,7 +22,7 @@ export class InvoicesService extends QountServices {
     }
 
     getDocumentServiceUrl():string {
-        let url = this.interpolateUrl(PATH.DOCUMENT_SERVICE,null,{id: Session.getUser().id});
+        let url = this.interpolateUrl(PATH.DOCUMENT_SERVICE,null,{id: Session.getUser().id,companyId:Session.getCurrentCompany()});
         url = PATH.DOCUMENT_SERVICE_URL + url;
         return url;
     }
