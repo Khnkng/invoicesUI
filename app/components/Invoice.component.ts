@@ -287,7 +287,7 @@ export class InvoiceComponent{
 
     calcLineTax(taxId, price, quantity) {
         let tax = _.find(this.taxesList, {id: taxId});
-        if(taxId && price && quantity) {
+        if(taxId && price && quantity && tax) {
             let priceVal = numeral(price).value();
             let quantityVal = numeral(quantity).value();
             return numeral((tax.taxRate * parseFloat(priceVal) * parseFloat(quantityVal))/100).value();
