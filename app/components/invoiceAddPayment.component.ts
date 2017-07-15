@@ -73,7 +73,7 @@ export class InvoiceAddPaymentComponent {
         this.loadingService.triggerLoadingEvent(true);
         this.invoiceService.payment(this.paymentId).subscribe(payment => {
             this.payment = payment;
-            let paymentFormValues:any = this.payment;
+            let paymentFormValues:any = _.clone(this.payment);
 
             if(!paymentFormValues.memo) {
                 paymentFormValues.memo = "";
@@ -167,6 +167,7 @@ export class InvoiceAddPaymentComponent {
     addPaymentLines(invoices) {
         this.paymentLines = [];
         invoices.forEach((invoice) => {
+
             let paymentLine:any = {};
             paymentLine.invoiceId = invoice.id;
             paymentLine.number = invoice.number;
@@ -179,7 +180,20 @@ export class InvoiceAddPaymentComponent {
             date.setDate(date + termDays);
             //paymentLine.dueDate =  termDays ? date.toString() : "";
             paymentLine.dueDate =  invoice.due_date;
-            this.paymentLines.push(paymentLine);
+            if(!this.paymentId) {
+                if(invoice.state != "paid" && invoice.state != "partially_paid") {
+                    this.paymentLines.push(paymentLine);
+                }
+            } else {
+                let line =  _.find(this.payment.paymentLines, function(_line) {
+                    return _line.invoiceId === invoice.id;
+                });
+
+                debugger;
+                if((invoice.state != "paid" && invoice.state != "partially_paid") || line) {
+                    this.paymentLines.push(paymentLine);
+                }
+            }
         });
     }
 
