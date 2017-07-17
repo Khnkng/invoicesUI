@@ -182,7 +182,8 @@ export class InvoicePayComponent{
         let data={
             "amountToPay":this.invoice.amount,
             "action":action,
-            "payment_spring_token":paymentSpringToken
+            "payment_spring_token":paymentSpringToken,
+            "payment_type":"Credit Card"
         };
         this.invoiceService.payInvoice(data,this.invoiceID).subscribe(res => {
             this.loadingService.triggerLoadingEvent(false);
