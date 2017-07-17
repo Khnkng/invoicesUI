@@ -15,6 +15,7 @@ import {InvoicePaymentForm} from "../forms/invoicePayment.form";
 import {ActivatedRoute, Router} from "@angular/router";
 import {StateService} from "qCommon/app/services/StateService";
 import {SwitchBoard} from "qCommon/app/services/SwitchBoard";
+import {FinancialAccountsService} from "qCommon/app/services/FinancialAccounts.service";
 
 declare let _:any;
 declare let numeral:any;
@@ -40,31 +41,43 @@ export class InvoiceAddPaymentComponent {
     paymentId:string;
     payment:any;
     routeSubscribe:any;
+    accounts: Array<any> = [];
 
     constructor(private _fb: FormBuilder, private loadingService:LoadingService,
                 private customerService:CustomersService,
                 private toastService: ToastService, private invoiceService: InvoicesService,
                 private _invoicePaymentForm:InvoicePaymentForm, private _router:Router,
                 private numeralService:NumeralService, private _route: ActivatedRoute,
-                private stateService: StateService,private switchBoard: SwitchBoard) {
+                private stateService: StateService,private switchBoard: SwitchBoard,
+                private accountsService: FinancialAccountsService) {
         this.loadCustomers(Session.getCurrentCompany());
         this.invoicePaymentForm = _fb.group(_invoicePaymentForm.getForm());
         this.routeSub = this._route.params.subscribe(params => {
             this.paymentId = params['paymentID'];
             if(this.paymentId) {
-              this.loadPayment();
+                this.loadPayment();
             }
         });
         this.routeSubscribe = switchBoard.onClickPrev.subscribe(title => {
             this.gotoPreviousState();
         });
+        this.loadAccounts();
+    }
+
+    loadAccounts() {
+        this.accountsService.financialAccounts(Session.getCurrentCompany())
+            .subscribe(accounts=> {
+                this.accounts = accounts.accounts;
+            }, error => {
+
+            });
     }
 
     gotoPreviousState() {
         /*let prevState = this.stateService.getPrevState();
-        if (prevState) {
-            this._router.navigate([prevState.url]);
-        }*/
+         if (prevState) {
+         this._router.navigate([prevState.url]);
+         }*/
         let link = ['invoices/dashboard', 1];
         this._router.navigate(link);
     }
@@ -80,8 +93,12 @@ export class InvoiceAddPaymentComponent {
             }
             if(!paymentFormValues.id) {
                 paymentFormValues.id = "";
-            }if(!paymentFormValues.paymentNote) {
+            }
+            if(!paymentFormValues.paymentNote) {
                 paymentFormValues.paymentNote = "";
+            }
+            if(!paymentFormValues.depositedTo) {
+                paymentFormValues.depositedTo = null;
             }
             delete paymentFormValues['paymentLines'];
 
@@ -164,8 +181,12 @@ export class InvoiceAddPaymentComponent {
         }, 100);
     }
 
-    addPaymentLines(invoices) {
+    addPaymentLines(_invoices) {
         this.paymentLines = [];
+
+        let invoices = _.sortBy(_invoices, function(_invoice) {
+            return _invoice.amount_paid|| 0;
+        }).reverse();
         invoices.forEach((invoice) => {
 
             let paymentLine:any = {};
@@ -173,6 +194,7 @@ export class InvoiceAddPaymentComponent {
             paymentLine.number = invoice.number;
             paymentLine.invoiceAmount = invoice.amount;
             paymentLine.amount = invoice.amount_paid || "";
+            paymentLine.dueAmount = invoice.amount_due || "";
             paymentLine.invoiceDate = invoice.invoice_date;
             paymentLine.state = invoice.state;
             let date:any = new Date(invoice.invoice_date);
@@ -181,7 +203,7 @@ export class InvoiceAddPaymentComponent {
             //paymentLine.dueDate =  termDays ? date.toString() : "";
             paymentLine.dueDate =  invoice.due_date;
             if(!this.paymentId) {
-                if(invoice.state != "paid" && invoice.state != "partially_paid") {
+                if(invoice.state != "paid" && invoice.state != "draft") {
                     this.paymentLines.push(paymentLine);
                 }
             } else {
@@ -189,19 +211,30 @@ export class InvoiceAddPaymentComponent {
                     return _line.invoiceId === invoice.id;
                 });
 
-                debugger;
-                if((invoice.state != "paid" && invoice.state != "partially_paid") || line) {
+                let appliedAmount = this.getAppliedAmount();
+                let paymentAmount = parseFloat(this.invoicePaymentForm.controls['paymentAmount'].value) || 0;
+
+                if(appliedAmount >= paymentAmount) {
+                    if(line) {
+                        this.paymentLines.push(paymentLine);
+                    }
+                } else if((invoice.state != "paid" && invoice.state != "draft") || line) {
                     this.paymentLines.push(paymentLine);
                 }
             }
         });
     }
 
-    getAppliedText() {
+    getAppliedAmount() {
         let appliedAmount:number = 0;
         this.paymentLines.forEach((line) => {
             appliedAmount += line.amount ? parseFloat(line.amount) : 0;
         })
+        return appliedAmount;
+    }
+
+    getAppliedText() {
+        let appliedAmount:number = this.getAppliedAmount();
         let text = this.numeralService.format("$0,0.00", appliedAmount);
         text += " of ";
         let paymentAmount = this.invoicePaymentForm.controls['paymentAmount'].value || 0;
@@ -212,7 +245,7 @@ export class InvoiceAddPaymentComponent {
     getOutstandingBalance() {
         let outstanding = 0;
         this.paymentLines.forEach((line) => {
-            outstanding += line.invoiceAmount ? parseFloat(line.invoiceAmount) : 0;
+            outstanding += line.dueAmount ? parseFloat(line.dueAmount) : 0;
         });
         return this.numeralService.format("$0,0.00", outstanding || 0);
     }
