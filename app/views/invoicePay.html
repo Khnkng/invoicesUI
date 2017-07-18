@@ -36,8 +36,8 @@
                                         <div class="row" *ngIf="!isPaid">
                                             <!--<div class="column medium-6" (click)="showForm('credit')"><button class="button hollow grey">Credit</button></div>
                                             <div class="column medium-6" (click)="showForm('bank')"><button class="button hollow grey">Bank Account</button></div>-->
-                                            <input type="button" class="button" [ngClass]="{'hollow grey': type!='credit', 'sky-blue-button': type=='credit'}" value="Credit Card" style="width: 10rem;" (click)="setType('credit')"/>
-                                            <input type="button" class="button" [ngClass]="{'hollow grey': type!='bank', 'sky-blue-button': type=='bank'}" value="Bank Account" (click)="setType('bank')" style="margin-left: 0.7rem;width: 9.8rem;"/>
+                                            <input type="button" class="button" [ngClass]="{'hollow grey': type!='credit', 'sky-blue-button': type=='credit'}" value="Credit Card" style="width: 8.8rem;" (click)="setType('credit')"/>
+                                            <input type="button" class="button" [ngClass]="{'hollow grey': type!='bank', 'sky-blue-button': type=='bank'}" value="Bank Account" (click)="setType('bank')" style="margin-left: 0.7rem;width: 8.7rem;"/>
                                         </div>
                                         <div *ngIf="isCreditForm">
                                             <div class="row" *ngIf="!isPaid">
