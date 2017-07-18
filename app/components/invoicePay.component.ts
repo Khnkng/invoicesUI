@@ -51,7 +51,6 @@ export class InvoicePayComponent{
     accountType:Array<any>=[{'name':'Checking','value':'checking'},{'name':'Saving','value':'saving'}];
     bank:any={'bank_account_holder_first_name':'','bank_account_holder_last_name':'','bank_account_number':'','bank_routing_number':'','bank_account_type':'','token_type':'bank_account'};
     type: string = 'credit';
-
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
                 private _invoiceForm:InvoiceForm, private _invoiceLineForm:InvoiceLineForm, private _invoiceLineTaxesForm:InvoiceLineTaxesForm
@@ -102,82 +101,8 @@ export class InvoicePayComponent{
         this.setupForm();
     }
 
-    /*addInvoiceList(line?:any) {
-        let base = this;
-        let _form:any = this._invoiceLineForm.getForm(line);
-        let taxesLineArray:FormArray = new FormArray([]);
-
-        _form['invoiceLineTaxes'] = taxesLineArray;
-        let invoiceListForm = this._fb.group(_form);
-        this.invoiceLineArray.push(invoiceListForm);
-        this.taxArray.push(taxesLineArray);
-        if(line && line.invoiceLineTaxes) {
-            line.invoiceLineTaxes.forEach(function(taxLine){
-                base.addTaxLine(base.taxArray.length-1, taxLine);
-            });
-        } else {
-            this.addTaxLine(this.taxArray.length-1);
-        }
-    }
-
-    addTaxLine(index, tax?:any) {
-        let _form:any = this._invoiceLineTaxesForm.getForm(tax);
-        let invoiceTaxForm = this._fb.group(_form);
-        this.taxArray[index].push(invoiceTaxForm);
-    }*/
-
     ngOnInit(){
     }
-
-    /*calcLineTax(tax_rate, price, quantity) {
-        if(tax_rate && price && quantity) {
-            let priceVal = numeral(price).value();
-            let quantityVal = numeral(quantity).value();
-            return numeral((tax_rate * parseFloat(priceVal) * parseFloat(quantityVal))/100).format('$00.00');
-        }
-        return numeral(0).format('$00.00');
-    }*/
-
-    /*calcAmt(price, quantity){
-        if(price && quantity) {
-            let priceVal = numeral(price).value();
-            let quantityVal = numeral(quantity).value();
-            return numeral(parseFloat(priceVal) * parseFloat(quantityVal)).format('$00.00');
-        }
-        return numeral(0).format('$00.00');
-    }*/
-
-    /*calcSubTotal() {
-        let invoiceData = this._invoiceForm.getData(this.invoiceForm);
-        let subTotal = 0;
-        let base = this;
-        if(invoiceData.invoiceLines) {
-            invoiceData.invoiceLines.forEach(function(invoiceLine){
-                subTotal = subTotal + numeral(base.calcAmt(invoiceLine.price, invoiceLine.quantity)).value();
-            });
-        }
-        return numeral(subTotal).format('$00.00');
-    }*/
-
-    /*calcTotal() {
-        let invoiceData = this._invoiceForm.getData(this.invoiceForm);
-        let total = 0;
-        let base = this;
-
-        if(invoiceData.invoiceLines) {
-            invoiceData.invoiceLines.forEach(function (invoiceLine) {
-                total = total + numeral(base.calcAmt(invoiceLine.price, invoiceLine.quantity)).value();
-
-                if(invoiceLine.invoiceLineTaxes) {
-                    invoiceLine.invoiceLineTaxes.forEach(function (tax) {
-                        let taxAmt = numeral(base.calcLineTax(tax.tax_rate, 1, total)).value();
-                        total = total + taxAmt;
-                    });
-                }
-            });
-        }
-        return numeral(total).format('$00.00');
-    }*/
 
     payInvoice(event){
             this.openCreditCardFlyout();
@@ -282,6 +207,7 @@ export class InvoicePayComponent{
              this.pay("one_time_customer_charge",this.invoice.payment_spring_customer_id);
          }*/
          this.getToken();
+         console.log(this.bank);
      }
 
 

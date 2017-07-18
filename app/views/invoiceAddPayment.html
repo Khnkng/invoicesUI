@@ -81,6 +81,15 @@
             </div>
             <div class="row">
                 <div class="medium-8 columns" *ngIf="invoicePaymentForm.controls.receivedFrom.value">
+                    <label>Deposit Into Bank
+                        <select formControlName="depositedTo">
+                            <option *ngFor="let account of accounts" [value]="account.id">{{account.name}}</option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="medium-8 columns" *ngIf="invoicePaymentForm.controls.receivedFrom.value">
                     <label>Payment Note (only you can see these)
                     <textarea style="height: 120px;" placeholder="Add payment details here to help you
 remember them later…" formControlName="paymentNote">
@@ -112,6 +121,7 @@ remember them later…" formControlName="paymentNote">
                 <th>Invoice Date</th>
                 <th>Due Date/Status</th>
                 <th>Amount</th>
+                <th>Due Amount</th>
                 <th>Apply Amount</th>
             </tr>
             </thead>
@@ -124,9 +134,10 @@ remember them later…" formControlName="paymentNote">
                 <td>{{paymentLine.invoiceDate}}</td>
                 <td>
                     <div>{{paymentLine.dueDate || "-"}}</div>
-                    <div><small>{{paymentLine.state || "draft"}}</small></div>
+                    <div><small>{{paymentLine.state || "-"}}</small></div>
                 </td>
                 <td>{{numeralService.format('$0,0.00', paymentLine.invoiceAmount)}}</td>
+                <td>{{numeralService.format('$0,0.00', paymentLine.dueAmount)}}</td>
                 <td><input type="text" [(ngModel)]="paymentLine.amount" numeral [locale]="currentLocale" [format]="'$0,0.00'"/></td>
             </tr>
             </tbody>
