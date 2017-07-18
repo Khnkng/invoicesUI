@@ -264,6 +264,9 @@ export class InvoiceComponent{
     setInvoiceDate(date){
         let invoiceDateControl:any = this.invoiceForm.controls['invoice_date'];
         invoiceDateControl.patchValue(date);
+        let term=this.invoiceForm.controls['term'].value;
+        if(term)
+        this.selectTerm(term);
     }
 
     setPaymentDate(date){
