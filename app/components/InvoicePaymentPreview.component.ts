@@ -54,8 +54,8 @@ export class InvoicePaymentPreview{
     }
 
     getCompanyLogo() {
-        let companyId = Session.getCurrentCompany();
-        this.invoiceService.getPreference(companyId)
+        //let companyId = Session.getCurrentCompany();
+        this.invoiceService.getPreference(this.invoiceData.company_id,this.invoiceData.user_id)
             .subscribe(preference => this.processPreference(preference), error => this.handleError(error));
     }
 

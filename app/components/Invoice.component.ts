@@ -396,13 +396,15 @@ export class InvoiceComponent{
         invoiceData.sendMail=sendMail;
         invoiceData.company=this.companyAddress;
         invoiceData.customer=this.selectedCustomer;
+        invoiceData.user_id=Session.getUser().id;
+        invoiceData.customer_id=Session.getCurrentCompany();
         this.invoiceProcessedData=invoiceData;
         if(action=='email'){
             this.openEmailDailog();
         }else if (action=='draft'){
             this.saveInvoiceDetails(invoiceData);
         }else if(action=='preview'){
-         this.togelPreview()
+         this.togelPreview();
         }else if(action=='download'){
             if(!this.showPreview)
             {
