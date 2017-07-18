@@ -45,7 +45,13 @@ export class InvoicePayComponent{
     cards:Array<string>=[];
     paymentCard:string;
     hasInvoice:boolean=false;
+    isCreditForm:boolean=true;
+    isBankForm:boolean=false;
     invoiceData:any;
+    accountType:Array<any>=[{'name':'Checking','value':'checking'},{'name':'Saving','value':'saving'}];
+    bank:any={'bank_account_holder_first_name':'','bank_account_holder_last_name':'','bank_account_number':'','bank_routing_number':'','bank_account_type':'','token_type':'bank_account'};
+    type: string = 'credit';
+
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
                 private _invoiceForm:InvoiceForm, private _invoiceLineForm:InvoiceLineForm, private _invoiceLineTaxesForm:InvoiceLineTaxesForm
@@ -180,11 +186,17 @@ export class InvoicePayComponent{
     pay(action,paymentSpringToken){
        // this.loadingService.triggerLoadingEvent(true);
         let data={
-            "amountToPay":this.invoice.amount,
+            "amountToPay":this.invoice.amount_due,
             "action":action,
-            "payment_spring_token":paymentSpringToken,
-            "payment_type":"Credit Card"
+            "payment_spring_token":paymentSpringToken
         };
+
+        if(this.type='bank'){
+            data['payment_type']="Bank Account";
+        }else {
+            data['payment_type']="Credit Card";
+        }
+
         this.invoiceService.payInvoice(data,this.invoiceID).subscribe(res => {
             this.loadingService.triggerLoadingEvent(false);
             this.resetCardFields();
@@ -208,11 +220,17 @@ export class InvoicePayComponent{
 
     closeCreditCardFlyout(){
         this.resetCardFields();
-        jQuery('#creditcard-details-conformation').foundation('close');
+        //jQuery('#creditcard-details-conformation').foundation('close');
     }
 
     checkValidation(){
         if(this.card_number&&this.card_exp_month&&this.card_exp_year&&this.csc&&this.card_owner_name)
+            return true;
+        else return false;
+    }
+
+    checkBankValidation(){
+        if(this.bank.bank_account_holder_first_name&&this.bank.bank_account_holder_last_name&&this.bank.bank_account_number&&this.bank.bank_routing_number&&this.bank.bank_account_type)
             return true;
         else return false;
     }
@@ -232,13 +250,19 @@ export class InvoicePayComponent{
     }
 
     getCardTokenDetails(){
-        let data={
-            "card_number": this.card_number,
-            "card_exp_month": this.card_exp_month,
-            "card_exp_year": this.card_exp_year,
-            "card_owner_name":this.card_owner_name,
-            "csc":this.csc
-        };
+        let data:any;
+        if(this.type=='bank'){
+            data=this.bank;
+            data.token_type='bank_account';
+        }else {
+            data={
+                "card_number": this.card_number,
+                "card_exp_month": this.card_exp_month,
+                "card_exp_year": this.card_exp_year,
+                "card_owner_name":this.card_owner_name,
+                "csc":this.csc
+            };
+        }
         this.customersService.getCreditCardToken(data,this.publicKey)
             .subscribe(res  => {
                 this.pay("one_time_charge",res.id);
@@ -273,6 +297,7 @@ export class InvoicePayComponent{
             this.card_owner_name=null;
             this.csc=null;
             this.paymentCard=null;
+            this.bank={};
     }
 
     getSavedOldCardDetails(companyID,springToken){
@@ -307,6 +332,23 @@ export class InvoicePayComponent{
 
     printInvoice() {
         window.print();
+    }
+
+    showForm(type){
+        if(type== 'bank'){
+            this.isBankForm = !this.isBankForm;
+        }else{
+            this.isCreditForm = !this.isCreditForm;
+        }
+    }
+
+    setPaymentMethod(event){
+        this.bank.payment_method = event.target.value;
+    }
+
+    setType(type) {
+        this.type = type;
+        this.isCreditForm = !this.isCreditForm
     }
 
 }
