@@ -397,7 +397,7 @@ export class InvoiceComponent{
         invoiceData.company=this.companyAddress;
         invoiceData.customer=this.selectedCustomer;
         invoiceData.user_id=Session.getUser().id;
-        invoiceData.customer_id=Session.getCurrentCompany();
+        invoiceData.company_id=Session.getCurrentCompany();
         this.invoiceProcessedData=invoiceData;
         if(action=='email'){
             this.openEmailDailog();
