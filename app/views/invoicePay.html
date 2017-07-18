@@ -34,38 +34,68 @@
                                             </div>
                                         </div>
                                         <div class="row" *ngIf="!isPaid">
-                                            <div class="small-12 medium-12 columns" style="padding: 0px;">
-                                                <div class="input-group">
-                                                    <i class="icon ion-ios-person-outline input-group-label" style="background: #fff;"></i>
-                                                    <input class="input-group-field" [(ngModel)]="card_owner_name" type="text" placeholder="Name on Card">
+                                            <div class="column medium-6" (click)="showForm('credit')"><button class="button hollow grey">Credit</button></div>
+                                            <div class="column medium-6" (click)="showForm('bank')"><button class="button hollow grey">Bank Account</button></div>
+                                        </div>
+                                        <div *ngIf="isCreditForm">
+                                            <div class="row" *ngIf="!isPaid">
+                                                <div class="small-12 medium-12 columns" style="padding: 0px;">
+                                                    <div class="input-group">
+                                                        <i class="icon ion-ios-person-outline input-group-label" style="background: #fff;"></i>
+                                                        <input class="input-group-field" [(ngModel)]="card_owner_name" type="text" placeholder="Name on Card">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row" *ngIf="!isPaid">
+                                                <div class="small-12 medium-12 columns" style="padding: 0px;">
+                                                    <div class="input-group">
+                                                        <i class="icon fa fa-credit-card input-group-label" style="background: #fff;"></i>
+                                                        <input class="input-group-field" [(ngModel)]="card_number" type="text" placeholder="Card Number">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row" *ngIf="!isPaid">
+                                                <div class="small-12 medium-3 columns" style="padding: 0px;">
+                                                    <select [(ngModel)]="card_exp_month">
+                                                        <option value="" selected>mm</option>
+                                                        <option value="{{month}}" *ngFor="let month of months">{{month}}</option>
+                                                    </select>
+                                                </div>
+                                                <div class="small-12 medium-4 columns">
+                                                    <select [(ngModel)]="card_exp_year">
+                                                        <option value="" selected>YYYY</option>
+                                                        <option value="{{year}}" *ngFor="let year of years">{{year}}</option>
+                                                    </select>
+                                                </div>
+                                                <div class="small-12 medium-5 columns" style="padding: 0px;">
+                                                    <div class="input-group">
+                                                        <i class="icon ion-ios-locked-outline input-group-label" style="background: #fff;"></i>
+                                                        <input class="input-group-field" [(ngModel)]="csc" type="text" placeholder="CVV">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row" *ngIf="!isPaid">
-                                            <div class="small-12 medium-12 columns" style="padding: 0px;">
-                                                <div class="input-group">
-                                                    <i class="icon fa fa-credit-card input-group-label" style="background: #fff;"></i>
-                                                    <input class="input-group-field" [(ngModel)]="card_number" type="text" placeholder="Card Number">
-                                                </div>
+                                        <div *ngIf="isBankForm">
+                                            <div class="row">
+                                                <div class="column medium-12"><input type="text" placeholder="Title*" [(ngModel)]="bank.owner_name"/></div>
                                             </div>
-                                        </div>
-                                        <div class="row" *ngIf="!isPaid">
-                                            <div class="small-12 medium-3 columns" style="padding: 0px;">
-                                                <select [(ngModel)]="card_exp_month">
-                                                    <option value="" selected>mm</option>
-                                                    <option value="{{month}}" *ngFor="let month of months">{{month}}</option>
-                                                </select>
+                                            <div class="row">
+                                                <div class="column medium-12"><input type="text" placeholder="Bank Name*" [(ngModel)]="bank.bank_name"/></div>
                                             </div>
-                                            <div class="small-12 medium-4 columns">
-                                                <select [(ngModel)]="card_exp_year">
-                                                    <option value="" selected>YYYY</option>
-                                                    <option value="{{year}}" *ngFor="let year of years">{{year}}</option>
-                                                </select>
+                                            <div class="row">
+                                                <div class="column medium-12"><input type="text" placeholder="Account Number*" [(ngModel)]="bank.account_number"/></div>
                                             </div>
-                                            <div class="small-12 medium-5 columns" style="padding: 0px;">
-                                                <div class="input-group">
-                                                    <i class="icon ion-ios-locked-outline input-group-label" style="background: #fff;"></i>
-                                                    <input class="input-group-field" [(ngModel)]="csc" type="text" placeholder="CVV">
+                                            <div class="row">
+                                                <div class="column medium-12"><input type="text" placeholder="Routing Numebr*" [(ngModel)]="bank.routing_number"/></div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="column medium-12"><input type="text" placeholder="Account Type*" [(ngModel)]="bank.account_type"/></div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="column medium-12">
+                                                    <select data-placeholder="Select" (change)="setPaymentMethod($event)">
+                                                        <option *ngFor="let type of accountType" [value]="type.value">{{type.name}}</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>

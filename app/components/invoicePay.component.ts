@@ -45,7 +45,12 @@ export class InvoicePayComponent{
     cards:Array<string>=[];
     paymentCard:string;
     hasInvoice:boolean=false;
+    isCreditForm:boolean=false;
+    isBankForm:boolean=false;
     invoiceData:any;
+    accountType:Array<any>=[{'name':'Checking','value':'checking'},{'name':'Saving','value':'saving'}];
+    bank:any={'owner_name':'','bank_name':'','account_number':'','routing_number':'','account_type':'','payment_method':'checking'};
+
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
                 private _invoiceForm:InvoiceForm, private _invoiceLineForm:InvoiceLineForm, private _invoiceLineTaxesForm:InvoiceLineTaxesForm
@@ -257,6 +262,7 @@ export class InvoicePayComponent{
              this.pay("one_time_customer_charge",this.invoice.payment_spring_customer_id);
          }*/
          this.getToken();
+         console.log(this.bank);
      }
 
 
@@ -306,6 +312,18 @@ export class InvoicePayComponent{
 
     printInvoice() {
         window.print();
+    }
+
+    showForm(type){
+        if(type== 'bank'){
+            this.isBankForm = !this.isBankForm;
+        }else{
+            this.isCreditForm = !this.isCreditForm;
+        }
+    }
+
+    setPaymentMethod(event){
+        this.bank.payment_method = event.target.value;
     }
 
 }

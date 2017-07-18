@@ -58,7 +58,7 @@
             <td style="width: 100%;">
                 <table>
                     <thead>
-                    <tr><th class="heading-color">Invoice From</th></tr>
+                    <tr><th class="heading-color">Invoice From</th><th></th></tr>
                     </thead>
                     <tbody>
                     <tr>
@@ -68,6 +68,7 @@
                             <div>{{invoiceData.company?invoiceData.company.state:""}}, {{invoiceData.company?invoiceData.company.zipcode:""}}</div>
                             <div>{{invoiceData.company?invoiceData.company.country:""}}</div>
                         </td>
+                        <td><img src={{logoURL}} alt="" height="50"/></td>
                     </tr>
                     </tbody>
                 </table>
@@ -191,7 +192,7 @@
                     <tbody>
                     <tr>
                         <td colspan="3">
-                            <span>Payment is due with in 30 days of receiving this invoice</span>
+                            <span>{{invoiceData.payment_options}}</span>
                         </td>
                     </tr>
                     </tbody>

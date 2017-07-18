@@ -286,10 +286,10 @@
                                                 <span style="font-size: 12px;">Send invoice to {{selectedCustomer?selectedCustomer.customer_name:""}}</span>
                                             </div>
                                             <div class="row">
-                                                <button class="button large" (click)="submit($event,true,'email')" [disabled]="!invoiceForm.valid||!validateTaskLines()">Email Invoice</button>
+                                                <button class="button small" (click)="submit($event,true,'email')" [disabled]="!invoiceForm.valid||!validateTaskLines()">Email Invoice</button>
                                             </div>
                                             <div class="row" style="margin-top: 15px">
-                                                <button class="button large hollow download"(click)="submit($event,false,'download')" [disabled]="!invoiceForm.valid||!validateTaskLines()">Download PDF</button>
+                                                <button class="button small hollow download"(click)="submit($event,false,'download')" [disabled]="!invoiceForm.valid||!validateTaskLines()">Download PDF</button>
                                             </div>
                                             <div class="row" style="margin-top: 1.2rem" *ngIf="!showPreview">
                                                 <div class="small-12 medium-12 columns" style="padding: 0px">
