@@ -206,7 +206,7 @@ export class InvoiceAddPaymentComponent {
                     invoice.amount_paid = 0; // making this to not display any previous amount payed;
                 } else {
                     // adding this so that we can use it for knowing if the present invoice is already paid under present payment.
-                    invoice.hasPaymentLine = true;
+                    invoice.paymentLine = line;
                 }
                 invoices.push(invoice);
             }
@@ -243,10 +243,10 @@ export class InvoiceAddPaymentComponent {
                 }
             } else {
 
-                if(invoice.state == "partially_paid" && !invoice.hasPaymentLine) {
+                if(invoice.state == "partially_paid" && !invoice.paymentLine) {
                     paymentLine.amount = 0;
                 } else {
-                    paymentLine.amount = invoice.amount_paid;
+                    paymentLine.amount = invoice.paymentLine.amount;
                 }
 
                 let paymentAmount = parseFloat(this.invoicePaymentForm.controls['paymentAmount'].value) || 0;
