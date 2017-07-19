@@ -264,6 +264,9 @@ export class InvoiceComponent{
     setInvoiceDate(date){
         let invoiceDateControl:any = this.invoiceForm.controls['invoice_date'];
         invoiceDateControl.patchValue(date);
+        let term=this.invoiceForm.controls['term'].value;
+        if(term)
+        this.selectTerm(term);
     }
 
     setPaymentDate(date){
@@ -396,13 +399,15 @@ export class InvoiceComponent{
         invoiceData.sendMail=sendMail;
         invoiceData.company=this.companyAddress;
         invoiceData.customer=this.selectedCustomer;
+        invoiceData.user_id=Session.getUser().id;
+        invoiceData.company_id=Session.getCurrentCompany();
         this.invoiceProcessedData=invoiceData;
         if(action=='email'){
             this.openEmailDailog();
         }else if (action=='draft'){
             this.saveInvoiceDetails(invoiceData);
         }else if(action=='preview'){
-         this.togelPreview()
+         this.togelPreview();
         }else if(action=='download'){
             if(!this.showPreview)
             {

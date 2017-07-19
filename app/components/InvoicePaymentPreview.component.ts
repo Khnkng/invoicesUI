@@ -26,10 +26,12 @@ export class InvoicePaymentPreview{
     taskInvoices: Array<any> = [];
     itemInvoices: Array<any> = [];
     invoiceData:any;
+    logoURL:string;
     @Input()
     set invoices(invoices:any){
         this.invoiceData = invoices;
         this.loadInvoiceData();
+        this.getCompanyLogo();
     }
 
     constructor(private switchBoard: SwitchBoard, private _router:Router, private _route: ActivatedRoute, private toastService: ToastService,
@@ -51,6 +53,17 @@ export class InvoicePaymentPreview{
             });
     }
 
+    getCompanyLogo() {
+        //let companyId = Session.getCurrentCompany();
+        this.invoiceService.getPreference(this.invoiceData.company_id,this.invoiceData.user_id)
+            .subscribe(preference => this.processPreference(preference), error => this.handleError(error));
+    }
+
+    processPreference(preference){
+        if(preference && preference.companyLogo){
+            this.logoURL = preference.companyLogo;
+        }
+    }
 
 
     handleError(error) {

@@ -33,8 +33,8 @@ export class InvoicesService extends QountServices {
             .catch(this.handleError)
     }
 
-    getPreference(companyId:String): Observable<any> {
-        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE_PREFERENCE,null,{id: Session.getUser().id, companyId: companyId});
+    getPreference(companyId:String,userID:String): Observable<any> {
+        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE_PREFERENCE,null,{id: userID, companyId: companyId});
         return this.query(url, SOURCE_TYPE.JAVA).map(res => <any> res.json())
             .catch(this.handleError)
     }
