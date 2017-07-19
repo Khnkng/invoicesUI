@@ -30,7 +30,7 @@
                 <div class="medium-6 columns">
                     <label>
                         Payment Amount
-                        <input type="text" formControlName="paymentAmount" numeral [locale]="currentLocale" [format]="'$0,0.00'"/>
+                        <input type="text" [readonly]="paymentId" formControlName="paymentAmount" numeral [locale]="currentLocale" [format]="'$0,0.00'"/>
                     </label>
                 </div>
                 <div class="medium-3 columns">
@@ -138,7 +138,7 @@ remember them later…" formControlName="paymentNote">
                 </td>
                 <td>{{numeralService.format('$0,0.00', paymentLine.invoiceAmount)}}</td>
                 <td>{{numeralService.format('$0,0.00', paymentLine.dueAmount)}}</td>
-                <td><input type="text" [(ngModel)]="paymentLine.amount" numeral [locale]="currentLocale" [format]="'$0,0.00'"/></td>
+                <td><input type="text" [readonly]="paymentLine.dueAmount == 0" [(ngModel)]="paymentLine.amount" numeral [locale]="currentLocale" [format]="'$0,0.00'"/></td>
             </tr>
             </tbody>
         </table>
