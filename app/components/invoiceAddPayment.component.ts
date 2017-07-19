@@ -105,7 +105,7 @@ export class InvoiceAddPaymentComponent {
 
             this.invoicePaymentForm.setValue(paymentFormValues);
             setTimeout(() => {
-                this.loadInvoices();
+                this.setCustomerName();
             }, 50);
         })
     }
@@ -228,7 +228,7 @@ export class InvoiceAddPaymentComponent {
 
         let invoices = this.removeOtherPaymentInvoices(_invoices);
         invoices = _.sortBy(invoices, function(_invoice) {
-            return _invoice.amount_paid|| 0;
+            return _invoice.paymentLine ? _invoice.paymentLine.amount: 0;
         }).reverse();
         invoices.forEach((invoice) => {
 
@@ -255,7 +255,7 @@ export class InvoiceAddPaymentComponent {
                 if(invoice.state == "partially_paid" && !invoice.paymentLine) {
                     paymentLine.amount = 0;
                 } else {
-                    paymentLine.amount = invoice.paymentLine.amount;
+                    paymentLine.amount = invoice.paymentLine ? invoice.paymentLine.amount : 0;
                 }
 
                 let paymentAmount = parseFloat(this.invoicePaymentForm.controls['paymentAmount'].value) || 0;
@@ -308,6 +308,7 @@ export class InvoiceAddPaymentComponent {
     }
 
     ngAfterViewInit() {
+        debugger;
         this.invoicePaymentForm.controls['type'].setValue("cheque");
         this.invoicePaymentForm.controls['currencyCode'].setValue("USD");
         this.numeralService.switchLocale("USD")
