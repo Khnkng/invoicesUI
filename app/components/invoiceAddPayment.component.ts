@@ -42,6 +42,7 @@ export class InvoiceAddPaymentComponent {
     payment:any;
     routeSubscribe:any;
     accounts: Array<any> = [];
+    saving: boolean;
 
     constructor(private _fb: FormBuilder, private loadingService:LoadingService,
                 private customerService:CustomersService,
@@ -152,6 +153,8 @@ export class InvoiceAddPaymentComponent {
     }
 
     save() {
+        this.saving = true;
+        this.loadingService.triggerLoadingEvent(true);
         let payment:any = this.invoicePaymentForm.value;
         payment.paymentLines = this.paymentLines;
         console.log("pament--", payment);
@@ -161,34 +164,40 @@ export class InvoiceAddPaymentComponent {
         let paymentAmount = parseFloat(this.invoicePaymentForm.controls['paymentAmount'].value) || 0;
         if(this.paymentLines.length == 0) {
             this.toastService.pop(TOAST_TYPE.error, "Add atlease one invoice");
+            this.loadingService.triggerLoadingEvent(false);
             return;
         }
         if(this.getAppliedAmount() <= paymentAmount) {
             this.invoiceService.addPayment(payment).subscribe(response => {
                 this.toastService.pop(TOAST_TYPE.success, "Payment created successfully");
+                this.loadingService.triggerLoadingEvent(false);
                 let link = ['invoices/dashboard',1];
                 this._router.navigate(link);
             }, error => {
                 this.toastService.pop(TOAST_TYPE.error, "Failed to create payment");
+                this.saving = false;
+                this.loadingService.triggerLoadingEvent(false);
             })
         } else {
             this.toastService.pop(TOAST_TYPE.error, "Applied amount cannot be greater than payment amount");
+            this.saving = false;
+            this.loadingService.triggerLoadingEvent(false);
         }
     }
 
     setCustomerName() {
         this.loadInvoices();
-        setTimeout(() => {
-            let clientId = this.invoicePaymentForm.controls['receivedFrom'].value;
-            if(clientId) {
-                let customer = _.find(this.customers, function(customer) {
-                    return customer.customer_id == clientId;
-                });
-                this.currentClientName = customer.customer_name;
-            } else {
-                this.currentClientName = "";
-            }
-        }, 100);
+
+        let clientId = this.invoicePaymentForm.controls['receivedFrom'].value;
+        if(clientId) {
+            let customer = _.find(this.customers, function(customer) {
+                return customer.customer_id == clientId;
+            });
+            this.currentClientName = customer.customer_name;
+        } else {
+            this.currentClientName = "";
+        }
+
     }
 
     removeOtherPaymentInvoices(_invoices) {
@@ -299,7 +308,6 @@ export class InvoiceAddPaymentComponent {
     }
 
     ngAfterViewInit() {
-        debugger;
         this.invoicePaymentForm.controls['type'].setValue("cheque");
         this.invoicePaymentForm.controls['currencyCode'].setValue("USD");
         this.numeralService.switchLocale("USD")
