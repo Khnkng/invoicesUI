@@ -137,6 +137,12 @@ export class InvoicesService extends QountServices {
             .catch(this.handleError)
     }
 
+    getCompanyLogo(companyId: string, userId:any):any {
+        var url = this.interpolateUrl(PATH.DOCUMENTS_SERVICE,null,{id: userId, companyId: companyId, type: 'company_invoice', mappedId: companyId});
+        return this.query(url, SOURCE_TYPE.JAVA).map(res => <any>res.json())
+            .catch(this.handleError)
+    }
+
 
     private handleError (error: Response) {
         return Observable.throw(error.text());

@@ -30,8 +30,12 @@ export class InvoicePaymentPreview{
     @Input()
     set invoices(invoices:any){
         this.invoiceData = invoices;
+        if(invoices.logoURL){
+            this.logoURL = invoices.logoURL;
+        }else{
+            this.getCompanyLogo();
+        }
         this.loadInvoiceData();
-        this.getCompanyLogo();
     }
 
     constructor(private switchBoard: SwitchBoard, private _router:Router, private _route: ActivatedRoute, private toastService: ToastService,
@@ -54,14 +58,13 @@ export class InvoicePaymentPreview{
     }
 
     getCompanyLogo() {
-        //let companyId = Session.getCurrentCompany();
-        this.invoiceService.getPreference(this.invoiceData.company_id,this.invoiceData.user_id)
-            .subscribe(preference => this.processPreference(preference), error => this.handleError(error));
+        this.invoiceService.getCompanyLogo(this.invoiceData.company_id,this.invoiceData.user_id)
+            .subscribe(preference => this.processPreference(preference[0]), error => this.handleError(error));
     }
 
     processPreference(preference){
-        if(preference && preference.companyLogo){
-            this.logoURL = preference.companyLogo;
+        if(preference && preference.temporaryURL){
+            this.logoURL = preference.temporaryURL;
         }
     }
 

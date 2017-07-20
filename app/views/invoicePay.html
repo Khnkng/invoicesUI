@@ -8,15 +8,6 @@
                             <div class="flyout-body flyout-shadow-effect" *ngIf="hasInvoice">
                                 <section class="form-section clearfix">
                                     <div class="small-12 medium-6 columns" style="margin-bottom: 2rem;margin-left: 3rem" >
-                                        <div class="preview-table-header">
-                                            <div class="row">
-                                                <div class="column medium-6"><span>Invoice</span><span>{{invoiceData.number}}</span></div>
-                                                <div class="column medium-6 text-right"><span>Due Date</span><span>{{invoiceData.due_date}}</span></div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="column medium-12"><span>Total Unpaid:</span><span>{{invoiceData.amount_due | currency:invoiceData.currency:true:'1.2-2'}}</span></div>
-                                            </div>
-                                        </div>
                                         <invoicePaymentPreview [invoices]="invoiceData"></invoicePaymentPreview>
                                     </div>
                                     <div class="small-12 medium-3 columns" style="margin-left: 3rem;">

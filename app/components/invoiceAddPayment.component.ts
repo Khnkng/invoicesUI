@@ -16,6 +16,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {StateService} from "qCommon/app/services/StateService";
 import {SwitchBoard} from "qCommon/app/services/SwitchBoard";
 import {FinancialAccountsService} from "qCommon/app/services/FinancialAccounts.service";
+import {State} from "qCommon/app/models/State";
 
 declare let _:any;
 declare let numeral:any;
@@ -61,6 +62,14 @@ export class InvoiceAddPaymentComponent {
         this.routeSubscribe = switchBoard.onClickPrev.subscribe(title => {
             this.gotoPreviousState();
         });
+
+        let previousState=this.stateService.getPrevState();
+        if(previousState&&previousState.key=="New-Payment-Invoice"){
+            this.invoicePaymentForm.setValue(previousState.data);
+            this.loadInvoices();
+            this.stateService.pop();
+        };
+
         this.loadAccounts();
     }
 
@@ -251,6 +260,8 @@ export class InvoiceAddPaymentComponent {
     }
 
     gotoInvoice() {
+        let tempData=this.invoicePaymentForm.value;
+        this.stateService.addState(new State('New-Payment-Invoice', this._router.url, tempData, null));
         let link = ['invoices/NewInvoice'];
         this._router.navigate(link);
     }

@@ -25,6 +25,7 @@
     tr td{
         color: #0a0a0a;
     }
+
     .heading-color td{
         color: #384986;
     }
@@ -40,9 +41,6 @@
     }
     #payment-preview{
         margin-top: 5px;
-        -webkit-box-shadow: 0 0 5px #ccc;
-        box-shadow: 0 0 5px #ccc;
-        padding-top: 50px;
     }
     .text-right{
         text-align: right;
@@ -50,15 +48,41 @@
     .invoice-amount{
         font-size: 20pt;
     }
+
+    .preview-table-header {
+        color: #FFF;
+        box-shadow: 0 0 5px #ccc;
+        -webkit-box-shadow: 0 0 5px #ccc;
+        padding:10px 10px 0 10px;
+        background-color: #384986;
+    }
+    .font-color{
+        color:#FAFAFA !important;
+        padding: 0.5rem 0.625rem 0.625rem;
+    }
 </style>
 <div id="payment-preview">
-    <table style='width:100%;' cellpadding='10'>
+    <div class="preview-table-header">
+        <table style='width:100%;margin-bottom:10px;'>
+            <tbody style="background-color: #384986;">
+            <tr>
+                <td class="font-color"><span>Invoice</span><span style="margin-left:5px;">{{invoiceData.number}}</span></td>
+                <td class="text-right font-color"><span>Due Date</span><span style="margin-left:5px;">{{invoiceData.due_date}}</span></td>
+            </tr>
+            <tr>
+                <td class="font-color"><span>Total Unpaid:</span><span style="margin-left:5px;">{{invoiceData.amount_due | currency:invoiceData.currency:true:'1.2-2'}}</span></td>
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <table style='width:100%;box-shadow: 0 0 5px #ccc;-webkit-box-shadow: 0 0 5px #ccc;' cellpadding='10'>
         <tbody>
         <tr>
             <td style="width: 100%;">
                 <table>
                     <thead>
-                    <tr><th class="heading-color">Invoice From</th><!--<th></th>--></tr>
+                    <tr><th class="heading-color">Invoice From</th><th></th></tr>
                     </thead>
                     <tbody>
                     <tr>
@@ -68,7 +92,7 @@
                             <div>{{invoiceData.company?invoiceData.company.state:""}}, {{invoiceData.company?invoiceData.company.zipcode:""}}</div>
                             <div>{{invoiceData.company?invoiceData.company.country:""}}</div>
                         </td>
-                        <!--<td><img src={{logoURL}} alt="" height="50"/></td>-->
+                        <td class="text-right" id="company-img"><img src={{logoURL}} alt="" height="70" style="position: relative;bottom:30px;"/></td>
                     </tr>
                     </tbody>
                 </table>
