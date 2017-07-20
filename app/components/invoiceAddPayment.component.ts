@@ -43,6 +43,7 @@ export class InvoiceAddPaymentComponent {
     payment:any;
     routeSubscribe:any;
     accounts: Array<any> = [];
+    saving: boolean;
 
     constructor(private _fb: FormBuilder, private loadingService:LoadingService,
                 private customerService:CustomersService,
@@ -113,7 +114,7 @@ export class InvoiceAddPaymentComponent {
 
             this.invoicePaymentForm.setValue(paymentFormValues);
             setTimeout(() => {
-                this.loadInvoices();
+                this.setCustomerName();
             }, 50);
         })
     }
@@ -161,40 +162,82 @@ export class InvoiceAddPaymentComponent {
     }
 
     save() {
+        this.saving = true;
+        this.loadingService.triggerLoadingEvent(true);
         let payment:any = this.invoicePaymentForm.value;
         payment.paymentLines = this.paymentLines;
         console.log("pament--", payment);
-        this.invoiceService.addPayment(payment).subscribe(response => {
-            this.toastService.pop(TOAST_TYPE.success, "Payment created successfully");
-            let link = ['invoices/dashboard',1];
-            this._router.navigate(link);
-        }, error => {
-            this.toastService.pop(TOAST_TYPE.error, "Failed to create payment");
-        })
-        this.invoicePaymentForm.reset();
-        this.paymentLines = [];
+        if(!payment.depositedTo) {
+            payment.depositedTo = null;
+        }
+        let paymentAmount = parseFloat(this.invoicePaymentForm.controls['paymentAmount'].value) || 0;
+        if(this.paymentLines.length == 0) {
+            this.toastService.pop(TOAST_TYPE.error, "Add atlease one invoice");
+            this.loadingService.triggerLoadingEvent(false);
+            return;
+        }
+        if(this.getAppliedAmount() <= paymentAmount) {
+            this.invoiceService.addPayment(payment).subscribe(response => {
+                this.toastService.pop(TOAST_TYPE.success, "Payment created successfully");
+                this.loadingService.triggerLoadingEvent(false);
+                let link = ['invoices/dashboard',1];
+                this._router.navigate(link);
+            }, error => {
+                this.toastService.pop(TOAST_TYPE.error, "Failed to create payment");
+                this.saving = false;
+                this.loadingService.triggerLoadingEvent(false);
+            })
+        } else {
+            this.toastService.pop(TOAST_TYPE.error, "Applied amount cannot be greater than payment amount");
+            this.saving = false;
+            this.loadingService.triggerLoadingEvent(false);
+        }
     }
 
     setCustomerName() {
         this.loadInvoices();
-        setTimeout(() => {
-            let clientId = this.invoicePaymentForm.controls['receivedFrom'].value;
-            if(clientId) {
-                let customer = _.find(this.customers, function(customer) {
-                    return customer.customer_id == clientId;
+
+        let clientId = this.invoicePaymentForm.controls['receivedFrom'].value;
+        if(clientId) {
+            let customer = _.find(this.customers, function(customer) {
+                return customer.customer_id == clientId;
+            });
+            this.currentClientName = customer.customer_name;
+        } else {
+            this.currentClientName = "";
+        }
+
+    }
+
+    removeOtherPaymentInvoices(_invoices) {
+        let invoices = [];
+        _invoices.forEach((invoice) => {
+            let line;
+            if(this.payment) {
+                line =  _.find(this.payment.paymentLines, function(_line) {
+                    return _line.invoiceId === invoice.id;
                 });
-                this.currentClientName = customer.customer_name;
-            } else {
-                this.currentClientName = "";
             }
-        }, 100);
+
+            if(line || !invoice.amount_paid || (invoice.amount_paid < invoice.amount) ) {
+                if(!line) {
+                    invoice.amount_paid = 0; // making this to not display any previous amount payed;
+                } else {
+                    // adding this so that we can use it for knowing if the present invoice is already paid under present payment.
+                    invoice.paymentLine = line;
+                }
+                invoices.push(invoice);
+            }
+        })
+        return invoices;
     }
 
     addPaymentLines(_invoices) {
         this.paymentLines = [];
 
-        let invoices = _.sortBy(_invoices, function(_invoice) {
-            return _invoice.amount_paid|| 0;
+        let invoices = this.removeOtherPaymentInvoices(_invoices);
+        invoices = _.sortBy(invoices, function(_invoice) {
+            return _invoice.paymentLine ? _invoice.paymentLine.amount: 0;
         }).reverse();
         invoices.forEach((invoice) => {
 
@@ -202,7 +245,7 @@ export class InvoiceAddPaymentComponent {
             paymentLine.invoiceId = invoice.id;
             paymentLine.number = invoice.number;
             paymentLine.invoiceAmount = invoice.amount;
-            paymentLine.amount = invoice.amount_paid || "";
+
             paymentLine.dueAmount = invoice.amount_due || "";
             paymentLine.invoiceDate = invoice.invoice_date;
             paymentLine.state = invoice.state;
@@ -212,24 +255,28 @@ export class InvoiceAddPaymentComponent {
             //paymentLine.dueDate =  termDays ? date.toString() : "";
             paymentLine.dueDate =  invoice.due_date;
             if(!this.paymentId) {
+                paymentLine.amount = "";
                 if(invoice.state != "paid" && invoice.state != "draft") {
                     this.paymentLines.push(paymentLine);
                 }
             } else {
-                let line =  _.find(this.payment.paymentLines, function(_line) {
-                    return _line.invoiceId === invoice.id;
-                });
 
-                let appliedAmount = this.getAppliedAmount();
-                let paymentAmount = parseFloat(this.invoicePaymentForm.controls['paymentAmount'].value) || 0;
-
-                if(appliedAmount >= paymentAmount) {
-                    if(line) {
-                        this.paymentLines.push(paymentLine);
-                    }
-                } else if((invoice.state != "paid" && invoice.state != "draft") || line) {
-                    this.paymentLines.push(paymentLine);
+                if(invoice.state == "partially_paid" && !invoice.paymentLine) {
+                    paymentLine.amount = 0;
+                } else {
+                    paymentLine.amount = invoice.paymentLine ? invoice.paymentLine.amount : 0;
                 }
+
+                let paymentAmount = parseFloat(this.invoicePaymentForm.controls['paymentAmount'].value) || 0;
+                if(invoice.state != "draft" && this.getAppliedAmount() < paymentAmount) {
+
+                    this.paymentLines.push(paymentLine);
+                    let appliedAmount = this.getAppliedAmount();
+                    if(appliedAmount > paymentAmount) {
+                        this.paymentLines.pop();
+                    }
+                }
+
             }
         });
     }

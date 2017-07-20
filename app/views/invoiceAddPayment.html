@@ -30,7 +30,7 @@
                 <div class="medium-6 columns">
                     <label>
                         Payment Amount
-                        <input type="text" formControlName="paymentAmount" numeral [locale]="currentLocale" [format]="'$0,0.00'"/>
+                        <input type="text" [readonly]="paymentId" formControlName="paymentAmount" numeral [locale]="currentLocale" [format]="'$0,0.00'"/>
                     </label>
                 </div>
                 <div class="medium-3 columns">
@@ -71,16 +71,16 @@
             </div>
         </div>
         <div class="medium-6 columns">
-            <div class="row" style="margin-top:20px;" *ngIf="invoicePaymentForm.controls.receivedFrom.value">
+            <div class="row" style="margin-top:20px;">
                 <div class="medium-4 columns">
-                    <input type="button" class="button large" (click)="save()" value="Save Payment"/>
+                    <input type="button" class="button large" [disabled]="saving" (click)="save()" value="Save Payment"/>
                 </div>
                 <div class="medium-4 columns">
                     <input type="button" class="button large clear" (click)="invoicePaymentForm.reset()" value="Cancel"/>
                 </div>
             </div>
             <div class="row">
-                <div class="medium-8 columns" *ngIf="invoicePaymentForm.controls.receivedFrom.value">
+                <div class="medium-8 columns">
                     <label>Deposit Into Bank
                         <select formControlName="depositedTo">
                             <option *ngFor="let account of accounts" [value]="account.id">{{account.name}}</option>
@@ -89,7 +89,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="medium-8 columns" *ngIf="invoicePaymentForm.controls.receivedFrom.value">
+                <div class="medium-8 columns">
                     <label>Payment Note (only you can see these)
                     <textarea style="height: 120px;" placeholder="Add payment details here to help you
 remember them later…" formControlName="paymentNote">
@@ -117,7 +117,7 @@ remember them later…" formControlName="paymentNote">
         <table style="margin-top: 15px;">
             <thead>
             <tr>
-                <th>Client/Invoice</th>
+                <th>Invoice</th>
                 <th>Invoice Date</th>
                 <th>Due Date/Status</th>
                 <th>Amount</th>
@@ -128,8 +128,7 @@ remember them later…" formControlName="paymentNote">
             <tbody>
             <tr *ngFor="let paymentLine of paymentLines">
                 <td>
-                    <div>{{currentClientName}}</div>
-                    <div><small>{{paymentLine.number}}</small></div>
+                    <div>{{paymentLine.number}}</div>
                 </td>
                 <td>{{paymentLine.invoiceDate}}</td>
                 <td>
@@ -138,7 +137,7 @@ remember them later…" formControlName="paymentNote">
                 </td>
                 <td>{{numeralService.format('$0,0.00', paymentLine.invoiceAmount)}}</td>
                 <td>{{numeralService.format('$0,0.00', paymentLine.dueAmount)}}</td>
-                <td><input type="text" [(ngModel)]="paymentLine.amount" numeral [locale]="currentLocale" [format]="'$0,0.00'"/></td>
+                <td><input type="text" [readonly]="paymentLine.dueAmount == 0" [(ngModel)]="paymentLine.amount" numeral [locale]="currentLocale" [format]="'$0,0.00'"/></td>
             </tr>
             </tbody>
         </table>
