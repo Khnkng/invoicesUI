@@ -26,9 +26,15 @@ export class InvoicePaymentPreview{
     taskInvoices: Array<any> = [];
     itemInvoices: Array<any> = [];
     invoiceData:any;
+    logoURL:string;
     @Input()
     set invoices(invoices:any){
         this.invoiceData = invoices;
+        if(invoices.logoURL){
+            this.logoURL = invoices.logoURL;
+        }else{
+            this.getCompanyLogo();
+        }
         this.loadInvoiceData();
     }
 
@@ -51,6 +57,16 @@ export class InvoicePaymentPreview{
             });
     }
 
+    getCompanyLogo() {
+        this.invoiceService.getCompanyLogo(this.invoiceData.company_id,this.invoiceData.user_id)
+            .subscribe(preference => this.processPreference(preference[0]), error => this.handleError(error));
+    }
+
+    processPreference(preference){
+        if(preference && preference.temporaryURL){
+            this.logoURL = preference.temporaryURL;
+        }
+    }
 
 
     handleError(error) {

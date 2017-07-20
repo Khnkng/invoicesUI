@@ -10,12 +10,12 @@
                     </div>
                     <div class="column medium-4 tab" (click)="reRoutePage(2)" [ngClass]="{'selected': tabDisplay[2].display == 'block'}">
                         <label [ngClass]="{'whiteColor': tabDisplay[2].display == 'block'}"><span>Invoices</span>
-                            <span>({{badges.invoice_unpaid ? badges.invoice_unpaid : localBadges ? localBadges.invoice_unpaid: 0 }})</span>
+                            <span>({{badges.invoice_count ? badges.invoice_count : localBadges ? localBadges.invoice_count: 0 }})</span>
                         </label>
                     </div>
                     <div class="column medium-4 tab" (click)="reRoutePage(1)" [ngClass]="{'selected': tabDisplay[1].display == 'block'}">
                         <label [ngClass]="{'whiteColor': tabDisplay[1].display == 'block'}"><span>Payments</span>
-                            <span>({{badges.invoice_paid ? badges.invoice_paid : localBadges ? localBadges.invoice_paid: 0 }})</span>
+                            <span>({{badges.payment_count ? badges.payment_count : localBadges ? localBadges.payment_count: 0 }})</span>
                         </label>
                     </div>
                 </div>

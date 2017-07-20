@@ -35,14 +35,14 @@ export class InvoiceDashboardComponent {
         '#2980b9',
         '#3dc36f'
     ];
+    statesOrder:Array<string>=["draft","sent","opened","partially_Paid","paid"];
 
     proposalsTableData: any = {};
-    proposalsTableOptions: any = {search: false, pageSize: 10};
+    proposalsTableOptions: any = {search: true, pageSize: 10};
     paidInvoiceTableData: any = {};
-    piadInvoiceTableOptions: any = {search: false, pageSize: 10};
+    paidInvoiceTableOptions: any = {search: true, pageSize: 10};
     invoiceTableData: any = {};
-    invoiceTableOptions: any = {search: false, pageSize: 10, selectable: false};
-    paidInvoiceTableOptions: any = {search: false, pageSize: 10};
+    invoiceTableOptions: any = {search: true, pageSize: 10, selectable: false};
 
     tabHeight: string;
     badges: any = [];
@@ -68,17 +68,17 @@ export class InvoiceDashboardComponent {
         'value': 'edit'
     },
         {'className': 'ion-ios-copy-outline',
-        'name': 'Duplicate',
-        'value': 'duplicate'
-    }, {
-        'className': 'ion-social-usd',
-        'name': 'Mark as paid',
-        'value': 'paid'
-    }, {
-        'className': 'ion-android-send',
-        'name': 'Mark as sent',
-        'value': 'sent'
-    }, {'className': 'ion-ios-trash', 'name': 'Delete', 'value': 'delete'}];
+            'name': 'Duplicate',
+            'value': 'duplicate'
+        }, {
+            'className': 'ion-social-usd',
+            'name': 'Mark as paid',
+            'value': 'paid'
+        }, {
+            'className': 'ion-android-send',
+            'name': 'Mark as sent',
+            'value': 'sent'
+        }, {'className': 'ion-ios-trash', 'name': 'Delete', 'value': 'delete'}];
     invoiceMultipleSelect: Array<any> = [ {
         'className': 'ion-android-send',
         'name': 'Mark as sent',
@@ -100,23 +100,34 @@ export class InvoiceDashboardComponent {
                 private companiesService: CompaniesService, private invoiceService: InvoicesService,
                 private customerService: CustomersService, private titleService: pageTitleService,
                 private stateService: StateService,private numeralService:NumeralService) {
+        this.loadCustomers(Session.getCurrentCompany());
         this.routeSub = this._route.params.subscribe(params => {
             this.selectedTab = params['tabId'];
             this.selectTab(this.selectedTab, "");
             this.hasInvoices = false;
             this.hasPaidInvoices = false;
             this.companyCurrency = Session.getCurrentCompanyCurrency();
-            this.loadCustomers(Session.getCurrentCompany());
         });
         this.localBadges = JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
         if (!this.localBadges) {
-            this.localBadges = {proposal_count: 0, invoice_unpaid: 0, invoice_paid: 0};
+            this.localBadges = {proposal_count: 0, payment_count: 0, invoice_count: 0};
             sessionStorage.setItem('localInvoicesBadges', JSON.stringify(this.localBadges));
         } else {
             this.localBadges = JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
         }
 
+        this.getBadgesCount();
+
     }
+
+
+    getBadgesCount(){
+        this.invoiceService.getInvoicesCount().subscribe(badges => {
+            sessionStorage.setItem("localInvoicesBadges", JSON.stringify(badges.badges));
+            this.localBadges = JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
+        }, error => this.handleError(error));
+    }
+
 
     addInvoiceDashboardState() {
         this.stateService.addState(new State('Invoices', this._router.url, null, this.selectedTab));
@@ -179,11 +190,12 @@ export class InvoiceDashboardComponent {
         } else if (this.selectedTab == 2) {
             this.isLoading = false;
             this.titleService.setPageTitle("invoices");
-            this.invoiceService.invoices('unpaid').subscribe(invoices => {
+            this.invoiceService.allInvoices().subscribe(invoices => {
                 if (invoices.invoices) {
-                    this.buildInvoiceTableData(invoices.invoices);
-                    sessionStorage.setItem("localInvoicesBadges", JSON.stringify(invoices.badges));
-                    this.localBadges = JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
+                    var sortedCollection = _.sortBy(invoices.invoices, function(item){
+                        return base.statesOrder.indexOf(item.state);
+                    });
+                    this.buildInvoiceTableData(sortedCollection);
                 } else {
                     this.closeLoading();
                 }
@@ -217,7 +229,7 @@ export class InvoiceDashboardComponent {
                 this.selectTab(2, "");
             },
             error => {
-                this.toastService.pop(TOAST_TYPE.error, "Invoice deletion failed.")
+                this.toastService.pop(TOAST_TYPE.error, "Invoice mark as sent failed.")
             });
     }
 
@@ -228,6 +240,11 @@ export class InvoiceDashboardComponent {
 
     showInvoice(invoice) {
         let link = ['invoices/edit', invoice.id];
+        this._router.navigate(link);
+    }
+
+    showDuplicate(invoice) {
+        let link = ['invoices/duplicate', invoice.id];
         this._router.navigate(link);
     }
 
@@ -256,21 +273,13 @@ export class InvoiceDashboardComponent {
     updateTabHeight() {
         let base = this;
         let topOfDiv = jQuery('.tab-content').offset().top;
-        topOfDiv = topOfDiv < 150 ? 170 : topOfDiv;
+        topOfDiv = topOfDiv < 150 ? 150 : topOfDiv;
         let bottomOfVisibleWindow = Math.max(jQuery(document).height(), jQuery(window).height());
         base.tabHeight = (bottomOfVisibleWindow - topOfDiv - 25) + "px";
         jQuery('.tab-content').css('height', base.tabHeight);
-        switch (this.selectedTab) {
-            case 0:
-                base.proposalsTableOptions.pageSize = Math.floor((bottomOfVisibleWindow - topOfDiv - 75) / 42) - 3;
-                break;
-            case 1:
-                base.piadInvoiceTableOptions.pageSize = Math.floor((bottomOfVisibleWindow - topOfDiv - 75) / 42) - 3;
-                break;
-            case 2:
-                base.invoiceTableOptions.pageSize = Math.floor((bottomOfVisibleWindow - topOfDiv - 75) / 42) - 3;
-                break;
-        }
+        base.proposalsTableOptions.pageSize = Math.floor((bottomOfVisibleWindow - topOfDiv - 75) / 42) - 3;
+        base.paidInvoiceTableOptions.pageSize = Math.floor((bottomOfVisibleWindow - topOfDiv - 75) / 62) - 3;
+        base.invoiceTableOptions.pageSize = Math.floor((bottomOfVisibleWindow - topOfDiv - 75) / 42) - 3;
     }
 
     ngAfterViewInit() {
@@ -303,8 +312,6 @@ export class InvoiceDashboardComponent {
         this.hasInvoices = false;
         this.invoices = invoices;
         this.invoiceTableData.rows = [];
-        this.invoiceTableOptions.search = true;
-        this.invoiceTableOptions.pageSize = 9;
         this.invoiceTableData.columns = [
             {"name": "id", "title": "id", "visible": false},
             {
@@ -351,7 +358,12 @@ export class InvoiceDashboardComponent {
             row['due_date'] = invoice['due_date'];
             row['amount'] = invoice['amount'];
             row['amount_due'] = invoice['amount_due'];
-            row['status'] = invoice['state']?_.capitalize(invoice['state']):"";
+            if(invoice['state']=='partially_Paid'){
+                row['status']="Partially Paid"
+            }else {
+                row['status'] = invoice['state']?_.startCase((invoice['state'])):"";
+            }
+
             base.invoiceTableData.rows.push(row);
         });
 
@@ -364,8 +376,6 @@ export class InvoiceDashboardComponent {
     buildPaymentsTableData() {
         this.hasPaidInvoices = false;
         this.paidInvoiceTableData.rows = [];
-        this.paidInvoiceTableOptions.search = true;
-        this.paidInvoiceTableOptions.pageSize = 9;
         this.paidInvoiceTableData.columns = [
             {"name": "id", "title": "id", "visible": false},
             {
@@ -386,7 +396,8 @@ export class InvoiceDashboardComponent {
             let row:any = {};
             row['id'] = payment['id'];
             row['selectCol'] = "<input type='checkbox' class='checkbox'/>";
-            row['type'] = "<div>"+payment.type+"</div><div><small>"+payment.referenceNo+"</small></div>";
+            let paymentType=payment.type=='cheque'?'Check':payment.type;
+            row['type'] = "<div>"+paymentType+"</div><div><small>"+payment.referenceNo+"</small></div>";
             row['receivedFrom'] = base.getCustomerName(payment.receivedFrom);
             row['dateReceived'] = payment.paymentDate;
             let assignStatus = "";
@@ -396,17 +407,17 @@ export class InvoiceDashboardComponent {
             });
             let assignmentHtml = "";
 
-                if(assignedAmount >= payment.paymentAmount) {
-                    assignStatus = "Assigned";
-                    assignmentHtml = "<small style='color:#00B1A9'>"+assignStatus+"</small>"
+            if(assignedAmount >= payment.paymentAmount) {
+                assignStatus = "Assigned";
+                assignmentHtml = "<small style='color:#00B1A9'>"+assignStatus+"</small>"
 
-                } else if(assignedAmount > 0) {
-                    assignStatus = "Partially Assigned";
-                    assignmentHtml = "<small style='color:#ff3219'>"+assignStatus+"</small>"
-                } else {
-                    assignStatus = "Unassigned";
-                    assignmentHtml = "<small style='color:#ff3219'>"+assignStatus+"</small>"
-                }
+            } else if(assignedAmount > 0) {
+                assignStatus = "Partially Assigned";
+                assignmentHtml = "<small style='color:#ff3219'>"+assignStatus+"</small>"
+            } else {
+                assignStatus = "Unassigned";
+                assignmentHtml = "<small style='color:#ff3219'>"+assignStatus+"</small>"
+            }
 
 
 
@@ -421,41 +432,41 @@ export class InvoiceDashboardComponent {
     }
 
     /*buildPaidInvoiceTableData(invoices) {
-        this.hasPaidInvoices = false;
-        this.invoices = invoices;
-        this.paidInvoiceTableData.rows = [];
-        this.paidInvoiceTableOptions.search = true;
-        this.paidInvoiceTableOptions.pageSize = 9;
-        this.paidInvoiceTableData.columns = [
-            {"name": "id", "title": "id", "visible": false},
-            {"name": "number", "title": "Number"},
-            {"name": "customer", "title": "Customer"},
-            {"name": "due_date", "title": "Due Date"},
-            {"name": "amount", "title": "Amount",type:'number',"formatter": (amount)=>{
-                amount = parseFloat(amount);
-                return amount.toLocaleString(base.localeFortmat, { style: 'currency', currency: base.companyCurrency, minimumFractionDigits: 2, maximumFractionDigits: 2 })
-            }}/!*,
-            {"name": "actions", "title": ""}*!/
-        ];
-        let base = this;
-        invoices.forEach(function (invoice) {
-            let row: any = {};
-            row['id'] = invoice['id'];
-            row['selectCol'] = "<input type='checkbox' class='checkbox'/>";
-            row['selectCol'] = "<input type='checkbox' class='checkbox'/>";
-            row['number'] = invoice['number'];
-            row['customer'] = base.getCustomerName(invoice['customer_id']);
-            row['due_date'] = invoice['due_date'];
-            row['amount'] = invoice['amount'];
-            /!*row['actions'] = "<a class='action' data-action='edit' style='margin:0px 0px 0px 5px;'><i class='icon ion-edit'></i></a><a class='action' data-action='delete' style='margin:0px 0px 0px 5px;'><i class='icon ion-trash-b'></i></a>";*!/
-            base.paidInvoiceTableData.rows.push(row);
-        });
+     this.hasPaidInvoices = false;
+     this.invoices = invoices;
+     this.paidInvoiceTableData.rows = [];
+     this.paidInvoiceTableOptions.search = true;
+     this.paidInvoiceTableOptions.pageSize = 9;
+     this.paidInvoiceTableData.columns = [
+     {"name": "id", "title": "id", "visible": false},
+     {"name": "number", "title": "Number"},
+     {"name": "customer", "title": "Customer"},
+     {"name": "due_date", "title": "Due Date"},
+     {"name": "amount", "title": "Amount",type:'number',"formatter": (amount)=>{
+     amount = parseFloat(amount);
+     return amount.toLocaleString(base.localeFortmat, { style: 'currency', currency: base.companyCurrency, minimumFractionDigits: 2, maximumFractionDigits: 2 })
+     }}/!*,
+     {"name": "actions", "title": ""}*!/
+     ];
+     let base = this;
+     invoices.forEach(function (invoice) {
+     let row: any = {};
+     row['id'] = invoice['id'];
+     row['selectCol'] = "<input type='checkbox' class='checkbox'/>";
+     row['selectCol'] = "<input type='checkbox' class='checkbox'/>";
+     row['number'] = invoice['number'];
+     row['customer'] = base.getCustomerName(invoice['customer_id']);
+     row['due_date'] = invoice['due_date'];
+     row['amount'] = invoice['amount'];
+     /!*row['actions'] = "<a class='action' data-action='edit' style='margin:0px 0px 0px 5px;'><i class='icon ion-edit'></i></a><a class='action' data-action='delete' style='margin:0px 0px 0px 5px;'><i class='icon ion-trash-b'></i></a>";*!/
+     base.paidInvoiceTableData.rows.push(row);
+     });
 
-        setTimeout(function () {
-            base.hasPaidInvoices = true;
-        }, 0)
-        this.loadingService.triggerLoadingEvent(false);
-    }*/
+     setTimeout(function () {
+     base.hasPaidInvoices = true;
+     }, 0)
+     this.loadingService.triggerLoadingEvent(false);
+     }*/
 
     getCustomerName(id) {
         let customer = _.find(this.customers, {'customer_id': id});
@@ -580,7 +591,7 @@ export class InvoiceDashboardComponent {
                 this.showInvoice(this.selectedTableRows[0]);
                 break;
             case 'duplicate':
-                this.showInvoice(this.selectedTableRows[0]);
+                this.showDuplicate(this.selectedTableRows[0]);
                 break;
             case 'sent':
                 this.invoiceMarkAsSent();

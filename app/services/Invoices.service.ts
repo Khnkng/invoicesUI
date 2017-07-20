@@ -22,7 +22,7 @@ export class InvoicesService extends QountServices {
     }
 
     getDocumentServiceUrl():string {
-        let url = this.interpolateUrl(PATH.DOCUMENT_SERVICE,null,{id: Session.getUser().id});
+        let url = this.interpolateUrl(PATH.DOCUMENT_SERVICE,null,{id: Session.getUser().id,companyId:Session.getCurrentCompany()});
         url = PATH.DOCUMENT_SERVICE_URL + url;
         return url;
     }
@@ -33,8 +33,8 @@ export class InvoicesService extends QountServices {
             .catch(this.handleError)
     }
 
-    getPreference(companyId:String): Observable<any> {
-        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE_PREFERENCE,null,{id: Session.getUser().id, companyId: companyId});
+    getPreference(companyId:String,userID:String): Observable<any> {
+        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE_PREFERENCE,null,{id: userID, companyId: companyId});
         return this.query(url, SOURCE_TYPE.JAVA).map(res => <any> res.json())
             .catch(this.handleError)
     }
@@ -130,6 +130,19 @@ export class InvoicesService extends QountServices {
         return this.update(url, data, SOURCE_TYPE.JAVA).map(res => <any> res.json())
             .catch(this.handleError)
     }
+
+    getInvoicesCount(){
+        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE,null,{id: Session.getUser().id,companyId:Session.getCurrentCompany()});
+        return this.query(url+"/count", SOURCE_TYPE.JAVA).map(res => <any> res.json())
+            .catch(this.handleError)
+    }
+
+    getCompanyLogo(companyId: string, userId:any):any {
+        var url = this.interpolateUrl(PATH.DOCUMENTS_SERVICE,null,{id: userId, companyId: companyId, type: 'company_invoice', mappedId: companyId});
+        return this.query(url, SOURCE_TYPE.JAVA).map(res => <any>res.json())
+            .catch(this.handleError)
+    }
+
 
     private handleError (error: Response) {
         return Observable.throw(error.text());

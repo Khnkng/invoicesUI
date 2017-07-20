@@ -73,6 +73,8 @@ export class InvoiceComponent{
     isDuplicate:boolean;
     routeSubscribe:any;
     companyAddress:any;
+    coreValue:number=0;
+    logoURL:string;
 
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
@@ -92,6 +94,7 @@ export class InvoiceComponent{
             this.loadCOA();
             this.getCompanyDetails();
         });
+        this.getCompanyLogo();
         if(this._router.url.indexOf('duplicate')!=-1){
             this.isDuplicate=true;
         };
@@ -100,10 +103,15 @@ export class InvoiceComponent{
         });
     }
 
+
+
     gotoPreviousState() {
-        let prevState = this.stateService.getPrevState();
-        if (prevState) {
-            this._router.navigate([prevState.url]);
+        let previousState=this.stateService.getPrevState();
+        if(previousState&&previousState.key=="New-Payment-Invoice"){
+            let link = [previousState.url];
+            this._router.navigate(link);
+        }else {
+            this._router.navigate([previousState.url]);
         }
     }
 
@@ -119,6 +127,21 @@ export class InvoiceComponent{
             });
     }
 
+    getCompanyLogo() {
+        this.invoiceService.getCompanyLogo(Session.getCurrentCompany(),Session.getUser().id)
+            .subscribe(preference => this.processPreference(preference[0]), error => this.handleError(error));
+    }
+
+    processPreference(preference){
+        if(preference && preference.temporaryURL){
+            this.logoURL = preference.temporaryURL;
+        }
+    }
+
+    handleError(error) {
+        this.loadingService.triggerLoadingEvent(false);
+        this.toastService.pop(TOAST_TYPE.error, "Failed to perform operation");
+    }
 
     closeLoader(){
         this.loadingService.triggerLoadingEvent(false);
@@ -166,6 +189,21 @@ export class InvoiceComponent{
                 this.invoice = invoice;
                 let _invoice = _.cloneDeep(invoice);
                 delete _invoice.invoiceLines;
+                let taskLines:Array<any> = [];
+                let itemLines:Array<any> = [];
+                taskLines =  _.filter(this.invoice.invoiceLines, function(invoice) { return invoice.type == 'task'; });
+                itemLines =  _.filter(this.invoice.invoiceLines, function(invoice) { return invoice.type == 'item'; });
+
+                if(taskLines.length==0){
+                    for(let i=0; i<2; i++){
+                        this.addInvoiceList(null,'task');
+                    }
+                }if(itemLines.length==0){
+                    for(let i=0; i<2; i++){
+                        this.addInvoiceList(null,'item');
+                    }
+                }
+                this.coreValue=_.random(50,75)+'%';
                 this.getCustomrtDetails(invoice.customer_id);
                 this.loadContacts(invoice.customer_id);
                 this._invoiceForm.updateForm(this.invoiceForm, _invoice);
@@ -246,6 +284,9 @@ export class InvoiceComponent{
     setInvoiceDate(date){
         let invoiceDateControl:any = this.invoiceForm.controls['invoice_date'];
         invoiceDateControl.patchValue(date);
+        let term=this.invoiceForm.controls['term'].value;
+        if(term)
+            this.selectTerm(term);
     }
 
     setPaymentDate(date){
@@ -269,7 +310,7 @@ export class InvoiceComponent{
 
     calcLineTax(taxId, price, quantity) {
         let tax = _.find(this.taxesList, {id: taxId});
-        if(taxId && price && quantity) {
+        if(taxId && price && quantity && tax) {
             let priceVal = numeral(price).value();
             let quantityVal = numeral(quantity).value();
             return numeral((tax.taxRate * parseFloat(priceVal) * parseFloat(quantityVal))/100).value();
@@ -359,8 +400,13 @@ export class InvoiceComponent{
         taskLines=this.getInvoiceLines('task');
         itemLines=this.getInvoiceLines('item');
 
+        if(this.amount<0){
+            this.toastService.pop(TOAST_TYPE.error, "Invoice amount should grater than or equal to zero");
+            return
+        }
+
         if(taskLines.length==0&&itemLines.length==0){
-            this.toastService.pop(TOAST_TYPE.error, "Please Tasks or Item Lines");
+            this.toastService.pop(TOAST_TYPE.error, "Please add Tasks or Item Lines");
             return
         }
 
@@ -373,13 +419,16 @@ export class InvoiceComponent{
         invoiceData.sendMail=sendMail;
         invoiceData.company=this.companyAddress;
         invoiceData.customer=this.selectedCustomer;
+        invoiceData.user_id=Session.getUser().id;
+        invoiceData.company_id=Session.getCurrentCompany();
+        invoiceData.logoURL = this.logoURL;
         this.invoiceProcessedData=invoiceData;
         if(action=='email'){
             this.openEmailDailog();
         }else if (action=='draft'){
             this.saveInvoiceDetails(invoiceData);
         }else if(action=='preview'){
-         this.togelPreview()
+            this.togelPreview();
         }else if(action=='download'){
             if(!this.showPreview)
             {
@@ -431,7 +480,8 @@ export class InvoiceComponent{
         if(this.newInvoice||this.isDuplicate) {
             this.invoiceService.createInvoice(invoiceData).subscribe(resp => {
                 this.toastService.pop(TOAST_TYPE.success, "Invoice created successfully");
-                this.navigateToDashborad();
+                //this.navigateToDashborad();
+                this.gotoPreviousState();
             }, error=>{
                 if(error&&JSON.parse(error))
                     this.toastService.pop(TOAST_TYPE.error, JSON.parse(error).message);
@@ -499,7 +549,7 @@ export class InvoiceComponent{
     }
 
     getCustomrtDetails(value){
-        this.getCustomerContacts(value);
+        //this.getCustomerContacts(value);
         let customer = _.find(this.customers, {'customer_id': value});
         this.selectedCustomer=customer;
     }
@@ -625,9 +675,9 @@ export class InvoiceComponent{
             this.resetAllLinesFromEditing(linesControl);
             itemForm.editable = !itemForm.editable;
         }
-         if(index == this.getLastActiveLineIndex(linesControl)){
-         this.addInvoiceList(null,type);
-         }
+        if(index == this.getLastActiveLineIndex(linesControl)){
+            this.addInvoiceList(null,type);
+        }
     }
 
     resetAllLinesFromEditing(linesControl){
@@ -781,7 +831,9 @@ export class InvoiceComponent{
 
 
     exportToPDF(){
+        let imgString = jQuery('#company-img').clone().html();
         let html = jQuery('<div>').append(jQuery('style').clone()).append(jQuery('#payment-preview').clone()).html();
+        html = html.replace(imgString,imgString.replace('>','/>'))
         let pdfReq={
             "version" : "1.1",
             "genericReport": {
@@ -803,7 +855,7 @@ export class InvoiceComponent{
 
     ngOnDestroy(){
         if(jQuery('#invoice-email-conformation'))
-        jQuery('#invoice-email-conformation').remove();
+            jQuery('#invoice-email-conformation').remove();
         if(this.routeSubscribe){
             this.routeSubscribe.unsubscribe();
         }
