@@ -314,6 +314,7 @@ export class InvoiceDashboardComponent {
         this.invoiceTableData.rows = [];
         this.invoiceTableData.columns = [
             {"name": "id", "title": "id", "visible": false},
+            {"name": "journalId", "title": "Journal ID", 'visible': false, 'filterable': false},
             {
                 "name": "selectCol",
                 "title": "<input type='checkbox' class='global-checkbox'>",
@@ -346,12 +347,14 @@ export class InvoiceDashboardComponent {
                 })
             }
             },
-            {"name": "status", "title": "Status"}
-        ];
+            {"name": "status", "title": "Status"},
+            {"name": "actions", "title": "", "type": "html", "sortable": false, "filterable": false}
+    ];
         let base = this;
         invoices.forEach(function (invoice) {
             let row: any = {};
             row['id'] = invoice['id'];
+            row['journalId'] = invoice['journalID'];
             row['selectCol'] = "<input type='checkbox' class='checkbox'/>";
             row['number'] = invoice['number'];
             row['customer'] = base.getCustomerName(invoice['customer_id']);
@@ -362,6 +365,10 @@ export class InvoiceDashboardComponent {
                 row['status']="Partially Paid"
             }else {
                 row['status'] = invoice['state']?_.startCase((invoice['state'])):"";
+            }
+
+            if(invoice.journalID){
+                row['actions'] = "<a class='action' data-action='navigation'><span class='icon badge je-badge'>JE</span></a>";
             }
 
             base.invoiceTableData.rows.push(row);
@@ -378,6 +385,7 @@ export class InvoiceDashboardComponent {
         this.paidInvoiceTableData.rows = [];
         this.paidInvoiceTableData.columns = [
             {"name": "id", "title": "id", "visible": false},
+            {"name": "journalId", "title": "Journal ID", 'visible': false, 'filterable': false},
             {
                 "name": "selectCol",
                 "title": "<input type='checkbox' class='global-checkbox'>",
@@ -388,13 +396,15 @@ export class InvoiceDashboardComponent {
             {"name": "type", "title": "Payment type/#"},
             {"name": "receivedFrom", "title": "Received From"},
             {"name": "dateReceived", "title": "Date Received"},
-            {"name": "amount", "title": "Amount/Status"}
+            {"name": "amount", "title": "Amount/Status"},
+            {"name": "actions", "title": "", "type": "html", "sortable": false, "filterable": false}
         ];
 
         let base = this;
         this.payments.forEach(function(payment) {
             let row:any = {};
             row['id'] = payment['id'];
+            row['journalId'] = payment['journalID'];
             row['selectCol'] = "<input type='checkbox' class='checkbox'/>";
             let paymentType=payment.type=='cheque'?'Check':payment.type;
             row['type'] = "<div>"+paymentType+"</div><div><small>"+payment.referenceNo+"</small></div>";
@@ -422,6 +432,9 @@ export class InvoiceDashboardComponent {
 
 
             row['amount'] = "<div>"+base.numeralService.format("$0,0.00", payment.paymentAmount)+"</div><div>"+assignmentHtml+"</div>";
+            if(payment.journalID){
+                row['actions'] = "<a class='action' data-action='navigation'><span class='icon badge je-badge'>JE</span></a>";
+            }
             base.paidInvoiceTableData.rows.push(row);
         });
 
@@ -499,6 +512,16 @@ export class InvoiceDashboardComponent {
                 break;
         }
 
+    }
+
+    handleAction($event){
+        let action = $event.action;
+        delete $event.action;
+        delete $event.actions;
+        if(action == 'navigation'){
+            let link = ['journalEntry', $event.journalId];
+            this._router.navigate(link);
+        }
     }
 
     handleSelect(event: any) {
@@ -605,9 +628,5 @@ export class InvoiceDashboardComponent {
                 break;
         }
     }
-
-
-
-
 }
 
