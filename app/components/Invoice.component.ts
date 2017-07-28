@@ -834,6 +834,7 @@ export class InvoiceComponent{
     exportToPDF(){
         let imgString = jQuery('#company-img').clone().html();
         let html = jQuery('<div>').append(jQuery('style').clone()).append(jQuery('#payment-preview').clone()).html();
+        if(imgString)
         html = html.replace(imgString,imgString.replace('>','/>'))
         let pdfReq={
             "version" : "1.1",
