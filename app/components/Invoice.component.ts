@@ -414,6 +414,7 @@ export class InvoiceComponent{
             return;
         }
         invoiceData.sub_total=this.subTotal;
+        invoiceData.tax_amount=this.taxTotal;
         invoiceData.invoiceLines=itemLines.concat(taskLines);
         invoiceData.recepientsMails=this.maillIds;
         invoiceData.sendMail=sendMail;
