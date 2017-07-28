@@ -27,8 +27,10 @@ export class InvoicePaymentPreview{
     itemInvoices: Array<any> = [];
     invoiceData:any;
     logoURL:string;
+    termsList:any={"net30":"Net 30","net45":"Net 45","net60":"Net 60","net90":"Net 90","custom":"Custom"};
     @Input()
     set invoices(invoices:any){
+        invoices.term=this.termsList[invoices.term];
         this.invoiceData = invoices;
         if(invoices.logoURL){
             this.logoURL = invoices.logoURL;

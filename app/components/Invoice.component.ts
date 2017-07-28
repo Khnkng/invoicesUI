@@ -471,12 +471,12 @@ export class InvoiceComponent{
         this.closeEmailDailog();
     }
 
-
-
     saveInvoiceDetails(invoiceData){
         this.loadingService.triggerLoadingEvent(true);
         delete invoiceData.company;
         delete invoiceData.customer;
+        delete invoiceData.taskLines;
+        delete invoiceData.logoURL;
         if(this.newInvoice||this.isDuplicate) {
             this.invoiceService.createInvoice(invoiceData).subscribe(resp => {
                 this.toastService.pop(TOAST_TYPE.success, "Invoice created successfully");
