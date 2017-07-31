@@ -414,6 +414,7 @@ export class InvoiceComponent{
             return;
         }
         invoiceData.sub_total=this.subTotal;
+        invoiceData.tax_amount=this.taxTotal;
         invoiceData.invoiceLines=itemLines.concat(taskLines);
         invoiceData.recepientsMails=this.maillIds;
         invoiceData.sendMail=sendMail;
@@ -471,12 +472,12 @@ export class InvoiceComponent{
         this.closeEmailDailog();
     }
 
-
-
     saveInvoiceDetails(invoiceData){
         this.loadingService.triggerLoadingEvent(true);
         delete invoiceData.company;
         delete invoiceData.customer;
+        delete invoiceData.taskLines;
+        delete invoiceData.logoURL;
         if(this.newInvoice||this.isDuplicate) {
             this.invoiceService.createInvoice(invoiceData).subscribe(resp => {
                 this.toastService.pop(TOAST_TYPE.success, "Invoice created successfully");
@@ -833,6 +834,7 @@ export class InvoiceComponent{
     exportToPDF(){
         let imgString = jQuery('#company-img').clone().html();
         let html = jQuery('<div>').append(jQuery('style').clone()).append(jQuery('#payment-preview').clone()).html();
+        if(imgString)
         html = html.replace(imgString,imgString.replace('>','/>'))
         let pdfReq={
             "version" : "1.1",

@@ -143,6 +143,15 @@ export class InvoicesService extends QountServices {
             .catch(this.handleError)
     }
 
+    getDashboardBoxData(companyId: string, startDate: string, endDate: string){
+        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE_DASHBOARD_BOX, null, {id: Session.getUser().id,companyId:Session.getCurrentCompany()});
+        let query = "";
+        if(startDate && endDate){
+            query = "?startDate="+startDate+"&endDate="+endDate;
+        }
+        return this.query(url+query, SOURCE_TYPE.JAVA).map(res => <any> res.json())
+            .catch(this.handleError)
+    }
 
     private handleError (error: Response) {
         return Observable.throw(error.text());
