@@ -303,7 +303,7 @@ export class InvoiceDashboardComponent {
                         }
                     },
                     title: {
-                        text: 'Total Receivables',
+                        text: 'Total Receivables By Customer',
                         style: {
                             color: '#878787',
                             fontFamily: 'NiveauGroteskLight',
@@ -342,7 +342,7 @@ export class InvoiceDashboardComponent {
                         }
                     },
                     title: {
-                        text: 'Operational Expenses',
+                        text: 'Total Receivables By Customer',
                         align:'left',
                         style: {
                             color: '#878787',
