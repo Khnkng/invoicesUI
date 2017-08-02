@@ -145,7 +145,7 @@
                                                         <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.price.value?(invoiceLine.controls.price.value| currency:companyCurrency:true:'1.2-2'):null}}</td>
 
                                                         <td *ngIf="invoiceLine.editable">
-                                                            <input type="text" [formControl]="invoiceLine.controls.price" numeral [locale]="localeFormat" [format]="'$00.00'"/>
+                                                            <input type="text" [formControl]="invoiceLine.controls.price" numeral [locale]="localeFormat" [format]="'$0,0.00'"/>
                                                         </td>
 
                                                         <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.quantity.value?invoiceLine.controls.quantity.value:''}}</td>
@@ -200,7 +200,7 @@
                                                         <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.price.value?(invoiceLine.controls.price.value| currency:companyCurrency:true:'1.2-2'):null}}</td>
 
                                                         <td *ngIf="invoiceLine.editable">
-                                                            <input type="text" [formControl]="invoiceLine.controls.price" numeral [locale]="localeFormat" [format]="'$00.00'"/>
+                                                            <input type="text" [formControl]="invoiceLine.controls.price" numeral [locale]="localeFormat" [format]="'$0,0.00'"/>
                                                         </td>
 
                                                         <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.quantity.value?invoiceLine.controls.quantity.value:''}}</td>
