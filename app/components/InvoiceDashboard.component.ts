@@ -264,9 +264,9 @@ export class InvoiceDashboardComponent {
             this.hasBoxData = true;
             this.metrics["totalReceivable"] = this.formatAmount(results[0].totalReceivableAmount);
             this.metrics["totalPastDue"] = this.formatAmount(results[0].totalPastDueAmount);
-            this.metrics["invoiceCount"] = results[0].invoiceCount;
-            this.metrics["openedInvoices"] = results[0].openedInvoices;
-            this.metrics["sentInvoices"] = results[0].sentInvoices;
+            this.metrics["invoiceCount"] = this.numeralService.format('0', results[0].invoiceCount);
+            this.metrics["openedInvoices"] = this.numeralService.format('0', results[0].openedInvoices);
+            this.metrics["sentInvoices"] = this.numeralService.format('0', results[0].sentInvoices);
             this.metrics["totalReceivedLast30Days"] = this.formatAmount(results[0].totalReceivedLast30Days);
             this.metrics["cashBalance"] = this.formatAmount(results[1].cashAtEndOfPeriod || 0);
             this.loadingService.triggerLoadingEvent(false);
