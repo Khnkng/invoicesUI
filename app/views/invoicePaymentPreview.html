@@ -176,7 +176,7 @@
                         <td  class="emptyCol" colspan="2"></td>
                         <td >Tax</td>
                         <td  class="emptyCol" colspan="2"></td>
-                        <td>{{invoiceData.tax_amount}}</td>
+                        <td>{{invoiceData.tax_amount | currency:invoiceData.currency:true:'1.2-2'}}</td>
                     </tr>
                     <tr >
                         <td  class="emptyCol" colspan="2"></td>
