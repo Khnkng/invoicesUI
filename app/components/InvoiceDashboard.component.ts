@@ -159,6 +159,7 @@ export class InvoiceDashboardComponent {
         this.routeSubscribe = switchBoard.onClickPrev.subscribe(title => {
             if(this.showDetailedChart){
                 this.showDetailedChart = !this.showDetailedChart;
+                this.detailedReportChartOptions.yAxis.title = {text: null,style: {fontSize:'15px'}};
             }
         });
         this.getBadgesCount();
