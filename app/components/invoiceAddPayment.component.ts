@@ -171,11 +171,11 @@ export class InvoiceAddPaymentComponent {
             payment.depositedTo = null;
         }
         let paymentAmount = parseFloat(this.invoicePaymentForm.controls['paymentAmount'].value) || 0;
-        if(this.paymentLines.length == 0) {
+        /*if(this.paymentLines.length == 0) {
             this.toastService.pop(TOAST_TYPE.error, "Add atlease one invoice");
             this.loadingService.triggerLoadingEvent(false);
             return;
-        }
+        }*/
         if(this.getAppliedAmount() <= paymentAmount) {
             this.invoiceService.addPayment(payment).subscribe(response => {
                 this.toastService.pop(TOAST_TYPE.success, "Payment created successfully");
@@ -319,7 +319,6 @@ export class InvoiceAddPaymentComponent {
     }
 
     ngAfterViewInit() {
-        debugger;
         this.invoicePaymentForm.controls['type'].setValue("cheque");
         this.invoicePaymentForm.controls['currencyCode'].setValue("USD");
         this.numeralService.switchLocale("USD")
