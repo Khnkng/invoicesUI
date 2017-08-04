@@ -438,6 +438,7 @@ export class InvoiceDashboardComponent {
                     }
                 }
                 this.agingByCustomer={
+                    colors: this.chartColors,
                     chart: {
                         type: 'bar',
                         marginRight: 50,
