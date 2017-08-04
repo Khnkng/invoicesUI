@@ -394,6 +394,7 @@ export class InvoiceDashboardComponent {
             this.detailedReportChartOptions.legend = {enabled: true};
         } else if(type == 'agingByCustomer'){
             this.detailedReportChartOptions = _.clone(this.agingByCustomer);
+            this.detailedReportChartOptions.yAxis.title = {text: 'Payable Amount',style: {fontSize:'15px'}};
             this.detailedReportChartOptions.legend = {enabled: true};
         } else if(type == 'customerAgingSummary'){
             this.detailedReportChartOptions = _.clone(this.customerAgingSummary);
@@ -473,7 +474,7 @@ export class InvoiceDashboardComponent {
                         minorGridLineWidth: 0,
                         min: 0,
                         title: {
-                            text: 'Payable Amount',
+                            text: '',
                             style: {
                                 fontSize:'15px'
                             }
