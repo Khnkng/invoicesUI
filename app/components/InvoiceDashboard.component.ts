@@ -233,8 +233,8 @@ export class InvoiceDashboardComponent {
             this.isLoading = false;
             this.titleService.setPageTitle("invoices");
             this.invoiceService.allInvoices().subscribe(invoices => {
-                if (invoices.invoices) {
-                    var sortedCollection = _.sortBy(invoices.invoices, function(item){
+                if (invoices) {
+                    var sortedCollection = _.sortBy(invoices, function(item){
                         return base.statesOrder.indexOf(item.state);
                     });
                     this.buildInvoiceTableData(sortedCollection);
