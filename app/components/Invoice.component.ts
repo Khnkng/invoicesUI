@@ -479,7 +479,8 @@ export class InvoiceComponent{
 
     sendInvoiceMails(){
         if(this.additionalMails){
-            this.invoiceProcessedData.recepientsMails.push(this.additionalMails);
+            let mails:Array<string>=this.additionalMails.split(',');
+            this.invoiceProcessedData.recepientsMails=this.invoiceProcessedData.recepientsMails.concat(mails);
         }
         this.saveInvoiceDetails(this.invoiceProcessedData);
         this.closeEmailDailog();
