@@ -159,6 +159,7 @@ export class InvoiceDashboardComponent {
         this.routeSubscribe = switchBoard.onClickPrev.subscribe(title => {
             if(this.showDetailedChart){
                 this.showDetailedChart = !this.showDetailedChart;
+                this.detailedReportChartOptions.yAxis.title = {text: null,style: {fontSize:'15px'}};
             }
         });
         this.getBadgesCount();
@@ -234,7 +235,7 @@ export class InvoiceDashboardComponent {
             this.titleService.setPageTitle("invoices");
             this.invoiceService.allInvoices().subscribe(invoices => {
                 if (invoices) {
-                    var sortedCollection = _.sortBy(invoices, function(item){
+                    let sortedCollection = _.sortBy(invoices, function(item){
                         return base.statesOrder.indexOf(item.state);
                     });
                     this.buildInvoiceTableData(sortedCollection);
@@ -264,7 +265,7 @@ export class InvoiceDashboardComponent {
             this.hasBoxData = true;
             this.metrics["totalReceivable"] = this.formatAmount(results[0].totalReceivableAmount);
             this.metrics["totalPastDue"] = this.formatAmount(results[0].totalPastDueAmount);
-            this.metrics["invoiceCount"] = this.numeralService.format('0', results[0].invoiceCount);
+            this.metrics["avgReceivableDays"] = this.numeralService.format('0', results[0].avgReceivableDays);
             this.metrics["openedInvoices"] = this.numeralService.format('0', results[0].openedInvoices);
             this.metrics["sentInvoices"] = this.numeralService.format('0', results[0].sentInvoices);
             this.metrics["totalReceivedLast30Days"] = this.formatAmount(results[0].totalReceivedLast30Days);
@@ -394,6 +395,7 @@ export class InvoiceDashboardComponent {
             this.detailedReportChartOptions.legend = {enabled: true};
         } else if(type == 'agingByCustomer'){
             this.detailedReportChartOptions = _.clone(this.agingByCustomer);
+            this.detailedReportChartOptions.yAxis.title = {text: 'Payable Amount',style: {fontSize:'15px'}};
             this.detailedReportChartOptions.legend = {enabled: true};
         } else if(type == 'customerAgingSummary'){
             this.detailedReportChartOptions = _.clone(this.customerAgingSummary);
@@ -421,22 +423,18 @@ export class InvoiceDashboardComponent {
                 this.hasAgingByCustomerData = true;
                 let columns = metricData.columns;
                 let data = metricData.data;
-                let keys=Object.keys(data);
                 let series = [];
-                for (let key of keys) {
-                    if(key!='TOTAL') {
-                        let customer = data[key];
-                        let customerName = customer['CustomerName'];
-                        delete customer['TOTAL'];
-                        delete customer['type'];
-                        let values = Object.values(customer);
-                        values = this.removeCurrency(values);
-                        series.push({
-                            name : customerName,
-                            data : values
-                        });
-                    }
-                }
+                _.each(data, function(value, key){
+                    let array = [];
+                    _.each(columns, function (column) {
+                        array.push(value[column]);
+                    });
+                    let valueArray = base.removeCurrency(array);
+                    series.push({
+                        name: key,
+                        data: valueArray
+                    });
+                });
                 this.agingByCustomer={
                     colors: this.chartColors,
                     chart: {
@@ -473,7 +471,7 @@ export class InvoiceDashboardComponent {
                         minorGridLineWidth: 0,
                         min: 0,
                         title: {
-                            text: 'Payable Amount',
+                            text: '',
                             style: {
                                 fontSize:'15px'
                             }
@@ -540,6 +538,10 @@ export class InvoiceDashboardComponent {
         return _values;
     }
 
+    unFormatAmount(amount){
+        return this.numeralService.value(amount);
+    }
+
     getCustomerAgingSummary(){
         let base = this;
         this.reportRequest.metricsType = 'customerAgingSummary';
@@ -548,23 +550,13 @@ export class InvoiceDashboardComponent {
                 this.hasARAgingSummaryData = true;
                 let columns = metricData.columns;
                 let data = metricData.data;
-                let keys=Object.keys(data);
                 let series = [];
-                for (let key of keys) {
-                    if(key=='TOTAL') {
-                        let customer = data[key];
-                        delete customer['CustomerName'];
-                        let values = Object.values(customer);
-                        let v=Object.keys(customer);
-                        values = this.removeCurrency(values);
-                        for(var i=0;i<values.length;i++){
-                            series.push({
-                                name : v[i],
-                                y : values[i]
-                            });
-                        }
-                    }
-                }
+                _.each(columns, function(column){
+                    series.push({
+                        name: column,
+                        y: base.unFormatAmount(data[column])
+                    });
+                });
                 this.customerAgingSummary={
                     chart: {
                         type: 'column',
@@ -598,7 +590,7 @@ export class InvoiceDashboardComponent {
                     },
                     yAxis: {
                         title: {
-                            text: 'Receivable Amount',
+                            text: '',
                             style: {
                                 fontSize:'15px'
 
@@ -807,7 +799,7 @@ export class InvoiceDashboardComponent {
             row['journalId'] = invoice['journalID'];
             row['selectCol'] = "<input type='checkbox' class='checkbox'/>";
             row['number'] = invoice['number'];
-            row['customer'] = base.getCustomerName(invoice['customer_id']);
+            row['customer'] = invoice['customer_name'];
             row['due_date'] = invoice['due_date'];
             row['amount'] = invoice['amount'];
             row['amount_due'] = invoice['amount_due'];
