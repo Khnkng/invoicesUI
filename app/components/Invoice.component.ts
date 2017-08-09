@@ -408,7 +408,7 @@ export class InvoiceComponent{
         let taskLines=[];
         let invoiceData = this._invoiceForm.getData(this.invoiceForm);
         let base = this;
-        invoiceData.amount = this.amount;
+        invoiceData.amount = numeral((this.amount).toFixed(2)).value();
         delete invoiceData.invoiceLines;
         taskLines=this.getInvoiceLines('task');
         itemLines=this.getInvoiceLines('item');
@@ -783,9 +783,9 @@ export class InvoiceComponent{
                     lineData.item=item;
                     lineData.item.name=base.getItemCodeName(lineData.item_id);
                     lineData.type=type;
-                    lineData.quantity=base.numeralService.format("0,0.0000",lineData.quantity);
+                    lineData.quantity=base.numeralService.format("0,0.00",lineData.quantity);
                     lineData.price=base.numeralService.format("0,0.0000",lineData.price);
-                    lineData.amount=base.numeralService.format("0,0.0000",lineData.quantity*lineData.price);
+                    lineData.amount=base.numeralService.format("0,0.00",lineData.quantity*lineData.price);
                     if(!lineData.destroy){
                         lines.push(lineData);
                     }
@@ -795,9 +795,9 @@ export class InvoiceComponent{
                     let item={};
                     lineData.item=item;
                     lineData.item.name=base.getItemCodeName(lineData.item_id);
-                    lineData.quantity=base.numeralService.format("0,0.0000",lineData.quantity);
+                    lineData.quantity=base.numeralService.format("0,0.00",lineData.quantity);
                     lineData.price=base.numeralService.format("0,0.0000",lineData.price);
-                    lineData.amount=base.numeralService.format("0,0.0000",lineData.quantity*lineData.price);
+                    lineData.amount=base.numeralService.format("0,0.00",lineData.quantity*lineData.price);
                     if(!lineData.destroy){
                         lines.push(lineData);
                     }
@@ -806,9 +806,9 @@ export class InvoiceComponent{
                     lineData.item=item;
                     lineData.item.name=base.getItemCodeName(lineData.item_id);
                     lineData.type=type;
-                    lineData.quantity=base.numeralService.format("0,0.0000",lineData.quantity);
+                    lineData.quantity=base.numeralService.format("0,0.00",lineData.quantity);
                     lineData.price=base.numeralService.format("0,0.0000",lineData.price);
-                    lineData.amount=base.numeralService.format("0,0.0000",lineData.quantity*lineData.price);
+                    lineData.amount=base.numeralService.format("0,0.00",lineData.quantity*lineData.price);
                     if(!lineData.destroy){
                         lines.push(lineData);
                     }
