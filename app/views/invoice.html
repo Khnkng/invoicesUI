@@ -143,16 +143,16 @@
                                                             <input type="text" [formControl]="invoiceLine.controls.description"/>
                                                         </td>
 
-                                                        <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.price.value?(invoiceLine.controls.price.value| currency:companyCurrency:true:'1.4-4'):null}}</td>
+                                                        <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.price.value?(invoiceLine.controls.price.value| currency:companyCurrency:true:'1.2-2'):null}}</td>
 
                                                         <td *ngIf="invoiceLine.editable">
-                                                            <input type="text" [formControl]="invoiceLine.controls.price" numeral [locale]="localeFormat" [format]="'$0,0.0000'" (change)="calculateTotals()"/>
+                                                            <input type="text" [formControl]="invoiceLine.controls.price" numeral [locale]="localeFormat" [format]="'$0,0.00'" (change)="calculateTotals()"/>
                                                         </td>
 
-                                                        <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.quantity.value?(invoiceLine.controls.quantity.value|number:'1.2-2'):null}}</td>
+                                                        <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.quantity.value?(invoiceLine.controls.quantity.value|number:'1.4-4'):null}}</td>
 
                                                         <td *ngIf="invoiceLine.editable">
-                                                            <input type="text" [locale]="localeFormat" [format]="'0,0.00'" numeral [formControl]="invoiceLine.controls.quantity" (change)="calculateTotals()" />
+                                                            <input type="text" [locale]="localeFormat" [format]="'0,0.0000'" numeral [formControl]="invoiceLine.controls.quantity" (change)="calculateTotals()" />
                                                         </td>
                                                         <td class="truncate" *ngIf="!invoiceLine.editable">{{getTaxName(invoiceLine.controls.tax_id.value)}}</td>
                                                         <td class="combo-box-field" *ngIf="invoiceLine.editable">
@@ -205,16 +205,16 @@
                                                             <input type="text" [formControl]="invoiceLine.controls.description"/>
                                                         </td>
 
-                                                        <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.price.value?(invoiceLine.controls.price.value| currency:companyCurrency:true:'1.4-4'):null}}</td>
+                                                        <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.price.value?(invoiceLine.controls.price.value| currency:companyCurrency:true:'1.2-2'):null}}</td>
 
                                                         <td *ngIf="invoiceLine.editable">
-                                                            <input type="text" (change)="calculateTotals()" [formControl]="invoiceLine.controls.price" numeral [locale]="localeFormat" [format]="'$0,0.0000'"/>
+                                                            <input type="text" (change)="calculateTotals()" [formControl]="invoiceLine.controls.price" numeral [locale]="localeFormat" [format]="'$0,0.00'"/>
                                                         </td>
 
-                                                        <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.quantity.value?(invoiceLine.controls.quantity.value|number:'1.2-2'):null}}</td>
+                                                        <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.quantity.value?(invoiceLine.controls.quantity.value|number:'1.4-4'):null}}</td>
 
                                                         <td *ngIf="invoiceLine.editable">
-                                                            <input type="text" [locale]="localeFormat" [format]="'0,0.00'" numeral [formControl]="invoiceLine.controls.quantity" (change)="calculateTotals()" />
+                                                            <input type="text" [locale]="localeFormat" [format]="'0,0.0000'" numeral [formControl]="invoiceLine.controls.quantity" (change)="calculateTotals()" />
                                                         </td>
                                                         <td class="truncate" *ngIf="!invoiceLine.editable">{{getTaxName(invoiceLine.controls.tax_id.value)}}</td>
                                                         <td class="combo-box-field" *ngIf="invoiceLine.editable">
@@ -378,7 +378,7 @@
                         <div class="small-12 medium-2">
                             <label>
                                 Price
-                                <input type="text" formControlName="price" numeral [format]="'$0,0.0000'" [locale]="localeFormat" placeholder="Price">
+                                <input type="text" formControlName="price" numeral [format]="'$0,0.00'" [locale]="localeFormat" placeholder="Price">
                             </label>
                         </div>
                     </div>
