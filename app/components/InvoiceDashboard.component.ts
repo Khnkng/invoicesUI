@@ -799,7 +799,7 @@ export class InvoiceDashboardComponent {
             row['journalId'] = invoice['journalID'];
             row['selectCol'] = "<input type='checkbox' class='checkbox'/>";
             row['number'] = invoice['number'];
-            row['customer'] = base.getCustomerName(invoice['customer_id']);
+            row['customer'] = invoice['customer_name'];
             row['due_date'] = invoice['due_date'];
             row['amount'] = invoice['amount'];
             row['amount_due'] = invoice['amount_due'];

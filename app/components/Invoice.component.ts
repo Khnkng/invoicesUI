@@ -18,6 +18,7 @@ import {ReportService} from "reportsUI/app/services/Reports.service";
 import {PAYMENTSPATHS} from "reportsUI/app/constants/payments.constants";
 import {StateService} from "qCommon/app/services/StateService";
 import {SwitchBoard} from "qCommon/app/services/SwitchBoard";
+import {NumeralService} from "qCommon/app/services/Numeral.service";
 
 declare let _:any;
 declare let numeral:any;
@@ -80,7 +81,7 @@ export class InvoiceComponent{
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
                 private customerService: CustomersService, private _invoiceForm:InvoiceForm, private _invoiceLineForm:InvoiceLineForm, private _invoiceLineTaxesForm:InvoiceLineTaxesForm,
-                private coaService: ChartOfAccountsService,private titleService:pageTitleService,private stateService: StateService, private reportService: ReportService,private switchBoard: SwitchBoard){
+                private coaService: ChartOfAccountsService,private titleService:pageTitleService,private stateService: StateService, private reportService: ReportService,private switchBoard: SwitchBoard,private numeralService:NumeralService){
         this.titleService.setPageTitle("Invoices");
         let _form:any = this._invoiceForm.getForm();
         _form['invoiceLines'] = this.invoiceLineArray;
@@ -425,9 +426,9 @@ export class InvoiceComponent{
         if(this.validateLines(itemLines,'item')||this.validateLines(taskLines,'task')){
             return;
         }
-        invoiceData.sub_total=this.subTotal;
-        invoiceData.amount_due=this.amount;
-        invoiceData.tax_amount=this.taxTotal;
+        invoiceData.sub_total=numeral((this.subTotal).toFixed(2)).value();
+        invoiceData.amount_due=numeral((this.amount).toFixed(2)).value();
+        invoiceData.tax_amount=numeral((this.taxTotal).toFixed(2)).value();
         invoiceData.invoiceLines=itemLines.concat(taskLines);
         invoiceData.recepientsMails=this.maillIds;
         invoiceData.sendMail=sendMail;
@@ -782,7 +783,9 @@ export class InvoiceComponent{
                     lineData.item=item;
                     lineData.item.name=base.getItemCodeName(lineData.item_id);
                     lineData.type=type;
-                    lineData.amount=lineData.quantity*lineData.price;
+                    lineData.quantity=base.numeralService.format("0,0.0000",lineData.quantity);
+                    lineData.price=base.numeralService.format("0,0.0000",lineData.price);
+                    lineData.amount=base.numeralService.format("0,0.0000",lineData.quantity*lineData.price);
                     if(!lineData.destroy){
                         lines.push(lineData);
                     }
@@ -792,7 +795,9 @@ export class InvoiceComponent{
                     let item={};
                     lineData.item=item;
                     lineData.item.name=base.getItemCodeName(lineData.item_id);
-                    lineData.amount=lineData.quantity*lineData.price;
+                    lineData.quantity=base.numeralService.format("0,0.0000",lineData.quantity);
+                    lineData.price=base.numeralService.format("0,0.0000",lineData.price);
+                    lineData.amount=base.numeralService.format("0,0.0000",lineData.quantity*lineData.price);
                     if(!lineData.destroy){
                         lines.push(lineData);
                     }
@@ -801,7 +806,9 @@ export class InvoiceComponent{
                     lineData.item=item;
                     lineData.item.name=base.getItemCodeName(lineData.item_id);
                     lineData.type=type;
-                    lineData.amount=lineData.quantity*lineData.price;
+                    lineData.quantity=base.numeralService.format("0,0.0000",lineData.quantity);
+                    lineData.price=base.numeralService.format("0,0.0000",lineData.price);
+                    lineData.amount=base.numeralService.format("0,0.0000",lineData.quantity*lineData.price);
                     if(!lineData.destroy){
                         lines.push(lineData);
                     }
