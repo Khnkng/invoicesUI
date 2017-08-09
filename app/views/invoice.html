@@ -125,6 +125,7 @@
                                                         <th width="13%;">Tax</th>
                                                         <th width="7%;">Tax Amount</th>
                                                         <th width="7%;">Line Total</th>
+                                                        <th width="2%"></th>
                                                     </tr>
                                                     </thead>
 
@@ -145,17 +146,17 @@
                                                         <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.price.value?(invoiceLine.controls.price.value| currency:companyCurrency:true:'1.2-2'):null}}</td>
 
                                                         <td *ngIf="invoiceLine.editable">
-                                                            <input type="text" [formControl]="invoiceLine.controls.price" numeral [locale]="localeFormat" [format]="'$00.00'"/>
+                                                            <input type="text" [formControl]="invoiceLine.controls.price" numeral [locale]="localeFormat" [format]="'$0,0.00'" (change)="calculateTotals()"/>
                                                         </td>
 
                                                         <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.quantity.value?invoiceLine.controls.quantity.value:''}}</td>
 
                                                         <td *ngIf="invoiceLine.editable">
-                                                            <input type="text" [formControl]="invoiceLine.controls.quantity"/>
+                                                            <input type="text" [formControl]="invoiceLine.controls.quantity" (change)="calculateTotals()"/>
                                                         </td>
                                                         <td class="truncate" *ngIf="!invoiceLine.editable">{{getTaxName(invoiceLine.controls.tax_id.value)}}</td>
                                                         <td class="combo-box-field" *ngIf="invoiceLine.editable">
-                                                            <select [formControl]="invoiceLine.controls.tax_id">
+                                                            <select [formControl]="invoiceLine.controls.tax_id" (change)="calculateTotals()">
                                                                 <option *ngFor="let taxItem of taxesList" [value]="taxItem.id">{{taxItem.name}} - {{taxItem.taxRate}}</option>
                                                             </select>
                                                         </td>
@@ -165,6 +166,12 @@
                                                         <td style="text-align: right;background-color: #E3F7F6">
                                                             {{calcAmt(invoiceLine.controls.price.value,invoiceLine.controls.quantity.value)| currency:companyCurrency:true:'1.2-2'}}
                                                         </td>
+                                                        <td>
+                                                            <span (click)="deleteLineItem($event,iindex,'taskLines')">
+                                                        <i class="icon ion-ios-trash-outline"></i>
+                                                    </span>
+                                                        </td>
+
                                                     </tr>
                                                     </tbody>
                                                 </table>
@@ -180,6 +187,7 @@
                                                         <th width="13%;">Tax</th>
                                                         <th width="7%">Tax Amount</th>
                                                         <th width="7%;">Line Total</th>
+                                                        <th width="2%"></th>
                                                     </tr>
                                                     </thead>
 
@@ -200,17 +208,17 @@
                                                         <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.price.value?(invoiceLine.controls.price.value| currency:companyCurrency:true:'1.2-2'):null}}</td>
 
                                                         <td *ngIf="invoiceLine.editable">
-                                                            <input type="text" [formControl]="invoiceLine.controls.price" numeral [locale]="localeFormat" [format]="'$00.00'"/>
+                                                            <input type="text" (change)="calculateTotals()" [formControl]="invoiceLine.controls.price" numeral [locale]="localeFormat" [format]="'$0,0.00'"/>
                                                         </td>
 
                                                         <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.quantity.value?invoiceLine.controls.quantity.value:''}}</td>
 
                                                         <td *ngIf="invoiceLine.editable">
-                                                            <input type="text" [formControl]="invoiceLine.controls.quantity"/>
+                                                            <input type="text" [formControl]="invoiceLine.controls.quantity" (change)="calculateTotals()" />
                                                         </td>
                                                         <td class="truncate" *ngIf="!invoiceLine.editable">{{getTaxName(invoiceLine.controls.tax_id.value)}}</td>
                                                         <td class="combo-box-field" *ngIf="invoiceLine.editable">
-                                                            <select [formControl]="invoiceLine.controls.tax_id">
+                                                            <select [formControl]="invoiceLine.controls.tax_id" (change)="calculateTotals()">
                                                                 <option *ngFor="let taxItem of taxesList" [value]="taxItem.id">{{taxItem.name}} - {{taxItem.taxRate}}</option>
                                                             </select>
                                                         </td>
@@ -219,6 +227,11 @@
                                                         </td>
                                                         <td style="text-align: right;background-color: #E3F7F6">
                                                             {{calcAmt(invoiceLine.controls.price.value,invoiceLine.controls.quantity.value)| currency:companyCurrency:true:'1.2-2'}}
+                                                        </td>
+                                                        <td>
+                                                            <span (click)="deleteLineItem($event,iindex,'invoiceLines')">
+                                                        <i class="icon ion-ios-trash-outline"></i>
+                                                    </span>
                                                         </td>
                                                     </tr>
                                                     </tbody>
@@ -233,13 +246,13 @@
                                                             <td style="background: #E5E5E5;">
                                                                 Subtotal
                                                             </td>
-                                                            <td style="text-align:right;">{{calcSubTotal()|currency:companyCurrency:true:'1.2-2'}}</td>
+                                                            <td style="text-align:right;">{{subTotal|currency:companyCurrency:true:'1.2-2'}}</td>
                                                         </tr>
                                                         <tr>
                                                             <td style="background: #E5E5E5;">
                                                                 Tax
                                                             </td>
-                                                            <td style="text-align:right;">{{calTaxTotal()|currency:companyCurrency:true:'1.2-2'}}</td>
+                                                            <td style="text-align:right;">{{taxTotal|currency:companyCurrency:true:'1.2-2'}}</td>
                                                         </tr>
                                                         <tr>
                                                             <td style="background: #E5E5E5;">

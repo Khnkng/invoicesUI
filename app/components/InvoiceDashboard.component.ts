@@ -423,23 +423,20 @@ export class InvoiceDashboardComponent {
                 this.hasAgingByCustomerData = true;
                 let columns = metricData.columns;
                 let data = metricData.data;
-                let keys=Object.keys(data);
                 let series = [];
-                for (let key of keys) {
-                    if(key!='TOTAL') {
-                        let customer = data[key];
-                        let customerName = customer['CustomerName'];
-                        delete customer['TOTAL'];
-                        delete customer['type'];
-                        let values = Object.values(customer);
-                        values = this.removeCurrency(values);
-                        series.push({
-                            name : customerName,
-                            data : values
-                        });
-                    }
-                }
+                _.each(data, function(value, key){
+                    let array = [];
+                    _.each(columns, function (column) {
+                        array.push(value[column]);
+                    });
+                    let valueArray = base.removeCurrency(array);
+                    series.push({
+                        name: key,
+                        data: valueArray
+                    });
+                });
                 this.agingByCustomer={
+                    colors: this.chartColors,
                     chart: {
                         type: 'bar',
                         marginRight: 50,
@@ -541,6 +538,10 @@ export class InvoiceDashboardComponent {
         return _values;
     }
 
+    unFormatAmount(amount){
+        return this.numeralService.value(amount);
+    }
+
     getCustomerAgingSummary(){
         let base = this;
         this.reportRequest.metricsType = 'customerAgingSummary';
@@ -549,23 +550,13 @@ export class InvoiceDashboardComponent {
                 this.hasARAgingSummaryData = true;
                 let columns = metricData.columns;
                 let data = metricData.data;
-                let keys=Object.keys(data);
                 let series = [];
-                for (let key of keys) {
-                    if(key=='TOTAL') {
-                        let customer = data[key];
-                        delete customer['CustomerName'];
-                        let values = Object.values(customer);
-                        let v=Object.keys(customer);
-                        values = this.removeCurrency(values);
-                        for(var i=0;i<values.length;i++){
-                            series.push({
-                                name : v[i],
-                                y : values[i]
-                            });
-                        }
-                    }
-                }
+                _.each(columns, function(column){
+                    series.push({
+                        name: column,
+                        y: base.unFormatAmount(data[column])
+                    });
+                });
                 this.customerAgingSummary={
                     chart: {
                         type: 'column',
@@ -599,7 +590,7 @@ export class InvoiceDashboardComponent {
                     },
                     yAxis: {
                         title: {
-                            text: 'Receivable Amount',
+                            text: '',
                             style: {
                                 fontSize:'15px'
 

@@ -187,6 +187,8 @@ export class InvoiceComponent{
             this.invoiceService.getInvoice(this.invoiceID).subscribe(invoice=>{
                 let base=this;
                 this.invoice = invoice;
+                this.subTotal=invoice.sub_total;
+                this.taxTotal=invoice.tax_amount;
                 let _invoice = _.cloneDeep(invoice);
                 delete _invoice.invoiceLines;
                 let taskLines:Array<any> = [];
@@ -347,12 +349,17 @@ export class InvoiceComponent{
 
         if(invoiceData.invoiceLines) {
             invoiceData.invoiceLines.forEach(function (invoiceLine) {
-                total = total +base.calcAmt(invoiceLine.price, invoiceLine.quantity);
+                if(!invoiceLine.destroy){
+                    total = total +base.calcAmt(invoiceLine.price, invoiceLine.quantity);
+                }
+
             });
         }
         if(invoiceData.taskLines) {
             invoiceData.taskLines.forEach(function (invoiceLine) {
-                taskTotal = taskTotal + base.calcAmt(invoiceLine.price, invoiceLine.quantity);
+                if(!invoiceLine.destroy){
+                    taskTotal = taskTotal + base.calcAmt(invoiceLine.price, invoiceLine.quantity);
+                }
             });
         }
         this.subTotal=numeral(total+taskTotal).value();
@@ -370,7 +377,9 @@ export class InvoiceComponent{
                 let total =  base.calcAmt(invoiceLine.price, invoiceLine.quantity);
                 if(invoiceLine.tax_id) {
                     let taxAmt=base.calcLineTax(invoiceLine.tax_id, 1, total);
-                    itemTaxTotal=itemTaxTotal+taxAmt;
+                    if(!invoiceLine.destroy){
+                        itemTaxTotal=itemTaxTotal+taxAmt;
+                    }
                 }
             });
         }
@@ -379,7 +388,10 @@ export class InvoiceComponent{
                 let total = base.calcAmt(invoiceLine.price, invoiceLine.quantity);
                 if(invoiceLine.tax_id) {
                     let taxAmt=base.calcLineTax(invoiceLine.tax_id, 1, total);
-                    lineTaxTotal=lineTaxTotal+taxAmt;
+                    if(!invoiceLine.destroy){
+                        lineTaxTotal=lineTaxTotal+taxAmt;
+                    }
+
                 }
             });
         }
@@ -414,6 +426,7 @@ export class InvoiceComponent{
             return;
         }
         invoiceData.sub_total=this.subTotal;
+        invoiceData.amount_due=this.amount;
         invoiceData.tax_amount=this.taxTotal;
         invoiceData.invoiceLines=itemLines.concat(taskLines);
         invoiceData.recepientsMails=this.maillIds;
@@ -466,7 +479,15 @@ export class InvoiceComponent{
 
     sendInvoiceMails(){
         if(this.additionalMails){
-            this.invoiceProcessedData.recepientsMails.push(this.additionalMails);
+            let mails=[];
+            let mailsUi:Array<string>=this.additionalMails.split(',');
+            _.forEach(mailsUi, function(value) {
+                if(value)
+                {
+                    mails.push(value);
+                }
+            });
+            this.invoiceProcessedData.recepientsMails=this.invoiceProcessedData.recepientsMails.concat(mails);
         }
         this.saveInvoiceDetails(this.invoiceProcessedData);
         this.closeEmailDailog();
@@ -531,6 +552,8 @@ export class InvoiceComponent{
             itemControl.controls['description'].patchValue(itemCode.desc);
             itemControl.controls['price'].patchValue(itemCode.sales_price);
         }
+
+        this.calculateTotals();
     }
 
 
@@ -708,17 +731,6 @@ export class InvoiceComponent{
         return activeLines.length;
     }
 
-    deleteItem($event,index){
-        $event && $event.stopImmediatePropagation();
-        let itemsList:any = this.invoiceForm.controls['invoiceLines'];
-        let itemControl = itemsList.controls[index];
-        itemControl.controls['destroy'].patchValue(true);
-        /*let base=this;
-         setTimeout(function(){
-         base.updateLineTotal();
-         });*/
-    }
-
     getTaxName(taxId){
         let tax = _.find(this.taxesList, {'id': taxId});
         return tax? tax.name+"-"+tax.taxRate: '';
@@ -771,7 +783,9 @@ export class InvoiceComponent{
                     lineData.item.name=base.getItemCodeName(lineData.item_id);
                     lineData.type=type;
                     lineData.amount=lineData.quantity*lineData.price;
-                    lines.push(lineData);
+                    if(!lineData.destroy){
+                        lines.push(lineData);
+                    }
                 }
             }else {
                 if (lineData.id) {
@@ -779,14 +793,18 @@ export class InvoiceComponent{
                     lineData.item=item;
                     lineData.item.name=base.getItemCodeName(lineData.item_id);
                     lineData.amount=lineData.quantity*lineData.price;
-                    lines.push(lineData);
+                    if(!lineData.destroy){
+                        lines.push(lineData);
+                    }
                 } else if (!_.isEqual(lineData, defaultLine)) {
                     let item={};
                     lineData.item=item;
                     lineData.item.name=base.getItemCodeName(lineData.item_id);
                     lineData.type=type;
                     lineData.amount=lineData.quantity*lineData.price;
-                    lines.push(lineData);
+                    if(!lineData.destroy){
+                        lines.push(lineData);
+                    }
                 }
             }
         });
@@ -861,6 +879,23 @@ export class InvoiceComponent{
         if(this.routeSubscribe){
             this.routeSubscribe.unsubscribe();
         }
+    }
+
+
+    deleteLineItem($event,index,type){
+        $event && $event.stopImmediatePropagation();
+        let itemsList:any = this.invoiceForm.controls[type];
+        let itemControl = itemsList.controls[index];
+        itemControl.controls['destroy'].patchValue(true);
+        let base=this;
+         setTimeout(function(){
+         base.calculateTotals();
+         });
+    }
+
+    calculateTotals(){
+        this.calcSubTotal();
+        this.calTaxTotal();
     }
 
 
