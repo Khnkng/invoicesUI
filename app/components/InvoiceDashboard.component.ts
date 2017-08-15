@@ -938,7 +938,7 @@ export class InvoiceDashboardComponent {
                     base.actions = base.invoiceActions;
                 }
                 break;
-            case "1":
+            case "3":
                 if (this.selectedTableRows.length > 1) {
                     base.actions = base.paymentActions;
                 }else{
@@ -989,7 +989,7 @@ export class InvoiceDashboardComponent {
     getNativeElement() {
         if (this.selectedTab == "2") {
             return this.invoicesTable.nativeElement;
-        } else if (this.selectedTab == "1") {
+        } else if (this.selectedTab == "3") {
             return this.paidTable.nativeElement;
         } else {
             return this.proposalsTable.nativeElement;
@@ -1001,7 +1001,7 @@ export class InvoiceDashboardComponent {
         if (this.selectedTab == "2") {
             this.invoiceTableData.rows = tableData.rows;
             this.invoiceTableData = _.clone(base.invoiceTableData);
-        } else if (this.selectedTab == "1") {
+        } else if (this.selectedTab == "3") {
             this.paidInvoiceTableData.rows = tableData.rows;
             this.paidInvoiceTableData = _.clone(base.paidInvoiceTableData);
         } else {
