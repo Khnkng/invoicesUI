@@ -88,7 +88,7 @@ export class InvoiceAddPaymentComponent {
          if (prevState) {
          this._router.navigate([prevState.url]);
          }*/
-        let link = ['invoices/dashboard', 1];
+        let link = ['invoices/dashboard', 3];
         this._router.navigate(link);
     }
 
@@ -180,7 +180,7 @@ export class InvoiceAddPaymentComponent {
             this.invoiceService.addPayment(payment).subscribe(response => {
                 this.toastService.pop(TOAST_TYPE.success, "Payment created successfully");
                 this.loadingService.triggerLoadingEvent(false);
-                let link = ['invoices/dashboard',1];
+                let link = ['invoices/dashboard',3];
                 this._router.navigate(link);
             }, error => {
                 this.toastService.pop(TOAST_TYPE.error, "Failed to create payment");

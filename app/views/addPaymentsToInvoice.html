@@ -22,7 +22,7 @@
         </div>
         <div class="row">
             <div class="medium-6">
-                <label>Add Payment Method
+                <label>Payment Method
                     <select data-placeholder="Select" (change)="setPaymentMethod($event)">
                         <option *ngFor="let paymentOption of paymentOptions" [value]="paymentOption.value">{{paymentOption.name}}</option>
                     </select>
