@@ -28,7 +28,7 @@ export class InvoiceAddPayment{
     hasInvoiceData: boolean = false;
     dateFormat:string;
     applyObject:any={'reference_number':'','invoice_date':'','payment_method':'cash','amount':''};
-    paymentOptions:Array<any>=[{'name':'Cash','value':'cash'},{'name':'Credit/Debit','value':'card'},{'name':'Cheque','value':'cheque'},{'name':'PayPal','value':'paypal'}];
+    paymentOptions:Array<any>=[{'name':'Cash','value':'cash'},{'name':'Credit/Debit','value':'card'},{'name':'Check','value':'cheque'},{'name':'PayPal','value':'paypal'},{'name':'ACH','value':'ach'}];
     routeSubscribe:any;
 
 

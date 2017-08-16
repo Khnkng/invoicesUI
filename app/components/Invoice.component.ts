@@ -314,8 +314,8 @@ export class InvoiceComponent{
     calcLineTax(taxId, price, quantity) {
         let tax = _.find(this.taxesList, {id: taxId});
         if(taxId && price && quantity && tax) {
-            let priceVal = numeral(price).value();
-            let quantityVal = numeral(quantity).value();
+            let priceVal = numeral(this.numeralService.format("0.00",price)).value();
+            let quantityVal = numeral(this.numeralService.format("0.0000",quantity)).value();
             return numeral((tax.taxRate * parseFloat(priceVal) * parseFloat(quantityVal))/100).value();
         }
         return numeral(0).value();
@@ -323,8 +323,8 @@ export class InvoiceComponent{
 
     calcAmt(price, quantity){
         if(price && quantity) {
-            let priceVal = numeral(price).value();
-            let quantityVal = numeral(quantity).value();
+            let priceVal = numeral(this.numeralService.format("0.00",price)).value();
+            let quantityVal = numeral(this.numeralService.format("0.0000",quantity)).value();
             return numeral(parseFloat(priceVal) * parseFloat(quantityVal)).value();
         }
         return numeral(0).value();
@@ -751,8 +751,8 @@ export class InvoiceComponent{
         }
     }
 
-    calculateAmount(discount,paidAmount){
-        this.amount=numeral(this.subTotal+this.taxTotal-(numeral(numeral(discount).value()+numeral(paidAmount).value()).value())).value();
+    calculateAmount(paidAmount){
+        this.amount=numeral(this.subTotal+this.taxTotal-(numeral(paidAmount).value())).value();
         return this.amount;
     }
 
@@ -783,9 +783,9 @@ export class InvoiceComponent{
                     lineData.item=item;
                     lineData.item.name=base.getItemCodeName(lineData.item_id);
                     lineData.type=type;
-                    lineData.quantity=base.numeralService.format("0,0.0000",lineData.quantity);
-                    lineData.price=base.numeralService.format("0,0.00",lineData.price);
-                    lineData.amount=base.numeralService.format("0,0.00",lineData.quantity*lineData.price);
+                    lineData.quantity=base.numeralService.format("0.0000",lineData.quantity);
+                    lineData.price=base.numeralService.format("0.00",lineData.price);
+                    lineData.amount=numeral((lineData.quantity*lineData.price).toFixed(2)).value();
                     if(!lineData.destroy){
                         lines.push(lineData);
                     }
@@ -795,9 +795,9 @@ export class InvoiceComponent{
                     let item={};
                     lineData.item=item;
                     lineData.item.name=base.getItemCodeName(lineData.item_id);
-                    lineData.quantity=base.numeralService.format("0,0.0000",lineData.quantity);
-                    lineData.price=base.numeralService.format("0,0.00",lineData.price);
-                    lineData.amount=base.numeralService.format("0,0.00",lineData.quantity*lineData.price);
+                    lineData.quantity=base.numeralService.format("0.0000",lineData.quantity);
+                    lineData.price=base.numeralService.format("0.00",lineData.price);
+                    lineData.amount=numeral((lineData.quantity*lineData.price).toFixed(2)).value();
                     if(!lineData.destroy){
                         lines.push(lineData);
                     }
@@ -806,9 +806,9 @@ export class InvoiceComponent{
                     lineData.item=item;
                     lineData.item.name=base.getItemCodeName(lineData.item_id);
                     lineData.type=type;
-                    lineData.quantity=base.numeralService.format("0,0.0000",lineData.quantity);
-                    lineData.price=base.numeralService.format("0,0.00",lineData.price);
-                    lineData.amount=base.numeralService.format("0,0.00",lineData.quantity*lineData.price);
+                    lineData.quantity=base.numeralService.format("0.0000",lineData.quantity);
+                    lineData.price=base.numeralService.format("0.00",lineData.price);
+                    lineData.amount=numeral((lineData.quantity*lineData.price).toFixed(2)).value();
                     if(!lineData.destroy){
                         lines.push(lineData);
                     }
@@ -907,3 +907,4 @@ export class InvoiceComponent{
 
 
 }
+

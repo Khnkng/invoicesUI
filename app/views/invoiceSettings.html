@@ -41,11 +41,6 @@
                                 <label>Company Logo:</label>
                             </div>
                             <div class="small-12 medium-3 columns">
-                                <div class="image-wrapper">
-                                    <img src="{{logoURL}}" *ngIf="logoURL"/>
-                                </div>
-                            </div>
-                            <div class="small-12 medium-3 columns">
                                 <div class="file-upload-modal">
                                     <section class="upload-area"  ng2FileDrop [uploader]="uploader" (fileOver)="fileOverBase($event)" >
                                         <div class="row upload-choose-btn" [ngClass]="{'popup-file-over': hasBaseDropZoneOver}">
@@ -81,8 +76,13 @@
                                     </section>
                                 </div>
                             </div>
+                            <div class="small-12 medium-3 columns">
+                                <div class="image-wrapper">
+                                    <img src="{{logoURL}}" *ngIf="logoURL"/>
+                                </div>
+                            </div>
                         </div>
-                        <div class="row">
+                        <!--<div class="row">
                             <div class="small-12 medium-3 columns text-right">
                                 <label>Display Logo:</label>
                             </div>
@@ -97,7 +97,7 @@
                             <div class="small-12 medium-6 columns">
                                 <input type="text" class="color-field" formControlName="accentColor"/>
                             </div>
-                        </div>
+                        </div>-->
                     </div>
                 </li>
                 <li data-accordion-item class="accordion-item">
