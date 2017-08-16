@@ -8,31 +8,41 @@
         <div class="saveDraft pointer" (click)="navigateToDashborad()">Close Preview</div>
         <h5>Apply Payment</h5>
         <div class="row applyPayment">
-            <div class="medium-6">
+            <div class="column medium-6" style="padding-left: 0">
                 <label>Reference Number
                     <input type="text" placeholder="Title*" [(ngModel)]="applyObject.reference_number"/>
                 </label>
             </div>
-            <div class="column medium-6">
+            <div class="column medium-6" style="padding-right: 0">
                 <label>
-                    Invoice Date*
-                    <input type="text" [(ngModel)]="applyObject.invoice_date" invoice-custom-datepicker [format]="'MM/DD/YYYY'" [mindate]="'past'"  placeholder="Invoice Date*"/>
+                    Bank Account*
+                    <select combo-box #accountComboBoxDir="comboBox" data-placeholder="Select Account" [listObject]="accounts" [(ngModel)]="applyObject.invoice_date" (valueChanged)="setBankAccount($event)">
+                        <option *ngFor="let account of accounts" [value]="account.id">{{account.name}}</option>
+                    </select>
                 </label>
             </div>
         </div>
-        <div class="row">
-            <div class="medium-6">
-                <label>Payment Method
+        <div class="row applyPayment">
+            <div class="column medium-6" style="padding-left: 0">
+                <label>
+                    Payment Date*
+                    <input type="text" [(ngModel)]="applyObject.payment_date" invoice-custom-datepicker [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setDate($event)"  placeholder="Payment Date*"/>
+                </label>
+            </div>
+            <div class="column  medium-6" style="padding-right: 0">
+                <label>Payment Method*
                     <select data-placeholder="Select" (change)="setPaymentMethod($event)">
                         <option *ngFor="let paymentOption of paymentOptions" [value]="paymentOption.value">{{paymentOption.name}}</option>
                     </select>
                 </label>
             </div>
         </div>
-        <div class="row">
-            <label>Amount
-                <input type="text" [(ngModel)]="applyObject.amount" numeral [locale]="invoiceData.currency" [format]="'$0,0.00'"/>
-            </label>
+        <div class="row applyPayment">
+            <div class="column medium-6" style="padding-left: 0">
+                <label>Amount*
+                    <input type="text" [(ngModel)]="applyObject.amount" numeral [locale]="invoiceData.currency" [format]="'$0,0.00'"/>
+                </label>
+            </div>
         </div>
         <button class="button create medium" type="submit" (click)="applyPayment()">Apply Payment</button>
     </div>
