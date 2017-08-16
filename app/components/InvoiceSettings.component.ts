@@ -32,16 +32,18 @@ export class InvoiceSettingsComponent implements  OnInit {
   companyId: string;
   logoURL:string;
   preference: any;
+  userID:any;
 
   constructor(private _fb: FormBuilder, private _invoiceSettingsForm: InvoiceSettingsForm, private dss: DomSanitizer,
       private invoiceService: InvoicesService, private toastService: ToastService){
     this.invoiceSettingsForm = this._fb.group(this._invoiceSettingsForm.getForm());
     this.companyId = Session.getCurrentCompany();
-
+    this.userID=Session.getUser().id;
     if(this.companyId){
-      this.invoiceService.getPreference(this.companyId)
+      this.invoiceService.getPreference(this.companyId,this.userID)
           .subscribe(preference => this.processPreference(preference), error => this.handleError(error));
     }
+    this.getCompanyLogo();
     this.uploader = new FileUploader(<FileUploaderOptions>{
       url: invoiceService.getDocumentServiceUrl(),
       headers: [{
@@ -51,10 +53,21 @@ export class InvoiceSettingsComponent implements  OnInit {
     });
   }
 
+  getCompanyLogo() {
+    this.invoiceService.getCompanyLogo(Session.getCurrentCompany(),Session.getUser().id)
+        .subscribe(preference => this.processLogoPreference(preference[0]), error => this.handleError(error));
+  }
+
+  processLogoPreference(preference){
+    if(preference && preference.temporaryURL){
+      this.logoURL = preference.temporaryURL;
+    }
+  }
+
   processPreference(preference){
     this.preference = preference;
     if(preference && preference.companyLogo){
-      this.logoURL = preference.companyLogo;
+      //this.logoURL = preference.companyLogo;
       this.populateColumns();
       this._invoiceSettingsForm.updateForm(this.invoiceSettingsForm, preference);
     }

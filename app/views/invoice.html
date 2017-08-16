@@ -254,12 +254,12 @@
                                                             </td>
                                                             <td style="text-align:right;">{{taxTotal|currency:companyCurrency:true:'1.2-2'}}</td>
                                                         </tr>
-                                                        <tr>
+                                                        <!--<tr>
                                                             <td style="background: #E5E5E5;">
                                                                 Discount
                                                             </td>
                                                             <td><input type="text" formControlName="discount" numeral [format]="'$0,0.00'" [locale]="localeFormat" placeholder="Discount"></td>
-                                                        </tr>
+                                                        </tr>-->
                                                         <tr >
                                                             <td style="background: #E5E5E5;">
                                                                 Amount Paid
@@ -271,7 +271,7 @@
                                                                 Total
                                                             </td>
                                                             <td style="text-align:right;">
-                                                                {{calculateAmount(invoiceForm.controls.discount.value,invoiceForm.controls.amount_paid.value)| currency:companyCurrency:true:'1.2-2'}}
+                                                                {{calculateAmount(invoiceForm.controls.amount_paid.value)| currency:companyCurrency:true:'1.2-2'}}
                                                             </td>
                                                         </tr>
                                                         </tbody>
