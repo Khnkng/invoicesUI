@@ -517,7 +517,10 @@ export class InvoiceComponent{
                 this.toastService.pop(TOAST_TYPE.success, "Invoice updated successfully");
                 this.navigateToDashborad();
             }, error=>{
-                this.toastService.pop(TOAST_TYPE.error, "Invoice update failed");
+                if(error&&JSON.parse(error))
+                    this.toastService.pop(TOAST_TYPE.error, JSON.parse(error).message);
+                else
+                    this.toastService.pop(TOAST_TYPE.error, "Invoice update failed");
                 this.closeLoader();
             });
         }
