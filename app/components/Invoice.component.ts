@@ -363,7 +363,8 @@ export class InvoiceComponent{
                 }
             });
         }
-        this.subTotal=numeral(total+taskTotal).value();
+
+        this.subTotal=numeral(numeral(total.toFixed(2)).value() + numeral(taskTotal.toFixed(2)).value()).value();
         return this.subTotal;
     }
 
@@ -396,7 +397,7 @@ export class InvoiceComponent{
                 }
             });
         }
-        this.taxTotal=numeral(lineTaxTotal+itemTaxTotal).value();
+        this.taxTotal=numeral(numeral(lineTaxTotal.toFixed(2)).value() + numeral(itemTaxTotal.toFixed(2)).value()).value();
         return this.taxTotal;
     }
 
