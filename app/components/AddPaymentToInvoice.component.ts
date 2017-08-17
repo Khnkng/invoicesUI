@@ -107,7 +107,16 @@ export class InvoiceAddPayment{
                 this.navigateToDashborad();
             },
             error => {
-                this.toastService.pop(TOAST_TYPE.error, "Invoice payment failed.")
+                if(error){
+                    let res=JSON.parse(error);
+                    if(res&&res.message){
+                        this.toastService.pop(TOAST_TYPE.error, res.message);
+                    }else {
+                        this.toastService.pop(TOAST_TYPE.error, "Invoice payment failed.");
+                    }
+                }else {
+                    this.toastService.pop(TOAST_TYPE.error, "Invoice payment failed.");
+                }
             });
     }
 
