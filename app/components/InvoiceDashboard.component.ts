@@ -850,7 +850,7 @@ export class InvoiceDashboardComponent {
             row['selectCol'] = "<input type='checkbox' class='checkbox'/>";
             let paymentType=payment.type=='cheque'?'Check':payment.type;
             row['type'] = "<div>"+paymentType+"</div><div><small>"+payment.referenceNo+"</small></div>";
-            row['receivedFrom'] = base.getCustomerName(payment.receivedFrom);
+            row['receivedFrom'] = payment['customerName'];
             row['dateReceived'] = payment.paymentDate;
             let assignStatus = "";
             let assignedAmount = 0;
