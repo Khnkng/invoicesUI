@@ -76,6 +76,7 @@ export class InvoiceComponent{
     companyAddress:any;
     coreValue:number=0;
     logoURL:string;
+    hasPaid:boolean;
 
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
@@ -188,6 +189,11 @@ export class InvoiceComponent{
             this.invoiceService.getInvoice(this.invoiceID).subscribe(invoice=>{
                 let base=this;
                 this.invoice = invoice;
+                if(invoice.state=='paid'){
+                    this.titleService.setPageTitle("View Invoice");
+                    this.hasPaid=true;
+                    this.amount=invoice.amount;
+                };
                 this.subTotal=invoice.sub_total;
                 this.taxTotal=invoice.tax_amount;
                 let _invoice = _.cloneDeep(invoice);
@@ -695,16 +701,16 @@ export class InvoiceComponent{
 
     editItem(index, itemForm,type){
         let linesControl:any;
-        if(type=='item'){
+        if(!this.hasPaid&&type=='item'){
             linesControl= this.invoiceForm.controls['invoiceLines'];
             this.resetAllLinesFromEditing(linesControl);
             itemForm.editable = !itemForm.editable;
-        }else if(type=='task'){
+        }else if(!this.hasPaid&&type=='task'){
             linesControl= this.invoiceForm.controls['taskLines'];
             this.resetAllLinesFromEditing(linesControl);
             itemForm.editable = !itemForm.editable;
         }
-        if(index == this.getLastActiveLineIndex(linesControl)){
+        if(!this.hasPaid&&index == this.getLastActiveLineIndex(linesControl)){
             this.addInvoiceList(null,type);
         }
     }
