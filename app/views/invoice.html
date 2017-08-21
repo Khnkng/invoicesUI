@@ -328,8 +328,11 @@
                                                             <td>
                                                                 Total
                                                             </td>
-                                                            <td style="text-align:right;">
+                                                            <td style="text-align:right;" *ngIf="!hasPaid">
                                                                 {{calculateAmount(invoiceForm.controls.amount_paid.value)| currency:companyCurrency:true:'1.2-2'}}
+                                                            </td>
+                                                            <td style="text-align:right;" *ngIf="hasPaid">
+                                                                {{amount| currency:companyCurrency:true:'1.2-2'}}
                                                             </td>
                                                         </tr>
                                                         </tbody>
