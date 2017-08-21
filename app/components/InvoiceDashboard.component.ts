@@ -677,7 +677,11 @@ export class InvoiceDashboardComponent {
                 this.selectTab(2, "");
             },
             error => {
-                this.toastService.pop(TOAST_TYPE.error, "Invoice mark as sent failed.")
+                if(error&&JSON.parse(error))
+                    this.toastService.pop(TOAST_TYPE.error, JSON.parse(error).message);
+                else
+                    this.toastService.pop(TOAST_TYPE.error, "Invoice mark as sent failed.")
+
             });
     }
 
