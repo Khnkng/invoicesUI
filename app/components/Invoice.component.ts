@@ -192,6 +192,7 @@ export class InvoiceComponent{
                 if(invoice.state=='paid'){
                     this.titleService.setPageTitle("View Invoice");
                     this.hasPaid=true;
+                    this.amount=invoice.amount;
                 };
                 this.subTotal=invoice.sub_total;
                 this.taxTotal=invoice.tax_amount;
