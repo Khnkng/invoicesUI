@@ -93,6 +93,12 @@ export class InvoiceDashboardComponent {
         'name': 'Edit',
         'value': 'edit'
     }];
+    paidInvoiceActions:Array<any>=[{
+            'className': 'ion-android-send ion-ios-eye-outline',
+            'name': 'View',
+            'value': 'edit'
+
+    }];
     selectedTableRows: Array<any> = [];
     @ViewChild('invoicesTable') invoicesTable;
     @ViewChild('paidTable') paidTable;
@@ -935,7 +941,12 @@ export class InvoiceDashboardComponent {
                 if (this.selectedTableRows.length > 1) {
                     base.actions = base.invoiceMultipleSelect;
                 }else{
-                    base.actions = base.invoiceActions;
+                    let invoice=this.selectedTableRows[0];
+                    if(invoice&&invoice.status=='Paid'){
+                        base.actions = base.paidInvoiceActions;
+                    }else {
+                        base.actions = base.invoiceActions;
+                    }
                 }
                 break;
             case "3":
