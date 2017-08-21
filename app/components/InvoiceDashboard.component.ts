@@ -94,7 +94,7 @@ export class InvoiceDashboardComponent {
         'value': 'edit'
     }];
     paidInvoiceActions:Array<any>=[{
-            'className': 'ion-android-send ion-ios-eye-outline',
+            'className': 'ion-android-send',
             'name': 'View',
             'value': 'edit'
 
