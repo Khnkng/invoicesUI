@@ -657,15 +657,26 @@ export class InvoiceDashboardComponent {
 
     removeInvoice() {
         let base = this;
+        let hasPaidInvoices=false;
+        this.selectedTableRows.forEach(function (invoice) {
+            if(invoice.status=='Paid'||invoice.status=='Partially Paid'){
+                hasPaidInvoices=true;
+            }
+        });
         let selectedIds = _.map(this.selectedTableRows, 'id');
-        this.invoiceService.deleteInvoice(selectedIds).subscribe(success => {
-                this.toastService.pop(TOAST_TYPE.success, "Invoice deleted successfully.");
-                this.hasInvoices = false;
-                this.selectTab(2, "");
-            },
-            error => {
-                this.toastService.pop(TOAST_TYPE.error, "Invoice deletion failed.")
-            });
+        if(!hasPaidInvoices){
+            this.invoiceService.deleteInvoice(selectedIds).subscribe(success => {
+                    this.toastService.pop(TOAST_TYPE.success, "Invoice deleted successfully.");
+                    this.hasInvoices = false;
+                    this.selectTab(2, "");
+                },
+                error => {
+                    this.toastService.pop(TOAST_TYPE.error, "Invoice deletion failed.")
+                });
+        }else {
+            this.toastService.pop(TOAST_TYPE.error, "cannot delete paid or partially paid invoices");
+        }
+
     }
 
     invoiceMarkAsSent() {
