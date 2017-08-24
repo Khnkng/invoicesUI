@@ -102,11 +102,14 @@ export class InvoiceAddPayment{
         this.applyObject['state'] = 'paid';
         this.applyObject['currency'] = this.invoiceData.currency;
         this.applyObject['customer_id'] = this.invoiceData.customer_id;
+        this.loadingService.triggerLoadingEvent(true);
         this.invoiceService.markAsPaid(this.applyObject,this.invoiceID).subscribe(success => {
                 this.toastService.pop(TOAST_TYPE.success, "Invoice paid successfully.");
+                this.loadingService.triggerLoadingEvent(false);
                 this.navigateToDashborad();
             },
             error => {
+                this.loadingService.triggerLoadingEvent(false);
                 if(error){
                     let res=JSON.parse(error);
                     if(res&&res.message){
