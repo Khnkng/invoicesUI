@@ -178,6 +178,7 @@ export class InvoiceComponent{
         if(!this.invoiceID){
             this.closeLoader();
             this.setInvoiceDate(this.defaultDate);
+            this.setDefaultCurrency();
             this.newInvoice = true;
             for(let i=0; i<2; i++){
                 this.addInvoiceList(null,'item');
@@ -289,6 +290,11 @@ export class InvoiceComponent{
         }
     }
 
+
+    setDefaultCurrency(){
+        let currencyControl:any = this.invoiceForm.controls['currency'];
+        currencyControl.patchValue(Session.getCurrentCompanyCurrency());
+    }
 
     setInvoiceDate(date){
         let invoiceDateControl:any = this.invoiceForm.controls['invoice_date'];
