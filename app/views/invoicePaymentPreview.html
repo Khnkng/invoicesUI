@@ -75,7 +75,7 @@
                 <td class="text-right font-color"><span>Due Date</span><span style="margin-left:5px;">{{invoiceData.due_date}}</span></td>
             </tr>
             <tr>
-                <td class="font-color"><span>Balance Due:</span><span style="margin-left:5px;">{{invoiceData.amount_due | currency:invoiceData.currency:true:'1.2-2'}}</span></td>
+                <td class="font-color"><span>Balance Due:</span><span style="margin-left:5px;">{{formatAmount(invoiceData.amount_due)}}</span></td>
                 <td></td>
             </tr>
             </tbody>
@@ -120,7 +120,7 @@
                         </td>
                         <td valign="top">{{invoiceData.invoice_date}}</td>
                         <td valign="top">{{invoiceData.number}}</td>
-                        <td valign="top" class="text-right invoice-amount">{{invoiceData.amount | currency:invoiceData.currency:true:'1.2-2'}}</td>
+                        <td valign="top" class="text-right invoice-amount">{{formatAmount(invoiceData.amount)}}</td>
                     </tr>
                     </tbody>
                 </table>
@@ -138,9 +138,9 @@
                         <td >{{taskInvoice.item.name}}</td>
                         <td >{{taskInvoice.description}}</td>
                         <td ></td>
-                        <td >{{taskInvoice.price | currency:invoiceData.currency:true:'1.2-2'}}</td>
-                        <td >{{taskInvoice.quantity}}</td>
-                        <td >{{taskInvoice.amount | currency:invoiceData.currency:true:'1.2-2'}}</td>
+                        <td >{{formatAmount(taskInvoice.price)}}</td>
+                        <td >{{formatQuantity(taskInvoice.quantity)}}</td>
+                        <td >{{formatAmount(taskInvoice.amount)}}</td>
                     </tr>
                     <tr *ngIf="taskInvoices.length>0 && itemInvoices.length>0">
                         <td  class="separator" colspan="6"></td>
@@ -157,9 +157,9 @@
                         <td >{{itemInvoice.item.name}}</td>
                         <td >{{itemInvoice.description}}</td>
                         <td ></td>
-                        <td >{{itemInvoice.price | currency:invoiceData.currency:true:'1.2-2'}}</td>
-                        <td >{{itemInvoice.quantity}}</td>
-                        <td >{{itemInvoice.amount | currency:invoiceData.currency:true:'1.2-2'}}</td>
+                        <td >{{formatAmount(itemInvoice.price)}}</td>
+                        <td >{{formatQuantity(itemInvoice.quantity)}}</td>
+                        <td >{{formatAmount(itemInvoice.amount)}}</td>
                     </tr>
 
                     <tr >
@@ -170,13 +170,13 @@
                         <td  colspan="2"></td>
                         <td >Subtotal</td>
                         <td  colspan="2"></td>
-                        <td>{{invoiceData.sub_total | currency:invoiceData.currency:true:'1.2-2'}}</td>
+                        <td>{{formatAmount(invoiceData.sub_total)}}</td>
                     </tr>
                     <tr >
                         <td  class="emptyCol" colspan="2"></td>
                         <td >Tax</td>
                         <td  class="emptyCol" colspan="2"></td>
-                        <td>{{invoiceData.tax_amount | currency:invoiceData.currency:true:'1.2-2'}}</td>
+                        <td>{{formatAmount(invoiceData.tax_amount)}}</td>
                     </tr>
                     <tr >
                         <td  class="emptyCol" colspan="2"></td>
@@ -186,7 +186,7 @@
                         <td  class="emptyCol" colspan="2"></td>
                         <td >Total</td>
                         <td  class="emptyCol" colspan="2"></td>
-                        <td >{{invoiceData.amount | currency:invoiceData.currency:true:'1.2-2'}}</td>
+                        <td >{{formatAmount(invoiceData.amount)}}</td>
                     </tr>
                     <tr >
                         <td  class="emptyCol" colspan="2"></td>
