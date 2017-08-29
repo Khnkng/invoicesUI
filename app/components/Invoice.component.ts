@@ -19,6 +19,7 @@ import {PAYMENTSPATHS} from "reportsUI/app/constants/payments.constants";
 import {StateService} from "qCommon/app/services/StateService";
 import {SwitchBoard} from "qCommon/app/services/SwitchBoard";
 import {NumeralService} from "qCommon/app/services/Numeral.service";
+import {CURRENCY_LOCALE_MAPPER} from "qCommon/app/constants/Currency.constants";
 
 declare let _:any;
 declare let numeral:any;
@@ -77,6 +78,7 @@ export class InvoiceComponent{
     coreValue:number=0;
     logoURL:string;
     hasPaid:boolean;
+    amount_paid:any=0;
 
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
@@ -88,6 +90,7 @@ export class InvoiceComponent{
         _form['invoiceLines'] = this.invoiceLineArray;
         _form['taskLines'] = this.tasksLineArray;
         this.companyCurrency=Session.getCurrentCompanyCurrency();
+        this.localeFormat=CURRENCY_LOCALE_MAPPER[Session.getCurrentCompanyCurrency()]?CURRENCY_LOCALE_MAPPER[Session.getCurrentCompanyCurrency()]:'en-US';
         this.invoiceForm = this._fb.group(_form);
         this.routeSub = this._route.params.subscribe(params => {
             this.invoiceID=params['invoiceID'];
@@ -179,6 +182,7 @@ export class InvoiceComponent{
             this.closeLoader();
             this.setInvoiceDate(this.defaultDate);
             this.setDefaultCurrency();
+            this.numeralService.switchLocale(Session.getCurrentCompanyCurrency().toLowerCase());
             this.newInvoice = true;
             for(let i=0; i<2; i++){
                 this.addInvoiceList(null,'item');
@@ -195,8 +199,10 @@ export class InvoiceComponent{
                     this.hasPaid=true;
                     this.amount=invoice.amount;
                 };
+                this.numeralService.switchLocale(invoice.currency.toLowerCase());
                 this.subTotal=invoice.sub_total;
                 this.taxTotal=invoice.tax_amount;
+                this.amount_paid=invoice.amount_paid;
                 let _invoice = _.cloneDeep(invoice);
                 delete _invoice.invoiceLines;
                 let taskLines:Array<any> = [];
@@ -326,20 +332,38 @@ export class InvoiceComponent{
     calcLineTax(taxId, price, quantity) {
         let tax = _.find(this.taxesList, {id: taxId});
         if(taxId && price && quantity && tax) {
-            let priceVal = numeral(this.numeralService.format("0.00",price)).value();
-            let quantityVal = numeral(this.numeralService.format("0.0000",quantity)).value();
-            return numeral((tax.taxRate * parseFloat(priceVal) * parseFloat(quantityVal))/100).value();
+            let priceVal = Number(price).toFixed(2);
+            let quantityVal =Number(quantity).toFixed(4);
+            return Number((tax.taxRate * parseFloat(priceVal) * parseFloat(quantityVal))/100);
         }
         return numeral(0).value();
     }
 
     calcAmt(price, quantity){
         if(price && quantity) {
-            let priceVal = numeral(this.numeralService.format("0.00",price)).value();
-            let quantityVal = numeral(this.numeralService.format("0.0000",quantity)).value();
-            return numeral(parseFloat(priceVal) * parseFloat(quantityVal)).value();
+            let priceVal = Number(price).toFixed(2);
+            let quantityVal =Number(quantity).toFixed(4);
+            return Number(parseFloat(priceVal) * parseFloat(quantityVal));
         }
         return numeral(0).value();
+    }
+
+    formattedLineTotal(price,quantity){
+        let value=this.calcAmt(price,quantity);
+        return this.numeralService.format('$0,0.00', value)
+    }
+
+    formattedTaxTotal(id,price,quantity){
+        let value=this.calcLineTax(id,price,quantity);
+        return this.numeralService.format('$0,0.00', value)
+    }
+
+    formatAmount(value){
+        return this.numeralService.format('$0,0.00', value)
+    }
+
+    formatQuantity(value){
+        return this.numeralService.format('0,0.0000', value)
     }
 
     /*calcSubTotal() {
@@ -359,6 +383,7 @@ export class InvoiceComponent{
         let total = 0;
         let base = this;
         let taskTotal=0;
+        let baseTotal=0;
 
         if(invoiceData.invoiceLines) {
             invoiceData.invoiceLines.forEach(function (invoiceLine) {
@@ -375,8 +400,9 @@ export class InvoiceComponent{
                 }
             });
         }
+        baseTotal=Number(total.toFixed(2))+Number(taskTotal.toFixed(2));
 
-        this.subTotal=numeral(numeral(total.toFixed(2)).value() + numeral(taskTotal.toFixed(2)).value()).value();
+        this.subTotal=baseTotal;
         return this.subTotal;
     }
 
@@ -385,6 +411,7 @@ export class InvoiceComponent{
         let base = this;
         let lineTaxTotal=0;
         let itemTaxTotal=0;
+        let baseTotal=0;
 
         if(invoiceData.invoiceLines) {
             invoiceData.invoiceLines.forEach(function (invoiceLine) {
@@ -405,11 +432,11 @@ export class InvoiceComponent{
                     if(!invoiceLine.destroy){
                         lineTaxTotal=lineTaxTotal+taxAmt;
                     }
-
                 }
             });
         }
-        this.taxTotal=numeral(numeral(lineTaxTotal.toFixed(2)).value() + numeral(itemTaxTotal.toFixed(2)).value()).value();
+        baseTotal=Number(lineTaxTotal.toFixed(2))+Number(itemTaxTotal.toFixed(2));
+        this.taxTotal=baseTotal;
         return this.taxTotal;
     }
 
@@ -421,7 +448,7 @@ export class InvoiceComponent{
         let taskLines=[];
         let invoiceData = this._invoiceForm.getData(this.invoiceForm);
         let base = this;
-        invoiceData.amount = numeral((this.amount).toFixed(2)).value();
+        invoiceData.amount = Number((this.amount).toFixed(2));
         delete invoiceData.invoiceLines;
         taskLines=this.getInvoiceLines('task');
         itemLines=this.getInvoiceLines('item');
@@ -439,9 +466,9 @@ export class InvoiceComponent{
         if(this.validateLines(itemLines,'item')||this.validateLines(taskLines,'task')){
             return;
         }
-        invoiceData.sub_total=numeral((this.subTotal).toFixed(2)).value();
-        invoiceData.amount_due=numeral((this.amount).toFixed(2)).value();
-        invoiceData.tax_amount=numeral((this.taxTotal).toFixed(2)).value();
+        invoiceData.sub_total=Number((this.subTotal).toFixed(2));
+        invoiceData.amount_due=Number((this.amount).toFixed(2));
+        invoiceData.tax_amount=Number((this.taxTotal).toFixed(2));
         invoiceData.invoiceLines=itemLines.concat(taskLines);
         invoiceData.recepientsMails=this.maillIds;
         invoiceData.sendMail=sendMail;
@@ -759,16 +786,19 @@ export class InvoiceComponent{
     }
 
     onCurrencySelect(currency){
-        this.companyCurrency=currency;
+        //this.companyCurrency=currency;
         if(currency=='USD'){
             this.localeFormat='en-Us';
         }else if(currency=='INR'){
-            this.localeFormat='ind';
+            this.localeFormat='en-IN';
+        }else if(currency=='IDR'){
+            this.localeFormat='id-id'
         }
+        this.numeralService.switchLocale(currency);
     }
 
     calculateAmount(paidAmount){
-        this.amount=numeral(this.subTotal+this.taxTotal-(numeral(paidAmount).value())).value();
+        this.amount=Number(this.subTotal+this.taxTotal-(Number(this.amount_paid)));
         return this.amount;
     }
 
@@ -799,9 +829,9 @@ export class InvoiceComponent{
                     lineData.item=item;
                     lineData.item.name=base.getItemCodeName(lineData.item_id);
                     lineData.type=type;
-                    lineData.quantity=base.numeralService.format("0.0000",lineData.quantity);
-                    lineData.price=base.numeralService.format("0.00",lineData.price);
-                    lineData.amount=numeral((lineData.quantity*lineData.price).toFixed(2)).value();
+                    lineData.quantity=lineData.quantity.toFixed(4);
+                    lineData.price=lineData.price.toFixed(2);
+                    lineData.amount=Number((lineData.quantity*lineData.price).toFixed(2));
                     if(!lineData.destroy){
                         lines.push(lineData);
                     }
@@ -811,9 +841,9 @@ export class InvoiceComponent{
                     let item={};
                     lineData.item=item;
                     lineData.item.name=base.getItemCodeName(lineData.item_id);
-                    lineData.quantity=base.numeralService.format("0.0000",lineData.quantity);
-                    lineData.price=base.numeralService.format("0.00",lineData.price);
-                    lineData.amount=numeral((lineData.quantity*lineData.price).toFixed(2)).value();
+                    lineData.quantity=lineData.quantity.toFixed(4);
+                    lineData.price=lineData.price.toFixed(2);
+                    lineData.amount=Number((lineData.quantity*lineData.price).toFixed(2));
                     if(!lineData.destroy){
                         lines.push(lineData);
                     }
@@ -822,9 +852,9 @@ export class InvoiceComponent{
                     lineData.item=item;
                     lineData.item.name=base.getItemCodeName(lineData.item_id);
                     lineData.type=type;
-                    lineData.quantity=base.numeralService.format("0.0000",lineData.quantity);
-                    lineData.price=base.numeralService.format("0.00",lineData.price);
-                    lineData.amount=numeral((lineData.quantity*lineData.price).toFixed(2)).value();
+                    lineData.quantity=lineData.quantity.toFixed(4);
+                    lineData.price=lineData.price.toFixed(2);
+                    lineData.amount=Number((lineData.quantity*lineData.price).toFixed(2));
                     if(!lineData.destroy){
                         lines.push(lineData);
                     }
@@ -902,6 +932,7 @@ export class InvoiceComponent{
         if(this.routeSubscribe){
             this.routeSubscribe.unsubscribe();
         }
+        this.numeralService.switchLocale(Session.getCurrentCompanyCurrency());
     }
 
 

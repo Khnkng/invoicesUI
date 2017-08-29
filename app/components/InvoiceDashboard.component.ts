@@ -18,6 +18,7 @@ import {SwitchBoard} from "qCommon/app/services/SwitchBoard";
 import {NumeralService} from "qCommon/app/services/Numeral.service";
 import {ReportService} from "reportsUI/app/services/Reports.service";
 import {Observable} from "rxjs/Rx";
+import {CURRENCY_LOCALE_MAPPER} from "qCommon/app/constants/Currency.constants";
 
 declare let _:any;
 declare let jQuery:any;
@@ -130,6 +131,7 @@ export class InvoiceDashboardComponent {
                 private stateService: StateService,private numeralService:NumeralService, private switchBoard:SwitchBoard,
                 private reportService: ReportService) {
         this.currentCompanyId = Session.getCurrentCompany();
+        this.localeFortmat=CURRENCY_LOCALE_MAPPER[Session.getCurrentCompanyCurrency()]?CURRENCY_LOCALE_MAPPER[Session.getCurrentCompanyCurrency()]:'en-US';
         this.loadCustomers(this.currentCompanyId);
         this.stateService.clearAllStates();
         let today = moment();
@@ -789,26 +791,10 @@ export class InvoiceDashboardComponent {
             {"name": "customer", "title": "Customer"},
             {"name": "due_date", "title": "Due Date"},
             {
-                "name": "amount", "title": "Invoice Amount", type: 'number', "formatter": (amount) => {
-                amount = parseFloat(amount);
-                return amount.toLocaleString(base.localeFortmat, {
-                    style: 'currency',
-                    currency: base.companyCurrency,
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                })
-            }
+                "name": "amount", "title": "Invoice Amount"
             },
             {
-                "name": "amount_due", "title": "Due Amount", type: 'number', "formatter": (amount) => {
-                amount = parseFloat(amount);
-                return amount.toLocaleString(base.localeFortmat, {
-                    style: 'currency',
-                    currency: base.companyCurrency,
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                })
-            }
+                "name": "amount_due", "title": "Due Amount"
             },
             {"name": "status", "title": "Status"},
             {"name": "actions", "title": "", "type": "html", "sortable": false, "filterable": false}
@@ -822,8 +808,10 @@ export class InvoiceDashboardComponent {
             row['number'] = invoice['number'];
             row['customer'] = invoice['customer_name'];
             row['due_date'] = invoice['due_date'];
-            row['amount'] = invoice['amount'];
-            row['amount_due'] = invoice['amount_due'];
+            let amount=invoice['amount']?Number(invoice['amount']):0;
+            let amount_due=invoice['amount_due']?Number(invoice['amount_due']):0;
+            row['amount'] = amount.toLocaleString(CURRENCY_LOCALE_MAPPER[invoice['currency']], { style: 'currency', currency: invoice['currency'], minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            row['amount_due'] = amount_due.toLocaleString(CURRENCY_LOCALE_MAPPER[invoice['currency']], { style: 'currency', currency: invoice['currency'], minimumFractionDigits: 2, maximumFractionDigits: 2 });;
             if(invoice['state']=='partially_Paid'){
                 row['status']="Partially Paid"
             }else {
@@ -893,7 +881,7 @@ export class InvoiceDashboardComponent {
             }
 
 
-
+            base.numeralService.switchLocale(payment.currencyCode.toLowerCase());
             row['amount'] = "<div>"+base.numeralService.format("$0,0.00", payment.paymentAmount)+"</div><div>"+assignmentHtml+"</div>";
             if(payment.journalID){
                 row['actions'] = "<a class='action' data-action='navigation'><span class='icon badge je-badge'>JE</span></a>";
