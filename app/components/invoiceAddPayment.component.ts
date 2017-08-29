@@ -93,9 +93,11 @@ export class InvoiceAddPaymentComponent {
     }
 
     loadPayment() {
+        let base=this;
         this.loadingService.triggerLoadingEvent(true);
         this.invoiceService.payment(this.paymentId).subscribe(payment => {
             this.payment = payment;
+            base.numeralService.switchLocale(payment.currencyCode);
             let paymentFormValues:any = _.clone(this.payment);
 
             if(!paymentFormValues.memo) {

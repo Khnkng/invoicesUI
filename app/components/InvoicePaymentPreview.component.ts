@@ -9,6 +9,7 @@ import {InvoicesService} from "../services/Invoices.service";
 import {TOAST_TYPE} from "qCommon/app/constants/Qount.constants";
 import {CustomersService} from "qCommon/app/services/Customers.service";
 import {Session} from "qCommon/app/services/Session";
+import {NumeralService} from "qCommon/app/services/Numeral.service";
 
 
 declare let jQuery:any;
@@ -41,7 +42,8 @@ export class InvoicePaymentPreview{
     }
 
     constructor(private switchBoard: SwitchBoard, private _router:Router, private _route: ActivatedRoute, private toastService: ToastService,
-                private loadingService:LoadingService, private titleService:pageTitleService, private invoiceService: InvoicesService,private customerService: CustomersService){
+                private loadingService:LoadingService, private titleService:pageTitleService, private invoiceService: InvoicesService,private customerService: CustomersService,
+                private numeralService:NumeralService){
     }
 
     loadInvoiceData() {
@@ -81,6 +83,14 @@ export class InvoicePaymentPreview{
 
     ngOnInit(){
 
+    }
+
+    formatAmount(value){
+        return this.numeralService.format('$0,0.00', value)
+    }
+
+    formatQuantity(value){
+        return this.numeralService.format('0,0.0000', value)
     }
 
 }
