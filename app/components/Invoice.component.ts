@@ -363,7 +363,7 @@ export class InvoiceComponent{
     }
 
     formatQuantity(value){
-        return this.numeralService.format('0,0.0000', value)
+        return this.numeralService.formatNumber('0,0.0000', value);
     }
 
     /*calcSubTotal() {
