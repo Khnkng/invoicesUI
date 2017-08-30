@@ -211,7 +211,7 @@
                                                         <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.quantity.value?formatQuantity(invoiceLine.controls.quantity.value):null}}</td>
 
                                                         <td *ngIf="invoiceLine.editable">
-                                                            <input type="text" [locale]="localeFormat" [format]="'0,0.0000'" numeral [formControl]="invoiceLine.controls.quantity" (change)="calculateTotals()" />
+                                                            <input type="text" [locale]="localeFormat" [isNumber]="true" [format]="'0,0.0000'" numeral [formControl]="invoiceLine.controls.quantity" (change)="calculateTotals()" />
                                                         </td>
                                                         <td class="truncate" *ngIf="!invoiceLine.editable">{{getTaxName(invoiceLine.controls.tax_id.value)}}</td>
                                                         <td class="combo-box-field" *ngIf="invoiceLine.editable">
@@ -273,7 +273,7 @@
                                                         <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.quantity.value?formatQuantity(invoiceLine.controls.quantity.value):null}}</td>
 
                                                         <td *ngIf="invoiceLine.editable">
-                                                            <input type="text" [locale]="localeFormat" [format]="'0,0.0000'" numeral [formControl]="invoiceLine.controls.quantity" (change)="calculateTotals()" />
+                                                            <input type="text" [locale]="localeFormat" [isNumber]="true" [format]="'0,0.0000'" numeral [formControl]="invoiceLine.controls.quantity" (change)="calculateTotals()" />
                                                         </td>
                                                         <td class="truncate" *ngIf="!invoiceLine.editable">{{getTaxName(invoiceLine.controls.tax_id.value)}}</td>
                                                         <td class="combo-box-field" *ngIf="invoiceLine.editable">
