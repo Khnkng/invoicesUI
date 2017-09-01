@@ -71,11 +71,11 @@
         <table style='width:100%;margin-bottom:10px;'>
             <tbody style="background-color: #384986;" cellpadding=5 cellspacing=5>
             <tr>
-                <td class="font-color"><span>Invoice</span><span style="margin-left:5px;">{{invoiceData.number}}</span></td>
-                <td class="text-right font-color"><span>Due Date</span><span style="margin-left:5px;">{{invoiceData.due_date}}</span></td>
+                <td class="font-color">Invoice:&nbsp;&nbsp;{{invoiceData.number}}</td>
+                <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{invoiceData.due_date}}</td>
             </tr>
             <tr>
-                <td class="font-color"><span>Balance Due:</span><span style="margin-left:5px;">{{formatAmount(invoiceData.amount_due)}}</span></td>
+                <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(invoiceData.amount_due)}}</td>
                 <td></td>
             </tr>
             </tbody>
