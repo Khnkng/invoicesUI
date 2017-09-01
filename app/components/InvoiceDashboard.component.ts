@@ -100,6 +100,21 @@ export class InvoiceDashboardComponent {
             'value': 'edit'
 
     }];
+    draftInvoiceActions:Array<any>=[
+        {
+            'className': 'ion-edit',
+            'name': 'Edit',
+            'value': 'edit'
+        },
+        {'className': 'ion-ios-copy-outline',
+            'name': 'Duplicate',
+            'value': 'duplicate'
+        }, {
+            'className': 'ion-android-send',
+            'name': 'Mark as sent',
+            'value': 'sent'
+        }, {'className': 'ion-ios-trash', 'name': 'Delete', 'value': 'delete'}
+    ]
     selectedTableRows: Array<any> = [];
     @ViewChild('invoicesTable') invoicesTable;
     @ViewChild('paidTable') paidTable;
@@ -947,6 +962,8 @@ export class InvoiceDashboardComponent {
                     let invoice=this.selectedTableRows[0];
                     if(invoice&&invoice.status=='Paid'){
                         base.actions = base.paidInvoiceActions;
+                    }else if(invoice&&invoice.status=='Draft'){
+                        base.actions=base.draftInvoiceActions;
                     }else {
                         base.actions = base.invoiceActions;
                     }
