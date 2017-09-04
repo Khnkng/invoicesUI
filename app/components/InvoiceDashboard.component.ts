@@ -281,10 +281,10 @@ export class InvoiceDashboardComponent {
         reportRequest.startDate = this.currentFiscalStart;
         reportRequest.asOfDate = this.asOfDate;
         let boxData = this.invoiceService.getDashboardBoxData(this.currentCompanyId, this.currentFiscalStart, this.asOfDate);
-        reportRequest.type = "cashFlowStatement";
-        let cashFlowstatement = this.reportService.generateAccountReport(reportRequest, this.currentCompanyId);
+        reportRequest.type = "cashBalance";
+        let cashBalance = this.reportService.generateAccountReport(reportRequest, this.currentCompanyId);
 
-        Observable.forkJoin(boxData, cashFlowstatement).subscribe(results => {
+        Observable.forkJoin(boxData, cashBalance).subscribe(results => {
             this.hasBoxData = true;
             this.metrics["totalReceivable"] = this.formatAmount(results[0].totalReceivableAmount);
             this.metrics["totalPastDue"] = this.formatAmount(results[0].totalPastDueAmount);
@@ -292,7 +292,7 @@ export class InvoiceDashboardComponent {
             this.metrics["openedInvoices"] = this.numeralService.format('0', results[0].openedInvoices);
             this.metrics["sentInvoices"] = this.numeralService.format('0', results[0].sentInvoices);
             this.metrics["totalReceivedLast30Days"] = this.formatAmount(results[0].totalReceivedLast30Days);
-            this.metrics["cashBalance"] = this.formatAmount(results[1].cashAtEndOfPeriod || 0);
+            this.metrics["cashBalance"] = this.formatAmount(results[1].cashBalance || 0);
             this.loadingService.triggerLoadingEvent(false);
         }, error => {
             this.loadingService.triggerLoadingEvent(false);
