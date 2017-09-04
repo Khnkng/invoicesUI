@@ -67,16 +67,16 @@
 
 </style>
 <div id="payment-preview">
-    <div class="preview-table-header">
+    <div class="preview-table-header" [style.background-color]="bgColor">
         <table style='width:100%;margin-bottom:10px;'>
-            <tbody style="background-color: #384986;" cellpadding=5 cellspacing=5>
+            <tbody style="background-color: #384986;" cellpadding=5 cellspacing=5 [style.background-color]="bgColor">
             <tr>
                 <td class="font-color">Invoice:&nbsp;&nbsp;{{invoiceData.number}}</td>
                 <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{invoiceData.due_date}}</td>
             </tr>
             <tr>
                 <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(invoiceData.amount_due)}}</td>
-                <td></td>
+                <td class="text-right font-color">{{getInvoiceDisplayState(invoiceData.state)}}</td>
             </tr>
             </tbody>
         </table>

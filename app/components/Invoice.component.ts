@@ -483,8 +483,10 @@ export class InvoiceComponent{
         }else if (action=='draft'){
             this.saveInvoiceDetails(invoiceData);
         }else if(action=='preview'){
+            this.setHeaderColor();
             this.togelPreview();
         }else if(action=='download'){
+            this.setHeaderColor();
             if(!this.showPreview)
             {
                 this.togelPreview();
@@ -493,6 +495,14 @@ export class InvoiceComponent{
             setTimeout(function(){
                 base.exportToPDF();
             })
+        }
+    }
+
+    setHeaderColor(){
+        if(this.invoiceID){
+            this.invoiceProcessedData.state=this.invoice.state;
+        }else {
+            this.invoiceProcessedData.state="draft";
         }
     }
 
