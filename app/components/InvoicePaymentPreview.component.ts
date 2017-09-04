@@ -29,6 +29,7 @@ export class InvoicePaymentPreview{
     invoiceData:any;
     logoURL:string;
     termsList:any={"net30":"Net 30","net45":"Net 45","net60":"Net 60","net90":"Net 90","custom":"Custom"};
+    invoiceStates:any={"draft":"Draft","paid":"Paid","partially_paid":"Partially Paid","past_due":"Past Due","sent":"Sent"};
     @Input()
     set invoices(invoices:any){
         invoices.displayterm=this.termsList[invoices.term];
@@ -39,7 +40,9 @@ export class InvoicePaymentPreview{
             this.getCompanyLogo();
         }
         this.loadInvoiceData();
+        this.getHeaderColor(invoices.state);
     }
+    bgColor:string="#878787";
 
     constructor(private switchBoard: SwitchBoard, private _router:Router, private _route: ActivatedRoute, private toastService: ToastService,
                 private loadingService:LoadingService, private titleService:pageTitleService, private invoiceService: InvoicesService,private customerService: CustomersService,
@@ -91,6 +94,30 @@ export class InvoicePaymentPreview{
 
     formatQuantity(value){
         return this.numeralService.format('0,0.0000', value)
+    }
+
+    getInvoiceDisplayState(state){
+        return this.invoiceStates[state];
+    }
+
+    getHeaderColor(state){
+        switch (state) {
+            case "draft":
+                this.bgColor="#878787";
+                break;
+            case "past_due":
+                this.bgColor="#F06459";
+                break;
+            case "sent":
+                this.bgColor="#07D4BE";
+                break;
+            case "paid":
+                this.bgColor="#384986";
+                break;
+            default:
+                this.bgColor="#07D4BE";
+                break;
+        }
     }
 
 }
