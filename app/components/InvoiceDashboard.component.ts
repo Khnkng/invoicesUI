@@ -954,7 +954,8 @@ export class InvoiceDashboardComponent {
 
     updateOptions() {
         let base = this;
-        switch (this.selectedTab) {
+        let selectedTab=this.selectedTab.toString();
+        switch (selectedTab) {
             case "2":
                 if (this.selectedTableRows.length > 1) {
                     base.actions = base.invoiceMultipleSelect;

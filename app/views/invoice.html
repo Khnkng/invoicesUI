@@ -184,7 +184,7 @@
                                                         <th width="13%;">Tax</th>
                                                         <th width="7%;">Tax Amount</th>
                                                         <th width="7%;">Line Total</th>
-                                                        <th width="2%" *ngIf="!hasPaid"></th>
+                                                        <th width="5%" *ngIf="!hasPaid"></th>
                                                     </tr>
                                                     </thead>
 
@@ -226,6 +226,9 @@
                                                             {{formattedLineTotal(invoiceLine.controls.price.value,invoiceLine.controls.quantity.value)}}
                                                         </td>
                                                         <td *ngIf="!hasPaid">
+                                                            <span (click)="editInvoiceLine($event, iindex,'taskLines')">
+                                                        <i class="icon ion-edit"></i>
+                                                    </span>
                                                             <span (click)="deleteLineItem($event,iindex,'taskLines')">
                                                         <i class="icon ion-ios-trash-outline"></i>
                                                     </span>
@@ -246,7 +249,7 @@
                                                         <th width="13%;">Tax</th>
                                                         <th width="7%">Tax Amount</th>
                                                         <th width="7%;">Line Total</th>
-                                                        <th width="2%" *ngIf="!hasPaid"></th>
+                                                        <th width="5%" *ngIf="!hasPaid"></th>
                                                     </tr>
                                                     </thead>
 
@@ -288,9 +291,11 @@
                                                             {{formattedLineTotal(invoiceLine.controls.price.value,invoiceLine.controls.quantity.value)}}
                                                         </td>
                                                         <td *ngIf="!hasPaid">
+                                                            <span (click)="editInvoiceLine($event, iindex,'invoiceLines')">
+                                                        <i class="icon ion-edit"></i></span>
                                                             <span (click)="deleteLineItem($event,iindex,'invoiceLines')">
                                                         <i class="icon ion-ios-trash-outline"></i>
-                                                    </span>
+                                                            </span>
                                                         </td>
                                                     </tr>
                                                     </tbody>
@@ -346,11 +351,11 @@
 
                                         <div class="small-12 medium-3 columns">
                                             <div class="row" >
-                                                <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;">
+                                                <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;" *ngIf="newInvoice||(invoice&&invoice.state=='draft')">
                                                     <button (click)="submit($event,false,'draft')" class="button small" [disabled]="hasPaid||!invoiceForm.valid||!validateTaskLines()" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;height: 25px;">Save as Draft</button>
                                                 </div>
                                                 <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;">
-                                                    <button [disabled]="hasPaid || !invoiceForm.valid||!validateTaskLines()" (click)="submit($event,false,'preview')" class="button small" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;">{{preViewText}}</button>
+                                                    <button [disabled]="!invoiceForm.valid||!validateTaskLines()" (click)="submit($event,false,'preview')" class="button small" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;">{{preViewText}}</button>
                                                 </div>
                                                 <!--<div *ngIf="showPreview" class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;">
                                                     <button (click)="submit($event,false,'preview')" class="button small" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;">Close Preview</button>
@@ -360,7 +365,7 @@
                                                 <span style="font-size: 12px;">Send invoice to {{selectedCustomer?selectedCustomer.customer_name:""}}</span>
                                             </div>
                                             <div class="row">
-                                                <button class="button small" (click)="submit($event,true,'email')" [disabled]="hasPaid||!invoiceForm.valid||!validateTaskLines()">Email Invoice</button>
+                                                <button class="button small" (click)="submit($event,true,'email')" [disabled]="!invoiceForm.valid||!validateTaskLines()">Email Invoice</button>
                                             </div>
                                             <div class="row" style="margin-top: 15px">
                                                 <button class="button small hollow download"(click)="submit($event,false,'download')" [disabled]="!invoiceForm.valid||!validateTaskLines()">Download PDF</button>
@@ -415,69 +420,97 @@
 
     <div class="report-wrapper journal-flyout">
         <div class="sidenav customization-panel" [ngClass]="dimensionFlyoutCSS" foundation>
-            <button class="close-button " data-close aria-label="Close modal" type="button">
+            <!--<button class="close-button " data-close aria-label="Close modal" type="button">
                 <span aria-hidden="true">
                   <i class="ion-ios-close-empty" (click)="hideFlyout()"></i>
                 </span>
-            </button>
+            </button>-->
             <div class="row collapse dimension-flyout">
-                <div class="row">
                     <div class="small-12 medium-12 small-centered column">
                         <h5>Invoice Details</h5>
                     </div>
-                </div>
             </div>
             <form *ngIf="itemActive" novalidate [formGroup]="editItemForm">
                 <div class="row collapse dimension-flyout">
-                    <div class="row">
-                        <div class="column small-12 medium-3">
-                            <label>
-                                Item Code
-                                <select formControlName="item_id" (change)="displayItemCodeCOA($event.target.value)">
-                                    <option *ngFor="let item of itemCodes" [value]="item.id">{{item.name}}</option>
-                                </select>
-                            </label>
-                        </div>
-                        <div class="column small-12 medium-4">
-                            <label>
-                                Description
-                                <input type="text" formControlName="description" placeholder="Description" />
-                            </label>
-                        </div>
+                    <div class="small-12 medium-6 columns">
+                        <div class="row">
+                            <div class="column small-12 medium-6">
+                                <label>
+                                    Item Code
+                                    <select formControlName="item_id" (change)="displayItemCodeCOA($event.target.value)">
+                                        <option *ngFor="let item of itemCodes" [value]="item.id">{{item.name}}</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="column small-12 medium-6">
+                                <label>
+                                    Description
+                                    <input type="text" formControlName="description" placeholder="Description" />
+                                </label>
+                            </div>
 
-                        <div class="small-12 medium-2">
-                            <label>
-                                Quantity
-                                <input type="text" formControlName="quantity" placeholder="Quantity">
-                            </label>
-                        </div>
+                            <div class="column small-12 medium-6">
+                                <label>
+                                    Quantity
+                                    <input [locale]="localeFormat" [isNumber]="true" [format]="'0,0.0000'" numeral type="text" formControlName="quantity" placeholder="Quantity">
+                                </label>
+                            </div>
 
-                        <div class="small-12 medium-2">
-                            <label>
-                                Price
-                                <input type="text" formControlName="price" numeral [format]="'$0,0.00'" [locale]="localeFormat" placeholder="Price">
-                            </label>
+                            <div class="column  small-12 medium-6">
+                                <label>
+                                    Price
+                                    <input type="text" formControlName="price" numeral [format]="'$0,0.00'" [locale]="localeFormat" placeholder="Price">
+                                </label>
+                            </div>
+                            <div class="column small-12 medium-6">
+                                <label>
+                                    Tax
+                                    <select formControlName="tax_id" (change)="calculateTotals()">
+                                        <option *ngFor="let taxItem of taxesList" [value]="taxItem.id">{{taxItem.name}} - {{taxItem.taxRate}}</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="column small-12 medium-6">
+                                <label>
+                                    Tax Amount
+                                    <input type="text" value="{{formattedTaxTotal(editItemForm.controls.tax_id.value,editItemForm.controls.price.value,editItemForm.controls.quantity.value)}}" readonly/>
+                                </label>
+                            </div>
+                            <div class="column small-12 medium-6">
+                                <label>
+                                    Line Amount
+                                    <input type="text" value="{{formattedLineTotal(editItemForm.controls.price.value,editItemForm.controls.quantity.value)}}" readonly/>
+                                </label>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="small-12 medium-2">
-                        <label>
-                            Amount:{{calcAmt(editItemForm.controls.quantity.value, editItemForm.controls.price.value)}}
+                    <div class="small-12 medium-6 columns">
+                        <label>Dimensions
+                            <div class="row dimension-grids" (click)="doNothing($event)">
+                                <div class="small-12 medium-4 columns dimension-grid" *ngFor="let dimension of dimensions">
+                                    <div class="dimension-header">
+                                        <div>
+                                            <span class="float-left">{{dimension.name}}</span>
+                                        <span class="float-right">
+                                                    <i class="icon ion-checkmark-circled" [ngClass]="{'selected': isDimensionSelected(dimension.name)}"
+                                                       (click)="selectDimension($event, dimension.name)"></i>
+                                                </span>
+                                        </div>
+                                        <div class="bottom" [ngClass]="{'selected': isDimensionSelected(dimension.name)}"></div>
+                                    </div>
+                                    <div class="dimension-values" [ngClass]="{'selected': isDimensionSelected(dimension.name)}">
+                                        <div class="dimension-value" *ngFor="let value of dimension.values; let index = index;">
+                                            <label (click)="selectValue($event, dimension, value)">
+                                                <input type="checkbox" [checked]="isValueSelected(dimension, value)"/>{{value}}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </label>
-                        <div class="column small-12 medium-6 large-6">
-                            <label class="coa-description" [hidden]="!paymentCOAName">
-                                <span>Payment COA:</span> {{paymentCOAName}}
-                            </label>
-                            <label class="coa-description" [hidden]="!expenseCOAName">
-                                <span>Expense COA:</span> {{expenseCOAName}}
-                            </label>
-                        </div>
                     </div>
-                    <div class="row">
-                        <div class="small-12 medium-12 columns">
-                            <input type="button" class="button small float-right" value="Update" (click)="saveItem()"/>
-                        </div>
+                    <div class="small-12 medium-12 columns">
+                        <input type="button" class="button small float-right" value="Update" (click)="saveItem()"/>
                     </div>
                 </div>
             </form>
