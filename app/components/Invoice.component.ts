@@ -20,6 +20,7 @@ import {StateService} from "qCommon/app/services/StateService";
 import {SwitchBoard} from "qCommon/app/services/SwitchBoard";
 import {NumeralService} from "qCommon/app/services/Numeral.service";
 import {CURRENCY_LOCALE_MAPPER} from "qCommon/app/constants/Currency.constants";
+import {DimensionService} from "qCommon/app/services/DimensionService.service";
 
 declare let _:any;
 declare let numeral:any;
@@ -79,12 +80,15 @@ export class InvoiceComponent{
     logoURL:string;
     hasPaid:boolean;
     amount_paid:any=0;
-
+    editLineType:string;
+    dimensions:Array<any> = [];
+    selectedDimensions:Array<any> = [];
+    totalAmount:number=0;
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
                 private customerService: CustomersService, private _invoiceForm:InvoiceForm, private _invoiceLineForm:InvoiceLineForm, private _invoiceLineTaxesForm:InvoiceLineTaxesForm,
-                private coaService: ChartOfAccountsService,private titleService:pageTitleService,private stateService: StateService, private reportService: ReportService,private switchBoard: SwitchBoard,private numeralService:NumeralService){
+                private coaService: ChartOfAccountsService,private titleService:pageTitleService,private stateService: StateService, private reportService: ReportService,private switchBoard: SwitchBoard,private numeralService:NumeralService, private dimensionService: DimensionService){
         this.titleService.setPageTitle("Invoices");
         let _form:any = this._invoiceForm.getForm();
         _form['invoiceLines'] = this.invoiceLineArray;
@@ -104,11 +108,21 @@ export class InvoiceComponent{
             this.isDuplicate=true;
         };
         this.routeSubscribe = switchBoard.onClickPrev.subscribe(title => {
-            this.gotoPreviousState();
+            if(this.dimensionFlyoutCSS == "expanded"){
+                this.hideFlyout();
+            }else{
+                this.gotoPreviousState();
+            }
+
         });
+
+        this.dimensionService.dimensions(Session.getCurrentCompany())
+            .subscribe(dimensions =>{
+                this.dimensions = dimensions;
+            }, error => {
+
+            });
     }
-
-
 
     gotoPreviousState() {
         let previousState=this.stateService.getPrevState();
@@ -453,7 +467,7 @@ export class InvoiceComponent{
         taskLines=this.getInvoiceLines('task');
         itemLines=this.getInvoiceLines('item');
 
-        if(this.amount<0){
+        if(this.totalAmount<0){
             this.toastService.pop(TOAST_TYPE.error, "Invoice amount should grater than or equal to zero");
             return
         }
@@ -467,7 +481,7 @@ export class InvoiceComponent{
             return;
         }
         invoiceData.sub_total=Number((this.subTotal).toFixed(2));
-        invoiceData.amount_due=Number((this.amount).toFixed(2));
+        invoiceData.amount_due=Number((this.totalAmount).toFixed(2));
         invoiceData.tax_amount=Number((this.taxTotal).toFixed(2));
         invoiceData.invoiceLines=itemLines.concat(taskLines);
         invoiceData.recepientsMails=this.maillIds;
@@ -702,19 +716,25 @@ export class InvoiceComponent{
 
 
 
-    editInvoiceLine($event, index) {
+    editInvoiceLine($event, index,type) {
         $event && $event.preventDefault();
         $event && $event.stopImmediatePropagation();
         let base = this,data,itemsControl:any;
         this.itemActive = true;
         this.dimensionFlyoutCSS = "expanded";
-        itemsControl = this.invoiceForm.controls['invoiceLines'];
-        data =this._invoiceLineForm.getData(itemsControl.controls[index]);
-        this.editItemForm = this._fb.group(this._invoiceLineForm.getForm(data));
-        if(data.item_id){
-            this.updateCOADisplay(data.item_id);
+        this.editLineType=type;
+        if(type=="taskLines"){
+            itemsControl = this.invoiceForm.controls['taskLines'];
+        }else {
+            itemsControl = this.invoiceForm.controls['invoiceLines'];
         }
 
+        data =this._invoiceLineForm.getData(itemsControl.controls[index]);
+        this.selectedDimensions = data.dimensions;
+        this.editItemForm = this._fb.group(this._invoiceLineForm.getForm(data));
+        /*if(data.item_id){
+            this.updateCOADisplay(data.item_id);
+        }*/
         this.editItemIndex = index;
     }
 
@@ -722,21 +742,32 @@ export class InvoiceComponent{
         this.dimensionFlyoutCSS = "collapsed";
         this.itemActive = false;
         this.editItemIndex = null;
+        this.selectedDimensions = [];
     }
 
     saveItem(){
+        let dimensions = this.editItemForm.controls['dimensions'];
+        dimensions.patchValue(this.selectedDimensions);
         let itemData = this._invoiceLineForm.getData(this.editItemForm);
         this.updateLineInView(itemData);
         this.hideFlyout();
     }
 
     updateLineInView(item){
-        let itemsControl=this.invoiceForm.controls['invoiceLines'];
+        let itemsControl:any;
+        if(this.editLineType=="taskLines"){
+            itemsControl=this.invoiceForm.controls['taskLines'];
+        }else {
+            itemsControl=this.invoiceForm.controls['invoiceLines'];
+        }
         let itemControl = itemsControl.controls[this.editItemIndex];
         itemControl.controls['description'].patchValue(item.description);
         itemControl.controls['price'].patchValue(item.price);
         itemControl.controls['quantity'].patchValue(item.quantity);
         itemControl.controls['item_id'].patchValue(item.item_id);
+        itemControl.controls['tax_id'].patchValue(item.tax_id);
+        itemControl.controls['dimensions'].patchValue(item.dimensions);
+        this.calculateTotals();
     }
 
 
@@ -808,8 +839,9 @@ export class InvoiceComponent{
     }
 
     calculateAmount(paidAmount){
-        this.amount=Number(this.subTotal+this.taxTotal-(Number(this.amount_paid)));
-        return this.amount;
+        this.amount=Number(this.subTotal+this.taxTotal);
+        this.totalAmount=Number(this.subTotal+this.taxTotal-(Number(this.amount_paid)));
+        return this.totalAmount;
     }
 
 
@@ -962,6 +994,56 @@ export class InvoiceComponent{
         this.calTaxTotal();
     }
 
+    isDimensionSelected(dimensionName){
+        let selectedDimensionNames = _.map(this.selectedDimensions, 'name');
+        return selectedDimensionNames.indexOf(dimensionName) != -1;
+    }
+
+    doNothing($event){
+        $event && $event.preventDefault();
+        $event && $event.stopPropagation();
+        $event && $event.stopImmediatePropagation();
+    }
+
+    selectDimension($event, dimensionName){
+        $event && $event.preventDefault();
+        $event && $event.stopPropagation();
+        $event && $event.stopImmediatePropagation();
+        let selectedDimensionNames = _.map(this.selectedDimensions, 'name');
+        if(selectedDimensionNames.indexOf(dimensionName) == -1){
+            this.selectedDimensions.push({
+                "name": dimensionName,
+                "values": []
+            });
+        } else{
+            this.selectedDimensions.splice(selectedDimensionNames.indexOf(dimensionName), 1);
+        }
+    }
+
+    isValueSelected(dimension, value){
+        let currentDimension = _.find(this.selectedDimensions, {'name': dimension.name});
+        if(!_.isEmpty(currentDimension)){
+            if(currentDimension.values.indexOf(value) != -1){
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+
+    selectValue($event, dimension, value){
+        $event && $event.stopPropagation();
+        $event && $event.stopImmediatePropagation();
+        _.each(this.selectedDimensions, function (selectedDimension) {
+            if(selectedDimension.name == dimension.name){
+                if(selectedDimension.values.indexOf(value) == -1){
+                    selectedDimension.values.push(value);
+                } else{
+                    selectedDimension.values.splice(selectedDimension.values.indexOf(value), 1);
+                }
+            }
+        });
+    }
 
 }
 

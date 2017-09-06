@@ -22,7 +22,8 @@ export class InvoiceLineForm extends abstractForm{
             destroy: [model? model.destroy: false],
             type: [model? model.type: ''],
             tax_id:[model? model.tax_id: ''],
-            id:[model ? model.id : '']
+            id:[model ? model.id : ''],
+            "dimensions": [model? model.dimensions: []]
         };
     }
 

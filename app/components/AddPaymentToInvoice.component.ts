@@ -11,6 +11,7 @@ import {DateFormater} from "qCommon/app/services/DateFormatter.service";
 import {StateService} from "qCommon/app/services/StateService";
 import {FinancialAccountsService} from "qCommon/app/services/FinancialAccounts.service";
 import {Session} from "qCommon/app/services/Session";
+import {CompaniesService} from "qCommon/app/services/Companies.service";
 
 
 declare let jQuery:any;
@@ -30,17 +31,17 @@ export class InvoiceAddPayment{
     hasInvoiceData: boolean = false;
     dateFormat:string;
     applyObject:any={'reference_number':'','payment_date':'','payment_method':'cash','amount':'','bank_account_id':''};
-    paymentOptions:Array<any>=[{'name':'Cash','value':'cash'},{'name':'Credit/Debit','value':'card'},{'name':'Check','value':'cheque'},{'name':'PayPal','value':'paypal'},{'name':'ACH','value':'ach'}];
+    paymentOptions:Array<any>=[{'name':'Cash','value':'cash'},{'name':'Credit/Debit','value':'card'},{'name':'Check','value':'cheque'},{'name':'PayPal','value':'paypal'},{'name':'ACH','value':'ach'},{'name':'Transfer','value':'transfer'}];
     routeSubscribe:any;
+    companyAddress:any;
 
     constructor(private switchBoard: SwitchBoard, private _router:Router, private _route: ActivatedRoute, private toastService: ToastService,
                 private loadingService:LoadingService, private titleService:pageTitleService, private stateService: StateService, private invoiceService: InvoicesService,private customerService: CustomersService,private dateFormater:DateFormater,
-                private accountsService: FinancialAccountsService){
+                private accountsService: FinancialAccountsService, private companyService: CompaniesService){
         this.titleService.setPageTitle("Add Payment To Invoice");
         this.dateFormat = dateFormater.getFormat();
         this.routeSub = this._route.params.subscribe(params => {
             this.invoiceID=params['invoiceID'];
-            this.loadInvoiceData();
         });
         this.routeSubscribe = switchBoard.onClickPrev.subscribe(title => {
             this.gotoPreviousState();
@@ -51,6 +52,27 @@ export class InvoiceAddPayment{
             }, error => {
 
             });
+        this.getCompanyDetails();
+    }
+
+    getCompanyDetails(){
+        this.companyService.company(Session.getCurrentCompany())
+            .subscribe(companyAddress => {
+                if(companyAddress){
+                    let address={
+                        name:companyAddress.name,
+                        address:companyAddress.addresses[0].line,
+                        country:companyAddress.addresses[0].country,
+                        state:companyAddress.addresses[0].stateCode,
+                        zipcode:companyAddress.addresses[0].zipcode
+                    };
+                    this.companyAddress=address;
+                }
+                this.loadInvoiceData();
+            },error=>{
+                this.toastService.pop(TOAST_TYPE.error, "Failed to load your Company details");
+            });
+
     }
 
     gotoPreviousState() {
@@ -64,6 +86,7 @@ export class InvoiceAddPayment{
         this.loadingService.triggerLoadingEvent(true);
         this.invoiceService.getInvoice(this.invoiceID).subscribe(invoices=>{
             if(invoices) {
+                invoices.company=this.companyAddress;
                 base.invoiceData = invoices;
                 this.applyObject.reference_number = invoices.number;
                 base.hasInvoiceData = true;
