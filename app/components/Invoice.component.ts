@@ -84,6 +84,7 @@ export class InvoiceComponent{
     dimensions:Array<any> = [];
     selectedDimensions:Array<any> = [];
     totalAmount:number=0;
+    remainder_name:string;
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
@@ -540,6 +541,7 @@ export class InvoiceComponent{
     }
     resetEmailDailogFields(){
         this.additionalMails=null;
+        this.remainder_name=null;
     }
 
     sendInvoiceMails(){
@@ -554,6 +556,7 @@ export class InvoiceComponent{
             });
             this.invoiceProcessedData.recepientsMails=this.invoiceProcessedData.recepientsMails.concat(mails);
         }
+        this.invoiceProcessedData.remainder_name=this.remainder_name;
         this.saveInvoiceDetails(this.invoiceProcessedData);
         this.closeEmailDailog();
     }
