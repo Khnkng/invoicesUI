@@ -1083,6 +1083,7 @@ export class InvoiceDashboardComponent {
 
 
     handleInvoiceStateChange(action) {
+        jQuery('#invoice-dropdown').foundation('close');
         switch (action) {
             case 'edit':
                 this.showInvoice(this.selectedTableRows[0]);
