@@ -794,7 +794,6 @@ export class InvoiceDashboardComponent {
         this.invoiceTableData.rows = [];
         this.invoiceTableData.columns = [
             {"name": "id", "title": "id", "visible": false},
-            {"name": "journalId", "title": "Journal ID", 'visible': false, 'filterable': false},
             {
                 "name": "selectCol",
                 "title": "<input type='checkbox' class='global-checkbox'>",
@@ -802,6 +801,7 @@ export class InvoiceDashboardComponent {
                 "sortable": false,
                 "filterable": false
             },
+            {"name": "journalId", "title": "Journal ID", 'visible': false, 'filterable': false},
             {"name": "number", "title": "Number"},
             {"name": "customer", "title": "Customer"},
             {"name": "due_date", "title": "Due Date"},
@@ -851,7 +851,6 @@ export class InvoiceDashboardComponent {
         this.paidInvoiceTableData.rows = [];
         this.paidInvoiceTableData.columns = [
             {"name": "id", "title": "id", "visible": false},
-            {"name": "journalId", "title": "Journal ID", 'visible': false, 'filterable': false},
             {
                 "name": "selectCol",
                 "title": "<input type='checkbox' class='global-checkbox'>",
@@ -859,6 +858,7 @@ export class InvoiceDashboardComponent {
                 "sortable": false,
                 "filterable": false
             },
+            {"name": "journalId", "title": "Journal ID", 'visible': false, 'filterable': false},
             {"name": "type", "title": "Payment type/#"},
             {"name": "receivedFrom", "title": "Received From"},
             {"name": "dateReceived", "title": "Date Received"},
@@ -1011,7 +1011,7 @@ export class InvoiceDashboardComponent {
     getSelectedTabData() {
         if (this.selectedTab == "2") {
             return this.invoiceTableData;
-        } else if (this.selectedTab == "1") {
+        } else if (this.selectedTab == "3") {
             return this.paidInvoiceTableData;
         } else {
             return this.proposalsTableData;
@@ -1083,6 +1083,7 @@ export class InvoiceDashboardComponent {
 
 
     handleInvoiceStateChange(action) {
+        jQuery('#invoice-dropdown').foundation('close');
         switch (action) {
             case 'edit':
                 this.showInvoice(this.selectedTableRows[0]);

@@ -84,6 +84,7 @@ export class InvoiceComponent{
     dimensions:Array<any> = [];
     selectedDimensions:Array<any> = [];
     totalAmount:number=0;
+    remainder_name:string;
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
@@ -491,16 +492,17 @@ export class InvoiceComponent{
         invoiceData.user_id=Session.getUser().id;
         invoiceData.company_id=Session.getCurrentCompany();
         invoiceData.logoURL = this.logoURL;
+        invoiceData.state=this.invoiceID?this.invoice.state:'draft';
         this.invoiceProcessedData=invoiceData;
         if(action=='email'){
             this.openEmailDailog();
         }else if (action=='draft'){
             this.saveInvoiceDetails(invoiceData);
+        }else if(action=='save'){
+            this.saveInvoiceDetails(invoiceData);
         }else if(action=='preview'){
-            this.setHeaderColor();
             this.togelPreview();
         }else if(action=='download'){
-            this.setHeaderColor();
             if(!this.showPreview)
             {
                 this.togelPreview();
@@ -509,14 +511,6 @@ export class InvoiceComponent{
             setTimeout(function(){
                 base.exportToPDF();
             })
-        }
-    }
-
-    setHeaderColor(){
-        if(this.invoiceID){
-            this.invoiceProcessedData.state=this.invoice.state;
-        }else {
-            this.invoiceProcessedData.state="draft";
         }
     }
 
@@ -540,6 +534,7 @@ export class InvoiceComponent{
     }
     resetEmailDailogFields(){
         this.additionalMails=null;
+        this.remainder_name=null;
     }
 
     sendInvoiceMails(){
@@ -554,6 +549,7 @@ export class InvoiceComponent{
             });
             this.invoiceProcessedData.recepientsMails=this.invoiceProcessedData.recepientsMails.concat(mails);
         }
+        this.invoiceProcessedData.remainder_name=this.remainder_name;
         this.saveInvoiceDetails(this.invoiceProcessedData);
         this.closeEmailDailog();
     }
