@@ -214,7 +214,8 @@ export class InvoiceComponent{
                     this.hasPaid=true;
                     this.amount=invoice.amount;
                 };
-                this.numeralService.switchLocale(invoice.currency.toLowerCase());
+                //this.numeralService.switchLocale(invoice.currency.toLowerCase());
+                this.onCurrencySelect(invoice.currency);
                 this.subTotal=invoice.sub_total;
                 this.taxTotal=invoice.tax_amount;
                 this.amount_paid=invoice.amount_paid;
@@ -827,7 +828,7 @@ export class InvoiceComponent{
         if(currency=='USD'){
             this.localeFormat='en-Us';
         }else if(currency=='INR'){
-            this.localeFormat='en-IN';
+            this.localeFormat='ind';
         }else if(currency=='IDR'){
             this.localeFormat='id-id'
         }
@@ -944,12 +945,14 @@ export class InvoiceComponent{
         let imgString = jQuery('#company-img').clone().html();
         let html = jQuery('<div>').append(jQuery('style').clone()).append(jQuery('#payment-preview').clone()).html();
         if(imgString)
-        html = html.replace(imgString,imgString.replace('>','/>'))
+        html = html.replace(imgString,imgString.replace('>','/>'));
         let pdfReq={
             "version" : "1.1",
             "genericReport": {
-                "payload": html
-            }
+                "payload": html,
+                "width":612,
+                "height":792
+            },
         };
         this.reportService.exportReportIntoFile(PAYMENTSPATHS.PDF_SERVICE, pdfReq)
             .subscribe(data =>{
