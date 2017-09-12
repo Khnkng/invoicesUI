@@ -946,7 +946,7 @@ export class InvoiceComponent{
         if(imgString)
         html = html.replace(imgString,imgString.replace('>','/>'));
         let pdfReq={
-            "verison" : "1.1",
+            "version" : "1.1",
             "genericReport": {
                 "payload": html,
                 "width":612,
