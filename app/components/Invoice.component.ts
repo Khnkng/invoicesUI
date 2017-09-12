@@ -214,7 +214,8 @@ export class InvoiceComponent{
                     this.hasPaid=true;
                     this.amount=invoice.amount;
                 };
-                this.numeralService.switchLocale(invoice.currency.toLowerCase());
+                //this.numeralService.switchLocale(invoice.currency.toLowerCase());
+                this.onCurrencySelect(invoice.currency);
                 this.subTotal=invoice.sub_total;
                 this.taxTotal=invoice.tax_amount;
                 this.amount_paid=invoice.amount_paid;
@@ -827,7 +828,7 @@ export class InvoiceComponent{
         if(currency=='USD'){
             this.localeFormat='en-Us';
         }else if(currency=='INR'){
-            this.localeFormat='en-IN';
+            this.localeFormat='ind';
         }else if(currency=='IDR'){
             this.localeFormat='id-id'
         }
