@@ -28,6 +28,9 @@ export class InvoicePaymentPreview{
     itemInvoices: Array<any> = [];
     invoiceData:any;
     logoURL:string;
+    zoomSize:number=1;
+    amountFont:string="18pt";
+    lineAmountFont:string="14pt";
     termsList:any={"net30":"Net 30","net45":"Net 45","net60":"Net 60","net90":"Net 90","custom":"Custom"};
     invoiceStates:any={"draft":"Draft","paid":"Paid","partially_paid":"Partially Paid","past_due":"Past Due","sent":"Sent"};
     @Input()
@@ -41,6 +44,7 @@ export class InvoicePaymentPreview{
         }
         this.loadInvoiceData();
         this.getHeaderColor(invoices.state);
+        this.getZoomSize();
     }
     bgColor:string="#878787";
 
@@ -117,6 +121,14 @@ export class InvoicePaymentPreview{
             default:
                 this.bgColor="#07D4BE";
                 break;
+        }
+    }
+
+    getZoomSize(){
+        let amount=this.formatAmount(this.invoiceData.amount);
+        if(amount.length>16){
+            this.amountFont="13pt";
+            this.lineAmountFont="10pt";
         }
     }
 
