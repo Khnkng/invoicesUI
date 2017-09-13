@@ -113,13 +113,13 @@ export class InvoicePaymentPreview{
                 this.bgColor="#F06459";
                 break;
             case "sent":
-                this.bgColor="#07D4BE";
+                this.bgColor="#00b1a9";
                 break;
             case "paid":
                 this.bgColor="#384986";
                 break;
             default:
-                this.bgColor="#07D4BE";
+                this.bgColor="#00b1a9";
                 break;
         }
     }
