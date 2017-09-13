@@ -368,10 +368,10 @@
                                                 <span style="font-size: 12px;">Send invoice to {{selectedCustomer?selectedCustomer.customer_name:""}}</span>
                                             </div>
                                             <div class="row">
-                                                <button style="padding: 18px 40px;" class="button small" (click)="submit($event,true,'email')" [disabled]="!invoiceForm.valid||!validateTaskLines()">Email Invoice</button>
+                                                <button style="padding: 18px 40px;width: 180px" class="button small" (click)="submit($event,true,'email')" [disabled]="!invoiceForm.valid||!validateTaskLines()">Email Invoice</button>
                                             </div>
                                             <div class="row">
-                                                <button style="padding: 18px 40px;" class="button small hollow download"(click)="submit($event,false,'download')" [disabled]="!invoiceForm.valid||!validateTaskLines()">Download PDF</button>
+                                                <button style="padding: 18px 40px;width: 180px" class="button small hollow download"(click)="submit($event,false,'download')" [disabled]="!invoiceForm.valid||!validateTaskLines()">Download PDF</button>
                                             </div>
                                             <div class="row" style="margin-top: 1.2rem" *ngIf="!showPreview&&!hasPaid">
                                                 <div class="small-12 medium-12 columns" style="padding: 0px">
@@ -389,7 +389,7 @@
                                                     </label>
                                                 </div>
                                             </div>
-                                            <div class="row" style="margin-top: 0.5rem" *ngIf="!showPreview&&!hasPaid">
+                                            <!--<div class="row" style="margin-top: 0.5rem" *ngIf="!showPreview&&!hasPaid">
                                                 <div class="small-12 medium-12 columns" style="padding: 0px">
                                                     <label>
                                                         Payment Options
@@ -404,7 +404,7 @@
                                                         <textarea readonly formControlName="payment_options" style="height: 130px;width: 80%;"></textarea>
                                                     </label>
                                                 </div>
-                                            </div>
+                                            </div>-->
                                             <div class="row" style="margin-top: 0.5rem" *ngIf="!showPreview">
                                                 <div class="small-12 medium-12 columns" style="padding: 0px" *ngIf="invoiceID">
                                                     <span class="label warning" style="width: 50px;text-align: center;font-size: 13pt;background: #00B1A9;">{{coreValue}}</span>

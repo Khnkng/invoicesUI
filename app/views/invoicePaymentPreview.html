@@ -211,7 +211,6 @@
                         <thead>
                         <tr>
                             <th class="heading-color">Payment Terms</th>
-                            <th class="heading-color">Notes</th>
                         </tr>
                         </thead>
                         <tbody cellpadding=5 cellspacing=5>
@@ -219,22 +218,19 @@
                             <td class="truncate-word" [style.font-size]="lineAmountFont">
                                 <span>{{invoiceData.displayterm}}</span>
                             </td>
-                            <td class="truncate-word" [style.font-size]="lineAmountFont">
-                                <span>{{invoiceData.notes}}</span>
-                            </td>
                         </tr>
                         </tbody>
                     </table>
                     <table class="middle-tables">
                         <thead>
                         <tr>
-                            <th class="heading-color">Payment Options</th>
+                            <th class="heading-color">Notes</th>
                         </tr>
                         </thead>
                         <tbody cellpadding=5 cellspacing=5>
                         <tr>
-                            <td colspan="3" class="truncate-word" [style.font-size]="lineAmountFont">
-                                <span>{{invoiceData.payment_options}}</span>
+                            <td class="truncate-word" [style.font-size]="lineAmountFont">
+                                <span>{{invoiceData.notes}}</span>
                             </td>
                         </tr>
                         </tbody>
