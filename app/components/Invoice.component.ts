@@ -84,7 +84,7 @@ export class InvoiceComponent{
     dimensions:Array<any> = [];
     selectedDimensions:Array<any> = [];
     totalAmount:number=0;
-    remainder_name:string;
+    remainder_name:string="weekly start two weeks before due";
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
@@ -535,7 +535,7 @@ export class InvoiceComponent{
     }
     resetEmailDailogFields(){
         this.additionalMails=null;
-        this.remainder_name=null;
+        this.remainder_name="weekly start two weeks before due";
     }
 
     sendInvoiceMails(){
