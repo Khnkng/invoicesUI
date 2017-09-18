@@ -10,7 +10,7 @@ import {TOAST_TYPE} from "qCommon/app/constants/Qount.constants";
 import {CustomersService} from "qCommon/app/services/Customers.service";
 import {Session} from "qCommon/app/services/Session";
 import {NumeralService} from "qCommon/app/services/Numeral.service";
-
+import {DateFormater} from "qCommon/app/services/DateFormatter.service";
 
 declare let jQuery:any;
 declare let _:any;
@@ -28,6 +28,8 @@ export class InvoicePaymentPreview{
     itemInvoices: Array<any> = [];
     invoiceData:any;
     logoURL:string;
+    dateFormat:string;
+    serviceDateformat:string;
     termsList:any={"net30":"Net 30","net45":"Net 45","net60":"Net 60","net90":"Net 90","custom":"Custom"};
     invoiceStates:any={"draft":"Draft","paid":"Paid","partially_paid":"Partially Paid","past_due":"Past Due","sent":"Sent"};
     @Input()
@@ -46,7 +48,9 @@ export class InvoicePaymentPreview{
 
     constructor(private switchBoard: SwitchBoard, private _router:Router, private _route: ActivatedRoute, private toastService: ToastService,
                 private loadingService:LoadingService, private titleService:pageTitleService, private invoiceService: InvoicesService,private customerService: CustomersService,
-                private numeralService:NumeralService){
+                private numeralService:NumeralService,private dateFormater: DateFormater){
+        this.serviceDateformat = dateFormater.getServiceDateformat();
+        this.dateFormat = dateFormater.getFormat();
     }
 
     loadInvoiceData() {
@@ -75,6 +79,9 @@ export class InvoicePaymentPreview{
         }
     }
 
+    convertDateToLocaleFormat(inputDate){
+        return (inputDate) ? this.dateFormater.formatDate(inputDate, this.serviceDateformat, this.dateFormat) : inputDate;
+    }
 
     handleError(error) {
         this.loadingService.triggerLoadingEvent(false);

@@ -30,6 +30,7 @@ export class InvoiceAddPayment{
     invoiceData:any;
     hasInvoiceData: boolean = false;
     dateFormat:string;
+    serviceDateformat:string;
     applyObject:any={'reference_number':'','payment_date':'','payment_method':'cash','amount':'','bank_account_id':''};
     paymentOptions:Array<any>=[{'name':'Cash','value':'cash'},{'name':'Credit/Debit','value':'card'},{'name':'Check','value':'cheque'},{'name':'PayPal','value':'paypal'},{'name':'ACH','value':'ach'},{'name':'Transfer','value':'transfer'}];
     routeSubscribe:any;
@@ -40,6 +41,7 @@ export class InvoiceAddPayment{
                 private accountsService: FinancialAccountsService, private companyService: CompaniesService){
         this.titleService.setPageTitle("Add Payment To Invoice");
         this.dateFormat = dateFormater.getFormat();
+        this.serviceDateformat = dateFormater.getServiceDateformat();
         this.routeSub = this._route.params.subscribe(params => {
             this.invoiceID=params['invoiceID'];
         });
@@ -125,6 +127,7 @@ export class InvoiceAddPayment{
         this.applyObject['state'] = 'paid';
         this.applyObject['currency'] = this.invoiceData.currency;
         this.applyObject['customer_id'] = this.invoiceData.customer_id;
+        this.applyObject.payment_date = this.dateFormater.formatDate(this.applyObject.payment_date, this.dateFormat, this.serviceDateformat);
         this.loadingService.triggerLoadingEvent(true);
         this.invoiceService.markAsPaid(this.applyObject,this.invoiceID).subscribe(success => {
                 this.toastService.pop(TOAST_TYPE.success, "Invoice paid successfully.");

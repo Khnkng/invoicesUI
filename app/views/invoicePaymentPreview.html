@@ -72,7 +72,7 @@
             <tbody style="background-color: #384986;" cellpadding=5 cellspacing=5 [style.background-color]="bgColor">
             <tr>
                 <td class="font-color">Invoice:&nbsp;&nbsp;{{invoiceData.number}}</td>
-                <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{invoiceData.due_date}}</td>
+                <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
             </tr>
             <tr>
                 <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(invoiceData.amount_due)}}</td>
@@ -118,7 +118,7 @@
                             <div>{{invoiceData.customer?invoiceData.customer.customer_city:""}}, {{invoiceData.customer?invoiceData.customer.customer_zipcode:""}}</div>
                             <div>{{invoiceData.customer?invoiceData.customer.customer_country:""}}</div>
                         </td>
-                        <td valign="top">{{invoiceData.invoice_date}}</td>
+                        <td valign="top">{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
                         <td valign="top">{{invoiceData.number}}</td>
                         <td valign="top" class="text-right invoice-amount">{{formatAmount(invoiceData.amount)}}</td>
                     </tr>
