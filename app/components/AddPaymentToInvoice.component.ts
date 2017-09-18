@@ -34,6 +34,7 @@ export class InvoiceAddPayment{
     paymentOptions:Array<any>=[{'name':'Cash','value':'cash'},{'name':'Credit/Debit','value':'card'},{'name':'Check','value':'cheque'},{'name':'PayPal','value':'paypal'},{'name':'ACH','value':'ach'},{'name':'Transfer','value':'transfer'}];
     routeSubscribe:any;
     companyAddress:any;
+    accounts:any;
 
     constructor(private switchBoard: SwitchBoard, private _router:Router, private _route: ActivatedRoute, private toastService: ToastService,
                 private loadingService:LoadingService, private titleService:pageTitleService, private stateService: StateService, private invoiceService: InvoicesService,private customerService: CustomersService,private dateFormater:DateFormater,

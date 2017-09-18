@@ -70,13 +70,13 @@ export class InvoiceComponent{
     discountEditMode:boolean=false;
     amountPaidEditMode:boolean=false;
     invoiceProcessedData:any;
-    additionalMails:String;
+    additionalMails:string;
     showPreview:boolean;
     preViewText:string="Preview Invoice";
     isDuplicate:boolean;
     routeSubscribe:any;
     companyAddress:any;
-    coreValue:number=0;
+    coreValue:string="0";
     logoURL:string;
     hasPaid:boolean;
     amount_paid:any=0;
