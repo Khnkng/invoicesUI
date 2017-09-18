@@ -14,6 +14,8 @@ import {InvoiceLineForm, InvoiceLineTaxesForm} from "../forms/InvoiceLine.form";
 import {YEARS, MONTHS} from "qCommon/app/constants/Date.constants";
 import {CreditCardType} from "qCommon/app/models/CreditCardType";
 import {CustomersService} from "qCommon/app/services/Customers.service";
+import {ReportService} from "reportsUI/app/services/Reports.service";
+import {PAYMENTSPATHS} from "reportsUI/app/constants/payments.constants";
 
 declare let _:any;
 declare let numeral:any;
@@ -21,7 +23,7 @@ declare let jQuery:any;
 
 @Component({
     selector: 'invoice-pay',
-    templateUrl: '../views/invoicePay.html'
+    templateUrl: '/app/views/invoicePay.html'
 })
 
 export class InvoicePayComponent{
@@ -42,12 +44,17 @@ export class InvoicePayComponent{
     publicKey:string;
     cards:Array<string>=[];
     paymentCard:string;
-    hasInvoice:boolen=false;
-
+    hasInvoice:boolean=false;
+    isCreditForm:boolean=true;
+    isBankForm:boolean=false;
+    invoiceData:any;
+    accountType:Array<any>=[{'name':'Checking','value':'checking'},{'name':'Saving','value':'saving'}];
+    bank:any={'bank_account_holder_first_name':'','bank_account_holder_last_name':'','bank_account_number':'','bank_routing_number':'','bank_account_type':'','token_type':'bank_account'};
+    type: string = 'credit';
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
                 private _invoiceForm:InvoiceForm, private _invoiceLineForm:InvoiceLineForm, private _invoiceLineTaxesForm:InvoiceLineTaxesForm
-                ,private customersService: CustomersService){
+                ,private customersService: CustomersService, private reportService: ReportService){
 
         let _form:any = this._invoiceForm.getForm();
         _form['invoiceLines'] = this.invoiceLineArray;
@@ -62,7 +69,13 @@ export class InvoicePayComponent{
         let base = this;
         this.invoiceService.getPaymentInvoice(this.invoiceID).subscribe(invoice=>{
             if(invoice){
-                this.hasInvoice=true;
+                if(invoice){
+                    this.invoiceData=invoice;
+                    this.hasInvoice=true;
+                    this.card_exp_month="";
+                    this.card_exp_year="";
+                }
+
                 this.invoice = invoice;
                 if(this.invoice.state=='paid'){
                     this.isPaid=true;
@@ -70,14 +83,14 @@ export class InvoicePayComponent{
                 if(invoice.payment_spring_customer_id){
                     this.getSavedOldCardDetails(invoice.company_id,invoice.payment_spring_customer_id)
                 }
-                let _invoice = _.cloneDeep(invoice);
+                /*let _invoice = _.cloneDeep(invoice);
                 delete _invoice.invoiceLines;
                 _invoice.customer_name=_invoice.customer.customer_name;
                 this._invoiceForm.updateForm(this.invoiceForm, _invoice);
                 this.invoice.invoiceLines.forEach(function(invoiceLine:any){
                     invoiceLine.name=invoiceLine.item.name;
                     base.addInvoiceList(invoiceLine);
-                });
+                });*/
             }
             this.loadingService.triggerLoadingEvent(false);
         },error=>this.handleError(error));
@@ -88,81 +101,7 @@ export class InvoicePayComponent{
         this.setupForm();
     }
 
-    addInvoiceList(line?:any) {
-        let base = this;
-        let _form:any = this._invoiceLineForm.getForm(line);
-        let taxesLineArray:FormArray = new FormArray([]);
-
-        _form['invoiceLineTaxes'] = taxesLineArray;
-        let invoiceListForm = this._fb.group(_form);
-        this.invoiceLineArray.push(invoiceListForm);
-        this.taxArray.push(taxesLineArray);
-        if(line && line.invoiceLineTaxes) {
-            line.invoiceLineTaxes.forEach(function(taxLine){
-                base.addTaxLine(base.taxArray.length-1, taxLine);
-            });
-        } else {
-            this.addTaxLine(this.taxArray.length-1);
-        }
-    }
-
-    addTaxLine(index, tax?:any) {
-        let _form:any = this._invoiceLineTaxesForm.getForm(tax);
-        let invoiceTaxForm = this._fb.group(_form);
-        this.taxArray[index].push(invoiceTaxForm);
-    }
-
     ngOnInit(){
-    }
-
-    calcLineTax(tax_rate, price, quantity) {
-        if(tax_rate && price && quantity) {
-            let priceVal = numeral(price).value();
-            let quantityVal = numeral(quantity).value();
-            return numeral((tax_rate * parseFloat(priceVal) * parseFloat(quantityVal))/100).format('$00.00');
-        }
-        return numeral(0).format('$00.00');
-    }
-
-    calcAmt(price, quantity){
-        if(price && quantity) {
-            let priceVal = numeral(price).value();
-            let quantityVal = numeral(quantity).value();
-            return numeral(parseFloat(priceVal) * parseFloat(quantityVal)).format('$00.00');
-        }
-        return numeral(0).format('$00.00');
-    }
-
-    calcSubTotal() {
-        let invoiceData = this._invoiceForm.getData(this.invoiceForm);
-        let subTotal = 0;
-        let base = this;
-        if(invoiceData.invoiceLines) {
-            invoiceData.invoiceLines.forEach(function(invoiceLine){
-                subTotal = subTotal + numeral(base.calcAmt(invoiceLine.price, invoiceLine.quantity)).value();
-            });
-        }
-        return numeral(subTotal).format('$00.00');
-    }
-
-    calcTotal() {
-        let invoiceData = this._invoiceForm.getData(this.invoiceForm);
-        let total = 0;
-        let base = this;
-
-        if(invoiceData.invoiceLines) {
-            invoiceData.invoiceLines.forEach(function (invoiceLine) {
-                total = total + numeral(base.calcAmt(invoiceLine.price, invoiceLine.quantity)).value();
-
-                if(invoiceLine.invoiceLineTaxes) {
-                    invoiceLine.invoiceLineTaxes.forEach(function (tax) {
-                        let taxAmt = numeral(base.calcLineTax(tax.tax_rate, 1, total)).value();
-                        total = total + taxAmt;
-                    });
-                }
-            });
-        }
-        return numeral(total).format('$00.00');
     }
 
     payInvoice(event){
@@ -170,12 +109,19 @@ export class InvoicePayComponent{
     }
 
     pay(action,paymentSpringToken){
-        this.loadingService.triggerLoadingEvent(true);
+       // this.loadingService.triggerLoadingEvent(true);
         let data={
-            "amountToPay":this.invoice.amount,
+            "amountToPay":this.invoice.amount_due,
             "action":action,
             "payment_spring_token":paymentSpringToken
         };
+
+        if(this.type='bank'){
+            data['payment_type']="Bank Account";
+        }else {
+            data['payment_type']="Credit Card";
+        }
+
         this.invoiceService.payInvoice(data,this.invoiceID).subscribe(res => {
             this.loadingService.triggerLoadingEvent(false);
             this.resetCardFields();
@@ -184,7 +130,7 @@ export class InvoicePayComponent{
         }, error=>{
             this.loadingService.triggerLoadingEvent(false);
             this.resetCardFields();
-            this.toastService.pop(TOAST_TYPE.error, "Invoice Payemnt failed");
+            this.toastService.pop(TOAST_TYPE.error, "Invoice Payment failed");
         });
     }
 
@@ -199,19 +145,23 @@ export class InvoicePayComponent{
 
     closeCreditCardFlyout(){
         this.resetCardFields();
-        jQuery('#creditcard-details-conformation').foundation('close');
+        //jQuery('#creditcard-details-conformation').foundation('close');
     }
 
     checkValidation(){
-        if(this.paymentCard&&this.paymentCard!='newCard'){
+        if(this.card_number&&this.card_exp_month&&this.card_exp_year&&this.csc&&this.card_owner_name)
             return true;
-        }
-        else if(this.paymentCard&&this.paymentCard=='newCard'&&this.card_number&&this.card_exp_month&&this.card_exp_year&&this.csc&&this.card_owner_name)
+        else return false;
+    }
+
+    checkBankValidation(){
+        if(this.bank.bank_account_holder_first_name&&this.bank.bank_account_holder_last_name&&this.bank.bank_account_number&&this.bank.bank_routing_number&&this.bank.bank_account_type)
             return true;
         else return false;
     }
 
     getToken(){
+        this.loadingService.triggerLoadingEvent(true);
         this.customersService.getPaymentSpringToken(this.invoice.company_id)
             .subscribe(res  => {
                 if(!_.isEmpty(res)){
@@ -225,13 +175,19 @@ export class InvoicePayComponent{
     }
 
     getCardTokenDetails(){
-        let data={
-            "card_number": this.card_number,
-            "card_exp_month": this.card_exp_month,
-            "card_exp_year": this.card_exp_year,
-            "card_owner_name":this.card_owner_name,
-            "csc":this.csc
-        };
+        let data:any;
+        if(this.type=='bank'){
+            data=this.bank;
+            data.token_type='bank_account';
+        }else {
+            data={
+                "card_number": this.card_number,
+                "card_exp_month": this.card_exp_month,
+                "card_exp_year": this.card_exp_year,
+                "card_owner_name":this.card_owner_name,
+                "csc":this.csc
+            };
+        }
         this.customersService.getCreditCardToken(data,this.publicKey)
             .subscribe(res  => {
                 this.pay("one_time_charge",res.id);
@@ -244,13 +200,14 @@ export class InvoicePayComponent{
     }
 
      saveCard(){
-         if(this.paymentCard=='newCard'){
+        /* if(this.paymentCard=='newCard'){
              this.getToken();
          }else {
              this.closeCreditCardFlyout();
              this.pay("one_time_customer_charge",this.invoice.payment_spring_customer_id);
-         }
-
+         }*/
+         this.getToken();
+         console.log(this.bank);
      }
 
 
@@ -266,6 +223,7 @@ export class InvoicePayComponent{
             this.card_owner_name=null;
             this.csc=null;
             this.paymentCard=null;
+            this.bank={};
     }
 
     getSavedOldCardDetails(companyID,springToken){
@@ -276,6 +234,47 @@ export class InvoicePayComponent{
                 }
 
             }, error =>  this.handleError(error));
+    }
+
+    downloadInvoice(){
+        let html = jQuery('<div>').append(jQuery('style').clone()).append(jQuery('#payment-preview').clone()).html();
+        let pdfReq={
+            "version" : "1.1",
+            "genericReport": {
+                "payload": html
+            }
+        };
+        this.reportService.exportReportIntoFile(PAYMENTSPATHS.PDF_SERVICE, pdfReq)
+            .subscribe(data =>{
+                var blob=new Blob([data._body], {type:"application/pdf"});
+                var link= jQuery('<a></a>');
+                link[0].href= URL.createObjectURL(blob);
+                link[0].download= "Invoice.pdf";
+                link[0].click();
+            }, error =>{
+                this.toastService.pop(TOAST_TYPE.error, "Failed to Export report into PDF");
+            });
+    }
+
+    printInvoice() {
+        window.print();
+    }
+
+    showForm(type){
+        if(type== 'bank'){
+            this.isBankForm = !this.isBankForm;
+        }else{
+            this.isCreditForm = !this.isCreditForm;
+        }
+    }
+
+    setPaymentMethod(event){
+        this.bank.payment_method = event.target.value;
+    }
+
+    setType(type) {
+        this.type = type;
+        this.isCreditForm = !this.isCreditForm
     }
 
 }
