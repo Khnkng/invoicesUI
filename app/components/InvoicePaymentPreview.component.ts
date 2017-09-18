@@ -18,7 +18,7 @@ declare let moment:any;
 
 @Component({
     selector: 'invoicePaymentPreview',
-    templateUrl: '/app/views/invoicePaymentPreview.html',
+    templateUrl: '../views/invoicePaymentPreview.html',
 })
 
 export class InvoicePaymentPreview{

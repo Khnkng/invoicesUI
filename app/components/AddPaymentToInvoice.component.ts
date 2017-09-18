@@ -20,7 +20,7 @@ declare let moment:any;
 
 @Component({
     selector: 'addInvoicePayment',
-    templateUrl: '/app/views/addPaymentsToInvoice.html',
+    templateUrl: '../views/addPaymentsToInvoice.html',
 })
 
 export class InvoiceAddPayment{

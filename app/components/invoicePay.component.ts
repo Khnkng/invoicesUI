@@ -23,7 +23,7 @@ declare let jQuery:any;
 
 @Component({
     selector: 'invoice-pay',
-    templateUrl: '/app/views/invoicePay.html'
+    templateUrl: '../views/invoicePay.html'
 })
 
 export class InvoicePayComponent{
