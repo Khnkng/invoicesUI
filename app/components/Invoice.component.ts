@@ -21,6 +21,7 @@ import {SwitchBoard} from "qCommon/app/services/SwitchBoard";
 import {NumeralService} from "qCommon/app/services/Numeral.service";
 import {CURRENCY_LOCALE_MAPPER} from "qCommon/app/constants/Currency.constants";
 import {DimensionService} from "qCommon/app/services/DimensionService.service";
+import {DateFormater} from "qCommon/app/services/DateFormatter.service";
 
 declare let _:any;
 declare let numeral:any;
@@ -85,21 +86,26 @@ export class InvoiceComponent{
     selectedDimensions:Array<any> = [];
     totalAmount:number=0;
     remainder_name:string="weekly start two weeks before due";
+    dateFormat:string;
+    serviceDateformat:string;
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
                 private customerService: CustomersService, private _invoiceForm:InvoiceForm, private _invoiceLineForm:InvoiceLineForm, private _invoiceLineTaxesForm:InvoiceLineTaxesForm,
-                private coaService: ChartOfAccountsService,private titleService:pageTitleService,private stateService: StateService, private reportService: ReportService,private switchBoard: SwitchBoard,private numeralService:NumeralService, private dimensionService: DimensionService){
+                private coaService: ChartOfAccountsService,private titleService:pageTitleService,private stateService: StateService, private reportService: ReportService,private switchBoard: SwitchBoard,
+                private numeralService:NumeralService, private dimensionService: DimensionService, private dateFormater:DateFormater){
         this.titleService.setPageTitle("Invoices");
         let _form:any = this._invoiceForm.getForm();
         _form['invoiceLines'] = this.invoiceLineArray;
         _form['taskLines'] = this.tasksLineArray;
+        this.dateFormat = dateFormater.getFormat();
+        this.serviceDateformat = dateFormater.getServiceDateformat();
         this.companyCurrency=Session.getCurrentCompanyCurrency();
         this.localeFormat=CURRENCY_LOCALE_MAPPER[Session.getCurrentCompanyCurrency()]?CURRENCY_LOCALE_MAPPER[Session.getCurrentCompanyCurrency()]:'en-US';
         this.invoiceForm = this._fb.group(_form);
         this.routeSub = this._route.params.subscribe(params => {
             this.invoiceID=params['invoiceID'];
-            this.defaultDate=moment(new Date()).format("MM/DD/YYYY");
+            this.defaultDate=moment(new Date()).format(this.dateFormat);
             this.loadInitialData();
             this.loadCOA();
             this.getCompanyDetails();
@@ -208,6 +214,8 @@ export class InvoiceComponent{
             this.titleService.setPageTitle("Edit Invoice");
             this.invoiceService.getInvoice(this.invoiceID).subscribe(invoice=>{
                 let base=this;
+                invoice.invoice_date = base.dateFormater.formatDate(invoice['invoice_date'],base.serviceDateformat,base.dateFormat);
+                invoice.due_date = base.dateFormater.formatDate(invoice['due_date'],base.serviceDateformat,base.dateFormat);
                 this.invoice = invoice;
                 if(invoice.state=='paid'){
                     this.titleService.setPageTitle("View Invoice");
@@ -464,6 +472,8 @@ export class InvoiceComponent{
         let taskLines=[];
         let invoiceData = this._invoiceForm.getData(this.invoiceForm);
         let base = this;
+        invoiceData.invoice_date = this.dateFormater.formatDate(invoiceData.invoice_date,this.dateFormat,this.serviceDateformat);
+        invoiceData.due_date = this.dateFormater.formatDate(invoiceData.due_date,this.dateFormat,this.serviceDateformat);
         invoiceData.amount = Number((this.amount).toFixed(2));
         delete invoiceData.invoiceLines;
         taskLines=this.getInvoiceLines('task');
@@ -597,10 +607,10 @@ export class InvoiceComponent{
 
     selectTerm(term) {
         let days = term == 'custom' ? 0 : term.substring(3, term.length);
-        let new_date = moment(this.invoiceForm.controls['invoice_date'].value, 'MM/DD/YYYY').add(days, 'days');
+        let new_date = moment(this.invoiceForm.controls['invoice_date'].value, this.dateFormat).add(days, 'days');
 
         let dueDateControl:any = this.invoiceForm.controls['due_date'];
-        dueDateControl.patchValue(moment(new_date).format('MM/DD/YYYY'));
+        dueDateControl.patchValue(moment(new_date).format(this.dateFormat));
     }
 
     itemChange(item,index,type){

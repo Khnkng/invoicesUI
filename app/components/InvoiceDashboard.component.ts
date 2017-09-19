@@ -19,6 +19,7 @@ import {NumeralService} from "qCommon/app/services/Numeral.service";
 import {ReportService} from "reportsUI/app/services/Reports.service";
 import {Observable} from "rxjs/Rx";
 import {CURRENCY_LOCALE_MAPPER} from "qCommon/app/constants/Currency.constants";
+import {DateFormater} from "qCommon/app/services/DateFormatter.service";
 
 declare let _:any;
 declare let jQuery:any;
@@ -138,14 +139,18 @@ export class InvoiceDashboardComponent {
     agingByCustomer:any;
     hasARAgingSummaryData: boolean = false;
     customerAgingSummary:any;
+    dateFormat:string;
+    serviceDateformat:string;
 
     constructor(private _router: Router, private _route: ActivatedRoute,
                 private toastService: ToastService, private loadingService: LoadingService,
                 private companiesService: CompaniesService, private invoiceService: InvoicesService,
                 private customerService: CustomersService, private titleService: pageTitleService,
                 private stateService: StateService,private numeralService:NumeralService, private switchBoard:SwitchBoard,
-                private reportService: ReportService) {
+                private reportService: ReportService, private dateFormater: DateFormater) {
         this.currentCompanyId = Session.getCurrentCompany();
+        this.dateFormat = dateFormater.getFormat();
+        this.serviceDateformat = dateFormater.getServiceDateformat();
         this.localeFortmat=CURRENCY_LOCALE_MAPPER[Session.getCurrentCompanyCurrency()]?CURRENCY_LOCALE_MAPPER[Session.getCurrentCompanyCurrency()]:'en-US';
         this.loadCustomers(this.currentCompanyId);
         this.stateService.clearAllStates();
@@ -822,7 +827,8 @@ export class InvoiceDashboardComponent {
             row['selectCol'] = "<input type='checkbox' class='checkbox'/>";
             row['number'] = invoice['number'];
             row['customer'] = invoice['customer_name'];
-            row['due_date'] = invoice['due_date'];
+            //row['due_date'] = invoice['due_date'];
+            row['due_date'] = base.dateFormater.formatDate(invoice['due_date'],base.serviceDateformat,base.dateFormat);
             let amount=invoice['amount']?Number(invoice['amount']):0;
             let amount_due=invoice['amount_due']?Number(invoice['amount_due']):0;
             row['amount'] = amount.toLocaleString(CURRENCY_LOCALE_MAPPER[invoice['currency']], { style: 'currency', currency: invoice['currency'], minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -875,7 +881,8 @@ export class InvoiceDashboardComponent {
             let paymentType=payment.type=='cheque'?'Check':payment.type;
             row['type'] = "<div>"+paymentType+"</div><div><small>"+payment.referenceNo+"</small></div>";
             row['receivedFrom'] = payment['customerName'];
-            row['dateReceived'] = payment.paymentDate;
+            //row['dateReceived'] = payment.paymentDate;
+            row['dateReceived'] = base.dateFormater.formatDate(payment['paymentDate'],base.serviceDateformat,base.dateFormat);
             let assignStatus = "";
             let assignedAmount = 0;
             payment.paymentLines.forEach((line) => {
