@@ -85,7 +85,7 @@ export class InvoiceComponent{
     dimensions:Array<any> = [];
     selectedDimensions:Array<any> = [];
     totalAmount:number=0;
-    remainder_name:string;
+    remainder_name:string="weekly start two weeks before due";
     dateFormat:string;
     serviceDateformat:string;
 
@@ -222,7 +222,8 @@ export class InvoiceComponent{
                     this.hasPaid=true;
                     this.amount=invoice.amount;
                 };
-                this.numeralService.switchLocale(invoice.currency.toLowerCase());
+                //this.numeralService.switchLocale(invoice.currency.toLowerCase());
+                this.onCurrencySelect(invoice.currency);
                 this.subTotal=invoice.sub_total;
                 this.taxTotal=invoice.tax_amount;
                 this.amount_paid=invoice.amount_paid;
@@ -502,16 +503,17 @@ export class InvoiceComponent{
         invoiceData.user_id=Session.getUser().id;
         invoiceData.company_id=Session.getCurrentCompany();
         invoiceData.logoURL = this.logoURL;
+        invoiceData.state=this.invoiceID?this.invoice.state:'draft';
         this.invoiceProcessedData=invoiceData;
         if(action=='email'){
             this.openEmailDailog();
         }else if (action=='draft'){
             this.saveInvoiceDetails(invoiceData);
+        }else if(action=='save'){
+            this.saveInvoiceDetails(invoiceData);
         }else if(action=='preview'){
-            this.setHeaderColor();
             this.togelPreview();
         }else if(action=='download'){
-            this.setHeaderColor();
             if(!this.showPreview)
             {
                 this.togelPreview();
@@ -520,14 +522,6 @@ export class InvoiceComponent{
             setTimeout(function(){
                 base.exportToPDF();
             })
-        }
-    }
-
-    setHeaderColor(){
-        if(this.invoiceID){
-            this.invoiceProcessedData.state=this.invoice.state;
-        }else {
-            this.invoiceProcessedData.state="draft";
         }
     }
 
@@ -551,7 +545,7 @@ export class InvoiceComponent{
     }
     resetEmailDailogFields(){
         this.additionalMails=null;
-        this.remainder_name=null;
+        this.remainder_name="weekly start two weeks before due";
     }
 
     sendInvoiceMails(){
@@ -844,7 +838,7 @@ export class InvoiceComponent{
         if(currency=='USD'){
             this.localeFormat='en-Us';
         }else if(currency=='INR'){
-            this.localeFormat='en-IN';
+            this.localeFormat='ind';
         }else if(currency=='IDR'){
             this.localeFormat='id-id'
         }
@@ -961,12 +955,14 @@ export class InvoiceComponent{
         let imgString = jQuery('#company-img').clone().html();
         let html = jQuery('<div>').append(jQuery('style').clone()).append(jQuery('#payment-preview').clone()).html();
         if(imgString)
-        html = html.replace(imgString,imgString.replace('>','/>'))
+        html = html.replace(imgString,imgString.replace('>','/>'));
         let pdfReq={
             "version" : "1.1",
             "genericReport": {
-                "payload": html
-            }
+                "payload": html,
+                "width":612,
+                "height":792
+            },
         };
         this.reportService.exportReportIntoFile(PAYMENTSPATHS.PDF_SERVICE, pdfReq)
             .subscribe(data =>{

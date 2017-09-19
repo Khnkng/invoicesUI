@@ -1,8 +1,7 @@
 <div class="row" *ngIf="hasInvoiceData">
-    <div class="column medium-7" >
+    <div class="column medium-6" style="min-width:612px;margin-right: 2rem">
         <invoicePaymentPreview [invoices]="invoiceData"></invoicePaymentPreview>
     </div>
-    <div class="column medium-1"></div>
     <div class="column medium-3">
         <!--<div class="saveDraft pointer">Save as Draft</div>-->
         <div class="saveDraft pointer" (click)="navigateToDashborad()">Close Preview</div>
