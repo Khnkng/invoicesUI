@@ -94,7 +94,7 @@
                                                             <div class="row" *ngIf="!hasPaid">
                                                                 <label>
                                                                     Invoice Date*
-                                                                    <input type="text" formControlName="invoice_date" invoice-custom-datepicker [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setInvoiceDate($event)" placeholder="Invoice Date*"/>
+                                                                    <input type="text" formControlName="invoice_date" invoice-custom-datepicker [format]="dateFormat" [mindate]="'past'" (valueChanged)="setInvoiceDate($event)" placeholder="Invoice Date*"/>
                                                                 </label>
                                                             </div>
                                                             <div class="row" *ngIf="hasPaid">
@@ -160,7 +160,7 @@
                                                             <div class="row" *ngIf="!hasPaid">
                                                                 <label>
                                                                     Due Date*
-                                                                    <input type="text" formControlName="due_date" invoice-custom-datepicker datepicker1 [format]="'MM/DD/YYYY'" [mindate]="'past'" (valueChanged)="setPaymentDate($event)" placeholder="Payment Date*">
+                                                                    <input type="text" formControlName="due_date" invoice-custom-datepicker datepicker1 [format]="dateFormat" [mindate]="'past'" (valueChanged)="setPaymentDate($event)" placeholder="Payment Date*">
                                                                 </label>
                                                             </div>
                                                             <div class="row" *ngIf="hasPaid">

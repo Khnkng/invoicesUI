@@ -17,6 +17,7 @@ import {StateService} from "qCommon/app/services/StateService";
 import {SwitchBoard} from "qCommon/app/services/SwitchBoard";
 import {FinancialAccountsService} from "qCommon/app/services/FinancialAccounts.service";
 import {State} from "qCommon/app/models/State";
+import {DateFormater} from "qCommon/app/services/DateFormatter.service";
 
 declare let _:any;
 declare let numeral:any;
@@ -44,6 +45,8 @@ export class InvoiceAddPaymentComponent {
     routeSubscribe:any;
     accounts: Array<any> = [];
     saving: boolean;
+    dateFormat:string;
+    serviceDateformat:string;
 
     constructor(private _fb: FormBuilder, private loadingService:LoadingService,
                 private customerService:CustomersService,
@@ -51,8 +54,10 @@ export class InvoiceAddPaymentComponent {
                 private _invoicePaymentForm:InvoicePaymentForm, private _router:Router,
                 private numeralService:NumeralService, private _route: ActivatedRoute,
                 private stateService: StateService,private switchBoard: SwitchBoard,
-                private accountsService: FinancialAccountsService) {
+                private accountsService: FinancialAccountsService, private dateFormater:DateFormater) {
         this.loadCustomers(Session.getCurrentCompany());
+        this.dateFormat = dateFormater.getFormat();
+        this.serviceDateformat = dateFormater.getServiceDateformat();
         this.invoicePaymentForm = _fb.group(_invoicePaymentForm.getForm());
         this.routeSub = this._route.params.subscribe(params => {
             this.paymentId = params['paymentID'];
@@ -96,6 +101,7 @@ export class InvoiceAddPaymentComponent {
         let base=this;
         this.loadingService.triggerLoadingEvent(true);
         this.invoiceService.payment(this.paymentId).subscribe(payment => {
+            payment.paymentDate = base.dateFormater.formatDate(payment['paymentDate'],base.serviceDateformat,base.dateFormat);
             this.payment = payment;
             base.numeralService.switchLocale(payment.currencyCode);
             let paymentFormValues:any = _.clone(this.payment);
@@ -167,7 +173,14 @@ export class InvoiceAddPaymentComponent {
         this.saving = true;
         this.loadingService.triggerLoadingEvent(true);
         let payment:any = this.invoicePaymentForm.value;
+        payment.paymentDate = this.dateFormater.formatDate(payment.paymentDate,this.dateFormat,this.serviceDateformat);
         payment.paymentLines = this.paymentLines;
+        if(payment.paymentLines.length >0) {
+            for (var i in payment.paymentLines) {
+                payment.paymentLines[i].invoiceDate = this.dateFormater.formatDate(payment.paymentLines[i].invoiceDate, this.dateFormat, this.serviceDateformat);
+                payment.paymentLines[i].dueDate = this.dateFormater.formatDate(payment.paymentLines[i].dueDate, this.dateFormat, this.serviceDateformat);
+            }
+        }
         console.log("pament--", payment);
         if(!payment.depositedTo) {
             payment.depositedTo = null;
@@ -249,13 +262,15 @@ export class InvoiceAddPaymentComponent {
             paymentLine.invoiceAmount = invoice.amount;
 
             paymentLine.dueAmount = invoice.amount_due || "";
-            paymentLine.invoiceDate = invoice.invoice_date;
+            //paymentLine.invoiceDate = invoice.invoice_date;
+            paymentLine.invoiceDate = moment(invoice.invoice_date).format(this.dateFormat);
             paymentLine.state = invoice.state;
             let date:any = new Date(invoice.invoice_date);
             let termDays =  invoice.term ? parseInt(invoice.term.replace("net")) : 0;
             date.setDate(date + termDays);
             //paymentLine.dueDate =  termDays ? date.toString() : "";
-            paymentLine.dueDate =  invoice.due_date;
+            //paymentLine.dueDate =  invoice.due_date;
+            paymentLine.dueDate = moment(invoice.due_date).format(this.dateFormat);
             if(!this.paymentId) {
                 paymentLine.amount = "";
                 if(invoice.state != "paid" && invoice.state != "draft") {
