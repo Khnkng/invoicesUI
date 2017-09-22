@@ -828,7 +828,7 @@ export class InvoiceDashboardComponent {
             row['number'] = invoice['number'];
             row['customer'] = invoice['customer_name'];
             //row['due_date'] = invoice['due_date'];
-            row['due_date'] = base.dateFormater.formatDate(invoice['due_date'],base.serviceDateformat,base.dateFormat);
+            row['due_date'] = (invoice['due_date']) ? base.dateFormater.formatDate(invoice['due_date'],base.serviceDateformat,base.dateFormat) : invoice['due_date'];
             let amount=invoice['amount']?Number(invoice['amount']):0;
             let amount_due=invoice['amount_due']?Number(invoice['amount_due']):0;
             row['amount'] = amount.toLocaleString(CURRENCY_LOCALE_MAPPER[invoice['currency']], { style: 'currency', currency: invoice['currency'], minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -882,7 +882,7 @@ export class InvoiceDashboardComponent {
             row['type'] = "<div>"+paymentType+"</div><div><small>"+payment.referenceNo+"</small></div>";
             row['receivedFrom'] = payment['customerName'];
             //row['dateReceived'] = payment.paymentDate;
-            row['dateReceived'] = base.dateFormater.formatDate(payment['paymentDate'],base.serviceDateformat,base.dateFormat);
+            row['dateReceived'] = (payment['paymentDate']) ? base.dateFormater.formatDate(payment['paymentDate'],base.serviceDateformat,base.dateFormat) : payment['paymentDate'];
             let assignStatus = "";
             let assignedAmount = 0;
             payment.paymentLines.forEach((line) => {
