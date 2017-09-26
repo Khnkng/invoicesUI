@@ -31,6 +31,7 @@ export class InvoicePaymentPreview{
     zoomSize:number=1;
     amountFont:string="18pt";
     lineAmountFont:string="14pt";
+    logoWidth:string="0";
     termsList:any={"net30":"Net 30","net45":"Net 45","net60":"Net 60","net90":"Net 90","custom":"Custom"};
     invoiceStates:any={"draft":"Draft","paid":"Paid","partially_paid":"Partially Paid","past_due":"Past Due","sent":"Sent"};
     @Input()
@@ -38,6 +39,7 @@ export class InvoicePaymentPreview{
         invoices.displayterm=this.termsList[invoices.term];
         this.invoiceData = invoices;
         if(invoices.logoURL){
+            this.logoWidth="120";
             this.logoURL = invoices.logoURL;
         }else{
             this.getCompanyLogo();
@@ -75,6 +77,7 @@ export class InvoicePaymentPreview{
 
     processPreference(preference){
         if(preference && preference.temporaryURL){
+            this.logoWidth="120";
             this.logoURL = preference.temporaryURL;
         }
     }
