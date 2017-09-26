@@ -121,7 +121,7 @@
                                 <div class="margin-align">{{invoiceData.company?invoiceData.company.state:""}}, {{invoiceData.company?invoiceData.company.zipcode:""}}</div>
                                 <div class="margin-align">{{invoiceData.company?invoiceData.company.country:""}}</div>
                             </td>
-                            <td class="text-right" id="company-img"><img src={{logoURL}} alt="" height="100" style="position: relative;bottom:30px;width: 5rem;"/></td>
+                            <td class="text-right" id="company-img"><img src={{logoURL}} alt="" height="90" style="position: relative;bottom:30px;" [style.width]="logoWidth"/></td>
                         </tr>
                         </tbody>
                     </table>
