@@ -2,6 +2,8 @@
     table{
         width: 100%;
         border:none;
+        font-family:HelveticaNeueMed;
+        font-size: 10pt;
     }
     table.middle-tables{
         margin-top: 50px;
@@ -21,16 +23,25 @@
     }
     table tbody tr{
         border:none !important;
+        line-height: 16px;
     }
     tr td{
         color: #0a0a0a;
+        height: 5px;
+        font-family:HelveticaNeueMed;
+        vertical-align:top
     }
 
     .heading-color td{
-        color: #384986;
+        color: #17457B;
+        font-family:HelveticaNeueMed;
+        font-weight: 600;
+        font-size: 10pt !important;
     }
     .heading-color {
-        color: #384986;
+        color: #17457B;
+        font-size: 10pt !important;
+        font-family:HelveticaNeueMed;
     }
     .separator {
         border-top:1px solid #384986;
@@ -41,14 +52,14 @@
     }
     #payment-preview{
         margin-top: 5px;
-        width:612px;
+        /*width:612px;*/
 
     }
     .text-right{
         text-align: right;
     }
     .invoice-amount{
-        font-size: 16pt;
+        font-size: 28pt;
     }
 
     .preview-table-header {
@@ -59,21 +70,20 @@
         padding: 15px 20px;
     }
     .font-color{
-        color:#FAFAFA !important;
-        padding: 0.5rem 0.625rem 0.3rem 0.625rem;
+        color:#FAFAFA !important;/*
+        padding: 0.5rem 0.625rem 0.3rem 0.625rem;*/
     }
 
     .address-tables tr td{
         padding: 0.1rem 0.625rem !important;
     }
 
-    .truncate-word{
-        word-break: break-all;
-        font-size: 14pt;
-    }
-
     .text-right{
         text-align: right;
+    }
+
+    .margin-align{
+        margin-top: 3px;
     }
 
 
@@ -81,7 +91,7 @@
 <div id="payment-preview">
     <div class="preview-table-header" [style.background-color]="bgColor">
         <table style='width:100%;margin-bottom:10px;'>
-            <tbody style="background-color: #384986;" cellpadding=5 cellspacing=5 [style.background-color]="bgColor">
+            <tbody style="background-color: #384986;font-size: 12pt" cellpadding=5 cellspacing=5 [style.background-color]="bgColor">
             <tr>
                 <td class="font-color">Invoice:&nbsp;&nbsp;{{invoiceData.number}}</td>
                 <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
@@ -107,11 +117,11 @@
                         <tr>
                             <td>
                                 <div>{{invoiceData.company?invoiceData.company.name:""}}</div>
-                                <div>{{invoiceData.company?invoiceData.company.address:""}}</div>
-                                <div>{{invoiceData.company?invoiceData.company.state:""}}, {{invoiceData.company?invoiceData.company.zipcode:""}}</div>
-                                <div>{{invoiceData.company?invoiceData.company.country:""}}</div>
+                                <div class="margin-align">{{invoiceData.company?invoiceData.company.address:""}}</div>
+                                <div class="margin-align">{{invoiceData.company?invoiceData.company.state:""}}, {{invoiceData.company?invoiceData.company.zipcode:""}}</div>
+                                <div class="margin-align">{{invoiceData.company?invoiceData.company.country:""}}</div>
                             </td>
-                            <td class="text-right" id="company-img"><img src={{logoURL}} alt="" height="70" style="position: relative;bottom:30px;"/></td>
+                            <td class="text-right" id="company-img"><img src={{logoURL}} alt="" height="100" style="position: relative;bottom:30px;width: 5rem;"/></td>
                         </tr>
                         </tbody>
                     </table>
@@ -128,52 +138,52 @@
                         <tr>
                             <td valign="top" colspan="3">
                                 <div>{{invoiceData.customer?invoiceData.customer.customer_name:""}}</div>
-                                <div>{{invoiceData.customer?invoiceData.customer.street_1:""}}</div>
-                                <div>{{invoiceData.customer?invoiceData.customer.customer_city:""}}, {{invoiceData.customer?invoiceData.customer.customer_zipcode:""}}</div>
-                                <div>{{invoiceData.customer?invoiceData.customer.customer_country:""}}</div>
+                                <div class="margin-align">{{invoiceData.customer?invoiceData.customer.street_1:""}}</div>
+                                <div class="margin-align">{{invoiceData.customer?invoiceData.customer.customer_city:""}}, {{invoiceData.customer?invoiceData.customer.customer_zipcode:""}}</div>
+                                <div class="margin-align">{{invoiceData.customer?invoiceData.customer.customer_country:""}}</div>
                             </td>
                             <td valign="top">{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
                             <td valign="top">{{invoiceData.number}}</td>
-                            <td valign="top" class="text-right invoice-amount" [style.font-size]="amountFont">{{formatAmount(invoiceData.amount)}}</td>
+                            <td valign="top" class="text-right invoice-amount">{{formatAmount(invoiceData.amount)}}</td>
                         </tr>
                         </tbody>
                     </table>
                     <table class='items middle-tables'>
                         <tbody  cellpadding=5 cellspacing=5>
                         <tr  class="heading-color" *ngIf="taskInvoices.length>0">
-                            <td >Item</td>
-                            <td >Description</td>
+                            <td width="30%">Item</td>
+                            <td width="15%">Description</td>
                             <td ></td>
-                            <td >Rate</td>
-                            <td >Hours</td>
-                            <td >Line Total</td>
+                            <td width="15%">Rate</td>
+                            <td width="8%">Hours</td>
+                            <td width="18%">Line Total</td>
                         </tr>
                         <tr *ngFor="let taskInvoice of taskInvoices" [hidden]="taskInvoices.length<0">
-                            <td class="truncate-word" [style.font-size]="lineAmountFont">{{taskInvoice.item.name}}</td>
-                            <td class="truncate-word" [style.font-size]="lineAmountFont">{{taskInvoice.description}}</td>
+                            <td>{{taskInvoice.item.name}}</td>
+                            <td class="truncate">{{taskInvoice.description}}</td>
                             <td ></td>
-                            <td [style.font-size]="lineAmountFont">{{formatAmount(taskInvoice.price)}}</td>
-                            <td [style.font-size]="lineAmountFont">{{formatQuantity(taskInvoice.quantity)}}</td>
-                            <td [style.font-size]="lineAmountFont" class="text-right">{{formatAmount(taskInvoice.amount)}}</td>
+                            <td>{{formatAmount(taskInvoice.price)}}</td>
+                            <td>{{formatQuantity(taskInvoice.quantity)}}</td>
+                            <td class="text-right">{{formatAmount(taskInvoice.amount)}}</td>
                         </tr>
                         <tr *ngIf="taskInvoices.length>0 && itemInvoices.length>0">
                             <td  class="separator" colspan="6"></td>
                         </tr>
                         <tr class="heading-color" *ngIf="itemInvoices.length>0">
-                            <td class="truncate-word" [style.font-size]="lineAmountFont">Item</td>
-                            <td class="truncate-word" [style.font-size]="lineAmountFont">Description</td>
+                            <td width="30%">Item</td>
+                            <td width="15%">Description</td>
                             <td ></td>
-                            <td >Unit Cost</td>
-                            <td >Quantity</td>
-                            <td >Line Total</td>
+                            <td width="15%">Unit Cost</td>
+                            <td width="8%">Quantity</td>
+                            <td width="18%">Line Total</td>
                         </tr>
                         <tr *ngFor="let itemInvoice of itemInvoices" [hidden]="itemInvoices.length<0">
-                            <td class="truncate-word" [style.font-size]="lineAmountFont">{{itemInvoice.item.name}}</td>
-                            <td class="truncate-word" [style.font-size]="lineAmountFont">{{itemInvoice.description}}</td>
+                            <td>{{itemInvoice.item.name}}</td>
+                            <td>{{itemInvoice.description}}</td>
                             <td ></td>
-                            <td [style.font-size]="lineAmountFont">{{formatAmount(itemInvoice.price)}}</td>
-                            <td [style.font-size]="lineAmountFont">{{formatQuantity(itemInvoice.quantity)}}</td>
-                            <td [style.font-size]="lineAmountFont" class="text-right">{{formatAmount(itemInvoice.amount)}}</td>
+                            <td>{{formatAmount(itemInvoice.price)}}</td>
+                            <td>{{formatQuantity(itemInvoice.quantity)}}</td>
+                            <td class="text-right">{{formatAmount(itemInvoice.amount)}}</td>
                         </tr>
 
                         <tr >
@@ -182,15 +192,15 @@
                         </tr>
                         <tr >
                             <td  colspan="2"></td>
-                            <td >Subtotal</td>
+                            <td width="8%">Subtotal</td>
                             <td  colspan="2"></td>
-                            <td [style.font-size]="lineAmountFont" class="text-right">{{formatAmount(invoiceData.sub_total)}}</td>
+                            <td class="text-right">{{formatAmount(invoiceData.sub_total)}}</td>
                         </tr>
                         <tr >
                             <td  class="emptyCol" colspan="2"></td>
-                            <td >Tax</td>
+                            <td>Tax</td>
                             <td  class="emptyCol" colspan="2"></td>
-                            <td [style.font-size]="lineAmountFont" class="text-right">{{formatAmount(invoiceData.tax_amount)}}</td>
+                            <td  class="text-right">{{formatAmount(invoiceData.tax_amount)}}</td>
                         </tr>
                         <tr >
                             <td  class="emptyCol" colspan="2"></td>
@@ -198,9 +208,9 @@
                         </tr>
                         <tr  class="heading-color">
                             <td  class="emptyCol" colspan="2"></td>
-                            <td >Total</td>
+                            <td>Total</td>
                             <td  class="emptyCol" colspan="2"></td>
-                            <td [style.font-size]="lineAmountFont" class="text-right">{{formatAmount(invoiceData.amount)}}</td>
+                            <td class="text-right">{{formatAmount(invoiceData.amount)}}</td>
                         </tr>
                         <tr >
                             <td  class="emptyCol" colspan="2"></td>
@@ -216,7 +226,7 @@
                         </thead>
                         <tbody cellpadding=5 cellspacing=5>
                         <tr>
-                            <td class="truncate-word" [style.font-size]="lineAmountFont">
+                            <td>
                                 <span>{{invoiceData.displayterm}}</span>
                             </td>
                         </tr>
@@ -230,7 +240,7 @@
                         </thead>
                         <tbody cellpadding=5 cellspacing=5>
                         <tr>
-                            <td class="truncate-word" [style.font-size]="lineAmountFont">
+                            <td>
                                 <span>{{invoiceData.notes}}</span>
                             </td>
                         </tr>

@@ -959,9 +959,7 @@ export class InvoiceComponent{
         let pdfReq={
             "version" : "1.1",
             "genericReport": {
-                "payload": html,
-                "width":612,
-                "height":792
+                "payload": html
             },
         };
         this.reportService.exportReportIntoFile(PAYMENTSPATHS.PDF_SERVICE, pdfReq)
