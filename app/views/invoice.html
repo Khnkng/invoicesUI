@@ -538,6 +538,7 @@
         <div class="small-12 medium-9 columns">
             <label style="text-align: left; font-size: 13pt;color: #878787">Set email alerts when invoice is due ?
                 <select [(ngModel)]="remainder_name">
+                  <option value="">--None--</option>
                     <option value="weekly start two weeks before due">Weekly, start two weeks before due</option>
                     <option value="on due date,then weekly afterward">On date due, then weekly afterward</option>
                     <option value="weekly until paid">Weekly until paid</option>
