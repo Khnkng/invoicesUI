@@ -26,7 +26,7 @@
     "reflect-metadata": "^0.1.8",
     "socket.io-client": "^1.5.1",
     "systemjs-builder": "^0.15.25",
-    "qCommon" : "git+https://Qount:b2da10194989666d043efdd95d7302dd85bc1cd1@github.com/Qount/qCommon.git#angular4"
+    "qCommon" : "git+https://Qount:b2da10194989666d043efdd95d7302dd85bc1cd1@github.com/Qount/qCommon.git#master-angular4"
   },
   "devDependencies": {
     "@types/core-js": "^0.9.35",
