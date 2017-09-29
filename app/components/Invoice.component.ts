@@ -85,7 +85,7 @@ export class InvoiceComponent{
     dimensions:Array<any> = [];
     selectedDimensions:Array<any> = [];
     totalAmount:number=0;
-    remainder_name:string="weekly start two weeks before due";
+    remainder_name:string="";
     dateFormat:string;
     serviceDateformat:string;
 
@@ -545,7 +545,7 @@ export class InvoiceComponent{
     }
     resetEmailDailogFields(){
         this.additionalMails=null;
-        this.remainder_name="weekly start two weeks before due";
+        this.remainder_name="";
     }
 
     sendInvoiceMails(){
