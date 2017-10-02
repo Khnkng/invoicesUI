@@ -5,7 +5,7 @@
                 <div class="medium-12 columns">
                     <label>
                         Invoice Number
-                        <div>
+                        <div class="payment-tabs">
                             <input type="button" class="button" [ngClass]="{'hollow grey': type!='cheque', 'sky-blue-button': type=='cheque'}" value="Check" (click)="setType('cheque')"/>
                             <input type="button" class="button" [ngClass]="{'hollow grey': type!='cash', 'sky-blue-button': type=='cash'}" value="Cash" (click)="setType('cash')"/>
                             <input type="button" class="button" [ngClass]="{'hollow grey': type!='card', 'sky-blue-button': type=='card'}" value="Credit/Debit" (click)="setType('card')"/>
