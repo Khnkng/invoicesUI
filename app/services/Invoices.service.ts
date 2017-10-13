@@ -22,8 +22,8 @@ export class InvoicesService extends QountServices {
     }
 
     getDocumentServiceUrl():string {
-        let url = this.interpolateUrl(UrlService.getBaseUrl('DOCUMENT'),null,{id: Session.getUser().id,companyId:Session.getCurrentCompany()});
-        url = PATH.DOCUMENT_SERVICE_URL + url;
+        let url = this.interpolateUrl(PATH.DOCUMENT_SERVICE,null,{id: Session.getUser().id,companyId:Session.getCurrentCompany()});
+        url = UrlService.getBaseUrl('DOCUMENT') + url;
         return url;
     }
 
@@ -47,9 +47,9 @@ export class InvoicesService extends QountServices {
 
 
     createInvoice(invoiceData) : Observable<any> {
-    let url = this.interpolateUrl(INVOICE_PATHS.INVOICE,null,{id: Session.getUser().id,companyId:Session.getCurrentCompany()});
-    return this.create(url, invoiceData, SOURCE_TYPE.JAVA).map(res => <any> res.json())
-        .catch(this.handleError)
+        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE,null,{id: Session.getUser().id,companyId:Session.getCurrentCompany()});
+        return this.create(url, invoiceData, SOURCE_TYPE.JAVA).map(res => <any> res.json())
+            .catch(this.handleError)
     }
 
     updateInvoice(invoiceData) : Observable<any> {
