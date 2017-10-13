@@ -12,7 +12,7 @@ import "rxjs/add/operator/map";
 import "rxjs/add/operator/catch";
 import "rxjs/add/observable/throw";
 import {INVOICE_PATHS} from "../constants/invoices.constants";
-
+import {UrlService} from "qCommon/app/services/UrlService";
 
 @Injectable()
 export class InvoicesService extends QountServices {
@@ -22,7 +22,7 @@ export class InvoicesService extends QountServices {
     }
 
     getDocumentServiceUrl():string {
-        let url = this.interpolateUrl(PATH.DOCUMENT_SERVICE,null,{id: Session.getUser().id,companyId:Session.getCurrentCompany()});
+        let url = this.interpolateUrl(UrlService.getBaseUrl('DOCUMENT'),null,{id: Session.getUser().id,companyId:Session.getCurrentCompany()});
         url = PATH.DOCUMENT_SERVICE_URL + url;
         return url;
     }
