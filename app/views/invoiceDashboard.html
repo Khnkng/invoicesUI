@@ -148,6 +148,12 @@
                                 </ul>
                             </div>
                             <div class="column medium-2 selection-count"><span>{{selectedTableRows.length}}</span><span>selected</span></div>
+                            <!--<i class="icon ion-ios-cloud-download-outline" data-toggle="export-dropdown"></i>-->
+                            <!--<div class="dropdown-pane bottom export-dropdown" id="export-dropdown" data-dropdown data-hover="true" data-hover-pane="true" foundation >-->
+                                <!--<div (click)="exportToExcel('proposals')" class="export-option">Export To Excel</div>-->
+                                <!--<div (click)="exportToPDF('proposals')" class="export-option">Export To PDF</div>-->
+                            <!--</div>-->
+
                         </div>
                         <foo-table class="bigpay-dashboard bighalf-footable invoice-table" *ngIf="hasProposals" [data]="proposalsTableData" [options]="proposalsTableOptions" (onRowAction)="handleProposalAction($event)" (onRowSelect)="handleSelect($event)" #proposalsTable></foo-table>
                         <div class=" callout text-center" [hidden]="isLoading" *ngIf="!hasProposals">
@@ -168,6 +174,13 @@
                                 </ul>
                             </div>
                             <div class="column medium-2 selection-count"><span>{{selectedTableRows.length}}</span><span>selected</span></div>
+
+                            <i class="icon ion-ios-cloud-download-outline" data-toggle="export-dropdown"></i>
+                            <div class="dropdown-pane bottom export-dropdown" id="export-dropdown" data-dropdown data-hover="true" data-hover-pane="true" foundation >
+                                <div (click)="exportToExcel('invoices')" class="export-option">Export To Excel</div>
+                                <div (click)="exportToPDF('invoices')" class="export-option">Export To PDF</div>
+                            </div>
+
                         </div>
                         <foo-table class="bigpay-dashboard bighalf-footable invoice-table" *ngIf="hasInvoices" [data]="invoiceTableData" [options]="invoiceTableOptions" (onRowAction)="handleAction($event)" (onRowSelect)="handleSelect($event)" #invoicesTable></foo-table>
                         <div class=" callout text-center" [hidden]="isLoading" *ngIf="!hasInvoices">
@@ -188,6 +201,12 @@
                                 </ul>
                             </div>
                             <div class="column medium-2 selection-count"><span>{{selectedTableRows.length}}</span><span>selected</span></div>
+                            <i class="icon ion-ios-cloud-download-outline" data-toggle="export-dropdown"></i>
+                            <div class="dropdown-pane bottom export-dropdown" id="export-dropdown" data-dropdown data-hover="true" data-hover-pane="true" foundation >
+                                <div (click)="exportToExcel('payments')" class="export-option">Export To Excel</div>
+                                <div (click)="exportToPDF('payments')" class="export-option">Export To PDF</div>
+                            </div>
+
                         </div>
                         <foo-table class="bigpay-dashboard bighalf-footable invoice-table" *ngIf="hasPaidInvoices" [data]="paidInvoiceTableData" [options]="paidInvoiceTableOptions" (onRowAction)="handleAction($event)" (onRowSelect)="handleSelect($event)" #paidTable></foo-table>
                         <div class=" callout text-center" [hidden]="isLoading" *ngIf="!hasPaidInvoices">
