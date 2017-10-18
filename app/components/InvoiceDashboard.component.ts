@@ -141,6 +141,10 @@ export class InvoiceDashboardComponent {
     customerAgingSummary:any;
     dateFormat:string;
     serviceDateformat:string;
+    invoicesTableColumns: Array<any> = ['Number', 'Customer', 'Due Date', 'Invoice Amount', 'Due Amount', 'Status'];
+    paymentsTableColumns: Array<any> = ['Payment type/#', 'Received From', 'Date Received', 'Amount/Status'];
+    // proposalsTableColumns: Array<any> = ['Number', 'Customer', 'Due Date', 'Invoice Amount', 'Due Amount', 'Status'];
+    pdfTableData: any = {"tableHeader": {"values": []}, "tableRows" : {"rows": []} };
 
     constructor(private _router: Router, private _route: ActivatedRoute,
                 private toastService: ToastService, private loadingService: LoadingService,
@@ -1110,5 +1114,111 @@ export class InvoiceDashboardComponent {
                 break;
         }
     }
+
+    getInvoicesTableData(inputData) {
+        let tempData = _.cloneDeep(inputData);
+        let newTableData: Array<any> = [];
+        let tempJsonArray: any;
+
+        for( var i in  tempData) {
+            tempJsonArray = {};
+            tempJsonArray["Number"] = tempData[i].number;
+            tempJsonArray["Customer"] = tempData[i].customer;
+            tempJsonArray["Due Date"] = tempData[i].due_date;
+            tempJsonArray["Invoice Amount"] = tempData[i].amount;
+            tempJsonArray["Due Amount"] = tempData[i].amount_due;
+            tempJsonArray["Status"] = tempData[i].status;
+
+            newTableData.push(tempJsonArray);
+        }
+
+        return newTableData;
+    }
+
+    getPaymentsTableData() {
+        let tempData = _.cloneDeep(this.payments);
+        let newTableData: Array<any> = [];
+        let tempJsonArray: any;
+
+        for( var i in  tempData) {
+            let paymentType=tempData[i].type=='cheque'?'Check':tempData[i].type;
+            let paymentTypeString = paymentType.concat(' ','(', tempData[i].referenceNo,')');
+            tempJsonArray = {};
+            let assignStatus = "";
+            let assignedAmount = 0;
+            tempData[i].paymentLines.forEach((line) => {
+                assignedAmount += line.amount ? parseFloat(line.amount) : 0;
+            });
+
+            if(assignedAmount >= tempData[i].paymentAmount) {
+                assignStatus = "Assigned";
+            } else if(assignedAmount > 0) {
+                assignStatus = "Partially Assigned";
+            } else {
+                assignStatus = "Unassigned";
+            }
+            let amountOrStatus = this.numeralService.format("$0,0.00", tempData[i].paymentAmount).concat(' ', '(', assignStatus, ')');
+
+            tempJsonArray["Payment type/#"] = paymentTypeString;
+            tempJsonArray["Received From"] = tempData[i].customerName;
+            tempJsonArray["Date Received"] = (tempData[i].paymentDate) ? this.dateFormater.formatDate(tempData[i].paymentDate,this.serviceDateformat,this.dateFormat) : tempData[i].paymentDate;
+            tempJsonArray["Amount/Status"] = amountOrStatus;
+
+            newTableData.push(tempJsonArray);
+        }
+
+        return newTableData;
+    }
+
+    buildPdfTabledata(tabId, fileType){
+        this.pdfTableData['documentHeader'] = "Header";
+        this.pdfTableData['documentFooter'] = "Footer";
+        this.pdfTableData['fileType'] = fileType;
+        this.pdfTableData['name'] = "Name";
+        if(tabId == "invoices") {
+            this.pdfTableData.tableHeader.values = this.invoicesTableColumns;
+            this.pdfTableData.tableRows.rows = this.getInvoicesTableData(this.invoiceTableData.rows);
+        }else if(tabId == "payments") {
+            this.pdfTableData.tableHeader.values = this.paymentsTableColumns;
+            this.pdfTableData.tableRows.rows = this.getPaymentsTableData();
+        }
+        // else if(tabId == "proposals") {
+        //     this.pdfTableData.tableHeader.values = this.proposalsTableColumns;
+        //     this.pdfTableData.tableRows.rows = this.getProposalsTableData(this.invoiceTableData.rows);
+        // }
+    }
+
+    exportToExcel(tabId) {
+        this.buildPdfTabledata(tabId, "excel");
+        this.reportService.exportFooTableIntoFile(this.currentCompanyId, this.pdfTableData)
+            .subscribe(data =>{
+                let blob = new Blob([data._body], {type:"application/vnd.ms-excel"});
+                let link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link['download'] = tabId+".xls";
+                link.click();
+            }, error =>{
+                this.toastService.pop(TOAST_TYPE.error, "Failed to Export table into Excel");
+            });
+        // jQuery('#example-dropdown').foundation('close');
+
+    }
+
+    exportToPDF(tabId) {
+        this.buildPdfTabledata(tabId, "pdf");
+
+        this.reportService.exportFooTableIntoFile(this.currentCompanyId, this.pdfTableData)
+            .subscribe(data =>{
+                var blob = new Blob([data._body], {type:"application/pdf"});
+                var link = jQuery('<a></a>');
+                link[0].href = URL.createObjectURL(blob);
+                link[0].download = tabId+".pdf";
+                link[0].click();
+            }, error =>{
+                this.toastService.pop(TOAST_TYPE.error, "Failed to Export table into PDF");
+            });
+
+    }
+
 }
 
