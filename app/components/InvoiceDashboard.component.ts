@@ -1135,17 +1135,34 @@ export class InvoiceDashboardComponent {
         return newTableData;
     }
 
-    getPaymentsTableData(inputData) {
-        let tempData = _.cloneDeep(inputData);
+    getPaymentsTableData() {
+        let tempData = _.cloneDeep(this.payments);
         let newTableData: Array<any> = [];
         let tempJsonArray: any;
 
         for( var i in  tempData) {
+            let paymentType=tempData[i].type=='cheque'?'Check':tempData[i].type;
+            let paymentTypeString = paymentType.concat(' ','(', tempData[i].referenceNo,')');
             tempJsonArray = {};
-            tempJsonArray["Payment type/#"] = tempData[i].type;
-            tempJsonArray["Received From"] = tempData[i].receivedFrom;
-            tempJsonArray["Date Received"] = tempData[i].dateReceived;
-            tempJsonArray["Amount/Status"] = tempData[i].amount;
+            let assignStatus = "";
+            let assignedAmount = 0;
+            tempData[i].paymentLines.forEach((line) => {
+                assignedAmount += line.amount ? parseFloat(line.amount) : 0;
+            });
+
+            if(assignedAmount >= tempData[i].paymentAmount) {
+                assignStatus = "Assigned";
+            } else if(assignedAmount > 0) {
+                assignStatus = "Partially Assigned";
+            } else {
+                assignStatus = "Unassigned";
+            }
+            let amountOrStatus = this.numeralService.format("$0,0.00", tempData[i].paymentAmount).concat(' ', '(', assignStatus, ')');
+
+            tempJsonArray["Payment type/#"] = paymentTypeString;
+            tempJsonArray["Received From"] = tempData[i].customerName;
+            tempJsonArray["Date Received"] = (tempData[i].paymentDate) ? this.dateFormater.formatDate(tempData[i].paymentDate,this.serviceDateformat,this.dateFormat) : tempData[i].paymentDate;
+            tempJsonArray["Amount/Status"] = amountOrStatus;
 
             newTableData.push(tempJsonArray);
         }
@@ -1163,7 +1180,7 @@ export class InvoiceDashboardComponent {
             this.pdfTableData.tableRows.rows = this.getInvoicesTableData(this.invoiceTableData.rows);
         }else if(tabId == "payments") {
             this.pdfTableData.tableHeader.values = this.paymentsTableColumns;
-            this.pdfTableData.tableRows.rows = this.getPaymentsTableData(this.paidInvoiceTableData.rows);
+            this.pdfTableData.tableRows.rows = this.getPaymentsTableData();
         }
         // else if(tabId == "proposals") {
         //     this.pdfTableData.tableHeader.values = this.proposalsTableColumns;

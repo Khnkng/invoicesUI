@@ -177,11 +177,11 @@
                             </div>
                             <div class="column medium-2 selection-count" [ngStyle]="{'visibility': selectedTableRows.length>0 ? 'visible':'hidden'}"><span>{{selectedTableRows.length}}</span><span>selected</span></div>
                             <div class="column medium-6"></div>
-                            <div class="column medium-2 text-right invoice-footable-doanload" *ngIf="hasInvoices">
+                            <div class="medium-2 text-right invoice-footable-doanload" *ngIf="hasInvoices">
                                 <i class="icon ion-ios-cloud-download-outline" data-toggle="export-dropdown"></i>
                                 <div class="dropdown-pane bottom export-dropdown" id="export-dropdown" data-dropdown data-hover="true" data-hover-pane="true" foundation >
-                                    <div (click)="exportToExcel('invoices')" class="export-option">Export To Excel</div>
-                                    <div (click)="exportToPDF('invoices')" class="export-option">Export To PDF</div>
+                                    <div (click)="exportToExcel('invoices')" class="export-option pointer">Export To Excel</div>
+                                    <div (click)="exportToPDF('invoices')" class="export-option pointer">Export To PDF</div>
                                 </div>
                             </div>
                         </div>
@@ -205,11 +205,11 @@
                             </div>
                             <div class="column medium-2 selection-count" [ngStyle]="{'visibility': selectedTableRows.length>0 ? 'visible':'hidden'}"><span>{{selectedTableRows.length}}</span><span>selected</span></div>
                             <div class="column medium-6"></div>
-                            <div class="column medium-2 text-right invoice-footable-doanload" *ngIf="hasPaidInvoices">
+                            <div class="medium-2 text-right invoice-footable-doanload" *ngIf="hasPaidInvoices">
                                 <i class="icon ion-ios-cloud-download-outline" data-toggle="export-dropdown"></i>
                                 <div class="dropdown-pane bottom export-dropdown" id="export-dropdown" data-dropdown data-hover="true" data-hover-pane="true" foundation >
-                                    <div (click)="exportToExcel('payments')" class="export-option">Export To Excel</div>
-                                    <div (click)="exportToPDF('payments')" class="export-option">Export To PDF</div>
+                                    <div (click)="exportToExcel('payments')" class="export-option pointer">Export To Excel</div>
+                                    <div (click)="exportToPDF('payments')" class="export-option pointer">Export To PDF</div>
                                 </div>
                             </div>
                         </div>
