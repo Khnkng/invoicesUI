@@ -88,6 +88,7 @@ export class InvoiceComponent{
     remainder_name:string="";
     dateFormat:string;
     serviceDateformat:string;
+    PdfData:any;
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
@@ -231,6 +232,9 @@ export class InvoiceComponent{
                 delete _invoice.invoiceLines;
                 let taskLines:Array<any> = [];
                 let itemLines:Array<any> = [];
+                if(invoice.remainder_name){
+                  this.remainder_name=invoice.remainder_name;
+                }
                 taskLines =  _.filter(this.invoice.invoiceLines, function(invoice) { return invoice.type == 'task'; });
                 itemLines =  _.filter(this.invoice.invoiceLines, function(invoice) { return invoice.type == 'item'; });
 
@@ -506,7 +510,12 @@ export class InvoiceComponent{
         invoiceData.state=this.invoiceID?this.invoice.state:'draft';
         this.invoiceProcessedData=invoiceData;
         if(action=='email'){
-            this.openEmailDailog();
+          if(!this.showPreview)
+          {
+            this.togelPreview();
+          }
+          this.PdfData=this.getPdfData();
+          this.openEmailDailog();
         }else if (action=='draft'){
             this.saveInvoiceDetails(invoiceData);
         }else if(action=='save'){
@@ -571,6 +580,9 @@ export class InvoiceComponent{
         delete invoiceData.customer;
         delete invoiceData.taskLines;
         delete invoiceData.logoURL;
+        if(invoiceData.sendMail){
+          invoiceData.pdf_data=this.PdfData;
+        }
         if(this.newInvoice||this.isDuplicate) {
             this.invoiceService.createInvoice(invoiceData).subscribe(resp => {
                 this.toastService.pop(TOAST_TYPE.success, "Invoice created successfully");
@@ -952,16 +964,7 @@ export class InvoiceComponent{
 
 
     exportToPDF(){
-        let imgString = jQuery('#company-img').clone().html();
-        let html = jQuery('<div>').append(jQuery('style').clone()).append(jQuery('#payment-preview').clone()).html();
-        if(imgString)
-        html = html.replace(imgString,imgString.replace('>','/>'));
-        let pdfReq={
-            "version" : "1.1",
-            "genericReport": {
-                "payload": html
-            },
-        };
+        let  pdfReq=this.getPdfData();
         this.reportService.exportReportIntoFile(PAYMENTSPATHS.PDF_SERVICE, pdfReq)
             .subscribe(data =>{
                 var blob=new Blob([data._body], {type:"application/pdf"});
@@ -974,6 +977,21 @@ export class InvoiceComponent{
             });
     }
 
+
+    getPdfData(){
+      let imgString = jQuery('#company-img').clone().html();
+      let html = jQuery('<div>').append(jQuery('style').clone()).append(jQuery('#payment-preview').clone()).html();
+      if(imgString)
+        html = html.replace(imgString,imgString.replace('>','/>'));
+      let pdfReq={
+        "version" : "1.1",
+        "genericReport": {
+          "payload": html
+        },
+      };
+
+      return pdfReq;
+    }
 
     ngOnDestroy(){
         if(jQuery('#invoice-email-conformation'))
@@ -1051,6 +1069,4 @@ export class InvoiceComponent{
             }
         });
     }
-
 }
-
