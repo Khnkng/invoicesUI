@@ -989,7 +989,14 @@ export class InvoiceComponent{
 
     getPdfData(){
       let imgString = jQuery('#company-img').clone().html();
-      let html = jQuery('<div>').append(jQuery('style').clone()).append(jQuery('#payment-preview').clone()).html();
+      let styleString = "";
+      let styleHtml = jQuery('style').clone();
+      if(styleHtml && styleHtml.length >= 2){
+        for(let i=1; i<styleHtml.length; i++){
+          styleString += styleHtml[i].outerHTML;
+        }
+      }
+      let html = jQuery('<div>').append(styleString).append(jQuery('#payment-preview').clone()).html();
       if(imgString)
         html = html.replace(imgString,imgString.replace('>','/>'));
       let pdfReq={
