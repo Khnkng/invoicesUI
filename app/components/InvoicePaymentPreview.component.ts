@@ -40,7 +40,7 @@ export class InvoicePaymentPreview{
     set invoices(invoices:any){
         this.invoiceData = invoices;
         if(invoices.logoURL){
-            this.logoWidth="120px";
+            this.logoWidth="90px";
             this.logoURL = invoices.logoURL;
         }else{
             this.getCompanyLogo();
@@ -86,7 +86,7 @@ export class InvoicePaymentPreview{
 
     processPreference(preference){
         if(preference && preference.temporaryURL){
-            this.logoWidth="120px";
+            this.logoWidth="90px";
             this.logoURL = preference.temporaryURL;
         }
     }
