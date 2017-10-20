@@ -38,7 +38,6 @@ export class InvoicePaymentPreview{
     invoiceStates:any={"draft":"Draft","paid":"Paid","partially_paid":"Partially Paid","past_due":"Past Due","sent":"Sent"};
     @Input()
     set invoices(invoices:any){
-        invoices.displayterm=this.termsList[invoices.term];
         this.invoiceData = invoices;
         if(invoices.logoURL){
             this.logoWidth="120px";
@@ -46,8 +45,14 @@ export class InvoicePaymentPreview{
         }else{
             this.getCompanyLogo();
         }
+        invoices.displayterm=this.setDisplayTerms(invoices.term);
         this.loadInvoiceData();
-        this.getHeaderColor(invoices.state);
+        if(invoices.isPastDue){
+          this.bgColor="#F06459";
+        }else {
+          this.getHeaderColor(invoices.state);
+        }
+
         this.getZoomSize();
     }
     bgColor:string="#878787";
@@ -140,6 +145,17 @@ export class InvoicePaymentPreview{
             this.amountFont="13pt";
             this.lineAmountFont="10pt";
         }
+    }
+
+    setDisplayTerms(term){
+      if(term=='custom'){
+        let startDate = moment(this.invoiceData.invoice_date, this.serviceDateformat);
+        let endDate = moment(this.invoiceData.due_date, this.serviceDateformat);
+
+        return   endDate.diff(startDate, 'days') +' days';
+      }else {
+        return this.termsList[this.invoiceData.term]
+      }
     }
 
 }

@@ -89,6 +89,7 @@ export class InvoiceComponent{
     dateFormat:string;
     serviceDateformat:string;
     PdfData:any;
+    isPastDue:boolean;
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
@@ -228,6 +229,7 @@ export class InvoiceComponent{
                 this.subTotal=invoice.sub_total;
                 this.taxTotal=invoice.tax_amount;
                 this.amount_paid=invoice.amount_paid;
+                this.isPastDue=invoice.is_past_due;
                 let _invoice = _.cloneDeep(invoice);
                 delete _invoice.invoiceLines;
                 let taskLines:Array<any> = [];
@@ -508,6 +510,7 @@ export class InvoiceComponent{
         invoiceData.company_id=Session.getCurrentCompany();
         invoiceData.logoURL = this.logoURL;
         invoiceData.state=this.invoiceID?this.invoice.state:'draft';
+        invoiceData.isPastDue=this.isPastDue;
         this.invoiceProcessedData=invoiceData;
         if(action=='email'){
           if(!this.showPreview)
