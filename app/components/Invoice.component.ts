@@ -514,7 +514,10 @@ export class InvoiceComponent{
           {
             this.togelPreview();
           }
-          this.PdfData=this.getPdfData();
+          let base=this;
+          setTimeout(function(){
+            base.PdfData=base.getPdfData();
+          });
           this.openEmailDailog();
         }else if (action=='draft'){
             this.saveInvoiceDetails(invoiceData);
@@ -965,6 +968,7 @@ export class InvoiceComponent{
 
     exportToPDF(){
         let  pdfReq=this.getPdfData();
+      this.loadingService.triggerLoadingEvent(true);
         this.reportService.exportReportIntoFile(PAYMENTSPATHS.PDF_SERVICE, pdfReq)
             .subscribe(data =>{
                 var blob=new Blob([data._body], {type:"application/pdf"});
@@ -972,8 +976,10 @@ export class InvoiceComponent{
                 link[0].href= URL.createObjectURL(blob);
                 link[0].download= "Invoice.pdf";
                 link[0].click();
+              this.loadingService.triggerLoadingEvent(false);
             }, error =>{
                 this.toastService.pop(TOAST_TYPE.error, "Failed to Export report into PDF");
+              this.loadingService.triggerLoadingEvent(false);
             });
     }
 
