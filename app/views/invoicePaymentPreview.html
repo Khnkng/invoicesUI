@@ -128,10 +128,12 @@
                       </thead>
                       <tbody cellpadding=5 cellspacing=5>
                       <tr><td>
-                              <p class="company-style">{{invoiceData.company?invoiceData.company.name:""}}</p>
-                              <p class="company-style">{{invoiceData.company?invoiceData.company.address:""}}</p>
-                              <p class="company-style">{{invoiceData.company?invoiceData.company.state:""}}, {{invoiceData.company?invoiceData.company.zipcode:""}}</p>
-                              <p class="company-style">{{invoiceData.company?invoiceData.company.country:""}}</p>
+                          <table>
+                              <tr><td class="company-style"><span>{{invoiceData.company?invoiceData.company.name:""}}</span></td></tr>
+                              <tr><td class="company-style"><span>{{invoiceData.company?invoiceData.company.address:""}}</span></td></tr>
+                              <tr><td class="company-style"><span>{{invoiceData.company?invoiceData.company.state:""}}, {{invoiceData.company?invoiceData.company.zipcode:""}}</span></td></tr>
+                              <tr><td class="company-style"><span>{{invoiceData.company?invoiceData.company.country:""}}</span></td></tr>
+                          </table>
                           </td>
                           <td class="text-right" id="company-img"><img src={{logoURL}} alt="" height="90" style="position: relative;bottom:30px;" [style.width]="logoWidth"/></td>
                       </tr>
@@ -149,10 +151,12 @@
                         <tbody cellpadding=5 cellspacing=5>
                         <tr>
                             <td valign="top" colspan="3">
-                              <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_name:""}}</p>
-                              <p class="company-style">{{invoiceData.customer?invoiceData.customer.street_1:""}}</p>
-                              <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_city:""}}, {{invoiceData.customer?invoiceData.customer.customer_zipcode:""}}</p>
-                              <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_country:""}}</p>
+                                <table>
+                                    <tr><td class="company-style"><span>{{invoiceData.customer?invoiceData.customer.customer_name:""}}</span></td></tr>
+                                    <tr><td class="company-style"><span>{{invoiceData.customer?invoiceData.customer.street_1:""}}</span></td></tr>
+                                    <tr><td class="company-style"><span>{{invoiceData.customer?invoiceData.customer.customer_city:""}}, {{invoiceData.customer?invoiceData.customer.customer_zipcode:""}}</span></td></tr>
+                                    <tr><td class="company-style"><span>{{invoiceData.customer?invoiceData.customer.customer_country:""}}</span></td></tr>
+                                </table>
                             </td>
                             <!--<td valign="top">{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
                             <td valign="top">{{invoiceData.number}}</td>-->
