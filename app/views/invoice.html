@@ -329,15 +329,17 @@
                                                                 Amount Paid
                                                             </td>
                                                             <td style="text-align:right;">{{formatAmount(amount_paid)}}</td></tr>
-                                                        <tr style="background:#E3F7F6">
+                                                        <tr *ngIf="!newInvoice">
+                                                            <td style="background: #E5E5E5;">
+                                                                Amount Due
+                                                            </td>
+                                                            <td style="text-align:right;">{{formatAmount(calculateAmount(amount_paid))}}</td></tr>
+                                                        <tr style="background:#E3F7F6" *ngIf="newInvoice">
                                                             <td>
                                                                 Total
                                                             </td>
                                                             <td style="text-align:right;" *ngIf="!hasPaid">
                                                                 {{formatAmount(calculateAmount(amount_paid))}}
-                                                            </td>
-                                                            <td style="text-align:right;" *ngIf="hasPaid">
-                                                                {{formatAmount(amount)}}
                                                             </td>
                                                         </tr>
                                                         </tbody>
