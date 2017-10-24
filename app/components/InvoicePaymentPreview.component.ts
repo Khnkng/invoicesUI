@@ -49,6 +49,7 @@ export class InvoicePaymentPreview{
         this.loadInvoiceData();
         if(invoices.isPastDue){
           this.bgColor="#F06459";
+          invoices.state="past_due";
         }else {
           this.getHeaderColor(invoices.state);
         }
