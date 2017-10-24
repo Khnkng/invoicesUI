@@ -86,6 +86,18 @@
         margin-top: 3px;
     }
 
+    td p {
+      margin-bottom: 0px !important;
+      font-size: inherit;
+      line-height: 1.4 !important;
+      text-rendering: optimizeLegibility;
+    }
+
+    .company-style {
+      margin-bottom: 0px !important;
+      line-height: 1.4 !important;
+    }
+
 
 </style>
 <div id="payment-preview">
@@ -94,56 +106,60 @@
             <tbody style="background-color: #384986;font-size: 12pt" cellpadding=5 cellspacing=5 [style.background-color]="bgColor">
             <tr>
                 <td class="font-color">Invoice:&nbsp;&nbsp;{{invoiceData.number}}</td>
-                <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
-            </tr>
-            <tr>
-                <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(invoiceData.amount_due)}}</td>
-                <td class="text-right font-color">{{getInvoiceDisplayState(invoiceData.state)}}</td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
+                <td class="font-color">Invoice Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
+              <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
+          </tr>
+          <tr>
+              <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(invoiceData.amount_due)}}</td>
+              <td class="text-right font-color" colspan="2">{{getInvoiceDisplayState(invoiceData.state)}}</td>
+          </tr>
+          </tbody>
+      </table>
+  </div>
 
-    <div style="box-shadow: 0 0 5px #ccc;-webkit-box-shadow: 0 0 5px #ccc;margin-top:15px;padding: 25px 15px;" [style.zoom]="zoomSize">
-        <table cellpadding='10' style="width:100%">
-            <tbody>
-            <tr>
-                <td style="width: 100%;">
-                    <table class="address-tables">
-                        <thead>
-                        <tr><th class="heading-color">Invoice From</th><th></th></tr>
-                        </thead>
-                        <tbody cellpadding=5 cellspacing=5>
-                        <tr>
-                            <td>
-                                <div>{{invoiceData.company?invoiceData.company.name:""}}</div>
-                                <div class="margin-align">{{invoiceData.company?invoiceData.company.address:""}}</div>
-                                <div class="margin-align">{{invoiceData.company?invoiceData.company.state:""}}, {{invoiceData.company?invoiceData.company.zipcode:""}}</div>
-                                <div class="margin-align">{{invoiceData.company?invoiceData.company.country:""}}</div>
-                            </td>
-                            <td class="text-right" id="company-img"><img src={{logoURL}} alt="" height="90" style="position: relative;bottom:30px;" [style.width]="logoWidth"/></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <table class="middle-tables address-tables">
-                        <thead>
-                        <tr>
-                            <th class="heading-color" colspan="3">Prepared For</th>
-                            <th class="heading-color">Invoice Date</th>
-                            <th class="heading-color">Invoice Number</th>
+  <div style="box-shadow: 0 0 5px #ccc;-webkit-box-shadow: 0 0 5px #ccc;margin-top:15px;padding: 25px 15px;" [style.zoom]="zoomSize">
+      <table cellpadding='10' style="width:100%">
+          <tbody>
+          <tr>
+              <td style="width: 100%;">
+                  <table class="address-tables">
+                      <thead>
+                      <tr><th class="heading-color">Invoice From</th><th></th></tr>
+                      </thead>
+                      <tbody cellpadding=5 cellspacing=5>
+                      <tr><td>
+                          <table>
+                              <tr><td class="company-style"><span>{{invoiceData.company?invoiceData.company.name:""}}</span></td></tr>
+                              <tr><td class="company-style"><span>{{invoiceData.company?invoiceData.company.address:""}}</span></td></tr>
+                              <tr><td class="company-style"><span>{{invoiceData.company?invoiceData.company.state:""}}, {{invoiceData.company?invoiceData.company.zipcode:""}}</span></td></tr>
+                              <tr><td class="company-style"><span>{{invoiceData.company?invoiceData.company.country:""}}</span></td></tr>
+                          </table>
+                          </td>
+                          <td class="text-right" id="company-img"><img src={{logoURL}} alt="" height="90" style="position: relative;bottom:30px;" [style.width]="logoWidth"/></td>
+                      </tr>
+                      </tbody>
+                  </table>
+                  <table class="middle-tables address-tables">
+                      <thead>
+                      <tr>
+                          <th class="heading-color" colspan="3">Prepared For</th>
+                          <!--<th class="heading-color">Invoice Date</th>
+                          <th class="heading-color">Invoice Number</th>-->
                             <th class="heading-color text-right"><span>Invoice Total</span><span style="margin-left:5px;">({{invoiceData.currency}})</span></th>
                         </tr>
                         </thead>
                         <tbody cellpadding=5 cellspacing=5>
                         <tr>
                             <td valign="top" colspan="3">
-                                <div>{{invoiceData.customer?invoiceData.customer.customer_name:""}}</div>
-                                <div class="margin-align">{{invoiceData.customer?invoiceData.customer.street_1:""}}</div>
-                                <div class="margin-align">{{invoiceData.customer?invoiceData.customer.customer_city:""}}, {{invoiceData.customer?invoiceData.customer.customer_zipcode:""}}</div>
-                                <div class="margin-align">{{invoiceData.customer?invoiceData.customer.customer_country:""}}</div>
+                                <table>
+                                    <tr><td class="company-style"><span>{{invoiceData.customer?invoiceData.customer.customer_name:""}}</span></td></tr>
+                                    <tr><td class="company-style"><span>{{invoiceData.customer?invoiceData.customer.street_1:""}}</span></td></tr>
+                                    <tr><td class="company-style"><span>{{invoiceData.customer?invoiceData.customer.customer_city:""}}, {{invoiceData.customer?invoiceData.customer.customer_zipcode:""}}</span></td></tr>
+                                    <tr><td class="company-style"><span>{{invoiceData.customer?invoiceData.customer.customer_country:""}}</span></td></tr>
+                                </table>
                             </td>
-                            <td valign="top">{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
-                            <td valign="top">{{invoiceData.number}}</td>
+                            <!--<td valign="top">{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
+                            <td valign="top">{{invoiceData.number}}</td>-->
                             <td valign="top" class="text-right invoice-amount">{{formatAmount(invoiceData.amount)}}</td>
                         </tr>
                         </tbody>
