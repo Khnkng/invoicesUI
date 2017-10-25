@@ -36,6 +36,7 @@ export class InvoicePaymentPreview{
     logoWidth:string="0";
     termsList:any={"net30":"Net 30","net45":"Net 45","net60":"Net 60","net90":"Net 90","custom":"Custom"};
     invoiceStates:any={"draft":"Draft","paid":"Paid","partially_paid":"Partially Paid","past_due":"Past Due","sent":"Sent"};
+    displayState:string;
     @Input()
     set invoices(invoices:any){
         this.invoiceData = invoices;
@@ -49,9 +50,10 @@ export class InvoicePaymentPreview{
         this.loadInvoiceData();
         if(invoices.isPastDue){
           this.bgColor="#F06459";
-          invoices.state="past_due";
+          this.displayState="past_due";
         }else {
-          this.getHeaderColor(invoices.state);
+          this.displayState=invoices.state;
+          this.getHeaderColor(this.displayState);
         }
 
         this.getZoomSize();
