@@ -517,6 +517,7 @@ export class InvoiceComponent{
           {
             this.togelPreview();
           }
+          invoiceData.state=this.invoiceID?this.invoice.state:'sent';
           let base=this;
           setTimeout(function(){
             base.PdfData=base.getPdfData();
@@ -555,8 +556,17 @@ export class InvoiceComponent{
     }
 
     closeEmailDailog(){
-        this.resetEmailDailogFields();
-        jQuery('#invoice-email-conformation').foundation('close');
+        this.resetPopupFields();
+        this.resetInvoiceState();
+    }
+
+    resetInvoiceState(){
+      this.togelPreview();
+    };
+
+    resetPopupFields(){
+      this.resetEmailDailogFields();
+      jQuery('#invoice-email-conformation').foundation('close');
     }
     resetEmailDailogFields(){
         this.additionalMails=null;
@@ -577,7 +587,7 @@ export class InvoiceComponent{
         }
         this.invoiceProcessedData.remainder_name=this.remainder_name;
         this.saveInvoiceDetails(this.invoiceProcessedData);
-        this.closeEmailDailog();
+        this.resetPopupFields();
     }
 
     saveInvoiceDetails(invoiceData){
