@@ -14,7 +14,7 @@ export class InvoiceSettingsForm extends abstractForm{
         numberValidator.push(Validators.pattern);
         numberValidator.push(Validators.required);
         return {
-            "templateType": ["Contemporary"],
+            "templateType": ["Default"],
             "companyLogo": [""],
             "documentId": [""],
             "displayLogo": [false],
@@ -24,8 +24,8 @@ export class InvoiceSettingsForm extends abstractForm{
             "defaultSubHeading": [""],
             "defaultFooter": [""],
             "standardMemo": [""],
-            "items": ["Items"],
-            "units": ["Units"],
+            "items": ["Item"],
+            "units": ["Unit"],
             "price": ["Price"],
             "amount": ["Amount"],
             "hideItemName": [false],

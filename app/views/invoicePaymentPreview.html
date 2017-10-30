@@ -1,270 +1,806 @@
 <style>
-    table{
-        width: 100%;
-        border:none;
-        font-family:'Open Sans', sans-serif;
-        font-size: 10pt;
-    }
-    table.middle-tables{
-        margin-top: 50px;
-    }
-    table.items{
-        border-top:5px solid #384986;
-    }
-    table thead {
-        background: none;
-        border:none;
-    }
-    table tbody {
-        border:none;
-    }
-    table tbody tr:hover{
-        background: none !important;
-    }
-    table tbody tr{
-        border:none !important;
-        line-height: 16px;
-    }
-    tr td{
-        color: #0a0a0a;
-        height: 5px;
-        font-family:'Open Sans', sans-serif;
-        vertical-align:top
-    }
+  table{
+    width: 100%;
+    border:none;
+    font-family:'Open Sans', sans-serif;
+    font-size: 10pt;
+    border-collapse: collapse;
+  }
+  table.middle-tables{
+    margin-top: 50px;
+  }
+  table.items{
+    border-top:5px solid #384986;
+  }
+  table thead {
+    background: none;
+    border:none;
+  }
+  table tbody {
+    border:none;
+  }
+  table tbody tr:hover{
+    background: none !important;
+  }
+  table tbody tr{
+    border:none !important;
+    /*line-height: 16px;*/
+  }
+  tr td{
+    color: #0a0a0a;
+    height: 5px;
+    font-family:'Open Sans', sans-serif;
+    vertical-align:top
+  }
 
-    .heading-color td{
-        color: #17457B;
-        font-family:'Open Sans', sans-serif;
-        font-weight: 600;
-        font-size: 10pt !important;
-    }
-    .heading-color {
-        color: #17457B;
-        font-size: 10pt !important;
-        font-family:'Open Sans', sans-serif;
-    }
-    .separator {
-        border-top:1px solid #384986;
-        padding:0px;
-    }
-    .emptyCol{
-        padding:0px;
-    }
-    #payment-preview{
-        margin-top: 5px;
-        /*width:612px;*/
+  .heading-color td{
+    color: #17457B;
+    font-family:'Open Sans', sans-serif;
+    font-weight: 600;
+    font-size: 10pt !important;
+  }
+  .heading-color {
+    color: #17457B;
+    font-size: 10pt !important;
+    font-family:'Open Sans', sans-serif;
+  }
+  .separator {
+    border-top:1px solid #384986;
+    padding:0px;
+  }
+  .dottedSeparator {
+    border-top:1px dashed #384986;
+    padding:0px;
+  }
+  .emptyCol{
+    padding:0px;
+  }
+  #payment-preview{
+    margin-top: 5px;
+    /*width:612px;*/
 
-    }
-    .text-right{
-        text-align: right;
-    }
-    .invoice-amount{
-        font-size: 28pt;
-    }
+  }
+  .text-right{
+    text-align: right;
+  }
 
-    .preview-table-header {
-        color: #FFF;
-        box-shadow: 0 0 5px #ccc;
-        -webkit-box-shadow: 0 0 5px #ccc;
-        background-color: #384986;
-        padding: 15px 20px;
-    }
-    .font-color{
-        color:#FAFAFA !important;/*
+  .text-center{
+    text-align: center;
+  }
+
+  .invoice-amount{
+    font-size: 28pt;
+  }
+
+  .preview-table-header {
+    color: #FFF;
+    box-shadow: 0 0 5px #ccc;
+    -webkit-box-shadow: 0 0 5px #ccc;
+    background-color: #384986;
+    padding: 15px 20px;
+  }
+  .font-color{
+    color:#FAFAFA !important;/*
         padding: 0.5rem 0.625rem 0.3rem 0.625rem;*/
-    }
+  }
 
-    .address-tables tr td{
-        padding: 0.1rem 0.625rem !important;
-    }
+  .address-tables tr td{
+    padding: 0.1rem 0.625rem;
+  }
 
-    .text-right{
-        text-align: right;
-    }
+  .text-right{
+    text-align: right;
+  }
 
-    .margin-align{
-        margin-top: 3px;
-    }
+  .margin-align{
+    margin-top: 3px;
+  }
 
-    td p {
-      margin-bottom: 0px !important;
-      font-size: inherit;
-      line-height: 1.4 !important;
-      text-rendering: optimizeLegibility;
-    }
+  td p {
+    margin-bottom: 0px !important;
+    font-size: inherit;
+    /* line-height: 1.4 !important;*/
+    text-rendering: optimizeLegibility;
+  }
 
-    .company-style {
-      margin-bottom: 0px !important;
-      line-height: 1.4 !important;
-    }
+  .company-style {
+    margin-bottom: 0px !important;
+    /* line-height: 1.4 !important;*/
+  }
 
+
+  .airy td {
+    background-color: #e2e2e2;
+  }
+
+  .friendly td{
+    border-top: 1px solid #384986 !important;
+    border-bottom: 1px solid #384986 !important;;
+  }
+
+  .fresh {
+    margin:0;
+    background-color: #e2e2e2;
+  }
+  .fresh p {
+    padding:5px 0 0 5px;
+  }
+
+  .coloredHead {
+    background-color: #e2e2e2;
+  }
 
 </style>
-<div id="payment-preview">
-    <div class="preview-table-header" [style.background-color]="bgColor">
-        <table style='width:100%;margin-bottom:10px;'>
-            <tbody style="background-color: #384986;font-size: 12pt" cellpadding=5 cellspacing=5 [style.background-color]="bgColor">
-            <tr>
-                <td class="font-color">Invoice:&nbsp;&nbsp;{{invoiceData.number}}</td>
-                <td class="font-color">Invoice Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
-              <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
-          </tr>
-          <tr>
-              <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(invoiceData.amount_due)}}</td>
-              <td class="text-right font-color" colspan="2">{{getInvoiceDisplayState(displayState)}}</td>
-          </tr>
-          </tbody>
-      </table>
+<div id="prev-Default" *ngIf="templateType=='Default'">
+  <div class="preview-table-header" [style.background-color]="bgColor">
+    <table style='width:100%;margin-bottom:10px;'>
+      <tbody style="background-color: #384986;font-size: 12pt" cellpadding=5 cellspacing=5 [style.background-color]="bgColor">
+      <tr>
+        <td class="font-color">Invoice:&nbsp;&nbsp;{{invoiceData.number}}</td>
+        <td class="font-color">Invoice Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
+        <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
+      </tr>
+      <tr>
+        <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(invoiceData.amount_due)}}</td>
+        <td class="text-right font-color" colspan="2">{{getInvoiceDisplayState(displayState)}}</td>
+      </tr>
+      </tbody>
+    </table>
   </div>
 
   <div style="box-shadow: 0 0 5px #ccc;-webkit-box-shadow: 0 0 5px #ccc;margin-top:15px;padding: 25px 15px;" [style.zoom]="zoomSize">
-      <table cellpadding='10' style="width:100%">
-          <tbody>
-          <tr>
-              <td style="width: 100%;">
-                  <table class="address-tables">
-                      <thead>
-                      <tr><th class="heading-color">Invoice From</th><th></th></tr>
-                      </thead>
-                      <tbody cellpadding=5 cellspacing=5>
-                      <tr><td>
-                          <table>
-                              <tr><td class="company-style"><span>{{invoiceData.company?invoiceData.company.name:""}}</span></td></tr>
-                              <tr><td class="company-style"><span>{{invoiceData.company?invoiceData.company.address:""}}</span></td></tr>
-                              <tr><td class="company-style"><span>{{invoiceData.company?invoiceData.company.state:""}}, {{invoiceData.company?invoiceData.company.zipcode:""}}</span></td></tr>
-                              <tr><td class="company-style"><span>{{invoiceData.company?invoiceData.company.country:""}}</span></td></tr>
-                          </table>
-                          </td>
-                          <td class="text-right" id="company-img"><img src={{logoURL}} alt="" height="90" style="position: relative;bottom:30px;" [style.width]="logoWidth"/></td>
-                      </tr>
-                      </tbody>
-                  </table>
-                  <table class="middle-tables address-tables">
-                      <thead>
-                      <tr>
-                          <th class="heading-color" colspan="3">Prepared For</th>
-                          <!--<th class="heading-color">Invoice Date</th>
-                          <th class="heading-color">Invoice Number</th>-->
-                            <th class="heading-color text-right"><span>Invoice Total</span><span style="margin-left:5px;">({{invoiceData.currency}})</span></th>
-                        </tr>
-                        </thead>
-                        <tbody cellpadding=5 cellspacing=5>
-                        <tr>
-                            <td valign="top" colspan="3">
-                                <table>
-                                    <tr><td class="company-style"><span>{{invoiceData.customer?invoiceData.customer.customer_name:""}}</span></td></tr>
-                                    <tr><td class="company-style"><span>{{invoiceData.customer?invoiceData.customer.street_1:""}}</span></td></tr>
-                                    <tr><td class="company-style"><span>{{invoiceData.customer?invoiceData.customer.customer_city:""}}, {{invoiceData.customer?invoiceData.customer.customer_zipcode:""}}</span></td></tr>
-                                    <tr><td class="company-style"><span>{{invoiceData.customer?invoiceData.customer.customer_country:""}}</span></td></tr>
-                                </table>
-                            </td>
-                            <!--<td valign="top">{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
-                            <td valign="top">{{invoiceData.number}}</td>-->
-                            <td valign="top" class="text-right invoice-amount">{{formatAmount(invoiceData.amount)}}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <table class='items middle-tables'>
-                        <tbody  cellpadding=5 cellspacing=5>
-                        <tr  class="heading-color" *ngIf="taskInvoices.length>0">
-                            <td width="30%">Item</td>
-                            <td width="15%">Description</td>
-                            <td ></td>
-                            <td width="15%">Rate</td>
-                            <td width="8%">Hours</td>
-                            <td width="18%">Line Total</td>
-                        </tr>
-                        <tr *ngFor="let taskInvoice of taskInvoices" [hidden]="taskInvoices.length<0">
-                            <td>{{taskInvoice.item.name}}</td>
-                            <td class="truncate">{{taskInvoice.description}}</td>
-                            <td ></td>
-                            <td>{{formatAmount(taskInvoice.price)}}</td>
-                            <td>{{formatQuantity(taskInvoice.quantity)}}</td>
-                            <td class="text-right">{{formatAmount(taskInvoice.amount)}}</td>
-                        </tr>
-                        <tr *ngIf="taskInvoices.length>0 && itemInvoices.length>0">
-                            <td  class="separator" colspan="6"></td>
-                        </tr>
-                        <tr class="heading-color" *ngIf="itemInvoices.length>0">
-                            <td width="30%">Item</td>
-                            <td width="15%">Description</td>
-                            <td ></td>
-                            <td width="15%">Unit Cost</td>
-                            <td width="8%">Quantity</td>
-                            <td width="18%">Line Total</td>
-                        </tr>
-                        <tr *ngFor="let itemInvoice of itemInvoices" [hidden]="itemInvoices.length<0">
-                            <td>{{itemInvoice.item.name}}</td>
-                            <td>{{itemInvoice.description}}</td>
-                            <td ></td>
-                            <td>{{formatAmount(itemInvoice.price)}}</td>
-                            <td>{{formatQuantity(itemInvoice.quantity)}}</td>
-                            <td class="text-right">{{formatAmount(itemInvoice.amount)}}</td>
-                        </tr>
-
-                        <tr >
-                            <td  class="emptyCol" colspan="2"></td>
-                            <td  class="separator" colspan="4"></td>
-                        </tr>
-                        <tr >
-                            <td  colspan="2"></td>
-                            <td width="8%">Subtotal</td>
-                            <td  colspan="2"></td>
-                            <td class="text-right">{{formatAmount(invoiceData.sub_total)}}</td>
-                        </tr>
-                        <tr >
-                            <td  class="emptyCol" colspan="2"></td>
-                            <td>Tax</td>
-                            <td  class="emptyCol" colspan="2"></td>
-                            <td  class="text-right">{{formatAmount(invoiceData.tax_amount)}}</td>
-                        </tr>
-                        <tr >
-                            <td  class="emptyCol" colspan="2"></td>
-                            <td  class="separator" colspan="4"></td>
-                        </tr>
-                        <tr  class="heading-color">
-                            <td  class="emptyCol" colspan="2"></td>
-                            <td>Total</td>
-                            <td  class="emptyCol" colspan="2"></td>
-                            <td class="text-right">{{formatAmount(invoiceData.amount)}}</td>
-                        </tr>
-                        <tr >
-                            <td  class="emptyCol" colspan="2"></td>
-                            <td  class="separator" colspan="4"></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <table class="middle-tables">
-                        <thead>
-                        <tr>
-                            <th class="heading-color">Payment Terms</th>
-                        </tr>
-                        </thead>
-                        <tbody cellpadding=5 cellspacing=5>
-                        <tr>
-                            <td>
-                                <span>{{invoiceData.displayterm}}</span>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <table class="middle-tables">
-                        <thead>
-                        <tr>
-                            <th class="heading-color">Notes</th>
-                        </tr>
-                        </thead>
-                        <tbody cellpadding=5 cellspacing=5>
-                        <tr>
-                            <td>
-                                <span>{{invoiceData.notes}}</span>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </td>
+    <table cellpadding='10' style="width:100%">
+      <tbody>
+      <tr>
+        <td style="width: 100%;">
+          <table class="address-tables">
+            <thead>
+            <tr><th class="heading-color">Invoice From</th><th></th></tr>
+            </thead>
+            <tbody cellpadding=5 cellspacing=5>
+            <tr><td>
+              <p class="company-style">{{invoiceData.company?invoiceData.company.name:""}}</p>
+              <p class="company-style">{{invoiceData.company?invoiceData.company.address:""}}</p>
+              <p class="company-style">{{invoiceData.company?invoiceData.company.state:""}}, {{invoiceData.company?invoiceData.company.zipcode:""}}</p>
+              <p class="company-style">{{invoiceData.company?invoiceData.company.country:""}}</p>
+            </td>
+              <td class="text-right" id="company-img"><img src={{logoURL}} alt="" height="90" style="position: relative;bottom:30px;" [style.width]="logoWidth"/></td>
             </tr>
             </tbody>
-        </table>
-    </div>
+          </table>
+          <table class="middle-tables address-tables">
+            <thead>
+            <tr>
+              <th class="heading-color" colspan="3">Prepared For</th>
+              <!--<th class="heading-color">Invoice Date</th>
+              <th class="heading-color">Invoice Number</th>-->
+              <th class="heading-color text-right"><span>Invoice Total</span><span style="margin-left:5px;">({{invoiceData.currency}})</span></th>
+            </tr>
+            </thead>
+            <tbody cellpadding=5 cellspacing=5>
+            <tr>
+              <td valign="top" colspan="3">
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_name:""}}</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.street_1:""}}</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_city:""}}, {{invoiceData.customer?invoiceData.customer.customer_zipcode:""}}</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_country:""}}</p>
+              </td>
+              <!--<td valign="top">{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
+              <td valign="top">{{invoiceData.number}}</td>-->
+              <td valign="top" class="text-right invoice-amount">{{formatAmount(invoiceData.amount)}}</td>
+            </tr>
+            </tbody>
+          </table>
+          <table class='items middle-tables'>
+            <tbody  cellpadding=5 cellspacing=5>
+            <tr  class="heading-color" *ngIf="taskInvoices.length>0">
+              <td width="30%" *ngIf="!showItemName">{{tasks}}</td>
+              <td width="15%" *ngIf="!showDescription">Description</td>
+              <td ></td>
+              <td width="15%" *ngIf="!showUnitCost">{{unitCost}}</td>
+              <td width="8%" *ngIf="!showUOM">{{UOM}}</td>
+              <td width="18%" class="text-right">Line Total</td>
+            </tr>
+            <tr *ngFor="let taskInvoice of taskInvoices" [hidden]="taskInvoices.length<0">
+              <td>{{taskInvoice.item.name}}</td>
+              <td class="truncate">{{taskInvoice.description}}</td>
+              <td ></td>
+              <td>{{formatAmount(taskInvoice.price)}}</td>
+              <td>{{formatQuantity(taskInvoice.quantity)}}</td>
+              <td class="text-right">{{formatAmount(taskInvoice.amount)}}</td>
+            </tr>
+            <tr >
+              <td  class="emptyCol" colspan="2"></td>
+              <td  class="separator" colspan="4"></td>
+            </tr>
+            <tr >
+              <td  colspan="2"></td>
+              <td width="8%">Subtotal</td>
+              <td  colspan="2"></td>
+              <td class="text-right">{{formatAmount(invoiceData.sub_total)}}</td>
+            </tr>
+            <tr >
+              <td  class="emptyCol" colspan="2"></td>
+              <td>Tax</td>
+              <td  class="emptyCol" colspan="2"></td>
+              <td  class="text-right">{{formatAmount(invoiceData.tax_amount)}}</td>
+            </tr>
+            <tr >
+              <td  class="emptyCol" colspan="2"></td>
+              <td  class="separator" colspan="4"></td>
+            </tr>
+            <tr  class="heading-color">
+              <td  class="emptyCol" colspan="2"></td>
+              <td>Total</td>
+              <td  class="emptyCol" colspan="2"></td>
+              <td class="text-right">{{formatAmount(invoiceData.amount)}}</td>
+            </tr>
+            <tr >
+              <td  class="emptyCol" colspan="2"></td>
+              <td  class="separator" colspan="4"></td>
+            </tr>
+            </tbody>
+          </table>
+          <table class="middle-tables">
+            <thead>
+            <tr>
+              <th class="heading-color">Payment Terms</th>
+            </tr>
+            </thead>
+            <tbody cellpadding=5 cellspacing=5>
+            <tr>
+              <td>
+                <span>{{invoiceData.displayterm}}</span>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+          <table class="middle-tables">
+            <thead>
+            <tr>
+              <th class="heading-color">Notes</th>
+            </tr>
+            </thead>
+            <tbody cellpadding=5 cellspacing=5>
+            <tr>
+              <td>
+                <span>{{invoiceData.notes}}</span>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div id="prev-Airy" *ngIf="templateType=='Airy'">
+  <div class="preview-table-header" [style.background-color]="bgColor">
+    <table style='width:100%;margin-bottom:10px;'>
+      <tbody style="background-color: #384986;font-size: 12pt" cellpadding=5 cellspacing=5 [style.background-color]="bgColor">
+      <tr>
+        <td class="font-color">Invoice:&nbsp;&nbsp;{{invoiceData.number}}</td>
+        <td class="font-color">Invoice Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
+        <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
+      </tr>
+      <tr>
+        <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(invoiceData.amount_due)}}</td>
+        <td class="text-right font-color" colspan="2">{{getInvoiceDisplayState(displayState)}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="box-shadow: 0 0 5px #ccc;-webkit-box-shadow: 0 0 5px #ccc;margin-top:15px;padding: 25px 15px;" [style.zoom]="zoomSize">
+    <table cellpadding='10' style="width:100%">
+      <tbody>
+      <tr>
+        <td style="width: 100%;">
+          <table class="address-tables">
+            <thead>
+            <tr><th class="heading-color">Invoice From</th><th></th></tr>
+            </thead>
+            <tbody cellpadding=5 cellspacing=5>
+            <tr><td>
+              <p class="company-style">{{invoiceData.company?invoiceData.company.name:""}}</p>
+              <p class="company-style">{{invoiceData.company?invoiceData.company.address:""}}</p>
+              <p class="company-style">{{invoiceData.company?invoiceData.company.state:""}}, {{invoiceData.company?invoiceData.company.zipcode:""}}</p>
+              <p class="company-style">{{invoiceData.company?invoiceData.company.country:""}}</p>
+            </td>
+              <td class="text-right" id="company-img"><img src={{logoURL}} alt="" height="90" style="position: relative;bottom:30px;" [style.width]="logoWidth"/></td>
+            </tr>
+            </tbody>
+          </table>
+          <table class="middle-tables address-tables">
+            <thead>
+            <tr>
+              <th class="heading-color" colspan="3"></th>
+              <th class="heading-color text-center" colspan="3">Invoice</th>
+              <th class="heading-color"></th>
+              <th class="heading-color"></th>
+            </tr>
+            </thead>
+            <tbody cellpadding=5 cellspacing=5>
+            <tr>
+              <td valign="top" colspan="3">
+                <p class="heading-color" style="font-weight: 600">Bill To</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_name:""}}</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.street_1:""}}</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_city:""}}, {{invoiceData.customer?invoiceData.customer.customer_zipcode:""}}</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_country:""}}</p>
+              </td>
+              <td valign="top" colspan="3">
+                <p class="heading-color" style="font-weight: 600">Ship To</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_name:""}}</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.street_1:""}}</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_city:""}}, {{invoiceData.customer?invoiceData.customer.customer_zipcode:""}}</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_country:""}}</p>
+              </td>
+
+              <td valign="top" class="text-right">
+                <p class="heading-color" style="font-weight: 600">Invoice:</p>
+                <p class="heading-color" style="font-weight: 600">TERMS:</p>
+                <p class="heading-color" style="font-weight: 600">DATE:</p>
+                <p class="heading-color" style="font-weight: 600">DUE DATE:</p>
+              </td>
+              <td valign="top">
+                <p class="company-style">{{invoiceData.number}}</p>
+                <p class="company-style">{{invoiceData.displayterm}}</p>
+                <p class="company-style">{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</p>
+                <p class="company-style">{{convertDateToLocaleFormat(invoiceData.due_date)}}</p>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+          <table class='middle-tables'>
+            <tbody  cellpadding=5 cellspacing=5>
+            <tr  class="heading-color airy" *ngIf="taskInvoices.length>0">
+              <td width="30%" *ngIf="!showItemName">{{tasks}}</td>
+              <td width="15%" *ngIf="!showDescription">Description</td>
+              <td ></td>
+              <td width="15%" *ngIf="!showUnitCost">{{unitCost}}</td>
+              <td width="8%" *ngIf="!showUOM">{{UOM}}</td>
+              <td width="18%" class="text-right">Line Total</td>
+            </tr>
+            <tr *ngFor="let taskInvoice of taskInvoices" [hidden]="taskInvoices.length<0">
+              <td *ngIf="!showItemName">{{taskInvoice.item.name}}</td>
+              <td class="truncate" *ngIf="!showDescription">{{taskInvoice.description}}</td>
+              <td ></td>
+              <td *ngIf="!showUnitCost">{{formatAmount(taskInvoice.price)}}</td>
+              <td *ngIf="!showUOM">{{formatQuantity(taskInvoice.quantity)}}</td>
+              <td class="text-right">{{formatAmount(taskInvoice.amount)}}</td>
+            </tr>
+            <tr>
+              <td  class="" colspan="6"></td>
+            </tr>
+
+            <tr>
+              <td  class="dottedSeparator" colspan="6"></td>
+            </tr>
+            <tr>
+              <td  colspan="3"></td>
+              <td>Subtotal</td>
+              <td colspan="2" class="text-right">{{formatAmount(invoiceData.sub_total)}}</td>
+            </tr>
+            <tr>
+              <td class="emptyCol" colspan="3"></td>
+              <td>Tax</td>
+              <td colspan="2" class="text-right">{{formatAmount(invoiceData.tax_amount)}}</td>
+            </tr>
+            <tr  class="heading-color">
+              <td  class="emptyCol" colspan="3"></td>
+              <td>Total</td>
+              <td colspan="2" class="text-right">{{formatAmount(invoiceData.amount)}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div id="prev-Fresh" *ngIf="templateType=='Fresh'">
+  <div class="preview-table-header" [style.background-color]="bgColor">
+    <table style='width:100%;margin-bottom:10px;'>
+      <tbody style="background-color: #384986;font-size: 12pt" cellpadding=5 cellspacing=5 [style.background-color]="bgColor">
+      <tr>
+        <td class="font-color">Invoice:&nbsp;&nbsp;{{invoiceData.number}}</td>
+        <td class="font-color">Invoice Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
+        <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
+      </tr>
+      <tr>
+        <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(invoiceData.amount_due)}}</td>
+        <td class="text-right font-color" colspan="2">{{getInvoiceDisplayState(invoiceData.state)}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="box-shadow: 0 0 5px #ccc;-webkit-box-shadow: 0 0 5px #ccc;margin-top:15px;padding: 25px 15px;" [style.zoom]="zoomSize">
+    <table cellpadding='10' style="width:100%">
+      <tbody>
+      <tr>
+        <td style="width: 100%;">
+          <table class="address-tables">
+            <thead>
+            <tr><th class="heading-color">Invoice From</th><th></th></tr>
+            </thead>
+            <tbody cellpadding=5 cellspacing=5>
+            <tr>
+              <td>
+                <p class="company-style">{{invoiceData.company?invoiceData.company.name:""}}</p>
+                <p class="company-style">{{invoiceData.company?invoiceData.company.address:""}}</p>
+                <p class="company-style">{{invoiceData.company?invoiceData.company.state:""}}, {{invoiceData.company?invoiceData.company.zipcode:""}}</p>
+                <p class="company-style">{{invoiceData.company?invoiceData.company.country:""}}</p>
+              </td>
+              <td class="text-right" id="company-img"><img src={{logoURL}} alt="" height="90" style="position: relative;bottom:30px;" [style.width]="logoWidth"/></td>
+            </tr>
+            </tbody>
+          </table>
+          <table class="middle-tables address-tables">
+            <tbody cellpadding=5 cellspacing=5>
+            <tr>
+              <td valign="top" colspan="3" style="border-bottom:5px solid #384986;">
+                <p class="heading-color" style="font-weight: 600">Bill To</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_name:""}}</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.street_1:""}}</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_city:""}}, {{invoiceData.customer?invoiceData.customer.customer_zipcode:""}}</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_country:""}}</p>
+              </td>
+              <td valign="top" colspan="3" style="border-bottom:5px solid #384986;">
+                <p class="heading-color" style="font-weight: 600">Ship To</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_name:""}}</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.street_1:""}}</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_city:""}}, {{invoiceData.customer?invoiceData.customer.customer_zipcode:""}}</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_country:""}}</p>
+              </td>
+
+              <td valign="top" >
+                <table class="fresh">
+                  <tbody style="background-color: #e2e2e2;">
+                  <tr>
+                    <td style="padding:0;">
+                      <p style="border-bottom: 5px solid #ffffff;"><span class="heading-color" style="font-weight: 600">Invoice:</span><span class="company-style">{{invoiceData.number}}</span></p>
+                      <p style="border-bottom: 5px solid #ffffff;"><span class="heading-color" style="font-weight: 600">TERMS:</span><span class="company-style">{{invoiceData.displayterm}}</span></p>
+                      <p><span class="heading-color" style="font-weight: 600">DATE:</span><span class="company-style">{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</span></p>
+                      <p><span class="heading-color" style="font-weight: 600">DUE DATE:</span><span class="company-style">{{convertDateToLocaleFormat(invoiceData.due_date)}}</span></p>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+          <table class='middle-tables'>
+            <tbody  cellpadding=5 cellspacing=5>
+            <tr  class="heading-color airy" *ngIf="taskInvoices.length>0">
+              <td width="30%" *ngIf="!showItemName">{{tasks}}</td>
+              <td width="15%" *ngIf="!showDescription">Description</td>
+              <td ></td>
+              <td width="15%" *ngIf="!showUnitCost">{{unitCost}}</td>
+              <td width="8%" *ngIf="!showUOM">{{UOM}}</td>
+              <td width="18%" class="text-right">Line Total</td>
+            </tr>
+            <tr *ngFor="let taskInvoice of taskInvoices" [hidden]="taskInvoices.length<0">
+              <td>{{taskInvoice.item.name}}</td>
+              <td class="truncate">{{taskInvoice.description}}</td>
+              <td ></td>
+              <td>{{formatAmount(taskInvoice.price)}}</td>
+              <td>{{formatQuantity(taskInvoice.quantity)}}</td>
+              <td class="text-right">{{formatAmount(taskInvoice.amount)}}</td>
+            </tr>
+            <tr>
+              <td  colspan="6"></td>
+            </tr>
+            <tr>
+              <td  class="dottedSeparator" colspan="6"></td>
+            </tr>
+            <tr>
+              <td  colspan="3"></td>
+              <td>Subtotal</td>
+              <td colspan="2" class="text-right">{{formatAmount(invoiceData.sub_total)}}</td>
+            </tr>
+            <tr>
+              <td class="emptyCol" colspan="3"></td>
+              <td>Tax</td>
+              <td colspan="2" class="text-right">{{formatAmount(invoiceData.tax_amount)}}</td>
+            </tr>
+            <tr  class="heading-color">
+              <td  class="emptyCol" colspan="3"></td>
+              <td>Total</td>
+              <td colspan="2" class="text-right">{{formatAmount(invoiceData.amount)}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div id="prev-Friendly" *ngIf="templateType=='Friendly'">
+  <div class="preview-table-header" [style.background-color]="bgColor">
+    <table style='width:100%;margin-bottom:10px;'>
+      <tbody style="background-color: #384986;font-size: 12pt" cellpadding=5 cellspacing=5 [style.background-color]="bgColor">
+      <tr>
+        <td class="font-color">Invoice:&nbsp;&nbsp;{{invoiceData.number}}</td>
+        <td class="font-color">Invoice Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
+        <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
+      </tr>
+      <tr>
+        <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(invoiceData.amount_due)}}</td>
+        <td class="text-right font-color" colspan="2">{{getInvoiceDisplayState(invoiceData.state)}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="box-shadow: 0 0 5px #ccc;-webkit-box-shadow: 0 0 5px #ccc;margin-top:15px;padding: 25px 15px;" [style.zoom]="zoomSize">
+    <table cellpadding='10' style="width:100%">
+      <tbody>
+      <tr>
+        <td style="width: 100%;">
+          <table class="address-tables">
+            <thead>
+            <tr>
+              <th class="heading-color" colspan="2">Invoice From</th>
+              <th class="heading-color" style="width:5%;text-align: center;">Invoice</th>
+              <th class="company-style" style="margin-left:10px;">{{invoiceData.number}}</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody cellpadding=5 cellspacing=5>
+            <tr>
+              <td colspan="2">
+                <p class="company-style">{{invoiceData.company?invoiceData.company.name:""}}</p>
+                <p class="company-style">{{invoiceData.company?invoiceData.company.address:""}}</p>
+                <p class="company-style">{{invoiceData.company?invoiceData.company.state:""}}, {{invoiceData.company?invoiceData.company.zipcode:""}}</p>
+                <p class="company-style">{{invoiceData.company?invoiceData.company.country:""}}</p>
+              </td>
+              <td></td>
+              <td></td>
+              <td class="text-right" id="company-img"><img src={{logoURL}} alt="" height="90" style="position: relative;bottom:30px;" [style.width]="logoWidth"/></td>
+            </tr>
+            </tbody>
+          </table>
+          <table class="middle-tables address-tables" style="border-top:1px solid #384986;">
+            <thead>
+            <tr>
+              <th class="heading-color" colspan="3"></th>
+              <th class="heading-color text-center" colspan="3"></th>
+              <th class="heading-color"></th>
+              <th class="heading-color"></th>
+              <th class="heading-color"></th>
+            </tr>
+            </thead>
+            <tbody cellpadding=5 cellspacing=5>
+            <tr>
+              <td valign="top" colspan="3">
+                <p class="heading-color" style="font-weight: 600">Bill To</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_name:""}}</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.street_1:""}}</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_city:""}}, {{invoiceData.customer?invoiceData.customer.customer_zipcode:""}}</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_country:""}}</p>
+              </td>
+              <td valign="top" colspan="3">
+                <p class="heading-color" style="font-weight: 600">Ship To</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_name:""}}</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.street_1:""}}</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_city:""}}, {{invoiceData.customer?invoiceData.customer.customer_zipcode:""}}</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_country:""}}</p>
+              </td>
+
+              <td valign="top" style="vertical-align: top !important;padding:0 !important">
+                <p class="heading-color" style="padding:5px;background-color: #e2e2e2;font-weight: 600;">DATE</p>
+                <p class="company-style" style="padding:5px;background-color: #e2e2e2;">{{invoiceData.number}}</p>
+              </td>
+              <td valign="top" style="vertical-align: top !important;padding:0 !important">
+                <p class="heading-color" style="padding:5px;background-color: #e2e2e2;font-weight: 600;">AMOUNT</p>
+                <p class="company-style" style="padding:5px;background-color: #e2e2e2;">{{formatAmount(invoiceData.amount)}}</p>
+              </td>
+              <td valign="top" style="vertical-align: top !important;padding:0 !important">
+                <p class="heading-color" style="padding:5px;background-color: #e2e2e2;font-weight: 600;">DUE DATE:</p>
+                <p class="company-style" style="padding:5px;background-color: #e2e2e2;">{{convertDateToLocaleFormat(invoiceData.due_date)}}</p>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+          <table class='middle-tables '>
+            <tbody  cellpadding=5 cellspacing=5>
+            <tr  class="heading-color friendly" *ngIf="taskInvoices.length>0">
+              <td width="30%">Item</td>
+              <td width="15%">Description</td>
+              <td ></td>
+              <td width="15%">Rate</td>
+              <td width="8%">Hours</td>
+              <td width="18%" class="text-right">Line Total</td>
+            </tr>
+            <tr *ngFor="let taskInvoice of taskInvoices" [hidden]="taskInvoices.length<0">
+              <td>{{taskInvoice.item.name}}</td>
+              <td class="truncate">{{taskInvoice.description}}</td>
+              <td ></td>
+              <td>{{formatAmount(taskInvoice.price)}}</td>
+              <td>{{formatQuantity(taskInvoice.quantity)}}</td>
+              <td class="text-right">{{formatAmount(taskInvoice.amount)}}</td>
+            </tr>
+            <tr>
+              <td  class="" colspan="6"></td>
+            </tr>
+            <tr>
+              <td  class="dottedSeparator" colspan="6"></td>
+            </tr>
+            <tr>
+              <td  colspan="3"></td>
+              <td>Subtotal</td>
+              <td colspan="2" class="text-right">{{formatAmount(invoiceData.sub_total)}}</td>
+            </tr>
+            <tr>
+              <td class="emptyCol" colspan="3"></td>
+              <td>Tax</td>
+              <td colspan="2" class="text-right">{{formatAmount(invoiceData.tax_amount)}}</td>
+            </tr>
+            <tr  class="heading-color">
+              <td  class="emptyCol" colspan="3"></td>
+              <td>Total</td>
+              <td colspan="2" class="text-right">{{formatAmount(invoiceData.amount)}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div id="prev-Modern" *ngIf="templateType=='Modern'">
+  <div class="preview-table-header" [style.background-color]="bgColor">
+    <table style='width:100%;margin-bottom:10px;'>
+      <tbody style="background-color: #384986;font-size: 12pt" cellpadding=5 cellspacing=5 [style.background-color]="bgColor">
+      <tr>
+        <td class="font-color">Invoice:&nbsp;&nbsp;{{invoiceData.number}}</td>
+        <td class="font-color">Invoice Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
+        <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
+      </tr>
+      <tr>
+        <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(invoiceData.amount_due)}}</td>
+        <td class="text-right font-color" colspan="2">{{getInvoiceDisplayState(invoiceData.state)}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="box-shadow: 0 0 5px #ccc;-webkit-box-shadow: 0 0 5px #ccc;margin-top:15px;padding: 25px 15px;" [style.zoom]="zoomSize">
+    <table cellpadding='10' style="width:100%">
+      <tbody>
+      <tr>
+        <td style="width: 100%;">
+          <table class="address-tables">
+            <thead cellpadding=5 cellspacing=5>
+            <tr><th class="heading-color">Invoice From</th>
+              <th class="text-center"><span class="heading-color">Invoice</span></th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody cellpadding=5 cellspacing=5>
+            <tr>
+              <td colspan="2">
+                <p class="company-style">{{invoiceData.company?invoiceData.company.name:""}}</p>
+                <p class="company-style">{{invoiceData.company?invoiceData.company.address:""}}</p>
+                <p class="company-style">{{invoiceData.company?invoiceData.company.state:""}}, {{invoiceData.company?invoiceData.company.zipcode:""}}</p>
+                <p class="company-style">{{invoiceData.company?invoiceData.company.country:""}}</p>
+              </td>
+              <td class="text-right" id="company-img"><img src={{logoURL}} alt="" height="90" style="position: relative;bottom:30px;" [style.width]="logoWidth"/></td>
+            </tr>
+            </tbody>
+          </table>
+          <table class="middle-tables" style="margin:0;">
+            <tbody>
+            <tr>
+              <td style="width:10%"></td>
+              <td style="width:40%">
+                <table class="middle-tables" style="margin:0;">
+                  <tbody cellpadding=5 cellspacing=5>
+                  <tr class="heading-color friendly coloredHead">
+                    <td>Bill To</td>
+                    <td>Ship To</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td valign="top">
+                      <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_name:""}}</p>
+                      <p class="company-style">{{invoiceData.customer?invoiceData.customer.street_1:""}}</p>
+                      <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_city:""}}, {{invoiceData.customer?invoiceData.customer.customer_zipcode:""}}</p>
+                      <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_country:""}}</p>
+                    </td>
+                    <td valign="top">
+                      <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_name:""}}</p>
+                      <p class="company-style">{{invoiceData.customer?invoiceData.customer.street_1:""}}</p>
+                      <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_city:""}}, {{invoiceData.customer?invoiceData.customer.customer_zipcode:""}}</p>
+                      <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_country:""}}</p>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </td>
+              <td style="width:10%"></td>
+            </tr>
+            </tbody>
+          </table>
+          <table class="middle-tables" style="margin:0;">
+            <tbody cellpadding=5 cellspacing=5>
+            <tr>
+              <td style="width:5%;"></td>
+              <td>
+                <table class="middle-tables">
+                  <tbody cellpadding=4 cellspacing=4>
+                  <tr class="heading-color friendly coloredHead">
+                    <td>Invoice</td>
+                    <td>DATE</td>
+                    <td>Amount</td>
+                    <td>DUE DATE</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td valign="top">
+                      <p style="" class="company-style">{{invoiceData.number}}</p>
+                    </td>
+                    <td valign="top">
+                      <p style="" class="company-style">{{invoiceData.invoice_date}}</p>
+                    </td>
+                    <td valign="top">
+                      <p style="" class="company-style">{{formatAmount(invoiceData.amount)}}</p>
+                    </td>
+                    <td valign="top" >
+                      <p style="" class="company-style">{{convertDateToLocaleFormat(invoiceData.due_date)}}</p>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </td>
+              <td style="width:5%;"></td>
+            </tr>
+            </tbody>
+          </table>
+          <table class='middle-tables'>
+            <tbody  cellpadding=5 cellspacing=5>
+            <tr  class="heading-color friendly coloredHead" *ngIf="taskInvoices.length>0">
+              <td width="30%" *ngIf="!showItemName">{{tasks}}</td>
+              <td width="15%" *ngIf="!showDescription">Description</td>
+              <td ></td>
+              <td width="15%" *ngIf="!showUnitCost">{{unitCost}}</td>
+              <td width="8%" *ngIf="!showUOM">{{UOM}}</td>
+              <td width="18%" class="text-right">Line Total</td>
+            </tr>
+            <tr *ngFor="let taskInvoice of taskInvoices" [hidden]="taskInvoices.length<0">
+              <td>{{taskInvoice.item.name}}</td>
+              <td class="truncate">{{taskInvoice.description}}</td>
+              <td ></td>
+              <td>{{formatAmount(taskInvoice.price)}}</td>
+              <td>{{formatQuantity(taskInvoice.quantity)}}</td>
+              <td class="text-right">{{formatAmount(taskInvoice.amount)}}</td>
+            </tr>
+            <tr>
+              <td  class="" colspan="6"></td>
+            </tr>
+            <tr>
+              <td colspan="3" style="border-top:1px dotted #384986"></td>
+              <td style="border-top:1px dotted #384986">Subtotal</td>
+              <td colspan="2" class="text-right" style="border-top:1px dotted #384986">{{formatAmount(invoiceData.sub_total)}}</td>
+            </tr>
+            <tr>
+              <td class="emptyCol" colspan="3"></td>
+              <td>Tax</td>
+              <td colspan="2" class="text-right">{{formatAmount(invoiceData.tax_amount)}}</td>
+            </tr>
+            <tr  class="heading-color">
+              <td  class="emptyCol" colspan="3"></td>
+              <td>Total</td>
+              <td colspan="2" class="text-right">{{formatAmount(invoiceData.amount)}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

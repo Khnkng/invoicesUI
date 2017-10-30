@@ -1,6 +1,6 @@
 <div>
     <form [formGroup]="invoiceForm">
-        <div class="new-invoice row" foundation>
+        <div class="new-invoice row" foundation *ngIf="showInvoice">
             <div class="column small-12 medium-12 large-12 qount-form-backgorund">
                 <div class="qount-off-canvas-menu chart-of-accounts">
                     <div class="flyout expanded" [ngClass]="{'expanded':true}">
@@ -174,13 +174,13 @@
                                                 </div>
                                             </div>
                                             <div class="row" style="margin-top: 1rem;">
-                                                <table border="1" formArrayName="taskLines">
+                                                <!--<table border="1" formArrayName="taskLines">
                                                     <thead>
                                                     <tr>
-                                                        <th width="13%;">Task</th>
-                                                        <th width="13%;">Description</th>
-                                                        <th width="7%;">Rate</th>
-                                                        <th width="7%;">Hours</th>
+                                                        <th width="13%;" *ngIf="!showItemName">{{tasks}}</th>
+                                                        <th width="13%;" *ngIf="!showDescription">Description</th>
+                                                        <th width="7%;" *ngIf="!showUnitCost">{{unitCost}}</th>
+                                                        <th width="7%;" *ngIf="!showUOM">{{UOM}}</th>
                                                         <th width="13%;">Tax</th>
                                                         <th width="7%;">Tax Amount</th>
                                                         <th width="7%;">Line Total</th>
@@ -190,27 +190,27 @@
 
                                                     <tbody  *ngFor="let invoiceLine of invoiceForm.controls.taskLines.controls;let iindex=index;" [hidden]="invoiceLine.controls.destroy.value" (click)="editItem(iindex, invoiceLine,'task')">
                                                     <tr [formGroupName]="iindex">
-                                                        <td class="truncate" *ngIf="!invoiceLine.editable">{{getItemCodeName(invoiceLine.controls.item_id.value)}}</td>
-                                                        <td *ngIf="invoiceLine.editable" class="combo-box-field">
+                                                        <td class="truncate" *ngIf="!showItemName&&!invoiceLine.editable">{{getItemCodeName(invoiceLine.controls.item_id.value)}}</td>
+                                                        <td *ngIf="!showItemName&&invoiceLine.editable" class="combo-box-field">
                                                             <select [formControl]="invoiceLine.controls.item_id" (change)="itemChange($event.target.value,iindex,'task')">
                                                                 <option *ngFor="let item of taskItemCodes" [value]="item.id">{{item.name}}</option>
                                                             </select>
                                                         </td>
-                                                        <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.description.value}}</td>
+                                                        <td class="truncate" *ngIf="!showDescription&&!invoiceLine.editable">{{invoiceLine.controls.description.value}}</td>
 
-                                                        <td *ngIf="invoiceLine.editable">
+                                                        <td *ngIf="!showDescription&&invoiceLine.editable">
                                                             <input type="text" [formControl]="invoiceLine.controls.description"/>
                                                         </td>
 
-                                                        <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.price.value?formatAmount(invoiceLine.controls.price.value):null}}</td>
+                                                        <td class="truncate" *ngIf="!showUnitCost&&!invoiceLine.editable">{{invoiceLine.controls.price.value?formatAmount(invoiceLine.controls.price.value):null}}</td>
 
-                                                        <td *ngIf="invoiceLine.editable">
+                                                        <td *ngIf="!showUnitCost&&invoiceLine.editable">
                                                             <input type="text" [formControl]="invoiceLine.controls.price" numeral [locale]="localeFormat" [format]="'$0,0.00'" (change)="calculateTotals()"/>
                                                         </td>
 
-                                                        <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.quantity.value?formatQuantity(invoiceLine.controls.quantity.value):null}}</td>
+                                                        <td class="truncate" *ngIf="!showUOM&&!invoiceLine.editable">{{invoiceLine.controls.quantity.value?formatQuantity(invoiceLine.controls.quantity.value):null}}</td>
 
-                                                        <td *ngIf="invoiceLine.editable">
+                                                        <td *ngIf="!showUOM&&invoiceLine.editable">
                                                             <input type="text" [locale]="localeFormat" [isNumber]="true" [format]="'0,0.0000'" numeral [formControl]="invoiceLine.controls.quantity" (change)="calculateTotals()" />
                                                         </td>
                                                         <td class="truncate" *ngIf="!invoiceLine.editable">{{getTaxName(invoiceLine.controls.tax_id.value)}}</td>
@@ -236,16 +236,16 @@
 
                                                     </tr>
                                                     </tbody>
-                                                </table>
+                                                </table>-->
 
 
                                                 <table border="1" style="margin-top: 2rem;" formArrayName="invoiceLines">
                                                     <thead>
                                                     <tr>
-                                                        <th width="13%;">Item</th>
-                                                        <th width="13%;">Description</th>
-                                                        <th width="7%;">Unit Cost</th>
-                                                        <th width="7%;">Quantity</th>
+                                                        <th width="13%;" *ngIf="!showItemName">{{tasks}}</th>
+                                                        <th width="13%;" *ngIf="!showDescription">Description</th>
+                                                        <th width="7%;" *ngIf="!showUnitCost">{{unitCost}}</th>
+                                                        <th width="7%;" *ngIf="!showUOM">{{UOM}}</th>
                                                         <th width="13%;">Tax</th>
                                                         <th width="7%">Tax Amount</th>
                                                         <th width="7%;">Line Total</th>
@@ -255,27 +255,27 @@
 
                                                     <tbody  *ngFor="let invoiceLine of invoiceForm.controls.invoiceLines.controls;let iindex=index;" [hidden]="invoiceLine.controls.destroy.value" (click)="editItem(iindex, invoiceLine,'item')">
                                                     <tr [formGroupName]="iindex">
-                                                        <td class="truncate" *ngIf="!invoiceLine.editable">{{getItemCodeName(invoiceLine.controls.item_id.value)}}</td>
-                                                        <td *ngIf="invoiceLine.editable" class="combo-box-field">
+                                                        <td class="truncate" *ngIf="!invoiceLine.editable&&!showItemName">{{getItemCodeName(invoiceLine.controls.item_id.value)}}</td>
+                                                        <td *ngIf="invoiceLine.editable&&!showItemName" class="combo-box-field">
                                                             <select [formControl]="invoiceLine.controls.item_id" (change)="itemChange($event.target.value,iindex,'item')">
                                                                 <option *ngFor="let item of itemItemCodes" [value]="item.id">{{item.name}}</option>
                                                             </select>
                                                         </td>
-                                                        <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.description.value}}</td>
+                                                        <td class="truncate" *ngIf="!invoiceLine.editable&&!showDescription">{{invoiceLine.controls.description.value}}</td>
 
-                                                        <td *ngIf="invoiceLine.editable">
+                                                        <td *ngIf="invoiceLine.editable&&!showDescription">
                                                             <input type="text" [formControl]="invoiceLine.controls.description"/>
                                                         </td>
 
-                                                        <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.price.value?formatAmount(invoiceLine.controls.price.value):null}}</td>
+                                                        <td class="truncate" *ngIf="!invoiceLine.editable&&!showUnitCost">{{invoiceLine.controls.price.value?formatAmount(invoiceLine.controls.price.value):null}}</td>
 
-                                                        <td *ngIf="invoiceLine.editable">
+                                                        <td *ngIf="invoiceLine.editable&&!showUnitCost">
                                                             <input type="text" (change)="calculateTotals()" [formControl]="invoiceLine.controls.price" numeral [locale]="localeFormat" [format]="'$0,0.00'"/>
                                                         </td>
 
-                                                        <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.controls.quantity.value?formatQuantity(invoiceLine.controls.quantity.value):null}}</td>
+                                                        <td class="truncate" *ngIf="!invoiceLine.editable&&!showUOM">{{invoiceLine.controls.quantity.value?formatQuantity(invoiceLine.controls.quantity.value):null}}</td>
 
-                                                        <td *ngIf="invoiceLine.editable">
+                                                        <td *ngIf="invoiceLine.editable&&!showUOM">
                                                             <input type="text" [locale]="localeFormat" [isNumber]="true" [format]="'0,0.0000'" numeral [formControl]="invoiceLine.controls.quantity" (change)="calculateTotals()" />
                                                         </td>
                                                         <td class="truncate" *ngIf="!invoiceLine.editable">{{getTaxName(invoiceLine.controls.tax_id.value)}}</td>
