@@ -1,303 +1,1001 @@
+<style>
+  table{
+    width: 100%;
+    border:none;
+    font-family:'Open Sans', sans-serif;
+    font-size: 10pt;
+    border-collapse: collapse;
+  }
+  table.middle-tables{
+    margin-top: 50px;
+  }
+  table.items{
+    border-top:5px solid #384986;
+  }
+  table thead {
+    background: none;
+    border:none;
+  }
+  table tbody {
+    border:none;
+  }
+  table tbody tr:hover{
+    background: none !important;
+  }
+  table tbody tr{
+    border:none !important;
+    /*line-height: 16px;*/
+  }
+  tr td{
+    color: #0a0a0a;
+    height: 5px;
+    font-family:'Open Sans', sans-serif;
+    vertical-align:top
+  }
+
+  .heading-color td{
+    color: #17457B;
+    font-family:'Open Sans', sans-serif;
+    font-weight: 600;
+    font-size: 10pt !important;
+  }
+  .heading-color {
+    color: #17457B;
+    font-size: 10pt !important;
+    font-family:'Open Sans', sans-serif;
+  }
+  .separator {
+    border-top:1px solid #384986;
+    padding:0px;
+  }
+  .dottedSeparator {
+    border-top:1px dashed #384986;
+    padding:0px;
+  }
+  .emptyCol{
+    padding:0px;
+  }
+  #payment-preview{
+    margin-top: 5px;
+    /*width:612px;*/
+
+  }
+  .text-right{
+    text-align: right;
+  }
+
+  .text-center{
+    text-align: center;
+  }
+
+  .invoice-amount{
+    font-size: 28pt;
+  }
+
+  .preview-table-header {
+    color: #FFF;
+    box-shadow: 0 0 5px #ccc;
+    -webkit-box-shadow: 0 0 5px #ccc;
+    background-color: #384986;
+    padding: 15px 20px;
+  }
+  .font-color{
+    color:#FAFAFA !important;/*
+        padding: 0.5rem 0.625rem 0.3rem 0.625rem;*/
+  }
+
+  .address-tables tr td{
+    padding: 0.1rem 0.625rem;
+  }
+
+  .text-right{
+    text-align: right;
+  }
+
+  .margin-align{
+    margin-top: 3px;
+  }
+
+  td p {
+    margin-bottom: 0px !important;
+    font-size: inherit;
+    /* line-height: 1.4 !important;*/
+    text-rendering: optimizeLegibility;
+  }
+
+  .company-style {
+    margin-bottom: 0px !important;
+    /* line-height: 1.4 !important;*/
+  }
+
+
+  .airy td {
+    background-color: #e2e2e2;
+  }
+
+  .friendly td{
+    border-top: 1px solid #384986 !important;
+    border-bottom: 1px solid #384986 !important;;
+  }
+
+  .fresh {
+    margin:0;
+    background-color: #e2e2e2;
+  }
+  .fresh p {
+    padding:5px 0 0 5px;
+  }
+
+  .coloredHead {
+    background-color: #e2e2e2;
+  }
+
+</style>
+<div foundation class="reports">
+  <ul class="reports tabs" data-tabs id="invoice-settings-tabs">
+    <li class="reports tabs-title "><a href="#generalSettings" aria-selected="true"><h6>General Settings</h6></a></li>
+    <li class="reports tabs-title is-active"><a href="#logoSettings"><h6>Logo Settings</h6></a></li>
+    <li class="reports tabs-title"><a href="#invoiceSettings"><h6>Invoice Settings</h6></a></li>
+    <li class="reports tabs-title"><a href="#columnSettings"><h6>Column Settings</h6></a></li>
+  </ul>
+</div>
 <form (ngSubmit)="submit($event)" [formGroup]="invoiceSettingsForm">
-    <div class="row invoice-settings">
+    <div class="row invoice-settings reports">
         <div class="small-12 medium-12 columns">
-            <ul foundation class="accordion" data-accordion data-allow-all-closed="true">
-                <li data-accordion-item class="accordion-item is-active">
-                    <a class="accordion-title">General Settings</a>
-                    <div class="accordion-content" data-tab-content>
-                        <div class="row">
-                            <div class="small-12 medium-3 columns text-right">
-                                <label>Template type:</label>
-                            </div>
-                            <div class="small-12 medium-9 columns">
-                                <div class="template-type">
-                                    <div class="template-text">
-                                        <label>
-                                            <input type="radio" formControlName="templateType" value="Contemporary"/>
-                                            <span>Contemporary</span>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="template-type">
-                                    <div class="template-text">
-                                        <label>
-                                            <input type="radio" formControlName="templateType" value="Classic"/>
-                                            <span>Classic</span>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="template-type">
-                                    <div class="template-text">
-                                        <label>
-                                            <input type="radio" formControlName="templateType" value="Modern"/>
-                                            <span>Modern</span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
+          <div class="reports tabs-content" data-tabs-content="invoice-settings-tabs">
+            <div  class="reports tabs-panel" id="generalSettings">
+              <div class="row" style="margin-top: 1rem">
+                <fieldset class="large-6 cell">
+                  <legend>Template type</legend>
+                  <input type="radio" formControlName="templateType" value="Default"/><label>Default</label>
+                  <input type="radio" formControlName="templateType" value="Airy"/><label>Airy</label>
+                  <input type="radio" formControlName="templateType" value="Fresh"/><label>Fresh</label>
+                  <input type="radio" formControlName="templateType" value="Friendly"/><label>Friendly</label>
+                  <input type="radio" formControlName="templateType" value="Modern"/><label>Modern</label>
+                </fieldset>
+              </div>
+              <div class="row" *ngIf="invoiceSettingsForm.controls.templateType.value=='Default'">
+                <div style="box-shadow: 0 0 5px #ccc;-webkit-box-shadow: 0 0 5px #ccc;margin-top:15px;padding: 25px 15px;">
+                  <table cellpadding='10' style="width:100%">
+                    <tbody>
+                    <tr>
+                      <td style="width: 100%;">
+                        <table class="address-tables">
+                          <thead>
+                          <tr><th class="heading-color">Invoice From</th><th></th></tr>
+                          </thead>
+                          <tbody cellpadding=5 cellspacing=5>
+                          <tr><td>
+                            <p class="company-style">Company Name</p>
+                            <p class="company-style">123,Main Street</p>
+                            <p class="company-style">New York, 10001</p>
+                            <p class="company-style">United States</p>
+                          </td>
+                            <!--<td class="text-right" id="company-img"><img src={{logoURL}} alt="" height="90" style="position: relative;bottom:30px;" [style.width]="logoWidth"/></td>-->
+                          </tr>
+                          </tbody>
+                        </table>
+                        <table class="middle-tables address-tables">
+                          <thead>
+                          <tr>
+                            <th class="heading-color" colspan="3">Prepared For</th>
+                            <!--<th class="heading-color">Invoice Date</th>
+                            <th class="heading-color">Invoice Number</th>-->
+                            <th class="heading-color text-right"><span>Invoice Total</span><span style="margin-left:5px;"></span></th>
+                          </tr>
+                          </thead>
+                          <tbody cellpadding=5 cellspacing=5>
+                          <tr>
+                            <td valign="top" colspan="3">
+                              <p class="company-style">Company Name</p>
+                              <p class="company-style">123,Main Street</p>
+                              <p class="company-style">New York, 10001</p>
+                              <p class="company-style">United States</p>
+                            </td>
+                            <!--<td valign="top">{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
+                            <td valign="top">{{invoiceData.number}}</td>-->
+                            <td valign="top" class="text-right invoice-amount">$500.00</td>
+                          </tr>
+                          </tbody>
+                        </table>
+                        <table class='items middle-tables'>
+                          <tbody  cellpadding=5 cellspacing=5>
+                          <tr  class="heading-color">
+                            <td width="30%">Item</td>
+                            <td width="15%">Description</td>
+                            <td ></td>
+                            <td width="15%">Rate</td>
+                            <td width="8%">Hours</td>
+                            <td width="18%" class="text-right">Line Total</td>
+                          </tr>
+                          <tr>
+                            <td>Item Name</td>
+                            <td class="truncate">Item Description</td>
+                            <td ></td>
+                            <td>$10.00</td>
+                            <td>50</td>
+                            <td class="text-right">$500.00</td>
+                          </tr>
+                          <tr >
+                            <td  class="emptyCol" colspan="2"></td>
+                            <td  class="separator" colspan="4"></td>
+                          </tr>
+                          <tr >
+                            <td  colspan="2"></td>
+                            <td width="8%">Subtotal</td>
+                            <td  colspan="2"></td>
+                            <td class="text-right">$500.00</td>
+                          </tr>
+                          <tr >
+                            <td  class="emptyCol" colspan="2"></td>
+                            <td>Tax</td>
+                            <td  class="emptyCol" colspan="2"></td>
+                            <td  class="text-right">$0.00</td>
+                          </tr>
+                          <tr >
+                            <td  class="emptyCol" colspan="2"></td>
+                            <td  class="separator" colspan="4"></td>
+                          </tr>
+                          <tr  class="heading-color">
+                            <td  class="emptyCol" colspan="2"></td>
+                            <td>Total</td>
+                            <td  class="emptyCol" colspan="2"></td>
+                            <td class="text-right">$500.00</td>
+                          </tr>
+                          <tr >
+                            <td  class="emptyCol" colspan="2"></td>
+                            <td  class="separator" colspan="4"></td>
+                          </tr>
+                          </tbody>
+                        </table>
+                        <table class="middle-tables">
+                          <thead>
+                          <tr>
+                            <th class="heading-color">Payment Terms</th>
+                          </tr>
+                          </thead>
+                          <tbody cellpadding=5 cellspacing=5>
+                          <tr>
+                            <td>
+                              <span>Net 30</span>
+                            </td>
+                          </tr>
+                          </tbody>
+                        </table>
+                        <table class="middle-tables">
+                          <thead>
+                          <tr>
+                            <th class="heading-color">Notes</th>
+                          </tr>
+                          </thead>
+                          <tbody cellpadding=5 cellspacing=5>
+                          <tr>
+                            <td>
+                              <span></span>
+                            </td>
+                          </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="row" *ngIf="invoiceSettingsForm.controls.templateType.value=='Airy'">
+                <div style="box-shadow: 0 0 5px #ccc;-webkit-box-shadow: 0 0 5px #ccc;margin-top:15px;padding: 25px 15px;">
+                  <table cellpadding='10' style="width:100%">
+                    <tbody>
+                    <tr>
+                      <td style="width: 100%;">
+                        <table class="address-tables">
+                          <thead>
+                          <tr><th class="heading-color">Invoice From</th><th></th></tr>
+                          </thead>
+                          <tbody cellpadding=5 cellspacing=5>
+                          <tr><td>
+                            <p class="company-style">Company Name</p>
+                            <p class="company-style">123,Main Street</p>
+                            <p class="company-style">New York, 10001</p>
+                            <p class="company-style">United States</p>
+                          </td>
+                            <!--<td class="text-right" id="company-img"><img src={{logoURL}} alt="" height="90" style="position: relative;bottom:30px;" [style.width]="logoWidth"/></td>-->
+                          </tr>
+                          </tbody>
+                        </table>
+                        <table class="middle-tables address-tables">
+                          <thead>
+                          <tr>
+                            <th class="heading-color" colspan="3"></th>
+                            <th class="heading-color text-center" colspan="3">Invoice</th>
+                            <th class="heading-color"></th>
+                            <th class="heading-color"></th>
+                          </tr>
+                          </thead>
+                          <tbody cellpadding=5 cellspacing=5>
+                          <tr>
+                            <td valign="top" colspan="3">
+                              <p class="heading-color" style="font-weight: 600">Bill To</p>
+                              <p class="company-style">Company Name</p>
+                              <p class="company-style">123,Main Street</p>
+                              <p class="company-style">New York, 10001</p>
+                              <p class="company-style">United States</p>
+                            </td>
+                            <td valign="top" colspan="3">
+                              <p class="heading-color" style="font-weight: 600">Ship To</p>
+                              <p class="company-style">Company Name</p>
+                              <p class="company-style">123,Main Street</p>
+                              <p class="company-style">New York, 10001</p>
+                              <p class="company-style">United States</p>
+                            </td>
+
+                            <td valign="top" class="text-right">
+                              <p class="heading-color" style="font-weight: 600">Invoice:</p>
+                              <p class="heading-color" style="font-weight: 600">TERMS:</p>
+                              <p class="heading-color" style="font-weight: 600">DATE:</p>
+                              <p class="heading-color" style="font-weight: 600">DUE DATE:</p>
+                            </td>
+                            <td valign="top">
+                              <p class="company-style">INV-1101</p>
+                              <p class="company-style">Net 30</p>
+                              <p class="company-style">01/01/2017</p>
+                              <p class="company-style">02/01/2017</p>
+                            </td>
+                          </tr>
+                          </tbody>
+                        </table>
+                        <table class='middle-tables'>
+                          <tbody  cellpadding=5 cellspacing=5>
+                          <tr  class="heading-color airy">
+                            <td width="30%">Item</td>
+                            <td width="15%">Description</td>
+                            <td ></td>
+                            <td width="15%">Rate</td>
+                            <td width="8%">Hours</td>
+                            <td width="18%" class="text-right">Line Total</td>
+                          </tr>
+                          <tr>
+                            <td>Item Name</td>
+                            <td class="truncate">Item Description</td>
+                            <td ></td>
+                            <td>$10.00</td>
+                            <td>50</td>
+                            <td class="text-right">$500.00</td>
+                          </tr>
+
+                          <tr>
+                            <td  class="" colspan="6"></td>
+                          </tr>
+
+                          <tr>
+                            <td  class="dottedSeparator" colspan="6"></td>
+                          </tr>
+                          <tr>
+                            <td  colspan="3"></td>
+                            <td>Subtotal</td>
+                            <td colspan="2" class="text-right">$500.00</td>
+                          </tr>
+                          <tr>
+                            <td class="emptyCol" colspan="3"></td>
+                            <td>Tax</td>
+                            <td colspan="2" class="text-right">$00.00</td>
+                          </tr>
+                          <tr  class="heading-color">
+                            <td  class="emptyCol" colspan="3"></td>
+                            <td>Total</td>
+                            <td colspan="2" class="text-right">$500.00</td>
+                          </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="row" *ngIf="invoiceSettingsForm.controls.templateType.value=='Fresh'">
+                <div style="box-shadow: 0 0 5px #ccc;-webkit-box-shadow: 0 0 5px #ccc;margin-top:15px;padding: 25px 15px;" [style.zoom]="zoomSize">
+                  <table cellpadding='10' style="width:100%">
+                    <tbody>
+                    <tr>
+                      <td style="width: 100%;">
+                        <table class="address-tables">
+                          <thead>
+                          <tr><th class="heading-color">Invoice From</th><th></th></tr>
+                          </thead>
+                          <tbody cellpadding=5 cellspacing=5>
+                          <tr>
+                            <td>
+                              <p class="company-style">Company Name</p>
+                              <p class="company-style">123,Main Street</p>
+                              <p class="company-style">New York, 10001</p>
+                              <p class="company-style">United States</p>
+                            </td>
+                          </tr>
+                          </tbody>
+                        </table>
+                        <table class="middle-tables address-tables">
+                          <tbody cellpadding=5 cellspacing=5>
+                          <tr>
+                            <td valign="top" colspan="3" style="border-bottom:5px solid #384986;">
+                              <p class="heading-color" style="font-weight: 600">Bill To</p>
+                              <p class="company-style">Company Name</p>
+                              <p class="company-style">123,Main Street</p>
+                              <p class="company-style">New York, 10001</p>
+                              <p class="company-style">United States</p>
+                            </td>
+                            <td valign="top" colspan="3" style="border-bottom:5px solid #384986;">
+                              <p class="heading-color" style="font-weight: 600">Ship To</p>
+                              <p class="company-style">Company Name</p>
+                              <p class="company-style">123,Main Street</p>
+                              <p class="company-style">New York, 10001</p>
+                              <p class="company-style">United States</p>
+                            </td>
+
+                            <td valign="top" >
+                              <table class="fresh">
+                                <tbody style="background-color: #e2e2e2;">
+                                <tr>
+                                  <td style="padding:0;">
+                                    <p style="border-bottom: 5px solid #ffffff;"><span class="heading-color" style="font-weight: 600">Invoice:</span><span class="company-style">INV-1101</span></p>
+                                    <p style="border-bottom: 5px solid #ffffff;"><span class="heading-color" style="font-weight: 600">TERMS:</span><span class="company-style">Net 30</span></p>
+                                    <p><span class="heading-color" style="font-weight: 600">DATE:</span><span class="company-style">01/01/2017</span></p>
+                                    <p><span class="heading-color" style="font-weight: 600">DUE DATE:</span><span class="company-style">02/01/2017</span></p>
+                                  </td>
+                                </tr>
+                                </tbody>
+                              </table>
+                            </td>
+                          </tr>
+                          </tbody>
+                        </table>
+                        <table class='middle-tables'>
+                          <tbody  cellpadding=5 cellspacing=5>
+                          <tr  class="heading-color airy">
+                            <td width="30%">Item</td>
+                            <td width="15%">Description</td>
+                            <td ></td>
+                            <td width="15%">Rate</td>
+                            <td width="8%">Hours</td>
+                            <td width="18%" class="text-right">Line Total</td>
+                          </tr>
+                          <tr>
+                            <td>Item Name</td>
+                            <td class="truncate">Item Description</td>
+                            <td ></td>
+                            <td>$10.00</td>
+                            <td>50</td>
+                            <td class="text-right">$500.00</td>
+                          </tr>
+                          <tr>
+                            <td  colspan="6"></td>
+                          </tr>
+                          <tr>
+                            <td  class="dottedSeparator" colspan="6"></td>
+                          </tr>
+                          <tr>
+                            <td  colspan="3"></td>
+                            <td>Subtotal</td>
+                            <td colspan="2" class="text-right">$500.00</td>
+                          </tr>
+                          <tr>
+                            <td class="emptyCol" colspan="3"></td>
+                            <td>Tax</td>
+                            <td colspan="2" class="text-right">$00.00</td>
+                          </tr>
+                          <tr  class="heading-color">
+                            <td  class="emptyCol" colspan="3"></td>
+                            <td>Total</td>
+                            <td colspan="2" class="text-right">$500.00</td>
+                          </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="row" *ngIf="invoiceSettingsForm.controls.templateType.value=='Friendly'">
+                <div style="box-shadow: 0 0 5px #ccc;-webkit-box-shadow: 0 0 5px #ccc;margin-top:15px;padding: 25px 15px;">
+                  <table cellpadding='10' style="width:100%">
+                    <tbody>
+                    <tr>
+                      <td style="width: 100%;">
+                        <table class="address-tables">
+                          <thead>
+                          <tr>
+                            <th class="heading-color" colspan="2">Invoice From</th>
+                            <th class="heading-color" style="width:5%;text-align: center;">Invoice</th>
+                            <th class="company-style" style="margin-left:10px;">INV-1101</th>
+                            <th></th>
+                          </tr>
+                          </thead>
+                          <tbody cellpadding=5 cellspacing=5>
+                          <tr>
+                            <td colspan="2">
+                              <p class="company-style">Company Name</p>
+                              <p class="company-style">123,Main Street</p>
+                              <p class="company-style">New York, 10001</p>
+                              <p class="company-style">United States</p>
+                            </td>
+                            <td></td>
+                            <td></td>
+                          </tr>
+                          </tbody>
+                        </table>
+                        <table class="middle-tables address-tables" style="border-top:1px solid #384986;">
+                          <thead>
+                          <tr>
+                            <th class="heading-color" colspan="3"></th>
+                            <th class="heading-color text-center" colspan="3"></th>
+                            <th class="heading-color"></th>
+                            <th class="heading-color"></th>
+                            <th class="heading-color"></th>
+                          </tr>
+                          </thead>
+                          <tbody cellpadding=5 cellspacing=5>
+                          <tr>
+                            <td valign="top" colspan="3">
+                              <p class="heading-color" style="font-weight: 600">Bill To</p>
+                              <p class="company-style">Company Name</p>
+                              <p class="company-style">123,Main Street</p>
+                              <p class="company-style">New York, 10001</p>
+                              <p class="company-style">United States</p>
+                            </td>
+                            <td valign="top" colspan="3">
+                              <p class="heading-color" style="font-weight: 600">Ship To</p>
+                              <p class="company-style">Company Name</p>
+                              <p class="company-style">123,Main Street</p>
+                              <p class="company-style">New York, 10001</p>
+                              <p class="company-style">United States</p>
+                            </td>
+
+                            <td valign="top" style="vertical-align: top !important;padding:0 !important">
+                              <p class="heading-color" style="padding:5px;background-color: #e2e2e2;font-weight: 600;">DATE</p>
+                              <p class="company-style" style="padding:5px;background-color: #e2e2e2;">INV-1101</p>
+                            </td>
+                            <td valign="top" style="vertical-align: top !important;padding:0 !important">
+                              <p class="heading-color" style="padding:5px;background-color: #e2e2e2;font-weight: 600;">AMOUNT</p>
+                              <p class="company-style" style="padding:5px;background-color: #e2e2e2;">$500.00</p>
+                            </td>
+                            <td valign="top" style="vertical-align: top !important;padding:0 !important">
+                              <p class="heading-color" style="padding:5px;background-color: #e2e2e2;font-weight: 600;">DUE DATE:</p>
+                              <p class="company-style" style="padding:5px;background-color: #e2e2e2;">01/01/2017</p>
+                            </td>
+                          </tr>
+                          </tbody>
+                        </table>
+                        <table class='middle-tables '>
+                          <tbody  cellpadding=5 cellspacing=5>
+                          <tr  class="heading-color friendly">
+                            <td width="30%">Item</td>
+                            <td width="15%">Description</td>
+                            <td ></td>
+                            <td width="15%">Rate</td>
+                            <td width="8%">Hours</td>
+                            <td width="18%" class="text-right">Line Total</td>
+                          </tr>
+                          <tr>
+                            <td>Item Name</td>
+                            <td class="truncate">Item Description</td>
+                            <td ></td>
+                            <td>$10.00</td>
+                            <td>50</td>
+                            <td class="text-right">$500.00</td>
+                          </tr>
+                          <tr>
+                            <td  class="" colspan="6"></td>
+                          </tr>
+                          <tr>
+                            <td  class="dottedSeparator" colspan="6"></td>
+                          </tr>
+                          <tr>
+                            <td  colspan="3"></td>
+                            <td>Subtotal</td>
+                            <td colspan="2" class="text-right">$500.00</td>
+                          </tr>
+                          <tr>
+                            <td class="emptyCol" colspan="3"></td>
+                            <td>Tax</td>
+                            <td colspan="2" class="text-right">$00.00</td>
+                          </tr>
+                          <tr  class="heading-color">
+                            <td  class="emptyCol" colspan="3"></td>
+                            <td>Total</td>
+                            <td colspan="2" class="text-right">$500.00</td>
+                          </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="row" *ngIf="invoiceSettingsForm.controls.templateType.value=='Modern'">
+                <div style="box-shadow: 0 0 5px #ccc;-webkit-box-shadow: 0 0 5px #ccc;margin-top:15px;padding: 25px 15px;">
+                  <table cellpadding='10' style="width:100%">
+                    <tbody>
+                    <tr>
+                      <td style="width: 100%;">
+                        <table class="address-tables">
+                          <thead cellpadding=5 cellspacing=5>
+                          <tr><th class="heading-color">Invoice From</th>
+                            <th class="text-center"><span class="heading-color">Invoice</span></th>
+                            <th></th>
+                          </tr>
+                          </thead>
+                          <tbody cellpadding=5 cellspacing=5>
+                          <tr>
+                            <td colspan="2">
+                              <p class="company-style">Company Name</p>
+                              <p class="company-style">123,Main Street</p>
+                              <p class="company-style">New York, 10001</p>
+                              <p class="company-style">United States</p>
+                            </td>
+                          </tr>
+                          </tbody>
+                        </table>
+                        <table class="middle-tables" style="margin:0;">
+                          <tbody>
+                          <tr>
+                            <td style="width:10%"></td>
+                            <td style="width:40%">
+                              <table class="middle-tables" style="margin:0;">
+                                <tbody cellpadding=5 cellspacing=5>
+                                <tr class="heading-color friendly coloredHead">
+                                  <td>Bill To</td>
+                                  <td>Ship To</td>
+                                  <td></td>
+                                </tr>
+                                <tr>
+                                  <td valign="top">
+                                    <p class="company-style">Company Name</p>
+                                    <p class="company-style">123,Main Street</p>
+                                    <p class="company-style">New York, 10001</p>
+                                    <p class="company-style">United States</p>
+                                  </td>
+                                  <td valign="top">
+                                    <p class="company-style">Company Name</p>
+                                    <p class="company-style">123,Main Street</p>
+                                    <p class="company-style">New York, 10001</p>
+                                    <p class="company-style">United States</p>
+                                  </td>
+                                </tr>
+                                </tbody>
+                              </table>
+                            </td>
+                            <td style="width:10%"></td>
+                          </tr>
+                          </tbody>
+                        </table>
+                        <table class="middle-tables" style="margin:0;">
+                          <tbody cellpadding=5 cellspacing=5>
+                          <tr>
+                            <td style="width:5%;"></td>
+                            <td>
+                              <table class="middle-tables">
+                                <tbody cellpadding=4 cellspacing=4>
+                                <tr class="heading-color friendly coloredHead">
+                                  <td>Invoice</td>
+                                  <td>DATE</td>
+                                  <td>Amount</td>
+                                  <td>DUE DATE</td>
+                                  <td></td>
+                                </tr>
+                                <tr>
+                                  <td valign="top">
+                                    <p style="" class="company-style">INV-1101</p>
+                                  </td>
+                                  <td valign="top">
+                                    <p style="" class="company-style">01/01/2017</p>
+                                  </td>
+                                  <td valign="top">
+                                    <p style="" class="company-style">$500.00</p>
+                                  </td>
+                                  <td valign="top" >
+                                    <p style="" class="company-style">02/01/2017</p>
+                                  </td>
+                                </tr>
+                                </tbody>
+                              </table>
+                            </td>
+                            <td style="width:5%;"></td>
+                          </tr>
+                          </tbody>
+                        </table>
+                        <table class='middle-tables'>
+                          <tbody  cellpadding=5 cellspacing=5>
+                          <tr  class="heading-color friendly coloredHead">
+                            <td width="30%">Item</td>
+                            <td width="15%">Description</td>
+                            <td ></td>
+                            <td width="15%">Rate</td>
+                            <td width="8%">Hours</td>
+                            <td width="18%" class="text-right">Line Total</td>
+                          </tr>
+                          <tr>
+                            <td>Item Name</td>
+                            <td class="truncate">Item Description</td>
+                            <td ></td>
+                            <td>$10.00</td>
+                            <td>50</td>
+                            <td class="text-right">$500.00</td>
+                          </tr>
+                          <tr>
+                            <td  class="" colspan="6"></td>
+                          </tr>
+                          <tr>
+                            <td colspan="3" style="border-top:1px dotted #384986"></td>
+                            <td style="border-top:1px dotted #384986">Subtotal</td>
+                            <td colspan="2" class="text-right" style="border-top:1px dotted #384986">$500.00</td>
+                          </tr>
+                          <tr>
+                            <td class="emptyCol" colspan="3"></td>
+                            <td>Tax</td>
+                            <td colspan="2" class="text-right">$00.00</td>
+                          </tr>
+                          <tr  class="heading-color">
+                            <td  class="emptyCol" colspan="3"></td>
+                            <td>Total</td>
+                            <td colspan="2" class="text-right">$500.00</td>
+                          </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="reports tabs-panel is-active" id="logoSettings">
+              <div class="row" style="margin-top: 1rem">
+                <div class="small-12 medium-2 columns text-right">
+                  <label>Company Logo:</label>
+                </div>
+                <div class="small-12 medium-6 columns">
+                  <div class="file-upload-modal">
+                    <section class="upload-area"  ng2FileDrop [uploader]="uploader" (fileOver)="fileOverBase($event)" >
+                      <div class="row upload-choose-btn" [ngClass]="{'popup-file-over': hasBaseDropZoneOver}" style="padding: 6rem 6rem">
+                        <div class="column text-center">
+                          <label for="nativeFileUpload" class="button">Choose File</label>
+                          <input type="file" id="nativeFileUpload" (change)="startUpload($event)" value="null" class="show-for-sr" ng2FileSelect [uploader]="uploader" />
+                          <p>Drag and drop files here.</p>
                         </div>
-                        <div class="row">
-                            <div class="small-12 medium-3 columns text-right">
-                                <label>Company Logo:</label>
-                            </div>
-                            <div class="small-12 medium-3 columns">
-                                <div class="file-upload-modal">
-                                    <section class="upload-area"  ng2FileDrop [uploader]="uploader" (fileOver)="fileOverBase($event)" >
-                                        <div class="row upload-choose-btn" [ngClass]="{'popup-file-over': hasBaseDropZoneOver}">
-                                            <div class="column text-center">
-                                                <label for="nativeFileUpload" class="button">Choose File</label>
-                                                <input type="file" id="nativeFileUpload" (change)="startUpload($event)" value="null" class="show-for-sr" ng2FileSelect [uploader]="uploader" />
-                                                <p>Drag and drop files here.</p>
-                                            </div>
-                                        </div>
-                                        <div class="row files-to-upload-section">
-                                            <ul *ngIf="uploader.queue.length>0">
-                                                <li *ngFor="let item of uploader.queue">
-                                                    <div class="row">
-                                                        <div class="column small-10" [ngClass]="{'item-uploaded':item.isSuccess}">
+                      </div>
+                      <div class="row files-to-upload-section">
+                        <ul *ngIf="uploader.queue.length>0">
+                          <li *ngFor="let item of uploader.queue">
+                            <div class="row">
+                              <div class="column small-10 medium-3" [ngClass]="{'item-uploaded':item.isSuccess}">
                                                         <span *ngIf="!(item.isReady || item.isUploading || item.isSuccess)">
                                                           <i class="ion-ios-cloud-upload-outline" (click)="item.upload()"></i>
                                                         </span>
-                                                            {{ item?.file?.name }} &nbsp;({{ item?.file?.size/1024/1024 | number:'.2' }} MB)
-                                                        </div>
-                                                        <div class="column small-2 text-right">
-                                                            <i *ngIf="(item.isUploading)" class="ion-ios-close-outline" (click)="item.cancel()"></i>
-                                                            <i class="ion-ios-minus-outline" (click)="removeUploadItem(item)"></i>
-                                                        </div>
-                                                    </div>
-                                                    <div *ngIf="item.isUploading">
-                                                        <div class="progress">
-                                                            <div class="progress-meter" [ngStyle]="{ 'width': item.progress + '%' }"></div>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </section>
-                                </div>
+                                {{ item?.file?.name }} &nbsp;({{ item?.file?.size/1024/1024 | number:'.2' }} MB)
+                              </div>
+                              <div class="column small-2 text-right">
+                                <i *ngIf="(item.isUploading)" class="ion-ios-close-outline" (click)="item.cancel()"></i>
+                                <i class="ion-ios-minus-outline" (click)="removeUploadItem(item)"></i>
+                              </div>
                             </div>
-                            <div class="small-12 medium-3 columns">
-                                <div class="image-wrapper">
-                                    <img src="{{logoURL}}" *ngIf="logoURL"/>
-                                </div>
+                            <div *ngIf="item.isUploading">
+                              <div class="progress">
+                                <div class="progress-meter" [ngStyle]="{ 'width': item.progress + '%' }"></div>
+                              </div>
                             </div>
-                        </div>
-                        <!--<div class="row">
-                            <div class="small-12 medium-3 columns text-right">
-                                <label>Display Logo:</label>
-                            </div>
-                            <div class="small-12 medium-6 columns">
-                                <input type="checkbox" formControlName="displayLogo"/>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="small-12 medium-3 columns text-right">
-                                <label>Accent Color:</label>
-                            </div>
-                            <div class="small-12 medium-6 columns">
-                                <input type="text" class="color-field" formControlName="accentColor"/>
-                            </div>
-                        </div>-->
+                          </li>
+                        </ul>
+                      </div>
+                    </section>
+                  </div>
+                </div>
+                <div class="small-12 medium-3 columns">
+                  <div class="image-wrapper">
+                    <img src="{{logoURL}}" *ngIf="logoURL"/>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="reports tabs-panel" id="invoiceSettings">
+              <div class="row" style="margin-top: 1rem">
+                <div class="small-12 medium-2 columns text-right">
+                  <label>Default Payment terms:</label>
+                </div>
+                <div class="small-12 medium-6 columns">
+                  <textarea formControlName="defaultPaymentTerms"></textarea>
+                </div>
+              </div>
+              <div class="row">
+                <div class="small-12 medium-2 columns text-right">
+                  <label>Default Title:</label>
+                </div>
+                <div class="small-12 medium-6 columns">
+                  <input type="text" formControlName="defaultTitle"/>
+                </div>
+              </div>
+              <div class="row">
+                <div class="small-12 medium-2 columns text-right">
+                  <label>Default Subheading:</label>
+                </div>
+                <div class="small-12 medium-6 columns">
+                  <input type="text" formControlName="defaultSubHeading"/>
+                </div>
+              </div>
+              <div class="row">
+                <div class="small-12 medium-2 columns text-right">
+                  <label>Default Footer:</label>
+                </div>
+                <div class="small-12 medium-6 columns">
+                  <input type="text" formControlName="defaultFooter"/>
+                </div>
+              </div>
+              <div class="row">
+                <div class="small-12 medium-2 columns text-right">
+                  <label>Standard Memo:</label>
+                </div>
+                <div class="small-12 medium-6 columns">
+                  <textarea formControlName="standardMemo"></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="reports tabs-panel" id="columnSettings">
+              <!--<div class="row" style="margin-top: 1rem">
+                <div class="small-12 medium-12 columns">
+                  <label>Edit the titles of columns on your choice.</label>
+                </div>
+              </div>-->
+              <div class="row" style="margin-top: 1rem">
+                <div class="small-12 medium-2 columns text-right">
+                  <label>Items:</label>
+                </div>
+                <div class="small-12 medium-6 columns">
+                  <div class="field-group">
+                    <div class="field-row">
+                      <label>
+                        <input type="radio" formControlName="items" value="Item"/>
+                        <span>Item</span>
+                      </label>
                     </div>
-                </li>
-                <li data-accordion-item class="accordion-item">
-                    <a class="accordion-title">Invoice Settings</a>
-                    <div class="accordion-content" data-tab-content>
-                        <div class="row">
-                            <div class="small-12 medium-3 columns text-right">
-                                <label>Default Payment terms:</label>
-                            </div>
-                            <div class="small-12 medium-6 columns">
-                                <textarea formControlName="defaultPaymentTerms"></textarea>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="small-12 medium-3 columns text-right">
-                                <label>Default Title:</label>
-                            </div>
-                            <div class="small-12 medium-6 columns">
-                                <input type="text" formControlName="defaultTitle"/>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="small-12 medium-3 columns text-right">
-                                <label>Default Subheading:</label>
-                            </div>
-                            <div class="small-12 medium-6 columns">
-                                <input type="text" formControlName="defaultSubHeading"/>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="small-12 medium-3 columns text-right">
-                                <label>Default Footer:</label>
-                            </div>
-                            <div class="small-12 medium-6 columns">
-                                <input type="text" formControlName="defaultFooter"/>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="small-12 medium-3 columns text-right">
-                                <label>Standard Memo:</label>
-                            </div>
-                            <div class="small-12 medium-6 columns">
-                                <textarea formControlName="standardMemo"></textarea>
-                            </div>
-                        </div>
+                    <div class="field-row">
+                      <label>
+                        <input type="radio" formControlName="items" value="Product"/>
+                        <span>Product</span>
+                      </label>
                     </div>
-                </li>
-                <li data-accordion-item class="accordion-item">
-                    <a class="accordion-title">Column Settings</a>
-                    <div class="accordion-content" data-tab-content>
-                        <div class="row">
-                            <div class="small-12 medium-12 columns">
-                                <label>Edit the titles of columns on your choice.</label>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="small-12 medium-3 columns text-right">
-                                <label>Items:</label>
-                            </div>
-                            <div class="small-12 medium-6 columns">
-                                <div class="field-group">
-                                    <div class="field-row">
-                                        <label>
-                                            <input type="radio" formControlName="items" value="Items"/>
-                                            <span>Items</span>
-                                        </label>
-                                    </div>
-                                    <div class="field-row">
-                                        <label>
-                                            <input type="radio" formControlName="items" value="Products"/>
-                                            <span>Products</span>
-                                        </label>
-                                    </div>
-                                    <div class="field-row">
-                                        <label>
-                                            <input type="radio" formControlName="items" value="Services"/>
-                                            <span>Services</span>
-                                        </label>
-                                    </div>
-                                    <div class="field-row other">
-                                        <label class="float-left">
-                                            <input type="radio" formControlName="items" value="Other"/>
-                                            <span>Other</span>
-                                        </label>
-                                        <input class="float-left" type="text" [disabled]="isOtherItem()" formControlName="otherItems"/>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="small-12 medium-3 columns text-right">
-                                <label>Units:</label>
-                            </div>
-                            <div class="small-12 medium-6 columns">
-                                <div class="field-group">
-                                    <div class="field-row">
-                                        <label>
-                                            <input type="radio" formControlName="units" value="Units"/>
-                                            <span>Units</span>
-                                        </label>
-                                    </div>
-                                    <div class="field-row">
-                                        <label>
-                                            <input type="radio" formControlName="units" value="Hours"/>
-                                            <span>Hours</span>
-                                        </label>
-                                    </div>
-                                    <div class="field-row other">
-                                        <label class="float-left">
-                                            <input type="radio" formControlName="units" value="Other"/>
-                                            <span>Other</span>
-                                        </label>
-                                        <input type="text" class="float-left" [disabled]="isOtherUnit()" formControlName="otherUnits"/>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="small-12 medium-3 columns text-right">
-                                <label>Price:</label>
-                            </div>
-                            <div class="small-12 medium-6 columns">
-                                <div class="field-group">
-                                    <div class="field-row">
-                                        <label>
-                                            <input type="radio" formControlName="price" value="Price"/>
-                                            <span>Price</span>
-                                        </label>
-                                    </div>
-                                    <div class="field-row">
-                                        <label>
-                                            <input type="radio" formControlName="price" value="Rate"/>
-                                            <span>Rate</span>
-                                        </label>
-                                    </div>
-                                    <div class="field-row other">
-                                        <label class="float-left">
-                                            <input type="radio" formControlName="price" value="Other"/>
-                                            <span>Other</span>
-                                        </label>
-                                        <input class="float-left" type="text" [disabled]="isOtherPrice()" formControlName="otherPrice"/>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="small-12 medium-3 columns text-right">
-                                <label>Amount:</label>
-                            </div>
-                            <div class="small-12 medium-6 columns">
-                                <div class="field-group">
-                                    <div class="field-row">
-                                        <label>
-                                            <input type="radio" formControlName="amount" value="Amount"/>
-                                            <span>Amount</span>
-                                        </label>
-                                    </div>
-                                    <div class="field-row other">
-                                        <label class="float-left">
-                                            <input type="radio" formControlName="amount" value="Other"/>
-                                            <span>Other</span>
-                                        </label>
-                                        <input class="float-left" type="text" [disabled]="isOtherAmount()" formControlName="otherAmount"/>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="small-12 medium-3 columns text-right">
-                                <label>Hide columns:</label>
-                            </div>
-                            <div class="small-12 medium-9 columns">
-                                <div class="row">
-                                    <div class="small-12 medium-6 columns">
-                                        <input type="checkbox" formControlName="hideItemName"/> <label>Hide item name</label>
-                                    </div>
-                                    <div class="small-12 medium-6 columns">
-                                        <input type="checkbox" formControlName="hideItemDescription"/> <label>Hide item description</label>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="small-12 medium-6 columns">
-                                        <input type="checkbox" formControlName="hideUnits"/> <label>Hide units</label>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="small-12 medium-6 columns">
-                                        <input type="checkbox" formControlName="hidePrice"/> <label>Hide price</label>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="small-12 medium-6 columns">
-                                        <input type="checkbox" formControlName="hideAmount"/> <label>Hide Amount</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="field-row">
+                      <label>
+                        <input type="radio" formControlName="items" value="Service"/>
+                        <span>Service</span>
+                      </label>
                     </div>
-                </li>
-            </ul>
+                    <div class="field-row">
+                      <label>
+                        <input type="radio" formControlName="items" value="Task"/>
+                        <span>Task</span>
+                      </label>
+                    </div>
+                    <div class="field-row other">
+                      <label class="float-left">
+                        <input type="radio" formControlName="items" value="Other"/>
+                        <span>Other</span>
+                      </label>
+                      <input class="float-left" type="text" [disabled]="isOtherItem()" formControlName="otherItems"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="small-12 medium-2 columns text-right">
+                  <label>UOM:</label>
+                </div>
+                <div class="small-12 medium-6 columns">
+                  <div class="field-group">
+                    <div class="field-row">
+                      <label>
+                        <input type="radio" formControlName="units" value="Quantity"/>
+                        <span>Units</span>
+                      </label>
+                    </div>
+                    <div class="field-row">
+                      <label>
+                        <input type="radio" formControlName="units" value="Hours"/>
+                        <span>Hours</span>
+                      </label>
+                    </div>
+                    <div class="field-row other">
+                      <label class="float-left">
+                        <input type="radio" formControlName="units" value="Other"/>
+                        <span>Other</span>
+                      </label>
+                      <input type="text" class="float-left" [disabled]="isOtherUnit()" formControlName="otherUnits"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="small-12 medium-2 columns text-right">
+                  <label>Unit Cost:</label>
+                </div>
+                <div class="small-12 medium-6 columns">
+                  <div class="field-group">
+                    <div class="field-row">
+                      <label>
+                        <input type="radio" formControlName="price" value="Price"/>
+                        <span>Price</span>
+                      </label>
+                    </div>
+                    <div class="field-row">
+                      <label>
+                        <input type="radio" formControlName="price" value="Rate"/>
+                        <span>Rate</span>
+                      </label>
+                    </div>
+                    <div class="field-row other">
+                      <label class="float-left">
+                        <input type="radio" formControlName="price" value="Other"/>
+                        <span>Other</span>
+                      </label>
+                      <input class="float-left" type="text" [disabled]="isOtherPrice()" formControlName="otherPrice"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--<div class="row">
+                  <div class="small-12 medium-3 columns text-right">
+                      <label>Amount:</label>
+                  </div>
+                  <div class="small-12 medium-6 columns">
+                      <div class="field-group">
+                          <div class="field-row">
+                              <label>
+                                  <input type="radio" formControlName="amount" value="Amount"/>
+                                  <span>Amount</span>
+                              </label>
+                          </div>
+                          <div class="field-row other">
+                              <label class="float-left">
+                                  <input type="radio" formControlName="amount" value="Other"/>
+                                  <span>Other</span>
+                              </label>
+                              <input class="float-left" type="text" [disabled]="isOtherAmount()" formControlName="otherAmount"/>
+                          </div>
+                      </div>
+                  </div>
+              </div>-->
+              <div class="row">
+                <div class="small-12 medium-2 columns text-right">
+                  <label>Hide columns:</label>
+                </div>
+                <div class="small-12 medium-9 columns">
+                  <div class="row">
+                    <div class="small-12 medium-6 columns">
+                      <input type="checkbox" formControlName="hideItemName"/> <label>Hide item name</label>
+                    </div>
+                    <div class="small-12 medium-6 columns">
+                      <input type="checkbox" formControlName="hideItemDescription"/> <label>Hide item description</label>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="small-12 medium-6 columns">
+                      <input type="checkbox" formControlName="hideUnits"/> <label>Hide units</label>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="small-12 medium-6 columns">
+                      <input type="checkbox" formControlName="hidePrice"/> <label>Hide price</label>
+                    </div>
+                  </div>
+                  <!--<div class="row">
+                      <div class="small-12 medium-6 columns">
+                          <input type="checkbox" formControlName="hideAmount"/> <label>Hide Amount</label>
+                      </div>
+                  </div>-->
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
     </div>
     <div class="row">

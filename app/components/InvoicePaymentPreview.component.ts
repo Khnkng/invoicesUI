@@ -36,10 +36,26 @@ export class InvoicePaymentPreview{
     logoWidth:string="0";
     termsList:any={"net30":"Net 30","net45":"Net 45","net60":"Net 60","net90":"Net 90","custom":"Custom"};
     invoiceStates:any={"draft":"Draft","paid":"Paid","partially_paid":"Partially Paid","past_due":"Past Due","sent":"Sent"};
+    templateType:string;
     displayState:string;
+    tasks:string;
+    UOM:string;
+    unitCost:string;
+    showDescription:boolean=true;
+    showUnitCost:boolean=true;
+    showUOM:boolean=true;
+    showItemName:boolean=true;
     @Input()
     set invoices(invoices:any){
         this.invoiceData = invoices;
+        this.templateType=invoices.templateType;
+        this.tasks=invoices.tasks;
+        this.UOM=invoices.UOM;
+        this.unitCost=invoices.unitCost;
+        this.showDescription=invoices.showDescription;
+        this.showUnitCost=invoices.showUnitCost;
+        this.showUOM=invoices.showUOM;
+        this.showItemName=invoices.showItemName;
         if(invoices.logoURL){
             this.logoWidth="90px";
             this.logoURL = invoices.logoURL;
@@ -68,8 +84,8 @@ export class InvoicePaymentPreview{
     }
 
     loadInvoiceData() {
-        this.taskInvoices =  _.filter(this.invoiceData.invoiceLines, function(invoice) { return invoice.type == 'task'; });
-        this.itemInvoices =  _.filter(this.invoiceData.invoiceLines, function(invoice) { return invoice.type == 'item'; });
+        this.taskInvoices =this.invoiceData.invoiceLines//  _.filter(this.invoiceData.invoiceLines, function(invoice) { return invoice.type == 'task'; });
+        //this.itemInvoices =  _.filter(this.invoiceData.invoiceLines, function(invoice) { return invoice.type == 'item'; });
     }
 
     loadCustomers(companyId: any) {
