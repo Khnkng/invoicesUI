@@ -78,7 +78,7 @@ export class InvoiceSettingsComponent implements  OnInit {
       this.preference.otherUnits = this.preference.units;
       this.preference.units = 'Other';
     }
-    if(["Items", "Products", "Services"].indexOf(this.preference.items) == -1){
+    if(["Item", "Product", "Service", "Task"].indexOf(this.preference.items) == -1){
       this.preference.otherItems = this.preference.items;
       this.preference.items = 'Other';
     }
