@@ -894,6 +894,7 @@ export class InvoiceDashboardComponent {
                 "filterable": false
             },
             {"name": "journalId", "title": "Journal ID", 'visible': false, 'filterable': false},
+            {"name": "invoiceIds", "title": "Invoice ID", 'visible': false, 'filterable': false},
             {"name": "type", "title": "Payment type/#"},
             {"name": "receivedFrom", "title": "Received From"},
             {"name": "dateReceived", "title": "Date Received"},
@@ -914,10 +915,15 @@ export class InvoiceDashboardComponent {
             row['dateReceived'] = (payment['paymentDate']) ? base.dateFormater.formatDate(payment['paymentDate'],base.serviceDateformat,base.dateFormat) : payment['paymentDate'];
             let assignStatus = "";
             let assignedAmount = 0;
+            let invoicesIds=[];
             payment.paymentLines.forEach((line) => {
                 assignedAmount += line.amount ? parseFloat(line.amount) : 0;
+                if(line.amount>0){
+                  invoicesIds.push(line.invoiceId);
+                }
             });
             let assignmentHtml = "";
+            let invoicesString="";
 
             if(assignedAmount >= payment.paymentAmount) {
                 assignStatus = "Assigned";
@@ -930,13 +936,29 @@ export class InvoiceDashboardComponent {
                 assignStatus = "Unassigned";
                 assignmentHtml = "<small style='color:#ff3219'>"+assignStatus+"</small>"
             }
-
-
+            row["invoiceIds"]=invoicesIds.toString();
+            if(invoicesIds.length>0){
+              for (var i = 0; i < invoicesIds.length; i++) {
+                let paymentIdString='invoiceAction-'+i;
+                invoicesString+="<a class='action' data-action="+paymentIdString+"><span class='icon badge je-badge'>P"+i+"</span></a>"
+              }
+            }
+          let JeString="";
+          if(payment.journalID){
+            JeString= "<a class='action' data-action='navigation'><span class='icon badge je-badge'>JE</span></a>";
+          }
+          if(invoicesString&&JeString){
+            row['actions']=invoicesString+JeString;
+          }else if(invoicesString){
+            row['actions']=invoicesString;
+          }else if(JeString){
+            row['actions']=JeString;
+          }
             base.numeralService.switchLocale(payment.currencyCode.toLowerCase());
             row['amount'] = "<div>"+base.numeralService.format("$0,0.00", payment.paymentAmount)+"</div><div>"+assignmentHtml+"</div>";
-            if(payment.journalID){
+            /*if(payment.journalID){
                 row['actions'] = "<a class='action' data-action='navigation'><span class='icon badge je-badge'>JE</span></a>";
-            }
+            }*/
             base.paidInvoiceTableData.rows.push(row);
         });
 
@@ -1039,6 +1061,12 @@ export class InvoiceDashboardComponent {
           this._router.navigate(link);
       }else if(action=='history'){
           this.handleHistory($event);
+        }else if(action.indexOf("invoiceAction")!=-1){
+          let invoiceIds=$event.invoiceIds.split(',');
+          let invoiceIdIndex=action.split('-')[1];
+          let invoiceId=invoiceIds[invoiceIdIndex];
+          let link = ['invoices/edit', invoiceId];
+          this._router.navigate(link);
         }
       }
 
