@@ -100,6 +100,9 @@ export class InvoiceComponent{
     showItemName:boolean=true;
     showInvoice:boolean;
     templateType:string;
+    historyFlyoutCSS:any;
+    historyList:Array<any>=[];
+    count:any=0;
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
@@ -131,6 +134,8 @@ export class InvoiceComponent{
         this.routeSubscribe = switchBoard.onClickPrev.subscribe(title => {
             if(this.dimensionFlyoutCSS == "expanded"){
                 this.hideFlyout();
+            }else if(this.historyFlyoutCSS=="expanded"){
+                this.hideHistoryFlyout();
             }else{
                 this.gotoPreviousState();
             }
@@ -831,13 +836,20 @@ export class InvoiceComponent{
         this.selectedDimensions = [];
     }
 
-    saveItem(){
-        let dimensions = this.editItemForm.controls['dimensions'];
-        dimensions.patchValue(this.selectedDimensions);
-        let itemData = this._invoiceLineForm.getData(this.editItemForm);
-        this.updateLineInView(itemData);
-        this.hideFlyout();
-    }
+  hideHistoryFlyout(){
+        this.historyFlyoutCSS="collapsed";
+        this.titleService.setPageTitle("Edit Invoice");
+        this.historyList=[];
+        this.count=0;
+  }
+
+  saveItem(){
+    let dimensions = this.editItemForm.controls['dimensions'];
+    dimensions.patchValue(this.selectedDimensions);
+    let itemData = this._invoiceLineForm.getData(this.editItemForm);
+    this.updateLineInView(itemData);
+    this.hideFlyout();
+  }
 
     updateLineInView(item){
         let itemsControl:any;
@@ -1135,5 +1147,37 @@ export class InvoiceComponent{
                 }
             }
         });
+    }
+
+    showHistory(){
+        this.loadingService.triggerLoadingEvent(true);
+        this.invoiceService.history(this.invoiceID).subscribe(history => {
+            this.titleService.setPageTitle("Invoices History");
+            this.historyFlyoutCSS="expanded";
+            this.historyList=history;
+            this.updateCredits(this.historyList);
+            this.loadingService.triggerLoadingEvent(false);
+        }, error => {
+            this.toastService.pop(TOAST_TYPE.error, "Failed to load invoice history");
+            this.loadingService.triggerLoadingEvent(false);
+        });
+    }
+
+    getCircleColor() {
+        let colors = ["2px solid #44B6E8", "2px solid #18457B", "2px solid #00B1A9", "2px solid #F06459", "2px solid #22B473","2px solid #384986","2px solid #4554A4 "];
+        if (this.count < 7) {
+            this.count++;
+            return colors[this.count - 1];
+        } else {
+            this.count = 0;
+            return colors[this.count];
+        }
+    };
+
+
+    updateCredits(credits) {
+        for(var i in credits){
+            credits[i]["color"] = this.getCircleColor();
+        }
     }
 }

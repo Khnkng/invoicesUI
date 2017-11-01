@@ -131,7 +131,8 @@ export class InvoiceDashboardComponent {
     routeSubscribe: any = {};
     metrics: any = {};
     chartColors:Array<any> = ['#44B6E8','#18457B','#00B1A9','#F06459','#22B473','#384986','#4554A4','#808CC5'];
-
+    historyList:Array<any>=[];
+    count: any = 0;
     detailedReportChartOptions:any;
     hasTotalReceivableData:boolean = false;
     groupedTotalReceivablesChartOptions: any;
@@ -142,8 +143,6 @@ export class InvoiceDashboardComponent {
     customerAgingSummary:any;
     dateFormat:string;
     serviceDateformat:string;
-    historyList:Array<any>=[];
-    count: any = 0;
 
     constructor(private _router: Router, private _route: ActivatedRoute,
                 private toastService: ToastService, private loadingService: LoadingService,
@@ -1076,15 +1075,17 @@ export class InvoiceDashboardComponent {
         this.historyFlyoutCSS="expanded";
         this.historyList=history;
         this.updateCredits(this.historyList);
+          this.titleService.setPageTitle("Invoice History");
         this.loadingService.triggerLoadingEvent(false);
       }, error => {
-        this.toastService.pop(TOAST_TYPE.error, "Failed to load your history");
+        this.toastService.pop(TOAST_TYPE.error, "Failed to load invoice history");
         this.loadingService.triggerLoadingEvent(false);
       });
     }
 
     hideFlyout(){
       this.historyFlyoutCSS = "collapsed";
+        this.titleService.setPageTitle("Invoicess");
     }
 
 
