@@ -271,7 +271,8 @@ export class InvoiceComponent{
                   this.remainder_name=invoice.remainder_name;
                 }
         //        taskLines =  _.filter(this.invoice.invoiceLines, function(invoice) { return invoice.type == 'task'; });
-                itemLines =  _.filter(this.invoice.invoiceLines, function(invoice) { return invoice.type == 'item'; });
+       // itemLines =  _.filter(this.invoice.invoiceLines, function(invoice) { return invoice.type == 'item'; });
+        itemLines =this.invoice.invoiceLines;  //_.filter(, function(invoice) { return invoice.type == 'item'; });
 
                 /*if(taskLines.length==0){
                     for(let i=0; i<2; i++){
@@ -320,18 +321,19 @@ export class InvoiceComponent{
 
     }
 
-    addInvoiceList(line?:any,type?:any) {
-        let base = this;
-        if(type=='task'){
-            let _taskForm:any = this._invoiceLineForm.getForm(line);
-            let tasksListForm = this._fb.group(_taskForm);
-            this.tasksLineArray.push(tasksListForm);
-        }else if(type=='item'){
-            let _form:any = this._invoiceLineForm.getForm(line);
-            let invoiceListForm = this._fb.group(_form);
-            this.invoiceLineArray.push(invoiceListForm);
-        }
-    }
+  addInvoiceList(line?:any,type?:any) {
+    let base = this;
+    /*if(type=='task'){
+      let _taskForm:any = this._invoiceLineForm.getForm(line);
+      let tasksListForm = this._fb.group(_taskForm);
+      this.tasksLineArray.push(tasksListForm);
+    }else if(type=='item'){
+
+    }*/
+    let _form:any = this._invoiceLineForm.getForm(line);
+    let invoiceListForm = this._fb.group(_form);
+    this.invoiceLineArray.push(invoiceListForm);
+  }
 
     deleteInvoiceLine(index,type) {
         if(type=='item'){

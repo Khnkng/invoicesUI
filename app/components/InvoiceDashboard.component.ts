@@ -68,6 +68,7 @@ export class InvoiceDashboardComponent {
     customers: Array<any> = [];
     payments: Array<any> = [];
     actions:Array<any> = [];
+    historyFlyoutCSS:any;
     invoiceActions: Array<any> = [{
         'className': 'ion-edit',
         'name': 'Edit',
@@ -141,6 +142,8 @@ export class InvoiceDashboardComponent {
     customerAgingSummary:any;
     dateFormat:string;
     serviceDateformat:string;
+    historyList:Array<any>=[];
+    count: any = 0;
 
     constructor(private _router: Router, private _route: ActivatedRoute,
                 private toastService: ToastService, private loadingService: LoadingService,
@@ -185,7 +188,10 @@ export class InvoiceDashboardComponent {
             this.localBadges = JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
         }
         this.routeSubscribe = switchBoard.onClickPrev.subscribe(title => {
-            if(this.showDetailedChart){
+          if(this.historyFlyoutCSS == "expanded"){
+            this.count = 0;
+            this.hideFlyout();
+          }else if(this.showDetailedChart){
                 this.showDetailedChart = !this.showDetailedChart;
                 this.detailedReportChartOptions.yAxis.title = {text: null,style: {fontSize:'15px'}};
             }
@@ -807,6 +813,7 @@ export class InvoiceDashboardComponent {
                 "filterable": false
             },
             {"name": "journalId", "title": "Journal ID", 'visible': false, 'filterable': false},
+            {"name": "paymentId", "title": "Payment ID", 'visible': false, 'filterable': false},
             {"name": "number", "title": "Number"},
             {"name": "customer", "title": "Customer"},
             {"name": "due_date", "title": "Due Date"},
@@ -824,6 +831,7 @@ export class InvoiceDashboardComponent {
             let row: any = {};
             row['id'] = invoice['id'];
             row['journalId'] = invoice['journalID'];
+            row['paymentId'] = invoice['payment_ids'];
             row['selectCol'] = "<input type='checkbox' class='checkbox'/>";
             row['number'] = invoice['number'];
             row['customer'] = invoice['customer_name'];
@@ -838,11 +846,32 @@ export class InvoiceDashboardComponent {
             }else {
                 row['status'] = invoice['state']?_.startCase((invoice['state'])):"";
             }
-
-            if(invoice.journalID){
-                row['actions'] = "<a class='action' data-action='navigation'><span class='icon badge je-badge'>JE</span></a>";
+            let paymentsString="";
+            let historyBadge="<a class='action' data-action='history'><span class='icon badge je-badge'>H</span></a>";
+            if(invoice['state']=='paid'||invoice['state']=='partially_paid'){
+              if(invoice['payment_ids']){
+                let paymentsList=invoice['payment_ids'].split(',');
+                if(paymentsList.length>0){
+                  for (var i = 0; i < paymentsList.length; i++) {
+                    let paymentIdString='paymentAction-'+i;
+                    paymentsString+="<a class='action' data-action="+paymentIdString+"><span class='icon badge je-badge'>P"+i+"</span></a>"
+                  }
+                }
+              }
             }
-
+          let JeString="";
+            if(invoice.journalID){
+              JeString= "<a class='action' data-action='navigation'><span class='icon badge je-badge'>JE</span></a>";
+            }
+          if(paymentsString&&JeString){
+            row['actions']=historyBadge+paymentsString+JeString;
+          }else if(paymentsString){
+            row['actions']=historyBadge+paymentsString;
+          }else if(JeString){
+            row['actions']=historyBadge+JeString;
+          }else {
+            row['actions']=historyBadge;
+          }
             base.invoiceTableData.rows.push(row);
         });
 
@@ -1002,8 +1031,53 @@ export class InvoiceDashboardComponent {
         if(action == 'navigation'){
             let link = ['journalEntry', $event.journalId];
             this._router.navigate(link);
+        }else if(action.indexOf("paymentAction")!=-1){
+          let paymentIds=$event.paymentId.split(',');
+          let paymentIdIndex=action.split('-')[1];
+          let paymentId=paymentIds[paymentIdIndex];
+          let link = ['payments/edit', paymentId];
+          this._router.navigate(link);
+      }else if(action=='history'){
+          this.handleHistory($event);
         }
+      }
+
+    handleHistory(invoice){
+      this.loadingService.triggerLoadingEvent(true);
+      this.invoiceService.history(invoice.id).subscribe(history => {
+        this.historyFlyoutCSS="expanded";
+        this.historyList=history;
+        this.updateCredits(this.historyList);
+        this.loadingService.triggerLoadingEvent(false);
+      }, error => {
+        this.toastService.pop(TOAST_TYPE.error, "Failed to load your history");
+        this.loadingService.triggerLoadingEvent(false);
+      });
     }
+
+    hideFlyout(){
+      this.historyFlyoutCSS = "collapsed";
+    }
+
+
+    getCircleColor() {
+      let colors = ["2px solid #44B6E8", "2px solid #18457B", "2px solid #00B1A9", "2px solid #F06459", "2px solid #22B473","2px solid #384986","2px solid #4554A4 "];
+      if (this.count < 7) {
+        this.count++;
+        return colors[this.count - 1];
+      } else {
+        this.count = 0;
+        return colors[this.count];
+      }
+    };
+
+
+    updateCredits(credits) {
+      for(var i in credits){
+        credits[i]["color"] = this.getCircleColor();
+      }
+    }
+
 
     handleSelect(event: any) {
         let base = this;
