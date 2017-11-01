@@ -353,6 +353,9 @@
 
                                         <div class="small-12 medium-3 columns">
                                             <div class="row" >
+                                                <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;" *ngIf="!newInvoice">
+                                                    <button (click)="showHistory()" class="button small" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;height: 25px;">View History</button>
+                                                </div>
                                                 <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;" *ngIf="newInvoice||(invoice&&invoice.state=='draft')">
                                                     <button (click)="submit($event,false,'draft')" class="button small" [disabled]="hasPaid||!invoiceForm.valid||!validateTaskLines()" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;height: 25px;">Save as Draft</button>
                                                 </div>
@@ -551,5 +554,43 @@
     <div class="text-right" style="padding-right:1rem">
         <button class="button small" style="background: #00B1A9;" (click)="sendInvoiceMails()">Send Invoice</button>
         <button class="button small" style="background-color: white !important;color: #878787;" (click)="closeEmailDailog()">Cancel</button>
+    </div>
+</div>
+
+
+<div class="report-wrapper journal-flyout">
+    <div class="sidenav customization-panel" [ngClass]="historyFlyoutCSS" foundation>
+        <div class="row collapse dimension-flyout">
+            <div class="small-12 medium-12 small-centered column">
+<!--                <h5>Invoice History</h5>-->
+                <div style="margin:20px 0 30px 0">
+                    <div *ngIf="historyList.length>0">
+                        <div class="row rdCircles" *ngFor="let history of historyList; let last=last;">
+                            <div class="column medium-1" style="padding-left: 55px">
+                                <div class="dec1" [style.border]="history.color"></div>
+                                <div class="dec2"></div>
+                                <div class="dec1" *ngIf="last? true:false;" [style.border]="history.color"></div>
+                            </div>
+                            <div class="column medium-11" style="padding-left:0px">
+                                <div class="row rdCredits">
+                                    <div class="column medium-12">
+                                        <div class="row creditInfo">
+                                            <div class="column medium-6 text-left">{{history.action}}</div>
+                                            <div class="column medium-6 text-right" style="font-size: 0.85em">{{history.action_at}}</div>
+                                        </div>
+                                    </div>
+                                    <div class="column medium-12 rdDescription">
+                                        <div class="row credit-desc">
+                                            <div class="column medium-10">{{history.email_to}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="historyList.length==0" class="text-center">History is not available.</div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
