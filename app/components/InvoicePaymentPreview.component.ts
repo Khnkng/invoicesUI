@@ -36,18 +36,26 @@ export class InvoicePaymentPreview{
     logoWidth:string="0";
     termsList:any={"net30":"Net 30","net45":"Net 45","net60":"Net 60","net90":"Net 90","custom":"Custom"};
     invoiceStates:any={"draft":"Draft","paid":"Paid","partially_paid":"Partially Paid","past_due":"Past Due","sent":"Sent"};
+    displayState:string;
     @Input()
     set invoices(invoices:any){
-        invoices.displayterm=this.termsList[invoices.term];
         this.invoiceData = invoices;
         if(invoices.logoURL){
-            this.logoWidth="120px";
+            this.logoWidth="90px";
             this.logoURL = invoices.logoURL;
         }else{
             this.getCompanyLogo();
         }
+        invoices.displayterm=this.setDisplayTerms(invoices.term);
         this.loadInvoiceData();
-        this.getHeaderColor(invoices.state);
+        if(invoices.isPastDue){
+          this.bgColor="#F06459";
+          this.displayState="past_due";
+        }else {
+          this.displayState=invoices.state;
+          this.getHeaderColor(this.displayState);
+        }
+
         this.getZoomSize();
     }
     bgColor:string="#878787";
@@ -81,7 +89,7 @@ export class InvoicePaymentPreview{
 
     processPreference(preference){
         if(preference && preference.temporaryURL){
-            this.logoWidth="120px";
+            this.logoWidth="90px";
             this.logoURL = preference.temporaryURL;
         }
     }
@@ -140,6 +148,17 @@ export class InvoicePaymentPreview{
             this.amountFont="13pt";
             this.lineAmountFont="10pt";
         }
+    }
+
+    setDisplayTerms(term){
+      if(term=='custom'){
+        let startDate = moment(this.invoiceData.invoice_date, this.serviceDateformat);
+        let endDate = moment(this.invoiceData.due_date, this.serviceDateformat);
+
+        return   endDate.diff(startDate, 'days') +' days';
+      }else {
+        return this.termsList[this.invoiceData.term]
+      }
     }
 
 }
