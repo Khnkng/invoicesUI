@@ -147,8 +147,6 @@ export class InvoiceDashboardComponent {
     paymentsTableColumns: Array<any> = ['Payment type/#', 'Received From', 'Date Received', 'Amount/Status'];
     // proposalsTableColumns: Array<any> = ['Number', 'Customer', 'Due Date', 'Invoice Amount', 'Due Amount', 'Status'];
     pdfTableData: any = {"tableHeader": {"values": []}, "tableRows" : {"rows": []} };
-    historyList:Array<any>=[];
-    count: any = 0;
 
     constructor(private _router: Router, private _route: ActivatedRoute,
                 private toastService: ToastService, private loadingService: LoadingService,
