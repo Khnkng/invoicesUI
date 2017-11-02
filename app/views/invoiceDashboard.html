@@ -254,11 +254,14 @@
                       <div class="column medium-6 text-right" style="font-size: 0.85em">{{history.action_at}}</div>
                     </div>
                   </div>
-                  <div class="column medium-12 rdDescription">
-                    <div class="row credit-desc">
-                      <div class="column medium-10">{{history.email_to}}</div>
+                    <div class="column medium-12 rdDescription">
+                        <div class="row credit-desc" *ngIf="history.action!='Partially Paid'||history.action!='Paid'">
+                            <div class="column medium-10">{{history.email_to}}</div>
+                        </div>
+                        <div class="row credit-desc" *ngIf="history.action=='Partially_paid'||history.action=='Paid'">
+                            <div class="column medium-10">Paid Amount: {{formatAmount(history.amount_paid)}}</div>
+                        </div>
                     </div>
-                  </div>
                 </div>
               </div>
             </div>
