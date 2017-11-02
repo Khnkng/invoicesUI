@@ -202,11 +202,11 @@
               <td width="18%" class="text-right">Line Total</td>
             </tr>
             <tr *ngFor="let taskInvoice of taskInvoices" [hidden]="taskInvoices.length<0">
-              <td>{{taskInvoice.item.name}}</td>
-              <td class="truncate">{{taskInvoice.description}}</td>
+              <td *ngIf="!showItemName">{{taskInvoice.item.name}}</td>
+              <td class="truncate" *ngIf="!showDescription">{{taskInvoice.description}}</td>
               <td ></td>
-              <td>{{formatAmount(taskInvoice.price)}}</td>
-              <td>{{formatQuantity(taskInvoice.quantity)}}</td>
+              <td *ngIf="!showUnitCost">{{formatAmount(taskInvoice.price)}}</td>
+              <td *ngIf="!showUOM">{{formatQuantity(taskInvoice.quantity)}}</td>
               <td class="text-right">{{formatAmount(taskInvoice.amount)}}</td>
             </tr>
             <tr>
@@ -518,11 +518,11 @@
               <td width="18%" class="text-right">Line Total</td>
             </tr>
             <tr *ngFor="let taskInvoice of taskInvoices" [hidden]="taskInvoices.length<0">
-              <td>{{taskInvoice.item.name}}</td>
-              <td class="truncate">{{taskInvoice.description}}</td>
+              <td *ngIf="!showItemName">{{taskInvoice.item.name}}</td>
+              <td class="truncate" *ngIf="!showDescription">{{taskInvoice.description}}</td>
               <td ></td>
-              <td>{{formatAmount(taskInvoice.price)}}</td>
-              <td>{{formatQuantity(taskInvoice.quantity)}}</td>
+              <td *ngIf="!showUnitCost">{{formatAmount(taskInvoice.price)}}</td>
+              <td *ngIf="!showUOM">{{formatQuantity(taskInvoice.quantity)}}</td>
               <td class="text-right">{{formatAmount(taskInvoice.amount)}}</td>
             </tr>
             <tr>
@@ -653,19 +653,19 @@
           <table class='middle-tables '>
             <tbody  cellpadding=5 cellspacing=5>
             <tr  class="heading-color friendly" *ngIf="taskInvoices.length>0">
-              <td width="30%">Item</td>
-              <td width="15%">Description</td>
+              <td width="30%" *ngIf="!showItemName">{{tasks}}</td>
+              <td width="15%" *ngIf="!showDescription">Description</td>
               <td ></td>
-              <td width="15%">Rate</td>
-              <td width="8%">Hours</td>
+              <td width="15%" *ngIf="!showUnitCost">{{unitCost}}</td>
+              <td width="8%" *ngIf="!showUOM">{{UOM}}</td>
               <td width="18%" class="text-right">Line Total</td>
             </tr>
             <tr *ngFor="let taskInvoice of taskInvoices" [hidden]="taskInvoices.length<0">
-              <td>{{taskInvoice.item.name}}</td>
-              <td class="truncate">{{taskInvoice.description}}</td>
+              <td *ngIf="!showItemName">{{taskInvoice.item.name}}</td>
+              <td class="truncate" *ngIf="!showDescription">{{taskInvoice.description}}</td>
               <td ></td>
-              <td>{{formatAmount(taskInvoice.price)}}</td>
-              <td>{{formatQuantity(taskInvoice.quantity)}}</td>
+              <td *ngIf="!showUnitCost">{{formatAmount(taskInvoice.price)}}</td>
+              <td *ngIf="!showUOM">{{formatQuantity(taskInvoice.quantity)}}</td>
               <td class="text-right">{{formatAmount(taskInvoice.amount)}}</td>
             </tr>
             <tr>
@@ -826,11 +826,11 @@
               <td width="18%" class="text-right">Line Total</td>
             </tr>
             <tr *ngFor="let taskInvoice of taskInvoices" [hidden]="taskInvoices.length<0">
-              <td>{{taskInvoice.item.name}}</td>
-              <td class="truncate">{{taskInvoice.description}}</td>
+              <td *ngIf="!showItemName">{{taskInvoice.item.name}}</td>
+              <td class="truncate" *ngIf="!showDescription">{{taskInvoice.description}}</td>
               <td ></td>
-              <td>{{formatAmount(taskInvoice.price)}}</td>
-              <td>{{formatQuantity(taskInvoice.quantity)}}</td>
+              <td *ngIf="!showUnitCost">{{formatAmount(taskInvoice.price)}}</td>
+              <td *ngIf="!showUOM">{{formatQuantity(taskInvoice.quantity)}}</td>
               <td class="text-right">{{formatAmount(taskInvoice.amount)}}</td>
             </tr>
             <tr>
