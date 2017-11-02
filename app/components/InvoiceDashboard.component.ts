@@ -943,7 +943,7 @@ export class InvoiceDashboardComponent {
             if(invoicesIds.length>0){
               for (var i = 0; i < invoicesIds.length; i++) {
                 let paymentIdString='invoiceAction-'+i;
-                invoicesString+="<a class='action' data-action="+paymentIdString+"><span class='icon badge je-badge'>P"+i+"</span></a>"
+                invoicesString+="<a class='action' data-action="+paymentIdString+"><span class='icon badge je-badge'>I"+i+"</span></a>"
               }
             }
           let JeString="";
