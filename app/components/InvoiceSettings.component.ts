@@ -12,6 +12,7 @@ import {InvoicesService} from "../services/Invoices.service";
 import {UUID} from "angular2-uuid";
 import {ToastService} from "qCommon/app/services/Toast.service";
 import {TOAST_TYPE} from "qCommon/app/constants/Qount.constants";
+import {LoadingService} from "qCommon/app/services/LoadingService";
 
 declare let jQuery:any;
 declare let Foundation:any;
@@ -35,13 +36,17 @@ export class InvoiceSettingsComponent implements  OnInit {
   userID:any;
 
   constructor(private _fb: FormBuilder, private _invoiceSettingsForm: InvoiceSettingsForm, private dss: DomSanitizer,
-      private invoiceService: InvoicesService, private toastService: ToastService){
+      private invoiceService: InvoicesService, private toastService: ToastService, private loadingService: LoadingService){
     this.invoiceSettingsForm = this._fb.group(this._invoiceSettingsForm.getForm());
     this.companyId = Session.getCurrentCompany();
     this.userID=Session.getUser().id;
     if(this.companyId){
+      this.loadingService.triggerLoadingEvent(true);
       this.invoiceService.getPreference(this.companyId,this.userID)
-          .subscribe(preference => this.processPreference(preference), error => this.handleError(error));
+          .subscribe(preference => this.processPreference(preference), error => {
+            this.loadingService.triggerLoadingEvent(false);
+            this.toastService.pop(TOAST_TYPE.error, "Failed to load invoice preferences");
+          });
     }
     this.getCompanyLogo();
     this.uploader = new FileUploader(<FileUploaderOptions>{
@@ -65,8 +70,9 @@ export class InvoiceSettingsComponent implements  OnInit {
   }
 
   processPreference(preference){
+    this.loadingService.triggerLoadingEvent(false);
     this.preference = preference;
-    if(preference && preference.companyLogo){
+    if(preference){
       //this.logoURL = preference.companyLogo;
       this.populateColumns();
       this._invoiceSettingsForm.updateForm(this.invoiceSettingsForm, preference);
@@ -78,7 +84,7 @@ export class InvoiceSettingsComponent implements  OnInit {
       this.preference.otherUnits = this.preference.units;
       this.preference.units = 'Other';
     }
-    if(["Items", "Products", "Services"].indexOf(this.preference.items) == -1){
+    if(["Item", "Product", "Service", "Task"].indexOf(this.preference.items) == -1){
       this.preference.otherItems = this.preference.items;
       this.preference.items = 'Other';
     }
@@ -151,21 +157,26 @@ export class InvoiceSettingsComponent implements  OnInit {
 
   submit($event){
     $event && $event.preventDefault();
+    this.loadingService.triggerLoadingEvent(true);
     let data = this._invoiceSettingsForm.getData(this.invoiceSettingsForm);
     if(this.preference && !_.isEmpty(this.preference)){
       data.id = this.preference.id;
       this.invoiceService.updatePreference(this.cleanData(data), this.preference.id, this.companyId)
           .subscribe(response => {
+            this.loadingService.triggerLoadingEvent(false);
             this.toastService.pop(TOAST_TYPE.success, "Invoice Preference updated successfully");
           }, error => {
+            this.loadingService.triggerLoadingEvent(false);
             this.toastService.pop(TOAST_TYPE.error, "Could not update Invoice Preference");
           });
     } else{
       data.id = UUID.UUID();
       this.invoiceService.createPreference(this.cleanData(data), this.companyId)
           .subscribe(response => {
+            this.loadingService.triggerLoadingEvent(false);
             this.toastService.pop(TOAST_TYPE.success, "Invoice Preference created successfully");
           }, error => {
+            this.loadingService.triggerLoadingEvent(false);
             this.toastService.pop(TOAST_TYPE.error, "Could not create Invoice Preference");
           });
     }

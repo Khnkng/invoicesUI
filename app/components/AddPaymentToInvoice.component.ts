@@ -36,6 +36,16 @@ export class InvoiceAddPayment{
     routeSubscribe:any;
     companyAddress:any;
     accounts:any;
+    tasks:string="Task";
+    showTask:boolean=true;
+    UOM:string="Quantity";
+    showUOM:boolean=true;
+    unitCost:string="Price";
+    showUnitCost:boolean=true;
+    showDescription:boolean=true;
+    showItemName:boolean=true;
+    showInvoice:boolean;
+    templateType:string;
 
     constructor(private switchBoard: SwitchBoard, private _router:Router, private _route: ActivatedRoute, private toastService: ToastService,
                 private loadingService:LoadingService, private titleService:pageTitleService, private stateService: StateService, private invoiceService: InvoicesService,private customerService: CustomersService,private dateFormater:DateFormater,
@@ -59,6 +69,7 @@ export class InvoiceAddPayment{
     }
 
     getCompanyDetails(){
+        this.loadingService.triggerLoadingEvent(true);
         this.companyService.company(Session.getCurrentCompany())
             .subscribe(companyAddress => {
                 if(companyAddress){
@@ -71,8 +82,9 @@ export class InvoiceAddPayment{
                     };
                     this.companyAddress=address;
                 }
-                this.loadInvoiceData();
+                this.loadInvoicePreferences();
             },error=>{
+                this.loadingService.triggerLoadingEvent(false);
                 this.toastService.pop(TOAST_TYPE.error, "Failed to load your Company details");
             });
 
@@ -84,15 +96,37 @@ export class InvoiceAddPayment{
             this._router.navigate([prevState.url]);
         }
     }
+
+    loadInvoicePreferences(){
+      this.invoiceService.getPreference(Session.getCurrentCompany(),Session.getUser().id)
+        .subscribe(preference => {
+          if(preference){
+            this.tasks=preference.items;
+            this.UOM=preference.units;
+            this.unitCost=preference.price;
+            this.showDescription=preference.hideItemDescription;
+            this.showUnitCost=preference.hidePrice;
+            this.showUOM=preference.hideUnits;
+            this.showItemName=preference.hideItemName;
+            this.templateType=preference.templateType;
+            this.loadInvoiceData();
+          }else {
+            this.loadingService.triggerLoadingEvent(false);
+            this.toastService.pop(TOAST_TYPE.error, "Please create invoice settings");
+          }
+        }, error =>{
+          this.toastService.pop(TOAST_TYPE.error, "Please create invoice settings");
+        });
+    }
+
     loadInvoiceData() {
-        let base = this;
-        this.loadingService.triggerLoadingEvent(true);
         this.invoiceService.getInvoice(this.invoiceID).subscribe(invoices=>{
             if(invoices) {
                 invoices.company=this.companyAddress;
-                base.invoiceData = invoices;
+                this.setTemplateSettings(invoices);
+                this.invoiceData = invoices;
                 this.applyObject.reference_number = invoices.number;
-                base.hasInvoiceData = true;
+                this.hasInvoiceData = true;
             }
             this.loadingService.triggerLoadingEvent(false);
         },error=>this.handleError(error));
@@ -100,6 +134,17 @@ export class InvoiceAddPayment{
 
     setPaymentMethod(paymentMethod){
         this.applyObject.payment_method = paymentMethod.target.value;
+    }
+
+    setTemplateSettings(data){
+      data.templateType=this.templateType;
+      data.tasks=this.tasks;
+      data.UOM=this.UOM;
+      data.unitCost=this.unitCost;
+      data.showDescription=this.showDescription;
+      data.showUnitCost=this.showUnitCost;
+      data.showUOM=this.showUOM;
+      data.showItemName=this.showItemName;
     }
 
     handleError(error) {
