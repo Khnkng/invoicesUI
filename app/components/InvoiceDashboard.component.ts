@@ -145,6 +145,7 @@ export class InvoiceDashboardComponent {
     paymentsTableColumns: Array<any> = ['Payment type/#', 'Received From', 'Date Received', 'Amount/Status'];
     // proposalsTableColumns: Array<any> = ['Number', 'Customer', 'Due Date', 'Invoice Amount', 'Due Amount', 'Status'];
     pdfTableData: any = {"tableHeader": {"values": []}, "tableRows" : {"rows": []} };
+    showDownloadIcon:string = "hidden";
 
     constructor(private _router: Router, private _route: ActivatedRoute,
                 private toastService: ToastService, private loadingService: LoadingService,
@@ -179,6 +180,7 @@ export class InvoiceDashboardComponent {
             this.selectTab(this.selectedTab, "");
             this.hasInvoices = false;
             this.hasPaidInvoices = false;
+            this.showDownloadIcon = "hidden";
             this.companyCurrency = Session.getCurrentCompanyCurrency();
         });
         this.localBadges = JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
@@ -852,7 +854,8 @@ export class InvoiceDashboardComponent {
 
         setTimeout(function () {
             base.hasInvoices = true;
-        }, 0)
+        }, 0);
+        this.displayFooTableDropdown();
         this.loadingService.triggerLoadingEvent(false);
     }
 
@@ -917,7 +920,8 @@ export class InvoiceDashboardComponent {
 
         setTimeout(function(){
             base.hasPaidInvoices = true;
-        }, 0)
+        }, 0);
+        this.displayFooTableDropdown();
         this.loadingService.triggerLoadingEvent(false);
     }
 
@@ -1218,6 +1222,13 @@ export class InvoiceDashboardComponent {
                 this.toastService.pop(TOAST_TYPE.error, "Failed to Export table into PDF");
             });
 
+    }
+
+    displayFooTableDropdown(){
+        let base = this;
+        setTimeout(function() {
+            base.showDownloadIcon = "visible";
+        },700);
     }
 
 }
