@@ -177,6 +177,7 @@ export class InvoiceDashboardComponent {
             "numberOfPeriods": "3",
         };
         this.routeSub = this._route.params.subscribe(params => {
+            this.hideFlyout();
             this.selectedTab = params['tabId'];
             this.selectTab(this.selectedTab, "");
             this.hasInvoices = false;
@@ -1089,7 +1090,8 @@ export class InvoiceDashboardComponent {
 
     hideFlyout(){
       this.historyFlyoutCSS = "collapsed";
-        this.titleService.setPageTitle("Invoicess");
+        if(this.selectedTab==2)
+        this.titleService.setPageTitle("Invoices");
     }
 
 
