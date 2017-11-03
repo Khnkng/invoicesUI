@@ -90,6 +90,19 @@ export class InvoiceComponent{
     serviceDateformat:string;
     PdfData:any;
     isPastDue:boolean;
+    tasks:string="Task";
+    showTask:boolean=true;
+    UOM:string="Quantity";
+    showUOM:boolean=true;
+    unitCost:string="Price";
+    showUnitCost:boolean=true;
+    showDescription:boolean=true;
+    showItemName:boolean=true;
+    showInvoice:boolean;
+    templateType:string;
+    historyFlyoutCSS:any;
+    historyList:Array<any>=[];
+    count:any=0;
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
@@ -99,7 +112,7 @@ export class InvoiceComponent{
         this.titleService.setPageTitle("Invoices");
         let _form:any = this._invoiceForm.getForm();
         _form['invoiceLines'] = this.invoiceLineArray;
-        _form['taskLines'] = this.tasksLineArray;
+       // _form['taskLines'] = this.tasksLineArray;
         this.dateFormat = dateFormater.getFormat();
         this.serviceDateformat = dateFormater.getServiceDateformat();
         this.companyCurrency=Session.getCurrentCompanyCurrency();
@@ -111,6 +124,8 @@ export class InvoiceComponent{
             this.loadInitialData();
             this.loadCOA();
             this.getCompanyDetails();
+            this.getCompanyPreferences();
+
         });
         this.getCompanyLogo();
         if(this._router.url.indexOf('duplicate')!=-1){
@@ -119,6 +134,8 @@ export class InvoiceComponent{
         this.routeSubscribe = switchBoard.onClickPrev.subscribe(title => {
             if(this.dimensionFlyoutCSS == "expanded"){
                 this.hideFlyout();
+            }else if(this.historyFlyoutCSS=="expanded"){
+                this.hideHistoryFlyout();
             }else{
                 this.gotoPreviousState();
             }
@@ -141,6 +158,27 @@ export class InvoiceComponent{
         }else {
             this._router.navigate([previousState.url]);
         }
+    }
+
+    getCompanyPreferences(){
+      this.invoiceService.getPreference(Session.getCurrentCompany(),Session.getUser().id)
+        .subscribe(preference => {
+          if(preference){
+            this.tasks=preference.items;
+            this.UOM=preference.units;
+            this.unitCost=preference.price;
+            this.showDescription=preference.hideItemDescription;
+            this.showUnitCost=preference.hidePrice;
+            this.showUOM=preference.hideUnits;
+            this.showItemName=preference.hideItemName;
+            this.templateType=preference.templateType;
+            this.showInvoice=true;
+          }else {
+            this.toastService.pop(TOAST_TYPE.error, "Please create invoice settings");
+          }
+        }, error =>{
+          this.toastService.pop(TOAST_TYPE.error, "Please create invoice settings");
+        });
     }
 
     loadCustomers(companyId:any) {
@@ -179,8 +217,8 @@ export class InvoiceComponent{
         this.codeService.itemCodes(companyId)
             .subscribe(itemCodes => {
                 this.itemCodes = itemCodes;
-                this.taskItemCodes = _.filter(itemCodes, {'is_service': true});
-                this.itemItemCodes = _.filter(itemCodes, {'is_service': false});
+                //this.taskItemCodes = _.filter(itemCodes, {'is_service': true});
+                this.itemItemCodes = itemCodes;
                 this.loadTaxList(companyId);
             },error=>{
                 this.toastService.pop(TOAST_TYPE.error, "Failed to load your Items");
@@ -209,7 +247,7 @@ export class InvoiceComponent{
             this.newInvoice = true;
             for(let i=0; i<2; i++){
                 this.addInvoiceList(null,'item');
-                this.addInvoiceList(null,'task');
+               // this.addInvoiceList(null,'task');
             }
             this.titleService.setPageTitle("New Invoice");
         } else {
@@ -232,19 +270,20 @@ export class InvoiceComponent{
                 this.isPastDue=invoice.is_past_due;
                 let _invoice = _.cloneDeep(invoice);
                 delete _invoice.invoiceLines;
-                let taskLines:Array<any> = [];
+        //        let taskLines:Array<any> = [];
                 let itemLines:Array<any> = [];
                 if(invoice.remainder_name){
                   this.remainder_name=invoice.remainder_name;
                 }
-                taskLines =  _.filter(this.invoice.invoiceLines, function(invoice) { return invoice.type == 'task'; });
-                itemLines =  _.filter(this.invoice.invoiceLines, function(invoice) { return invoice.type == 'item'; });
+        //        taskLines =  _.filter(this.invoice.invoiceLines, function(invoice) { return invoice.type == 'task'; });
+       // itemLines =  _.filter(this.invoice.invoiceLines, function(invoice) { return invoice.type == 'item'; });
+        itemLines =this.invoice.invoiceLines;  //_.filter(, function(invoice) { return invoice.type == 'item'; });
 
-                if(taskLines.length==0){
+                /*if(taskLines.length==0){
                     for(let i=0; i<2; i++){
                         this.addInvoiceList(null,'task');
                     }
-                }if(itemLines.length==0){
+                }*/if(itemLines.length==0){
                     for(let i=0; i<2; i++){
                         this.addInvoiceList(null,'item');
                     }
@@ -287,18 +326,19 @@ export class InvoiceComponent{
 
     }
 
-    addInvoiceList(line?:any,type?:any) {
-        let base = this;
-        if(type=='task'){
-            let _taskForm:any = this._invoiceLineForm.getForm(line);
-            let tasksListForm = this._fb.group(_taskForm);
-            this.tasksLineArray.push(tasksListForm);
-        }else if(type=='item'){
-            let _form:any = this._invoiceLineForm.getForm(line);
-            let invoiceListForm = this._fb.group(_form);
-            this.invoiceLineArray.push(invoiceListForm);
-        }
-    }
+  addInvoiceList(line?:any,type?:any) {
+    let base = this;
+    /*if(type=='task'){
+      let _taskForm:any = this._invoiceLineForm.getForm(line);
+      let tasksListForm = this._fb.group(_taskForm);
+      this.tasksLineArray.push(tasksListForm);
+    }else if(type=='item'){
+
+    }*/
+    let _form:any = this._invoiceLineForm.getForm(line);
+    let invoiceListForm = this._fb.group(_form);
+    this.invoiceLineArray.push(invoiceListForm);
+  }
 
     deleteInvoiceLine(index,type) {
         if(type=='item'){
@@ -423,13 +463,13 @@ export class InvoiceComponent{
 
             });
         }
-        if(invoiceData.taskLines) {
+        /*if(invoiceData.taskLines) {
             invoiceData.taskLines.forEach(function (invoiceLine) {
                 if(!invoiceLine.destroy){
                     taskTotal = taskTotal + base.calcAmt(invoiceLine.price, invoiceLine.quantity);
                 }
             });
-        }
+        }*/
         baseTotal=Number(total.toFixed(2))+Number(taskTotal.toFixed(2));
 
         this.subTotal=baseTotal;
@@ -454,7 +494,7 @@ export class InvoiceComponent{
                 }
             });
         }
-        if(invoiceData.taskLines) {
+        /*if(invoiceData.taskLines) {
             invoiceData.taskLines.forEach(function (invoiceLine) {
                 let total = base.calcAmt(invoiceLine.price, invoiceLine.quantity);
                 if(invoiceLine.tax_id) {
@@ -464,7 +504,7 @@ export class InvoiceComponent{
                     }
                 }
             });
-        }
+        }*/
         baseTotal=Number(lineTaxTotal.toFixed(2))+Number(itemTaxTotal.toFixed(2));
         this.taxTotal=baseTotal;
         return this.taxTotal;
@@ -475,14 +515,14 @@ export class InvoiceComponent{
         $event.preventDefault();
         $event.stopPropagation();
         let itemLines=[];
-        let taskLines=[];
+        //let taskLines=[];
         let invoiceData = this._invoiceForm.getData(this.invoiceForm);
         let base = this;
         invoiceData.invoice_date = this.dateFormater.formatDate(invoiceData.invoice_date,this.dateFormat,this.serviceDateformat);
         invoiceData.due_date = this.dateFormater.formatDate(invoiceData.due_date,this.dateFormat,this.serviceDateformat);
         invoiceData.amount = Number((this.amount).toFixed(2));
         delete invoiceData.invoiceLines;
-        taskLines=this.getInvoiceLines('task');
+        //taskLines=this.getInvoiceLines('task');
         itemLines=this.getInvoiceLines('item');
 
         if(this.totalAmount<0){
@@ -490,18 +530,19 @@ export class InvoiceComponent{
             return
         }
 
-        if(taskLines.length==0&&itemLines.length==0){
-            this.toastService.pop(TOAST_TYPE.error, "Please add Tasks or Item Lines");
+        if(itemLines.length==0){
+            this.toastService.pop(TOAST_TYPE.error, "Please add invoive lines");
             return
         }
 
-        if(this.validateLines(itemLines,'item')||this.validateLines(taskLines,'task')){
+        if(this.validateLines(itemLines,'item')){
             return;
         }
         invoiceData.sub_total=Number((this.subTotal).toFixed(2));
         invoiceData.amount_due=Number((this.totalAmount).toFixed(2));
         invoiceData.tax_amount=Number((this.taxTotal).toFixed(2));
-        invoiceData.invoiceLines=itemLines.concat(taskLines);
+        //invoiceData.invoiceLines=itemLines.concat(taskLines);
+        invoiceData.invoiceLines=itemLines;
         invoiceData.recepientsMails=this.maillIds;
         invoiceData.sendMail=sendMail;
         invoiceData.company=this.companyAddress;
@@ -511,6 +552,7 @@ export class InvoiceComponent{
         invoiceData.logoURL = this.logoURL;
         invoiceData.state=this.invoiceID?this.invoice.state:'draft';
         invoiceData.isPastDue=this.isPastDue;
+        this.setTemplateSettings(invoiceData);
         this.invoiceProcessedData=invoiceData;
         if(action=='email'){
           if(!this.showPreview)
@@ -550,6 +592,17 @@ export class InvoiceComponent{
         }
     }
 
+    setTemplateSettings(data){
+      data.templateType=this.templateType;
+      data.tasks=this.tasks;
+      data.UOM=this.UOM;
+      data.unitCost=this.unitCost;
+      data.showDescription=this.showDescription;
+      data.showUnitCost=this.showUnitCost;
+      data.showUOM=this.showUOM;
+      data.showItemName=this.showItemName;
+    }
+
 
     openEmailDailog(){
         jQuery('#invoice-email-conformation').foundation('open');
@@ -568,6 +621,7 @@ export class InvoiceComponent{
       this.resetEmailDailogFields();
       jQuery('#invoice-email-conformation').foundation('close');
     }
+
     resetEmailDailogFields(){
         this.additionalMails=null;
         this.remainder_name="";
@@ -594,7 +648,7 @@ export class InvoiceComponent{
         this.loadingService.triggerLoadingEvent(true);
         delete invoiceData.company;
         delete invoiceData.customer;
-        delete invoiceData.taskLines;
+        //delete invoiceData.taskLines;
         delete invoiceData.logoURL;
         if(invoiceData.sendMail){
           invoiceData.pdf_data=this.PdfData;
@@ -645,11 +699,12 @@ export class InvoiceComponent{
         let itemCode = _.find(this.itemCodes, {'id': item});
         let itemsControl:any;
         let itemControl:any;
-        if(type=='item'){
+        /*if(type=='item'){
             itemsControl=this.invoiceForm.controls['invoiceLines'];
         }else if(type=='task'){
             itemsControl=this.invoiceForm.controls['taskLines'];
-        }
+        }*/
+      itemsControl=this.invoiceForm.controls['invoiceLines'];
         if(itemCode){
             itemControl= itemsControl.controls[index];
             itemControl.controls['description'].patchValue(itemCode.desc);
@@ -758,12 +813,13 @@ export class InvoiceComponent{
         this.itemActive = true;
         this.dimensionFlyoutCSS = "expanded";
         this.editLineType=type;
-        if(type=="taskLines"){
+        /*if(type=="taskLines"){
             itemsControl = this.invoiceForm.controls['taskLines'];
         }else {
             itemsControl = this.invoiceForm.controls['invoiceLines'];
-        }
+        }*/
 
+        itemsControl = this.invoiceForm.controls['invoiceLines'];
         data =this._invoiceLineForm.getData(itemsControl.controls[index]);
         this.selectedDimensions = data.dimensions;
         this.editItemForm = this._fb.group(this._invoiceLineForm.getForm(data));
@@ -780,21 +836,29 @@ export class InvoiceComponent{
         this.selectedDimensions = [];
     }
 
-    saveItem(){
-        let dimensions = this.editItemForm.controls['dimensions'];
-        dimensions.patchValue(this.selectedDimensions);
-        let itemData = this._invoiceLineForm.getData(this.editItemForm);
-        this.updateLineInView(itemData);
-        this.hideFlyout();
-    }
+  hideHistoryFlyout(){
+        this.historyFlyoutCSS="collapsed";
+        this.titleService.setPageTitle("Edit Invoice");
+        this.historyList=[];
+        this.count=0;
+  }
+
+  saveItem(){
+    let dimensions = this.editItemForm.controls['dimensions'];
+    dimensions.patchValue(this.selectedDimensions);
+    let itemData = this._invoiceLineForm.getData(this.editItemForm);
+    this.updateLineInView(itemData);
+    this.hideFlyout();
+  }
 
     updateLineInView(item){
         let itemsControl:any;
-        if(this.editLineType=="taskLines"){
+        /*if(this.editLineType=="taskLines"){
             itemsControl=this.invoiceForm.controls['taskLines'];
         }else {
             itemsControl=this.invoiceForm.controls['invoiceLines'];
-        }
+        }*/
+        itemsControl=this.invoiceForm.controls['invoiceLines'];
         let itemControl = itemsControl.controls[this.editItemIndex];
         itemControl.controls['description'].patchValue(item.description);
         itemControl.controls['price'].patchValue(item.price);
@@ -814,11 +878,11 @@ export class InvoiceComponent{
             linesControl= this.invoiceForm.controls['invoiceLines'];
             this.resetAllLinesFromEditing(linesControl);
             itemForm.editable = !itemForm.editable;
-        }else if(!this.hasPaid&&type=='task'){
+        }/*else if(!this.hasPaid&&type=='task'){
             linesControl= this.invoiceForm.controls['taskLines'];
             this.resetAllLinesFromEditing(linesControl);
             itemForm.editable = !itemForm.editable;
-        }
+        }*/
         if(!this.hasPaid&&index == this.getLastActiveLineIndex(linesControl)){
             this.addInvoiceList(null,type);
         }
@@ -892,11 +956,12 @@ export class InvoiceComponent{
         let base = this;
         let lines = [];
         let lineListControl:any;
-        if(type=='task'){
+        /*if(type=='task'){
             lineListControl=this.invoiceForm.controls['taskLines'];
         }else if(type=='item'){
             lineListControl=this.invoiceForm.controls['invoiceLines'];
-        }
+        }*/
+        lineListControl=this.invoiceForm.controls['invoiceLines'];
         let defaultLine = this._invoiceLineForm.getData(this._fb.group(this._invoiceLineForm.getForm()));
         _.each(lineListControl.controls, function(lineListForm){
             let lineData = base._invoiceLineForm.getData(lineListForm);
@@ -947,29 +1012,17 @@ export class InvoiceComponent{
         _.each(lines, function(line){
             if(!line.destroy){
                 if(!line.item_id){
-                    if(type=='task'){
-                        base.toastService.pop(TOAST_TYPE.error, "Please select task");
-                    }else {
-                        base.toastService.pop(TOAST_TYPE.error, "Please select item");
-                    }
+                    base.toastService.pop(TOAST_TYPE.error, "Please select "+base.tasks);
                     result = true;
                     return false;
                 }
                 if(!line.quantity){
-                    if(type=='task'){
-                        base.toastService.pop(TOAST_TYPE.error, "Hours should grater than zero");
-                    }else {
-                        base.toastService.pop(TOAST_TYPE.error, "Quantity should grater than zero");
-                    }
+                    base.toastService.pop(TOAST_TYPE.error, base.UOM+" should grater than zero");
                     result = true;
                     return false;
                 }
                 if(!line.price){
-                    if(type=='task'){
-                        base.toastService.pop(TOAST_TYPE.error, "Rate should grater than zero");
-                    }else {
-                        base.toastService.pop(TOAST_TYPE.error, "Unit cost grater than zero");
-                    }
+                    base.toastService.pop(TOAST_TYPE.error, base.unitCost +" grater than zero");
                     result = true;
                     return false;
                 }
@@ -1006,7 +1059,7 @@ export class InvoiceComponent{
           styleString += styleHtml[i].outerHTML;
         }
       }
-      let html = jQuery('<div>').append(styleString).append(jQuery('#payment-preview').clone()).html();
+      let html = jQuery('<div>').append(styleString).append(jQuery('#prev-'+this.templateType).clone()).html();
       if(imgString)
         html = html.replace(imgString,imgString.replace('>','/>'));
       let pdfReq={
@@ -1094,5 +1147,37 @@ export class InvoiceComponent{
                 }
             }
         });
+    }
+
+    showHistory(){
+        this.loadingService.triggerLoadingEvent(true);
+        this.invoiceService.history(this.invoiceID).subscribe(history => {
+            this.titleService.setPageTitle("Invoices History");
+            this.historyFlyoutCSS="expanded";
+            this.historyList=history;
+            this.updateCredits(this.historyList);
+            this.loadingService.triggerLoadingEvent(false);
+        }, error => {
+            this.toastService.pop(TOAST_TYPE.error, "Failed to load invoice history");
+            this.loadingService.triggerLoadingEvent(false);
+        });
+    }
+
+    getCircleColor() {
+        let colors = ["2px solid #44B6E8", "2px solid #18457B", "2px solid #00B1A9", "2px solid #F06459", "2px solid #22B473","2px solid #384986","2px solid #4554A4 "];
+        if (this.count < 7) {
+            this.count++;
+            return colors[this.count - 1];
+        } else {
+            this.count = 0;
+            return colors[this.count];
+        }
+    };
+
+
+    updateCredits(credits) {
+        for(var i in credits){
+            credits[i]["color"] = this.getCircleColor();
+        }
     }
 }
