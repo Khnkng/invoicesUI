@@ -157,7 +157,7 @@
                                 </div>
                             </div>
                         </div>
-                        <foo-table class="bigpay-dashboard bighalf-footable invoice-table" *ngIf="hasProposals" [data]="proposalsTableData" [options]="proposalsTableOptions" (onRowAction)="handleProposalAction($event)" (onRowSelect)="handleSelect($event)" #proposalsTable></foo-table>
+                        <foo-table class="bigpay-dashboard bighalf-footable invoice-table" *ngIf="hasProposals" [data]="proposalsTableData" [options]="proposalsTableOptions" (onSearch)="setSearchString($event)" (onRowAction)="handleProposalAction($event)" (onRowSelect)="handleSelect($event)" #proposalsTable></foo-table>
                         <div class=" callout text-center" [hidden]="isLoading" *ngIf="!hasProposals">
                             <div class="woo-woo">Woot Woot!</div>
                             <p>There are no Proposals.</p>
@@ -185,7 +185,7 @@
                                 </div>
                             </div>
                         </div>
-                        <foo-table class="bigpay-dashboard bighalf-footable invoice-table" *ngIf="hasInvoices" [data]="invoiceTableData" [options]="invoiceTableOptions" (onRowAction)="handleAction($event)" (onRowSelect)="handleSelect($event)" #invoicesTable></foo-table>
+                        <foo-table class="bigpay-dashboard bighalf-footable invoice-table" *ngIf="hasInvoices" [data]="invoiceTableData" [options]="invoiceTableOptions" (onSearch)="setSearchString($event)" (onRowAction)="handleAction($event)" (onRowSelect)="handleSelect($event)" #invoicesTable></foo-table>
                         <div class=" callout text-center" [hidden]="isLoading" *ngIf="!hasInvoices">
                             <div class="woo-woo">Woot Woot!</div>
                             <p>There are no Invoices.</p>
@@ -213,7 +213,7 @@
                                 </div>
                             </div>
                         </div>
-                        <foo-table class="bigpay-dashboard bighalf-footable invoice-table" *ngIf="hasPaidInvoices" [data]="paidInvoiceTableData" [options]="paidInvoiceTableOptions" (onRowAction)="handleAction($event)" (onRowSelect)="handleSelect($event)" #paidTable></foo-table>
+                        <foo-table class="bigpay-dashboard bighalf-footable invoice-table" *ngIf="hasPaidInvoices" [data]="paidInvoiceTableData" [options]="paidInvoiceTableOptions" (onSearch)="setSearchString($event)" (onRowAction)="handleAction($event)" (onRowSelect)="handleSelect($event)" #paidTable></foo-table>
                         <div class=" callout text-center" [hidden]="isLoading" *ngIf="!hasPaidInvoices">
                             <div class="woo-woo">Woot Woot!</div>
                             <p>There are no Invoices.</p>
@@ -233,41 +233,41 @@
 </div>
 
 <div class="report-wrapper journal-flyout">
-  <div class="sidenav customization-panel" [ngClass]="historyFlyoutCSS" foundation>
-    <div class="row collapse dimension-flyout">
-      <div class="small-12 medium-12 small-centered column">
-        <!--<h5>Invoice History</h5>-->
-        <div style="margin:20px 0 30px 0">
-          <div *ngIf="historyList.length>0">
-            <div class="row rdCircles" *ngFor="let history of historyList; let last=last;">
-              <div class="column medium-1" style="padding-left: 55px">
-                <div class="dec1" [style.border]="history.color"></div>
-                <div class="dec2"></div>
-                <div class="dec1" *ngIf="last? true:false;" [style.border]="history.color"></div>
-              </div>
-              <div class="column medium-11" style="padding-left:0px">
-                <div class="row rdCredits">
-                  <div class="column medium-12">
-                    <div class="row creditInfo">
-                      <div class="column medium-6 text-left">{{history.action}}</div>
-                      <div class="column medium-6 text-right" style="font-size: 0.85em">{{history.action_at}}</div>
-                    </div>
-                  </div>
-                    <div class="column medium-12 rdDescription">
-                        <div class="row credit-desc" *ngIf="history.action!='Partially paid'||history.action!='Paid'">
-                            <div class="column medium-10">{{history.email_to}}</div>
+    <div class="sidenav customization-panel" [ngClass]="historyFlyoutCSS" foundation>
+        <div class="row collapse dimension-flyout">
+            <div class="small-12 medium-12 small-centered column">
+                <!--<h5>Invoice History</h5>-->
+                <div style="margin:20px 0 30px 0">
+                    <div *ngIf="historyList.length>0">
+                        <div class="row rdCircles" *ngFor="let history of historyList; let last=last;">
+                            <div class="column medium-1" style="padding-left: 55px">
+                                <div class="dec1" [style.border]="history.color"></div>
+                                <div class="dec2"></div>
+                                <div class="dec1" *ngIf="last? true:false;" [style.border]="history.color"></div>
+                            </div>
+                            <div class="column medium-11" style="padding-left:0px">
+                                <div class="row rdCredits">
+                                    <div class="column medium-12">
+                                        <div class="row creditInfo">
+                                            <div class="column medium-6 text-left">{{history.action}}</div>
+                                            <div class="column medium-6 text-right" style="font-size: 0.85em">{{history.action_at}}</div>
+                                        </div>
+                                    </div>
+                                    <div class="column medium-12 rdDescription">
+                                        <div class="row credit-desc" *ngIf="history.action!='Partially paid'||history.action!='Paid'">
+                                            <div class="column medium-10">{{history.email_to}}</div>
+                                        </div>
+                                        <div class="row credit-desc" *ngIf="history.action=='Partially paid'||history.action=='Paid'">
+                                            <div class="column medium-10">Paid Amount: {{formatAmount(history.amount_paid)}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="row credit-desc" *ngIf="history.action=='Partially paid'||history.action=='Paid'">
-                            <div class="column medium-10">Paid Amount: {{formatAmount(history.amount_paid)}}</div>
-                        </div>
                     </div>
+                    <div *ngIf="historyList.length==0" class="text-center">History is not available.</div>
                 </div>
-              </div>
             </div>
-          </div>
-          <div *ngIf="historyList.length==0" class="text-center">History is not available.</div>
         </div>
-      </div>
     </div>
-  </div>
 </div>

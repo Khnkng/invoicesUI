@@ -648,7 +648,6 @@ export class InvoiceComponent{
         this.loadingService.triggerLoadingEvent(true);
         delete invoiceData.company;
         delete invoiceData.customer;
-        //delete invoiceData.taskLines;
         delete invoiceData.logoURL;
         if(invoiceData.sendMail){
           invoiceData.pdf_data=this.PdfData;
@@ -656,7 +655,6 @@ export class InvoiceComponent{
         if(this.newInvoice||this.isDuplicate) {
             this.invoiceService.createInvoice(invoiceData).subscribe(resp => {
                 this.toastService.pop(TOAST_TYPE.success, "Invoice created successfully");
-                //this.navigateToDashborad();
                 this.gotoPreviousState();
             }, error=>{
                 if(error&&JSON.parse(error))
@@ -668,6 +666,7 @@ export class InvoiceComponent{
         } else {
             this.invoiceService.updateInvoice(invoiceData).subscribe(resp => {
                 this.toastService.pop(TOAST_TYPE.success, "Invoice updated successfully");
+                this.setUpdatedFlagInStates();
                 this.navigateToDashborad();
             }, error=>{
                 if(error&&JSON.parse(error))
@@ -679,12 +678,24 @@ export class InvoiceComponent{
         }
     }
 
-
-
+    setUpdatedFlagInStates(){
+        if(this.stateService.states) {
+            _.each(this.stateService.states, function(state){
+                let data = state.data || {};
+                data.refreshData = true;
+                state.data = data;
+            });
+        }
+    }
 
     navigateToDashborad(){
-        let link = ['invoices/dashboard',2];
-        this._router.navigate(link);
+        let prevState = this.stateService.getPrevState();
+        if(prevState){
+            this._router.navigate([prevState.url]);
+        } else{
+            let link = ['invoices/dashboard',2];
+            this._router.navigate(link);
+        }
     }
 
     selectTerm(term) {
