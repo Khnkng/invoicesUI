@@ -353,17 +353,20 @@
 
                                         <div class="small-12 medium-3 columns">
                                             <div class="row" >
-                                                <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;" *ngIf="!newInvoice">
-                                                    <button (click)="showHistory()" class="button small" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;height: 25px;">View History</button>
-                                                </div>
                                                 <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;" *ngIf="newInvoice||(invoice&&invoice.state=='draft')">
                                                     <button (click)="submit($event,false,'draft')" class="button small" [disabled]="hasPaid||!invoiceForm.valid||!validateTaskLines()" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;height: 25px;">Save as Draft</button>
                                                 </div>
                                                 <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;" *ngIf="!newInvoice&&(invoice&&(invoice.state!='draft'&&invoice.state!='paid'))">
                                                     <button (click)="submit($event,false,'save')" class="button small" [disabled]="hasPaid||!invoiceForm.valid||!validateTaskLines()" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;height: 25px;">Save</button>
                                                 </div>
-                                                <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;">
+                                                <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 40px;" *ngIf="newInvoice">
                                                     <button [disabled]="!invoiceForm.valid||!validateTaskLines()" (click)="submit($event,false,'preview')" class="button small" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;">{{preViewText}}</button>
+                                                </div>
+                                                <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;" *ngIf="!newInvoice">
+                                                    <button [disabled]="!invoiceForm.valid||!validateTaskLines()" (click)="submit($event,false,'preview')" class="button small" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;">{{preViewText}}</button>
+                                                </div>
+                                                <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 40px;" *ngIf="!newInvoice">
+                                                    <button (click)="showHistory()" class="button small" style="padding: 0;background-color: white !important;color: #4b4b9e;font-size: 14px;">View History</button>
                                                 </div>
                                                 <!--<div *ngIf="showPreview" class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;">
                                                     <button (click)="submit($event,false,'preview')" class="button small" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;">Close Preview</button>
@@ -394,6 +397,59 @@
                                                     </label>
                                                 </div>
                                             </div>
+                                            <div class="row" *ngIf="!showPreview">
+                                                <div class="small-12 medium-12 columns" style="padding: 0px">
+                                                    <label>
+                                                        Add Attachments
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div *ngIf="!showPreview">
+                                                <div class="row" *ngFor="let attachment of attachments" style="margin-bottom: 15px">
+                                                    <div class="small-12 medium-12 columns" style="padding: 0px">
+                                                        <div style="width: 273px;height: 60px;border: 1px solid #FF0000;background: #e5e5e5"><a href="{{attachment.temporaryURL}}" style="margin-left: 10px;line-height: 60px;font-size: 14px; color: #4b4b9e;" target="_blank">{{attachment.name}}</a> <span style="float: right;margin-right: 10px;cursor: pointer;line-height: 60px;color: grey" (click)="removeAttachment(attachment)">X</span></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row" *ngIf="!showPreview">
+                                                <div class="small-12 medium-12 columns" style="padding: 0px">
+                                                    <div class="file-upload-modal">
+                                                        <section class="upload-area" style="width: 273px;line-height: 60px;margin: 0px" ng2FileDrop [uploader]="uploader" (fileOver)="fileOverBase($event)" >
+                                                            <div class="row upload-choose-btn" style="background: #e5e5e5;padding: 0px" [ngClass]="{'popup-file-over': hasBaseDropZoneOver}">
+                                                                <div class="column text-center">
+                                                                    <label for="nativeFileUpload" class="button" style="background: transparent;text-decoration: underline;padding: 0px;margin-top: 1rem;color: #4b4b9e !important;">Upload</label>
+                                                                    <span style="color: #4b4b9e">or Drag and Drop</span>
+                                                                    <input type="file" id="nativeFileUpload" (change)="startUpload($event)" value="null" class="show-for-sr" ng2FileSelect [uploader]="uploader" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="row files-to-upload-section">
+                                                                <ul *ngIf="uploader.queue.length>0">
+                                                                    <li *ngFor="let item of uploader.queue">
+                                                                        <div class="row">
+                                                                            <div class="column small-10 medium-10" [ngClass]="{'item-uploaded':item.isSuccess}">
+                                                        <span *ngIf="!(item.isReady || item.isUploading || item.isSuccess)">
+                                                          <i class="ion-ios-cloud-upload-outline" (click)="item.upload()"></i>
+                                                        </span>
+                                                                                {{ item?.file?.name }} &nbsp;({{ item?.file?.size/1024/1024 | number:'.2' }} MB)
+                                                                            </div>
+                                                                            <div class="column small-2 text-right">
+                                                                                <i *ngIf="(item.isUploading)" class="ion-ios-close-outline" (click)="item.cancel()"></i>
+                                                                                <i class="ion-ios-minus-outline" (click)="removeUploadItem(item)"></i>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div *ngIf="item.isUploading">
+                                                                            <div class="progress">
+                                                                                <div class="progress-meter" [ngStyle]="{ 'width': item.progress + '%' }"></div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </section>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <!--<div class="row" style="margin-top: 0.5rem" *ngIf="!showPreview&&!hasPaid">
                                                 <div class="small-12 medium-12 columns" style="padding: 0px">
                                                     <label>
@@ -410,11 +466,11 @@
                                                     </label>
                                                 </div>
                                             </div>-->
-                                            <div class="row" style="margin-top: 0.5rem" *ngIf="!showPreview">
+                                            <!--<div class="row" style="margin-top: 0.5rem" *ngIf="!showPreview">
                                                 <div class="small-12 medium-12 columns" style="padding: 0px" *ngIf="invoiceID">
                                                     <span class="label warning" style="width: 50px;text-align: center;font-size: 13pt;background: #00B1A9;">{{coreValue}}</span>
                                                 </div>
-                                            </div>
+                                            </div>-->
                                         </div>
                                     </div>
                                 </section>

@@ -22,6 +22,8 @@ import {NumeralService} from "qCommon/app/services/Numeral.service";
 import {CURRENCY_LOCALE_MAPPER} from "qCommon/app/constants/Currency.constants";
 import {DimensionService} from "qCommon/app/services/DimensionService.service";
 import {DateFormater} from "qCommon/app/services/DateFormatter.service";
+import {FileUploader, FileUploaderOptions} from "ng2-file-upload";
+import {UUID} from "angular2-uuid/index";
 
 declare let _:any;
 declare let numeral:any;
@@ -103,6 +105,13 @@ export class InvoiceComponent{
     historyFlyoutCSS:any;
     historyList:Array<any>=[];
     count:any=0;
+    uploader: FileUploader;
+    hasBaseDropZoneOver: boolean = false;
+    document: any;
+    attachments:Array<any>=[];
+    billUploadResp: any;
+    sourceId:string;
+    storedAttachments:Array<any>=[];
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
@@ -125,7 +134,13 @@ export class InvoiceComponent{
             this.loadCOA();
             this.getCompanyDetails();
             this.getCompanyPreferences();
-
+            this.uploader = new FileUploader(<FileUploaderOptions>{
+                url: invoiceService.getDocumentServiceUrl(),
+                headers: [{
+                    name: 'Authorization',
+                    value: 'Bearer ' + Session.getToken()
+                }]
+            });
         });
         this.getCompanyLogo();
         if(this._router.url.indexOf('duplicate')!=-1){
@@ -262,6 +277,12 @@ export class InvoiceComponent{
                     this.hasPaid=true;
                     this.amount=invoice.amount;
                 };
+                if(invoice.attachments_metadata){
+                    let attachmentObj=JSON.parse(invoice.attachments_metadata);
+                    this.sourceId=attachmentObj.sourceId;
+                    this.getInvoiceAttachments(this.sourceId);
+                    this.storedAttachments=attachmentObj.attachments;
+                }
                 //this.numeralService.switchLocale(invoice.currency.toLowerCase());
                 this.onCurrencySelect(invoice.currency);
                 this.subTotal=invoice.sub_total;
@@ -361,8 +382,23 @@ export class InvoiceComponent{
     }
 
     ngOnInit(){
-        if(!this.newInvoice){
-            //Fetch existing invoice
+        this.sourceId=this.invoiceID?this.invoiceID:UUID.UUID();
+        this.uploader.onBuildItemForm = (fileItem: any, form: any) => {
+            let payload: any = {};
+            payload.sourceID = this.sourceId;
+            payload.sourceType = 'invoice_attachment';
+            form.append('payload', JSON.stringify(payload));
+        };
+        this.uploader.onCompleteItem = (item, response, status, header) => {
+            if (status === 200) {
+                this.uploader.progress = 100;
+                this.billUploadResp = response;
+                this.uploader.queue.forEach(function (item) {
+                    item.remove();
+                });
+                this.document = JSON.parse(response);
+                this.compileLink();
+            }
         }
     }
 
@@ -552,6 +588,15 @@ export class InvoiceComponent{
         invoiceData.logoURL = this.logoURL;
         invoiceData.state=this.invoiceID?this.invoice.state:'draft';
         invoiceData.isPastDue=this.isPastDue;
+        if(this.attachments.length>0){
+            let attachmentObj={
+                sourceId:this.sourceId,
+                attachments:this.attachments
+            };
+            invoiceData.attachments_metadata=JSON.stringify(attachmentObj);
+        }else{
+            invoiceData.attachments_metadata="";
+        }
         this.setTemplateSettings(invoiceData);
         this.invoiceProcessedData=invoiceData;
         if(action=='email'){
@@ -1189,6 +1234,62 @@ export class InvoiceComponent{
     updateCredits(credits) {
         for(var i in credits){
             credits[i]["color"] = this.getCircleColor();
+        }
+    }
+
+    fileOverBase(e: any) {
+        this.hasBaseDropZoneOver = e;
+    }
+
+    startUpload($event) {
+        let base = this;
+        setTimeout(function () {
+            base.uploader.uploadAll();
+        }, 500);
+    }
+
+    deleteDocument() {
+        //Invoke delete document service
+    }
+
+    removeUploadItem(item) {
+        item.remove();
+        this.deleteDocument();
+    }
+
+    compileLink() {
+        if (this.document && this.document.temporaryURL) {
+            let data={id:this.document.id,
+                name:this.document.name,
+                temporaryURL:this.document.temporaryURL
+            };
+            this.attachments.push(data);
+        }
+    }
+
+    removeAttachment(attachment){
+        _.remove(this.attachments, {
+            id: attachment.id
+        });
+    }
+
+    getInvoiceAttachments(sourceId){
+        this.invoiceService.getDocumentByInvoice(Session.getCurrentCompany(),sourceId).subscribe(attachments => {
+            //this.attachments=attachments;
+            this.setAttachments(attachments);
+        }, error => {
+        });
+    }
+
+    setAttachments(attachmnets){
+        let base=this;
+        if(this.storedAttachments.length>0){
+            _.forEach(this.storedAttachments, function(value) {
+                let attachment=_.find(attachmnets, function(o) { return o.id == value.id; });
+                if(attachment){
+                    base.attachments.push(attachment);
+                }
+            });
         }
     }
 }
