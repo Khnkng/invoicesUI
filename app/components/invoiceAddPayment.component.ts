@@ -177,7 +177,7 @@ export class InvoiceAddPaymentComponent {
         payment.paymentDate = this.dateFormater.formatDate(payment.paymentDate,this.dateFormat,this.serviceDateformat);
         payment.paymentLines = this.paymentLines;
         if(payment.paymentLines.length >0) {
-            for (var i in payment.paymentLines) {
+            for (let i in payment.paymentLines) {
                 payment.paymentLines[i].invoiceDate = this.dateFormater.formatDate(payment.paymentLines[i].invoiceDate, this.dateFormat, this.serviceDateformat);
                 payment.paymentLines[i].dueDate = this.dateFormater.formatDate(payment.paymentLines[i].dueDate, this.dateFormat, this.serviceDateformat);
             }
@@ -196,8 +196,8 @@ export class InvoiceAddPaymentComponent {
             this.invoiceService.addPayment(payment).subscribe(response => {
                 this.toastService.pop(TOAST_TYPE.success, "Payment created successfully");
                 this.loadingService.triggerLoadingEvent(false);
-                let link = ['invoices/dashboard',3];
-                this._router.navigate(link);
+                this.setUpdatedFlagInStates();
+                this.handleState();
             }, error => {
                 this.toastService.pop(TOAST_TYPE.error, "Failed to create payment");
                 this.saving = false;
@@ -207,6 +207,26 @@ export class InvoiceAddPaymentComponent {
             this.toastService.pop(TOAST_TYPE.error, "Applied amount cannot be greater than payment amount");
             this.saving = false;
             this.loadingService.triggerLoadingEvent(false);
+        }
+    }
+
+    setUpdatedFlagInStates(){
+        if(this.stateService.states) {
+            _.each(this.stateService.states, function(state){
+                let data = state.data || {};
+                data.refreshData = true;
+                state.data = data;
+            });
+        }
+    }
+
+    handleState(){
+        let prevState = this.stateService.getPrevState();
+        if(prevState){
+            this._router.navigate([prevState.url]);
+        } else{
+            let link = ['invoices/dashboard',3];
+            this._router.navigate(link);
         }
     }
 

@@ -148,6 +148,7 @@ export class InvoiceDashboardComponent {
     // proposalsTableColumns: Array<any> = ['Number', 'Customer', 'Due Date', 'Invoice Amount', 'Due Amount', 'Status'];
     pdfTableData: any = {"tableHeader": {"values": []}, "tableRows" : {"rows": []} };
     showDownloadIcon:string = "hidden";
+    searchString: string;
 
     constructor(private _router: Router, private _route: ActivatedRoute,
                 private toastService: ToastService, private loadingService: LoadingService,
@@ -160,7 +161,6 @@ export class InvoiceDashboardComponent {
         this.serviceDateformat = dateFormater.getServiceDateformat();
         this.localeFortmat=CURRENCY_LOCALE_MAPPER[Session.getCurrentCompanyCurrency()]?CURRENCY_LOCALE_MAPPER[Session.getCurrentCompanyCurrency()]:'en-US';
         this.loadCustomers(this.currentCompanyId);
-        this.stateService.clearAllStates();
         let today = moment();
         let fiscalStartDate = moment(Session.getFiscalStartDate(), 'MM/DD/YYYY');
         this.currentFiscalStart = moment([today.get('year'),fiscalStartDate.get('month'),1]);
@@ -197,14 +197,31 @@ export class InvoiceDashboardComponent {
           if(this.historyFlyoutCSS == "expanded"){
             this.count = 0;
             this.hideFlyout();
-          }else if(this.showDetailedChart){
-                this.showDetailedChart = !this.showDetailedChart;
-                this.detailedReportChartOptions.yAxis.title = {text: null,style: {fontSize:'15px'}};
-            }
+          } else if(this.showDetailedChart){
+            this.showDetailedChart = !this.showDetailedChart;
+            this.detailedReportChartOptions.yAxis.title = {text: null,style: {fontSize:'15px'}};
+          }
         });
         this.getBadgesCount();
+
+        let prevState = this.stateService.pop();
+        if(prevState){
+            let data = prevState.data || {};
+            this.searchString = data.searchString;
+        }
+        this.stateService.clearAllStates();
     }
 
+    setSearchString($event){
+        this.searchString = $event;
+    }
+
+    addInvoiceState(){
+        let data = {
+          "searchString": this.searchString
+        };
+        this.stateService.addState(new State("INVOICE_DASHBOARD", this._router.url, data, null));
+    }
 
     getBadgesCount(){
         this.invoiceService.getInvoicesCount().subscribe(badges => {
@@ -250,10 +267,10 @@ export class InvoiceDashboardComponent {
     }
 
     selectTab(tabNo, color) {
+        let base = this;
         this.selectedTab = tabNo;
         this.selectedColor = color;
         this.selectedTableRows = [];
-        let base = this;
         this.addInvoiceDashboardState();
         this.loadingService.triggerLoadingEvent(true);
         this.tabDisplay.forEach(function (tab, index) {
@@ -732,16 +749,19 @@ export class InvoiceDashboardComponent {
     }
 
     showPayment(){
+        this.addInvoiceState();
         let link = ['payments/edit', this.selectedTableRows[0].id];
         this._router.navigate(link);
     }
 
     showInvoice(invoice) {
+        this.addInvoiceState();
         let link = ['invoices/edit', invoice.id];
         this._router.navigate(link);
     }
 
     showDuplicate(invoice) {
+        this.addInvoiceState();
         let link = ['invoices/duplicate', invoice.id];
         this._router.navigate(link);
     }
@@ -760,6 +780,7 @@ export class InvoiceDashboardComponent {
     }
 
     reRoutePage(tabId) {
+        this.searchString = "";
         let link = ['invoices/dashboard', tabId];
         this._router.navigate(link);
     }
@@ -792,16 +813,19 @@ export class InvoiceDashboardComponent {
     }
 
     addNewInvoice() {
+        this.addInvoiceState();
         let link = ['invoices/NewInvoice'];
         this._router.navigate(link);
     }
 
     addNewProposal() {
+        this.addInvoiceState();
         let link = ['invoices/NewProposal'];
         this._router.navigate(link);
     }
 
     addNewPayment(){
+        this.addInvoiceState();
         let link = ['invoices/addPayment'];
         this._router.navigate(link);
     }
@@ -809,6 +833,8 @@ export class InvoiceDashboardComponent {
     buildInvoiceTableData(invoices) {
         this.hasInvoices = false;
         this.invoices = invoices;
+        this.invoiceTableData.defSearch = true;
+        this.invoiceTableData.defSearchString = this.searchString;
         this.invoiceTableData.rows = [];
         this.invoiceTableData.columns = [
             {"name": "id", "title": "id", "visible": false},
@@ -891,6 +917,8 @@ export class InvoiceDashboardComponent {
 
     buildPaymentsTableData() {
         this.hasPaidInvoices = false;
+        this.paidInvoiceTableData.defSearch = true;
+        this.paidInvoiceTableData.defSearchString = this.searchString;
         this.paidInvoiceTableData.rows = [];
         this.paidInvoiceTableData.columns = [
             {"name": "id", "title": "id", "visible": false},
@@ -1060,22 +1088,25 @@ export class InvoiceDashboardComponent {
         delete $event.action;
         delete $event.actions;
         if(action == 'navigation'){
+            this.addInvoiceState();
             let link = ['journalEntry', $event.journalId];
             this._router.navigate(link);
         }else if(action.indexOf("paymentAction")!=-1){
-          let paymentIds=$event.paymentId.split(',');
-          let paymentIdIndex=action.split('-')[1];
-          let paymentId=paymentIds[paymentIdIndex];
-          let link = ['payments/edit', paymentId];
-          this._router.navigate(link);
-      }else if(action=='history'){
-          this.handleHistory($event);
-        }else if(action.indexOf("invoiceAction")!=-1){
-          let invoiceIds=$event.invoiceIds.split(',');
-          let invoiceIdIndex=action.split('-')[1];
-          let invoiceId=invoiceIds[invoiceIdIndex];
-          let link = ['invoices/edit', invoiceId];
-          this._router.navigate(link);
+            this.addInvoiceState();
+            let paymentIds=$event.paymentId.split(',');
+            let paymentIdIndex=action.split('-')[1];
+            let paymentId=paymentIds[paymentIdIndex];
+            let link = ['payments/edit', paymentId];
+            this._router.navigate(link);
+      } else if(action=='history'){
+            this.handleHistory($event);
+      } else if(action.indexOf("invoiceAction")!=-1){
+            this.addInvoiceState();
+            let invoiceIds=$event.invoiceIds.split(',');
+            let invoiceIdIndex=action.split('-')[1];
+            let invoiceId=invoiceIds[invoiceIdIndex];
+            let link = ['invoices/edit', invoiceId];
+            this._router.navigate(link);
         }
       }
 
