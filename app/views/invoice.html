@@ -359,11 +359,14 @@
                                                 <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;" *ngIf="!newInvoice&&(invoice&&(invoice.state!='draft'&&invoice.state!='paid'))">
                                                     <button (click)="submit($event,false,'save')" class="button small" [disabled]="hasPaid||!invoiceForm.valid||!validateTaskLines()" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;height: 25px;">Save</button>
                                                 </div>
-                                                <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;">
+                                                <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 40px;" *ngIf="newInvoice">
                                                     <button [disabled]="!invoiceForm.valid||!validateTaskLines()" (click)="submit($event,false,'preview')" class="button small" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;">{{preViewText}}</button>
                                                 </div>
                                                 <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;" *ngIf="!newInvoice">
-                                                    <button (click)="showHistory()" class="button small" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;height: 25px;">View History</button>
+                                                    <button [disabled]="!invoiceForm.valid||!validateTaskLines()" (click)="submit($event,false,'preview')" class="button small" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;">{{preViewText}}</button>
+                                                </div>
+                                                <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 40px;" *ngIf="!newInvoice">
+                                                    <button (click)="showHistory()" class="button small" style="padding: 0;background-color: white !important;color: #4b4b9e;font-size: 14px;">View History</button>
                                                 </div>
                                                 <!--<div *ngIf="showPreview" class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;">
                                                     <button (click)="submit($event,false,'preview')" class="button small" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;">Close Preview</button>
@@ -394,10 +397,17 @@
                                                     </label>
                                                 </div>
                                             </div>
+                                            <div class="row" *ngIf="!showPreview">
+                                                <div class="small-12 medium-12 columns" style="padding: 0px">
+                                                    <label>
+                                                        Add Attachments
+                                                    </label>
+                                                </div>
+                                            </div>
                                             <div *ngIf="!showPreview">
-                                                <div class="row" *ngFor="let attachment of attachments" style="margin-bottom: 10px">
+                                                <div class="row" *ngFor="let attachment of attachments" style="margin-bottom: 15px">
                                                     <div class="small-12 medium-12 columns" style="padding: 0px">
-                                                        <div style="width: 273px;height: 60px;border: 1px solid #FF0000;background: #e5e5e5"><a href="{{attachment.temporaryURL}}" style="margin-left: 10px;line-height: 60px;font-size: 14px" target="_blank">{{attachment.name}}</a> <span style="float: right;margin-right: 10px;cursor: pointer;line-height: 60px;color: grey" (click)="removeAttachment(attachment)">X</span></div>
+                                                        <div style="width: 273px;height: 60px;border: 1px solid #FF0000;background: #e5e5e5"><a href="{{attachment.temporaryURL}}" style="margin-left: 10px;line-height: 60px;font-size: 14px; color: #4b4b9e;" target="_blank">{{attachment.name}}</a> <span style="float: right;margin-right: 10px;cursor: pointer;line-height: 60px;color: grey" (click)="removeAttachment(attachment)">X</span></div>
                                                     </div>
                                                 </div>
                                             </div>
