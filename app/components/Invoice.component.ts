@@ -594,6 +594,8 @@ export class InvoiceComponent{
                 attachments:this.attachments
             };
             invoiceData.attachments_metadata=JSON.stringify(attachmentObj);
+        }else{
+            invoiceData.attachments_metadata="";
         }
         this.setTemplateSettings(invoiceData);
         this.invoiceProcessedData=invoiceData;
