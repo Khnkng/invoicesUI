@@ -598,6 +598,7 @@ export class InvoiceDashboardComponent {
                     });
                 });
                 this.customerAgingSummary={
+                    colors: this.chartColors,
                     chart: {
                         type: 'column',
                         style: {
