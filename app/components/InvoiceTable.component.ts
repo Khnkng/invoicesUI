@@ -5,9 +5,7 @@
 import {Component, ViewChild} from "@angular/core";
 import {Session} from "qCommon/app/services/Session";
 import {LoadingService} from "qCommon/app/services/LoadingService";
-import {HighChart} from "reportsUI/app/directives/HighChart.directive";
 import {CompaniesService} from "qCommon/app/services/Companies.service";
-import {ReportService} from "reportsUI/app/services/Reports.service";
 import {Router,ActivatedRoute} from "@angular/router";
 import {FTable} from "qCommon/app/directives/footable.directive";
 import {StateService} from "qCommon/app/services/StateService";
@@ -49,12 +47,12 @@ export class InvoiceTableComponent {
     invoiceState:any;
     billstatus:boolean=false;
     @ViewChild('fooTableDir') fooTableDir:FTable;
-    @ViewChild('hChart1') hChart1:HighChart;
     @ViewChild('createtaxes') createtaxes;
     routeSubscribe:any;
 
     constructor(private _router: Router,private _route: ActivatedRoute,private companyService: CompaniesService,
-                private loadingService:LoadingService, private reportService: ReportService, private stateService: StateService,private titleService:pageTitleService,_switchBoard:SwitchBoard) {
+                private loadingService:LoadingService, private stateService: StateService,
+                private titleService:pageTitleService,_switchBoard:SwitchBoard) {
         this.companyId = Session.getCurrentCompany();
         this.companyCurrency = Session.getCurrentCompanyCurrency();
         this.routeSub = this._route.params.subscribe(params => {
@@ -85,7 +83,7 @@ export class InvoiceTableComponent {
             }
             this.titleService.setPageTitle(this.invoiceState);
         });
-        this.loadingService.triggerLoadingEvent(true);
+        //this.loadingService.triggerLoadingEvent(true);
 /*
         this.companyService.getReceivedInvoiceTable(this.companyId)
             .subscribe(receivedData  => {
@@ -96,7 +94,7 @@ export class InvoiceTableComponent {
             });
 */
 
-        this.companyService.getInvoicetable(this.companyId,this.currentpayment)
+        this.companyService.getInvoiceTable(this.companyId,this.currentpayment)
             .subscribe(invoiceTabledata  => {
                 this.invoiceTabledata=invoiceTabledata;
                 this.companyService.credits(this.companyId)
