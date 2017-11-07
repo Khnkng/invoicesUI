@@ -112,6 +112,7 @@ export class InvoiceComponent{
     billUploadResp: any;
     sourceId:string;
     storedAttachments:Array<any>=[];
+    showInvoiceHistory:boolean;
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
@@ -149,7 +150,7 @@ export class InvoiceComponent{
         this.routeSubscribe = switchBoard.onClickPrev.subscribe(title => {
             if(this.dimensionFlyoutCSS == "expanded"){
                 this.hideFlyout();
-            }else if(this.historyFlyoutCSS=="expanded"){
+            }else if(this.showInvoiceHistory){
                 this.hideHistoryFlyout();
             }else{
                 this.gotoPreviousState();
@@ -893,7 +894,8 @@ export class InvoiceComponent{
     }
 
   hideHistoryFlyout(){
-        this.historyFlyoutCSS="collapsed";
+        this.showInvoiceHistory=false;
+        this.showInvoice=true;
         this.titleService.setPageTitle("Edit Invoice");
         this.historyList=[];
         this.count=0;
@@ -1209,7 +1211,8 @@ export class InvoiceComponent{
         this.loadingService.triggerLoadingEvent(true);
         this.invoiceService.history(this.invoiceID).subscribe(history => {
             this.titleService.setPageTitle("Invoices History");
-            this.historyFlyoutCSS="expanded";
+            this.showInvoiceHistory=true;
+            this.showInvoice=false;
             this.historyList=history;
             this.updateCredits(this.historyList);
             this.loadingService.triggerLoadingEvent(false);
@@ -1239,6 +1242,9 @@ export class InvoiceComponent{
 
     fileOverBase(e: any) {
         this.hasBaseDropZoneOver = e;
+        this.uploader.queue.forEach(function (item) {
+            item.upload();
+        });
     }
 
     startUpload($event) {

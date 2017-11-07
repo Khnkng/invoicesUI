@@ -381,33 +381,19 @@
                                             <div class="row">
                                                 <button style="padding: 18px 40px;width: 180px" class="button small hollow download"(click)="submit($event,false,'download')" [disabled]="!invoiceForm.valid||!validateTaskLines()">Download PDF</button>
                                             </div>
-                                            <div class="row" style="margin-top: 1.2rem" *ngIf="!showPreview&&!hasPaid">
+
+                                            <div class="row" *ngIf="!showPreview" style="margin-top: 27px">
                                                 <div class="small-12 medium-12 columns" style="padding: 0px">
                                                     <label>
-                                                        Notes
-                                                        <textarea formControlName="notes" style="height: 130px;width: 80%;"></textarea>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="row" style="margin-top: 1.2rem" *ngIf="!showPreview&&hasPaid">
-                                                <div class="small-12 medium-12 columns" style="padding: 0px">
-                                                    <label>
-                                                        Notes
-                                                        <textarea readonly formControlName="notes" style="height: 130px;width: 80%;"></textarea>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="row" *ngIf="!showPreview">
-                                                <div class="small-12 medium-12 columns" style="padding: 0px">
-                                                    <label>
-                                                        Add Attachments
+                                                        Attachments
                                                     </label>
                                                 </div>
                                             </div>
                                             <div *ngIf="!showPreview">
                                                 <div class="row" *ngFor="let attachment of attachments" style="margin-bottom: 15px">
                                                     <div class="small-12 medium-12 columns" style="padding: 0px">
-                                                        <div style="width: 273px;height: 60px;border: 1px solid #FF0000;background: #e5e5e5"><a href="{{attachment.temporaryURL}}" style="margin-left: 10px;line-height: 60px;font-size: 14px; color: #4b4b9e;" target="_blank">{{attachment.name}}</a> <span style="float: right;margin-right: 10px;cursor: pointer;line-height: 60px;color: grey" (click)="removeAttachment(attachment)">X</span></div>
+                                                        <div style="width: 273px;height: 60px;border: 1px solid #878787;background: #e5e5e5"><span style="float: right;cursor: pointer;padding:11px;color: grey" (click)="removeAttachment(attachment)"><i class="icon ion-ios-close-empty" style="font-size: 1.8rem"></i></span>
+                                                            <div style="padding:11px;margin-top: 7px"><a href="{{attachment.temporaryURL}}" style="font-size: 14px;color: #4b4b9e;width: 220px;text-overflow: ellipsis;display: block;overflow: hidden;white-space: nowrap;" target="_blank">{{attachment.name}}</a></div></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -416,10 +402,10 @@
                                                 <div class="small-12 medium-12 columns" style="padding: 0px">
                                                     <div class="file-upload-modal">
                                                         <section class="upload-area" style="width: 273px;line-height: 60px;margin: 0px" ng2FileDrop [uploader]="uploader" (fileOver)="fileOverBase($event)" >
-                                                            <div class="row upload-choose-btn" style="background: #e5e5e5;padding: 0px" [ngClass]="{'popup-file-over': hasBaseDropZoneOver}">
+                                                            <div class="row upload-choose-btn" style="background: #e5e5e5;padding: 0px;border: 1.5px dashed  #848484;" [ngClass]="{'popup-file-over': hasBaseDropZoneOver}">
                                                                 <div class="column text-center">
-                                                                    <label for="nativeFileUpload" class="button" style="background: transparent;text-decoration: underline;padding: 0px;margin-top: 1rem;color: #4b4b9e !important;">Upload</label>
-                                                                    <span style="color: #4b4b9e">or Drag and Drop</span>
+                                                                    <label for="nativeFileUpload" class="button" style="background: transparent;text-decoration: underline;padding: 0px;margin-top: 1rem;color: #4b4b9e !important;font-size: 14px">Upload</label>
+                                                                    <span style="color: #4b4b9e;font-size: 14px">or Drag and Drop</span>
                                                                     <input type="file" id="nativeFileUpload" (change)="startUpload($event)" value="null" class="show-for-sr" ng2FileSelect [uploader]="uploader" />
                                                                 </div>
                                                             </div>
@@ -450,6 +436,24 @@
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            <div class="row" style="margin-top: 1.2rem" *ngIf="!showPreview&&!hasPaid">
+                                                <div class="small-12 medium-12 columns" style="padding: 0px">
+                                                    <label>
+                                                        Notes
+                                                        <textarea formControlName="notes" style="height: 130px;width: 80%;"></textarea>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="margin-top: 1.2rem" *ngIf="!showPreview&&hasPaid">
+                                                <div class="small-12 medium-12 columns" style="padding: 0px">
+                                                    <label>
+                                                        Notes
+                                                        <textarea readonly formControlName="notes" style="height: 130px;width: 80%;"></textarea>
+                                                    </label>
+                                                </div>
+                                            </div>
+
                                             <!--<div class="row" style="margin-top: 0.5rem" *ngIf="!showPreview&&!hasPaid">
                                                 <div class="small-12 medium-12 columns" style="padding: 0px">
                                                     <label>
@@ -582,7 +586,6 @@
     </div>
 </div>
 
-
 <div class="reveal small bill-modal-container" style="width: 40%;padding: 0;border: 1px;margin-top: 6rem;" id="invoice-email-conformation" data-reveal foundation  data-close-on-click="false">
     <div class="row">
         <div class="small-12 medium-12 columns" style="padding: 0; background: #00B1A9;height: 3rem;">
@@ -614,42 +617,43 @@
 </div>
 
 
-<div class="report-wrapper journal-flyout">
-    <div class="sidenav customization-panel" [ngClass]="historyFlyoutCSS" foundation>
-        <div class="row collapse dimension-flyout">
-            <div class="small-12 medium-12 small-centered column">
-<!--                <h5>Invoice History</h5>-->
-                <div style="margin:20px 0 30px 0">
-                    <div *ngIf="historyList.length>0">
-                        <div class="row rdCircles" *ngFor="let history of historyList; let last=last;">
-                            <div class="column medium-1" style="padding-left: 55px">
-                                <div class="dec1" [style.border]="history.color"></div>
-                                <div class="dec2"></div>
-                                <div class="dec1" *ngIf="last? true:false;" [style.border]="history.color"></div>
+<div class="small-12 medium-12 small-centered column" *ngIf="showInvoiceHistory">
+    <div style="margin:20px 0 30px 0">
+        <div *ngIf="historyList.length>0">
+            <div class="row rdCircles" *ngFor="let history of historyList; let last=last;">
+                <div class="column medium-1" style="padding-left: 55px">
+                    <div class="dec1" [style.border]="history.color"></div>
+                    <div class="dec2"></div>
+                    <div class="dec1" *ngIf="last? true:false;" [style.border]="history.color"></div>
+                </div>
+                <div class="column medium-11" style="padding-left:0px">
+                    <div class="row rdCredits">
+                        <div class="column medium-12">
+                            <div class="row creditInfo">
+                                <div class="column medium-6 text-left">{{history.action}}</div>
+                                <div class="column medium-6 text-right" style="font-size: 0.85em">{{history.action_at}}</div>
                             </div>
-                            <div class="column medium-11" style="padding-left:0px">
-                                <div class="row rdCredits">
-                                    <div class="column medium-12">
-                                        <div class="row creditInfo">
-                                            <div class="column medium-6 text-left">{{history.action}}</div>
-                                            <div class="column medium-6 text-right" style="font-size: 0.85em">{{history.action_at}}</div>
-                                        </div>
-                                    </div>
-                                    <div class="column medium-12 rdDescription">
-                                        <div class="row credit-desc" *ngIf="history.action!='Partially paid'||history.action!='Paid'">
-                                            <div class="column medium-10">{{history.email_to}}</div>
-                                        </div>
-                                        <div class="row credit-desc" *ngIf="history.action=='Partially paid'||history.action=='Paid'">
-                                            <div class="column medium-10">Paid Amount: {{formatAmount(history.amount_paid)}}</div>
-                                        </div>
-                                    </div>
-                                </div>
+                        </div>
+                        <div class="column medium-12 rdDescription">
+                            <div class="row credit-desc" *ngIf="history.action!='Partially paid'||history.action!='Paid'">
+                                <div class="column medium-10">{{history.email_to}}</div>
+                            </div>
+                            <div class="row credit-desc" *ngIf="history.action=='Partially paid'||history.action=='Paid'">
+                                <div class="column medium-10">Paid Amount: {{formatAmount(history.amount_paid)}}</div>
                             </div>
                         </div>
                     </div>
-                    <div *ngIf="historyList.length==0" class="text-center">History is not available.</div>
                 </div>
             </div>
         </div>
+        <div *ngIf="historyList.length==0" class="text-center">History is not available.</div>
     </div>
 </div>
+<!--
+<div class="report-wrapper journal-flyout">
+    <div class="sidenav customization-panel" [ngClass]="historyFlyoutCSS" foundation>
+        <div class="row collapse dimension-flyout">
+
+        </div>
+    </div>
+</div>-->
