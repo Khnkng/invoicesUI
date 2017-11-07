@@ -43,10 +43,10 @@ export class InvoiceTableComponent {
     payable:boolean=false
     routeSub:any;
     currentpayment:any;
-    paiddata:any;
-    paymenttabledata:any;
+    receivedData:any;
+    invoiceTabledata:any;
     credits:any;
-    billstate:any;
+    invoiceState:any;
     billstatus:boolean=false;
     @ViewChild('fooTableDir') fooTableDir:FTable;
     @ViewChild('hChart1') hChart1:HighChart;
@@ -58,45 +58,47 @@ export class InvoiceTableComponent {
         this.companyId = Session.getCurrentCompany();
         this.companyCurrency = Session.getCurrentCompanyCurrency();
         this.routeSub = this._route.params.subscribe(params => {
-            this.currentpayment = params['PaymentstableID'];
-            if(this.currentpayment=='totalpayable'){
-                this.billstate='Payables';
-                this.billstatus=true;
-            } else if(this.currentpayment=='pastdue'){
-                this.billstate='Past Due';
-                this.billstatus=true;
-            } else if(this.currentpayment=='approve'){
-                this.billstate='Approve';
-                this.billstatus=true;
-            } else if(this.currentpayment=='pay'){
-                this.billstate='Pay';
-                this.billstatus=true;
-            } else if(this.currentpayment=='30days'){
-                this.billstate='Paid Bills';
-                this.companyService.getpaidcounttable(this.companyId)
-                    .subscribe(paiddata  => {
-                        this.paiddata=paiddata;
+            this.currentpayment = params['invoiceTableID'];
+            if(this.currentpayment=='receivables'){
+                this.invoiceState='Receivables';
+                //this.billstatus=true;
+            } else if(this.currentpayment=='past_due'){
+                this.invoiceState='Past Due';
+                //this.billstatus=true;
+            } else if(this.currentpayment=='opened'){
+                this.invoiceState='Opened';
+                //this.billstatus=true;
+            } else if(this.currentpayment=='sent'){
+                this.invoiceState='Sent';
+                //this.billstatus=true;
+            } else if(this.currentpayment=='recvdin30days'){
+                this.invoiceState='Received Invoices';
+                /*this.companyService.getReceivedInvoiceTable(this.companyId)
+                    .subscribe(receivedData  => {
+                        this.receivedData=receivedData;
                     }, error =>{
                         this.loadingService.triggerLoadingEvent(false);
-                    });
-                this.billstatus=true;
+                    });*/
+                //this.billstatus=true;
             } else{
                 console.log("error");
             }
-            this.titleService.setPageTitle(this.billstate);
+            this.titleService.setPageTitle(this.invoiceState);
         });
         this.loadingService.triggerLoadingEvent(true);
-        this.companyService.getpaidcounttable(this.companyId)
-            .subscribe(paiddata  => {
-                this.paiddata=paiddata;
-                console.log("this.paiddata",this.paiddata);
+/*
+        this.companyService.getReceivedInvoiceTable(this.companyId)
+            .subscribe(receivedData  => {
+                this.receivedData=receivedData;
+                //console.log("this.paiddata",this.paiddata);
             }, error =>{
                 this.loadingService.triggerLoadingEvent(false);
             });
+*/
 
-        this.companyService.getpaymenttable(this.companyId,this.currentpayment)
-            .subscribe(paymentTabledata  => {
-                this.paymenttabledata=paymentTabledata;
+        this.companyService.getInvoicetable(this.companyId,this.currentpayment)
+            .subscribe(invoiceTabledata  => {
+                this.invoiceTabledata=invoiceTabledata;
                 this.companyService.credits(this.companyId)
                     .subscribe(credits => {
                         this.credits = credits;
@@ -145,7 +147,7 @@ export class InvoiceTableComponent {
             {"name": "actions", "title": ""}
         ];
         let base = this;
-        this.paymenttabledata.forEach(function(expense) {
+        this.invoiceTabledata.forEach(function(expense) {
             let row:any = {};
             _.each(base.tableColumns, function(key) {
                 if(key == 'amount'){

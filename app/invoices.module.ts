@@ -21,6 +21,7 @@ import {InvoiceAddPaymentComponent} from "./components/invoiceAddPayment.compone
 import {InvoicePaymentForm} from "./forms/invoicePayment.form";
 import {InvoiceAddPayment} from "./components/AddPaymentToInvoice.component";
 import {InvoicePaymentPreview} from "./components/InvoicePaymentPreview.component";
+import {InvoiceTableComponent} from "./components/InvoiceTable.component";
 
 @NgModule({
     imports: [CommonModule, FormsModule, ReactiveFormsModule, ShareModule, RouterModule.forChild([
@@ -33,11 +34,12 @@ import {InvoicePaymentPreview} from "./components/InvoicePaymentPreview.componen
         {path: 'invoices/addPayment', component: InvoiceAddPaymentComponent, canActivate: [LoggedInActivator]},
         {path: 'payments/edit/:paymentID', component: InvoiceAddPaymentComponent, canActivate: [LoggedInActivator]},
         {path: 'payment/invoices/:invoiceID', component: InvoicePayComponent, canActivate: [DashBoardActivator]},
-        {path: 'invoices/:invoiceID', component: InvoiceAddPayment,canActivate: [LoggedInActivator]}
+        {path: 'invoices/:invoiceID', component: InvoiceAddPayment,canActivate: [LoggedInActivator]},
+        {path: 'invoices/:invoiceTableID', component: InvoiceTableComponent,canActivate: [LoggedInActivator]}
     ])],
     declarations: [InvoiceCustomDatepicker, CustomDatepicker1, InvoiceSettingsComponent, InvoiceDashboardComponent,
             InvoiceComponent, InvoicesComponent, InvoiceCustomDatepicker,InvoicePayComponent,InvoiceAddPaymentComponent,
-            InvoiceAddPayment,InvoicePaymentPreview],
+            InvoiceAddPayment,InvoicePaymentPreview,InvoiceTableComponent],
     exports: [RouterModule, CustomDatepicker1],
     providers: [InvoiceSettingsForm, InvoicesService, InvoiceForm, InvoiceLineForm, InvoiceLineTaxesForm, InvoicePaymentForm],
     schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
