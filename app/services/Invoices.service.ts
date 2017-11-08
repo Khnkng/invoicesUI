@@ -168,4 +168,11 @@ export class InvoicesService extends QountServices {
     private handleError (error: Response) {
         return Observable.throw(error.text());
     }
+
+    getInvoiceTable(companyId:string,currentpayment:string): Observable<any> {
+        let url = this.interpolateUrl(PATH.INVOICE_DETAIL_SERVICE,null,{id: Session.getUser().id, companyId:companyId});
+        return this.query(url+"/details?filter="+currentpayment, SOURCE_TYPE.JAVA).map(res => <any> res.json())
+            .catch(this.handleError)
+    }
+
 }
