@@ -9,7 +9,6 @@ import {InvoicesService} from "../services/Invoices.service";
 import {Router,ActivatedRoute} from "@angular/router";
 import {FTable} from "qCommon/app/directives/footable.directive";
 import {StateService} from "qCommon/app/services/StateService";
-import {State} from "qCommon/app/models/State";
 import {pageTitleService} from "qCommon/app/services/PageTitle";
 import {SwitchBoard} from "qCommon/app/services/SwitchBoard";
 import {CURRENCY_LOCALE_MAPPER} from "qCommon/app/constants/Currency.constants";
