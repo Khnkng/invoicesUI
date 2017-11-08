@@ -1,0 +1,11 @@
+<div class="qount-off-canvas-menu" foundation>
+    <div class="flyout expanded" [ngClass]="{'expanded':true}">
+        <section class="flyout-placeholder flyout-table-alignment">
+            <div class="column large-12 medium-12 small-12 foo-container chart_search">
+                <div class="foo-toolbar">
+                </div>
+                <foo-table #fooTableDir="fooTable" class="bighalf-footable" *ngIf="hasItemCodes" [data]="tableData" [options]="tableOptions" (onRowAction)="handleAction($event)"></foo-table>
+            </div>
+        </section>
+    </div>
+</div>

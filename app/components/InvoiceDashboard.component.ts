@@ -1368,5 +1368,30 @@ export class InvoiceDashboardComponent {
         },700);
     }
 
+    receivablesClick(receivableclick){
+        let link = ['invoice', receivableclick];
+        this._router.navigate(link);
+    }
+
+    pastDueClick(pastDueclick){
+        let link = ['invoice', pastDueclick];
+        this._router.navigate(link);
+    }
+
+    openedInvoicesClick(openedInvClick){
+        let link = ['invoice', openedInvClick];
+        this._router.navigate(link);
+    }
+
+    sentInvoicesDueClick(sentInvClick){
+        let link = ['invoice', sentInvClick];
+        this._router.navigate(link);
+    }
+
+    receivedInvoicesClick(receivedInvClick){
+        let link = ['invoice', receivedInvClick];
+        this._router.navigate(link);
+    }
+
 }
 
