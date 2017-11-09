@@ -13,9 +13,13 @@ import {pageTitleService} from "qCommon/app/services/PageTitle";
 import {SwitchBoard} from "qCommon/app/services/SwitchBoard";
 import {CURRENCY_LOCALE_MAPPER} from "qCommon/app/constants/Currency.constants";
 import {DateFormater} from "qCommon/app/services/DateFormatter.service";
+import {ReportService} from "reportsUI/app/services/Reports.service";
+import {ToastService} from "qCommon/app/services/Toast.service";
+import {TOAST_TYPE} from "qCommon/app/constants/Qount.constants";
 
 declare let jQuery:any;
 declare let _:any;
+declare let moment:any;
 
 @Component({
     selector: 'invoices',
@@ -39,10 +43,13 @@ export class InvoiceTableComponent {
     routeSubscribe:any;
     dateFormat:string;
     serviceDateformat:string;
+    pdfTableData: any = {"tableHeader": {"values": []}, "tableRows" : {"rows": []} };
+    invoicesTableColumns: Array<any> = ["Number","Customer","Invoice Date","Due Date","Invoice Amount","Paid Amount","Due Amount"];
 
     constructor(private _router: Router,private _route: ActivatedRoute,private invoicesService: InvoicesService,
                 private loadingService:LoadingService, private stateService: StateService,
-                private titleService:pageTitleService,_switchBoard:SwitchBoard,private dateFormater: DateFormater) {
+                private titleService:pageTitleService,_switchBoard:SwitchBoard,private dateFormater: DateFormater,
+                private reportService: ReportService,private _toastService: ToastService) {
         this.companyId = Session.getCurrentCompany();
         this.companyCurrency = Session.getCurrentCompanyCurrency();
         this.dateFormat = dateFormater.getFormat();
@@ -95,7 +102,7 @@ export class InvoiceTableComponent {
             {"name": "due_date", "title": "Due Date"},
             {"name": "amount", "title": "Invoice Amount"},
             {"name": "amount_paid", "title": "Paid Amount"},
-            {"name": "amount_due", "title": "Due Amount"},
+            {"name": "amount_due", "title": "Due Amount"}
         ];
         let base = this;
         this.invoiceTabledata.forEach(function(invoice) {
@@ -121,6 +128,67 @@ export class InvoiceTableComponent {
             base.hasItemCodes = true;
         }, 0)
         this.loadingService.triggerLoadingEvent(false);
+    }
+
+    buildPdfTabledata(fileType){
+        this.pdfTableData['documentHeader'] = "Header";
+        this.pdfTableData['documentFooter'] = "Footer";
+        this.pdfTableData['fileType'] = fileType;
+        this.pdfTableData['name'] = "Name";
+
+        this.pdfTableData.tableHeader.values = this.invoicesTableColumns;
+        this.pdfTableData.tableRows.rows = this.getInvoicesTableData();
+    }
+
+    getInvoicesTableData() {
+        let tempData = _.cloneDeep(this.tableData.rows);
+        let newTableData: Array<any> = [];
+        let tempJsonArray: any;
+
+        for( var i in  tempData) {
+            tempJsonArray = {};
+            tempJsonArray["Number"] = tempData[i].number;
+            tempJsonArray["Customer"] = tempData[i].customer;
+            tempJsonArray["Invoice Date"] = tempData[i].invoice_date;
+            tempJsonArray["Due Date"] = tempData[i].due_date;
+            tempJsonArray["Invoice Amount"] = tempData[i].amount;
+            tempJsonArray["Paid Amount"] = tempData[i].amount_paid;
+            tempJsonArray["Due Amount"] = tempData[i].amount_due;
+            newTableData.push(tempJsonArray);
+        }
+        return newTableData;
+    }
+
+    exportToExcel() {
+        this.buildPdfTabledata("excel");
+        this.reportService.exportFooTableIntoFile(this.companyId, this.pdfTableData)
+            .subscribe(data =>{
+                let blob = new Blob([data._body], {type:"application/vnd.ms-excel"});
+                let link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link['download'] = "InvoicesDetails.xls";
+                link.click();
+            }, error =>{
+                this._toastService.pop(TOAST_TYPE.error, "Failed to Export table into Excel");
+            });
+        // jQuery('#example-dropdown').foundation('close');
+
+    }
+
+    exportToPDF() {
+        this.buildPdfTabledata("pdf");
+
+        this.reportService.exportFooTableIntoFile(this.companyId, this.pdfTableData)
+            .subscribe(data =>{
+                var blob = new Blob([data._body], {type:"application/pdf"});
+                var link = jQuery('<a></a>');
+                link[0].href = URL.createObjectURL(blob);
+                link[0].download = "InvoicesDetails.pdf";
+                link[0].click();
+            }, error =>{
+                this._toastService.pop(TOAST_TYPE.error, "Failed to Export table into PDF");
+            });
+
     }
 
 }
