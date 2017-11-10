@@ -165,6 +165,12 @@ export class InvoicesService extends QountServices {
         .catch(this.handleError)
     }
 
+  removeInvoiceAttachment(id, companyId): Observable<any> {
+    var url = this.interpolateUrl(INVOICE_PATHS.DOCUMENT_SERVICE_BASE,null,{id: Session.getUser().id, companyId: companyId});
+    return this.delete(url+'/'+id, SOURCE_TYPE.JAVA).map(res => <any> res.json())
+      .catch(this.handleError)
+  }
+
     private handleError (error: Response) {
         return Observable.throw(error.text());
     }
