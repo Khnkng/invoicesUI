@@ -1263,8 +1263,21 @@ export class InvoiceComponent{
     }
 
     removeAttachment(attachment){
-        _.remove(this.attachments, {
-            id: attachment.id
+        this.loadingService.triggerLoadingEvent(true);
+        this.invoiceService.removeInvoiceAttachment(attachment.id,Session.getCurrentCompany()).subscribe(attachments => {
+            _.remove(this.attachments, {
+                id: attachment.id
+            });
+            this.closeLoader();
+            this.toastService.pop(TOAST_TYPE.success, "Attachment deleted successfully");
+        }, error => {
+            if(error){
+                if(error&&JSON.parse(error))
+                    this.toastService.pop(TOAST_TYPE.error, JSON.parse(error).message);
+                else
+                    this.toastService.pop(TOAST_TYPE.error, "Failed to delete attachment");
+                this.closeLoader();
+            }
         });
     }
 
