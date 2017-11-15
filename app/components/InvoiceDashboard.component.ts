@@ -882,12 +882,16 @@ export class InvoiceDashboardComponent {
             let paymentsString="";
             let historyBadge="<a class='action' data-action='history'><span class='icon badge je-badge'>H</span></a>";
             if(invoice['state']=='paid'||invoice['state']=='partially_paid'){
-                if(invoice['payment_ids']){
-                    let paymentsList=invoice['payment_ids'].split(',');
-                    if(paymentsList.length>0){
+              if(invoice['payment_ids']){
+                let paymentsList=invoice['payment_ids'].split(',');
+                if(paymentsList.length>0){
+                    if(paymentsList.length==1){
+                        let paymentIdString='paymentAction-'+0;
+                        paymentsString+="<a class='action' data-action="+paymentIdString+"><span class='icon badge je-badge'>P</span></a>"
+                    }else {
                         for (var i = 0; i < paymentsList.length; i++) {
                             let paymentIdString='paymentAction-'+i;
-                            paymentsString+="<a class='action' data-action="+paymentIdString+"><span class='icon badge je-badge'>P"+i+"</span></a>"
+                            paymentsString+="<a class='action' data-action="+paymentIdString+"><span class='icon badge je-badge'>P"+(i+1)+"</span></a>"
                         }
                     }
                 }
@@ -975,9 +979,14 @@ export class InvoiceDashboardComponent {
             }
             row["invoiceIds"]=invoicesIds.toString();
             if(invoicesIds.length>0){
-                for (var i = 0; i < invoicesIds.length; i++) {
-                    let paymentIdString='invoiceAction-'+i;
-                    invoicesString+="<a class='action' data-action="+paymentIdString+"><span class='icon badge je-badge'>I"+i+"</span></a>"
+                if(invoicesIds.length==1){
+                    let paymentIdString='invoiceAction-'+0;
+                    invoicesString+="<a class='action' data-action="+paymentIdString+"><span class='icon badge je-badge'>I</span></a>"
+                }else {
+                    for (var i = 0; i < invoicesIds.length; i++) {
+                        let paymentIdString='invoiceAction-'+i;
+                        invoicesString+="<a class='action' data-action="+paymentIdString+"><span class='icon badge je-badge'>I"+(i+1)+"</span></a>"
+                    }
                 }
             }
             let JeString="";
