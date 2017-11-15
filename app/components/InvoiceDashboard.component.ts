@@ -882,16 +882,17 @@ export class InvoiceDashboardComponent {
             let paymentsString="";
             let historyBadge="<a class='action' data-action='history'><span class='icon badge je-badge'>H</span></a>";
             if(invoice['state']=='paid'||invoice['state']=='partially_paid'){
-              if(invoice['payment_ids']){
-                let paymentsList=invoice['payment_ids'].split(',');
-                if(paymentsList.length>0){
-                    if(paymentsList.length==1){
-                        let paymentIdString='paymentAction-'+0;
-                        paymentsString+="<a class='action' data-action="+paymentIdString+"><span class='icon badge je-badge'>P</span></a>"
-                    }else {
-                        for (var i = 0; i < paymentsList.length; i++) {
-                            let paymentIdString='paymentAction-'+i;
-                            paymentsString+="<a class='action' data-action="+paymentIdString+"><span class='icon badge je-badge'>P"+(i+1)+"</span></a>"
+                if(invoice['payment_ids']){
+                    let paymentsList=invoice['payment_ids'].split(',');
+                    if(paymentsList.length>0){
+                        if(paymentsList.length==1){
+                            let paymentIdString='paymentAction-'+0;
+                            paymentsString+="<a class='action' data-action="+paymentIdString+"><span class='icon badge je-badge'>P</span></a>"
+                        }else {
+                            for (var i = 0; i < paymentsList.length; i++) {
+                                let paymentIdString='paymentAction-'+i;
+                                paymentsString+="<a class='action' data-action="+paymentIdString+"><span class='icon badge je-badge'>P"+(i+1)+"</span></a>"
+                            }
                         }
                     }
                 }
