@@ -199,6 +199,10 @@
               <td ></td>
               <td width="15%" *ngIf="!showUnitCost">{{unitCost}}</td>
               <td width="8%" *ngIf="!showUOM">{{UOM}}</td>
+              <td width="15%" *ngIf="showUnitCost"></td>
+              <td width="30%" *ngIf="showItemName"></td>
+              <td width="15%" *ngIf="showDescription"></td>
+              <td width="8%" *ngIf="showUOM"></td>
               <td width="18%" class="text-right">Line Total</td>
             </tr>
             <tr *ngFor="let taskInvoice of taskInvoices" [hidden]="taskInvoices.length<0">
@@ -207,6 +211,10 @@
               <td ></td>
               <td *ngIf="!showUnitCost">{{formatAmount(taskInvoice.price)}}</td>
               <td *ngIf="!showUOM">{{formatQuantity(taskInvoice.quantity)}}</td>
+              <td *ngIf="showItemName"></td>
+              <td class="truncate" *ngIf="showDescription"></td>
+              <td *ngIf="showUnitCost"></td>
+              <td *ngIf="showUOM"></td>
               <td class="text-right">{{formatAmount(taskInvoice.amount)}}</td>
             </tr>
             <tr>
@@ -385,6 +393,10 @@
               <td ></td>
               <td width="15%" *ngIf="!showUnitCost">{{unitCost}}</td>
               <td width="8%" *ngIf="!showUOM">{{UOM}}</td>
+              <td width="15%" *ngIf="showUnitCost"></td>
+              <td width="30%" *ngIf="showItemName"></td>
+              <td width="15%" *ngIf="showDescription"></td>
+              <td width="8%" *ngIf="showUOM"></td>
               <td width="18%" class="text-right">Line Total</td>
             </tr>
             <tr *ngFor="let taskInvoice of taskInvoices" [hidden]="taskInvoices.length<0">
@@ -393,6 +405,10 @@
               <td ></td>
               <td *ngIf="!showUnitCost">{{formatAmount(taskInvoice.price)}}</td>
               <td *ngIf="!showUOM">{{formatQuantity(taskInvoice.quantity)}}</td>
+              <td *ngIf="showItemName"></td>
+              <td class="truncate" *ngIf="showDescription"></td>
+              <td *ngIf="showUnitCost"></td>
+              <td *ngIf="showUOM"></td>
               <td class="text-right">{{formatAmount(taskInvoice.amount)}}</td>
             </tr>
             <tr>
@@ -515,6 +531,10 @@
               <td ></td>
               <td width="15%" *ngIf="!showUnitCost">{{unitCost}}</td>
               <td width="8%" *ngIf="!showUOM">{{UOM}}</td>
+              <td width="15%" *ngIf="showUnitCost"></td>
+              <td width="30%" *ngIf="showItemName"></td>
+              <td width="15%" *ngIf="showDescription"></td>
+              <td width="8%" *ngIf="showUOM"></td>
               <td width="18%" class="text-right">Line Total</td>
             </tr>
             <tr *ngFor="let taskInvoice of taskInvoices" [hidden]="taskInvoices.length<0">
@@ -523,6 +543,10 @@
               <td ></td>
               <td *ngIf="!showUnitCost">{{formatAmount(taskInvoice.price)}}</td>
               <td *ngIf="!showUOM">{{formatQuantity(taskInvoice.quantity)}}</td>
+              <td *ngIf="showItemName"></td>
+              <td class="truncate" *ngIf="showDescription"></td>
+              <td *ngIf="showUnitCost"></td>
+              <td *ngIf="showUOM"></td>
               <td class="text-right">{{formatAmount(taskInvoice.amount)}}</td>
             </tr>
             <tr>
@@ -658,6 +682,10 @@
               <td ></td>
               <td width="15%" *ngIf="!showUnitCost">{{unitCost}}</td>
               <td width="8%" *ngIf="!showUOM">{{UOM}}</td>
+              <td width="15%" *ngIf="showUnitCost"></td>
+              <td width="30%" *ngIf="showItemName"></td>
+              <td width="15%" *ngIf="showDescription"></td>
+              <td width="8%" *ngIf="showUOM"></td>
               <td width="18%" class="text-right">Line Total</td>
             </tr>
             <tr *ngFor="let taskInvoice of taskInvoices" [hidden]="taskInvoices.length<0">
@@ -666,6 +694,10 @@
               <td ></td>
               <td *ngIf="!showUnitCost">{{formatAmount(taskInvoice.price)}}</td>
               <td *ngIf="!showUOM">{{formatQuantity(taskInvoice.quantity)}}</td>
+              <td *ngIf="showItemName"></td>
+              <td class="truncate" *ngIf="showDescription"></td>
+              <td *ngIf="showUnitCost"></td>
+              <td *ngIf="showUOM"></td>
               <td class="text-right">{{formatAmount(taskInvoice.amount)}}</td>
             </tr>
             <tr>
@@ -823,6 +855,10 @@
               <td ></td>
               <td width="15%" *ngIf="!showUnitCost">{{unitCost}}</td>
               <td width="8%" *ngIf="!showUOM">{{UOM}}</td>
+              <td width="15%" *ngIf="showUnitCost"></td>
+              <td width="30%" *ngIf="showItemName"></td>
+              <td width="15%" *ngIf="showDescription"></td>
+              <td width="8%" *ngIf="showUOM"></td>
               <td width="18%" class="text-right">Line Total</td>
             </tr>
             <tr *ngFor="let taskInvoice of taskInvoices" [hidden]="taskInvoices.length<0">
@@ -831,6 +867,10 @@
               <td ></td>
               <td *ngIf="!showUnitCost">{{formatAmount(taskInvoice.price)}}</td>
               <td *ngIf="!showUOM">{{formatQuantity(taskInvoice.quantity)}}</td>
+              <td *ngIf="showItemName"></td>
+              <td class="truncate" *ngIf="showDescription"></td>
+              <td *ngIf="showUnitCost"></td>
+              <td *ngIf="showUOM"></td>
               <td class="text-right">{{formatAmount(taskInvoice.amount)}}</td>
             </tr>
             <tr>
