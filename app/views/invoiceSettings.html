@@ -130,6 +130,10 @@
     background-color: #e2e2e2;
   }
 
+  .labelWidth{
+    width: 75px;
+  }
+
 </style>
 <div foundation class="reports">
   <ul class="reports tabs" data-tabs id="invoice-settings-tabs">
@@ -804,7 +808,7 @@
                 <div class="small-12 medium-2 columns text-right">
                   <label>Company Logo:</label>
                 </div>
-                <div class="small-12 medium-6 columns">
+                <div class="small-12 medium-6 columns" *ngIf="showUploader">
                   <div class="file-upload-modal">
                     <section class="upload-area"  ng2FileDrop [uploader]="uploader" (fileOver)="fileOverBase($event)" >
                       <div class="row upload-choose-btn" [ngClass]="{'popup-file-over': hasBaseDropZoneOver}" style="padding: 6rem 6rem">
@@ -905,27 +909,27 @@
                 <div class="small-12 medium-2 columns text-right">
                   <label>Items:</label>
                 </div>
-                <div class="small-12 medium-1 columns">
+                <div class="small-12 medium-2 columns">
                   <div class="field-group">
-                    <div class="field-row">
+                    <div class="field-row labelWidth">
                       <label>
                         <input type="radio" formControlName="items" value="Item"/>
                         <span>Item</span>
                       </label>
                     </div>
-                    <div class="field-row">
+                    <div class="field-row labelWidth">
                       <label>
                         <input type="radio" formControlName="items" value="Product"/>
                         <span>Product</span>
                       </label>
                     </div>
-                    <div class="field-row">
+                    <div class="field-row labelWidth">
                       <label>
                         <input type="radio" formControlName="items" value="Service"/>
                         <span>Service</span>
                       </label>
                     </div>
-                    <div class="field-row">
+                    <div class="field-row labelWidth">
                       <label>
                         <input type="radio" formControlName="items" value="Task"/>
                         <span>Task</span>
