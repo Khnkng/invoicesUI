@@ -34,6 +34,7 @@ export class InvoiceSettingsComponent implements  OnInit {
   logoURL:string;
   preference: any;
   userID:any;
+  showUploader:boolean;
 
   constructor(private _fb: FormBuilder, private _invoiceSettingsForm: InvoiceSettingsForm, private dss: DomSanitizer,
       private invoiceService: InvoicesService, private toastService: ToastService, private loadingService: LoadingService){
@@ -49,23 +50,22 @@ export class InvoiceSettingsComponent implements  OnInit {
           });
     }
     this.getCompanyLogo();
-    this.uploader = new FileUploader(<FileUploaderOptions>{
-      url: invoiceService.getDocumentServiceUrl(),
-      headers: [{
-        name: 'Authorization',
-        value: 'Bearer ' + Session.getToken()
-      }]
-    });
   }
 
   getCompanyLogo() {
     this.invoiceService.getCompanyLogo(Session.getCurrentCompany(),Session.getUser().id)
-        .subscribe(preference => this.processLogoPreference(preference[0]), error => this.handleError(error));
+        .subscribe(preference => this.processLogoPreference(preference[0]), error => {
+          this.setFileUploader(null);
+          this.handleError(error);
+        });
   }
 
   processLogoPreference(preference){
     if(preference && preference.temporaryURL){
       this.logoURL = preference.temporaryURL;
+      this.setFileUploader(preference.id);
+    }else {
+      this.setFileUploader(null);
     }
   }
 
@@ -135,24 +135,7 @@ export class InvoiceSettingsComponent implements  OnInit {
   }
 
   ngOnInit() {
-    this.uploader.onBuildItemForm = (fileItem: any, form: any) => {
-      let payload: any = {};
-      payload.sourceID = this.companyId;
-      payload.sourceType = 'company_invoice';
-      form.append('payload', JSON.stringify(payload));
-    };
 
-    this.uploader.onCompleteItem = (item, response, status, header) => {
-      if (status === 200) {
-        this.uploader.progress = 100;
-        this.billUploadResp = response;
-        this.uploader.queue.forEach(function (item) {
-          item.remove();
-        });
-        this.document = JSON.parse(response);
-        this.compileLink();
-      }
-    }
   }
 
   submit($event){
@@ -233,4 +216,41 @@ export class InvoiceSettingsComponent implements  OnInit {
     }
     return true;
   }
+
+  setFileUploader(documentId){
+    let serviceURL=this.invoiceService.getDocumentServiceUrl();
+    let methodType='POST';
+    if(documentId){
+      serviceURL=serviceURL+'/'+documentId;
+      methodType='PUT';
+    }
+    this.uploader = new FileUploader(<FileUploaderOptions>{
+      url: serviceURL,
+      method:methodType,
+      headers: [{
+        name: 'Authorization',
+        value: 'Bearer ' + Session.getToken()
+      }]
+    });
+    this.uploader.onBuildItemForm = (fileItem: any, form: any) => {
+      let payload: any = {};
+      payload.sourceID = this.companyId;
+      payload.sourceType = 'company_invoice';
+      form.append('payload', JSON.stringify(payload));
+    };
+
+    this.uploader.onCompleteItem = (item, response, status, header) => {
+      if (status === 200) {
+        this.uploader.progress = 100;
+        this.billUploadResp = response;
+        this.uploader.queue.forEach(function (item) {
+          item.remove();
+        });
+        this.document = JSON.parse(response);
+        this.compileLink();
+      }
+    }
+    this.showUploader=true;
+  }
+
 }
