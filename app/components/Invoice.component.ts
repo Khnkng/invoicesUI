@@ -296,6 +296,7 @@ export class InvoiceComponent{
                 }
                 if(invoice.commission){
                     this.commissions=invoice.commission.lines;
+                    this.commission=invoice.commission;
                     this.commissionObj=invoice.commission;
                     if(invoice.commission.event_type=='date'){
                         this.commissionObj.event_date=this.dateFormater.formatDate(this.commissionObj.event_at,this.serviceDateformat,this.dateFormat);
@@ -622,6 +623,7 @@ export class InvoiceComponent{
         this.setTemplateSettings(invoiceData);
         this.invoiceProcessedData=invoiceData;
         if(action=='email'){
+          this.setBillUpdate(invoiceData);
           if(!this.showPreview)
           {
             this.togelPreview();
@@ -633,8 +635,10 @@ export class InvoiceComponent{
           });
           this.openEmailDailog();
         }else if (action=='draft'){
+            this.setBillUpdate(invoiceData);
             this.saveInvoiceDetails(invoiceData);
         }else if(action=='save'){
+            this.setBillUpdate(invoiceData);
             this.saveInvoiceDetails(invoiceData);
         }else if(action=='preview'){
             this.togelPreview();
@@ -647,6 +651,12 @@ export class InvoiceComponent{
             setTimeout(function(){
                 base.exportToPDF();
             })
+        }
+    }
+
+    setBillUpdate(invoiceData){
+        if(this.invoice&&this.invoice.commission){
+            invoiceData.commission.updateBill=true;
         }
     }
 
@@ -1378,7 +1388,8 @@ export class InvoiceComponent{
             this.commission.bill_id=this.invoice.commission.bill_id;
             this.commission.updateBill=true;
         }else {
-            this.commission.updateBill=false;
+            this.commission.updateBill=true;
+            this.commission.bill_id="";
         }
         if(this.commissionObj.event_at!='custom'){
             this.commission.event_type='string';
