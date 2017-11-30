@@ -359,7 +359,7 @@
                                                 <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;" *ngIf="!newInvoice&&(invoice&&(invoice.state!='draft'&&invoice.state!='paid'))">
                                                     <button (click)="submit($event,false,'save')" class="button small" [disabled]="hasPaid||!invoiceForm.valid||!validateTaskLines()" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;height: 25px;">Save</button>
                                                 </div>
-                                                <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;">
+                                                <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;" *ngIf="displayCommission">
                                                     <button (click)="applyCommission()" class="button small" [disabled]="hasPaid||!invoiceForm.valid||!validateTaskLines()" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;height: 25px;">Commission</button>
                                                 </div>
                                                 <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 40px;" *ngIf="newInvoice">
@@ -747,7 +747,7 @@
                 <td>{{getEventTypeName(commission.amount_type)}}</td>
                 <td *ngIf="commission.amount_type=='percentage'">{{commission.amount}}%</td>
                 <td *ngIf="commission.amount_type=='flat_fee'">{{formatAmount(commission.amount)}}</td>
-                <td>
+                <td style="text-align: center;">
           <span (click)="editCommission(commission)">
                                 <!--<i class="icon ion-edit"></i>-->
                             </span>
