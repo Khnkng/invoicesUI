@@ -114,6 +114,13 @@ export class InvoiceComponent{
     storedAttachments:Array<any>=[];
     showInvoiceHistory:boolean;
 
+    showCommission:boolean;
+    vendors:Array<string>=[];
+    commissionObj:any={vendor_id:"",event_type:"",event_at:"",event_date:"",lines:[],updateBill:false};
+    commissions:Array<any>=[];
+    showAddCommission:boolean;
+    commission:any={};
+
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
                 private customerService: CustomersService, private _invoiceForm:InvoiceForm, private _invoiceLineForm:InvoiceLineForm, private _invoiceLineTaxesForm:InvoiceLineTaxesForm,
@@ -283,6 +290,14 @@ export class InvoiceComponent{
                     this.sourceId=attachmentObj.sourceId;
                     this.getInvoiceAttachments(this.sourceId);
                     this.storedAttachments=attachmentObj.attachments;
+                }
+                if(invoice.commission){
+                    this.commissions=invoice.commission.lines;
+                    this.commissionObj=invoice.commission;
+                    if(invoice.commission.event_type=='date'){
+                        this.commissionObj.event_date=this.dateFormater.formatDate(this.commissionObj.event_at,this.serviceDateformat,this.dateFormat);
+                        this.commissionObj.event_at='custom';
+                    }
                 }
                 //this.numeralService.switchLocale(invoice.currency.toLowerCase());
                 this.onCurrencySelect(invoice.currency);
@@ -589,6 +604,9 @@ export class InvoiceComponent{
         invoiceData.logoURL = this.logoURL;
         invoiceData.state=this.invoiceID?this.invoice.state:'draft';
         invoiceData.isPastDue=this.isPastDue;
+        if(this.commissions.length>0){
+            invoiceData.commission=this.commission;
+        }
         if(this.attachments.length>0){
             let attachmentObj={
                 sourceId:this.sourceId,
@@ -1311,4 +1329,90 @@ export class InvoiceComponent{
             });
         }
     }
+
+    //invoice commission changes
+
+    applyCommission(){
+        this.showCommission=true;
+        this.showInvoice=false;
+    }
+
+    loadVendors(){
+        this.companyService.vendors(Session.getCurrentCompany())
+            .subscribe(vendors => {
+                this.vendors=vendors;
+            }, error => this.handleError(error));
+    }
+
+    createCommission(){
+        let commission= _.clone(this.commissionObj);
+        let commissionLine={
+            amount:commission.amount,
+            item_id:commission.item_id,
+            amount_type:commission.amount_type,
+            item_name:this.getItemCodeName(commission.item_id)
+        };
+        this.commissions.push(commissionLine);
+        this.resetCommission();
+    }
+
+    resetCommission(){
+        // this.commissionObj.vendor_id="";
+        this.commissionObj.amount=0;
+        this.commissionObj.item_id="";
+        this.commissionObj.amount_type="";
+        this.showAddCommission=false;
+
+    }
+
+    getVendorName(id){
+        let vendor = _.find(this.vendors, {'id': id});
+        return vendor? vendor.name: '';
+    }
+
+    saveCommission(){
+        if(this.invoice&&this.invoice.commission){
+            this.commission.bill_id=this.invoice.commission.bill_id;
+            this.commission.updateBill=true;
+        }else {
+            this.commission.updateBill=false;
+        }
+        if(this.commissionObj.event_at!='custom'){
+            this.commission.event_type='string';
+            this.commission.event_at=this.commissionObj.event_at;
+        }else {
+            this.commission.event_type='date';
+            this.commission.event_at=this.dateFormater.formatDate(this.commissionObj.event_date,this.dateFormat,this.serviceDateformat);
+        }
+        this.commission.lines=this.commissions;
+        this.commission.vendor_id=this.commissionObj.vendor_id;
+        this.showCommission=false;
+        this.showInvoice=true;
+    }
+
+    validateCommission(){
+        if(this.commissionObj.vendor_id&&this.commissionObj.item_id&&this.commissionObj.amount>0){
+            return false;
+        }
+        return true;
+    }
+
+    deleteCommission(commission,index){
+        this.commissions.splice(index, 1);
+    }
+
+    setEventDate(date){
+        this.commissionObj.event_date=date;
+    }
+
+
+    addCommissionLine(){
+        this.showAddCommission=true;
+    }
+
+    getEventTypeName(type){
+        let eventTypes={flat_fee:'Flat Fee',percentage:'Percentage'};
+        return eventTypes[type];
+    }
+
 }
