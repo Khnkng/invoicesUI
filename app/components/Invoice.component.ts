@@ -120,6 +120,7 @@ export class InvoiceComponent{
     commissions:Array<any>=[];
     showAddCommission:boolean;
     commission:any={};
+    displayCommission:boolean;
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
@@ -188,6 +189,7 @@ export class InvoiceComponent{
       this.invoiceService.getPreference(Session.getCurrentCompany(),Session.getUser().id)
         .subscribe(preference => {
           if(preference){
+            this.displayCommission=preference.displayCommission;
             this.tasks=preference.items;
             this.UOM=preference.units;
             this.unitCost=preference.price;

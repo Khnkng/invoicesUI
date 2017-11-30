@@ -137,10 +137,10 @@
 </style>
 <div foundation class="reports">
   <ul class="reports tabs" data-tabs id="invoice-settings-tabs">
-    <li class="reports tabs-title is-active"><a href="#generalSettings" aria-selected="true"><h6>General Settings</h6></a></li>
+    <li class="reports tabs-title is-active"><a href="#generalSettings" aria-selected="true"><h6>Template Settings</h6></a></li>
     <li class="reports tabs-title "><a href="#logoSettings"><h6>Logo Settings</h6></a></li>
-    <li class="reports tabs-title"><a href="#invoiceSettings"><h6>Invoice Settings</h6></a></li>
-    <li class="reports tabs-title"><a href="#columnSettings"><h6>Column Settings</h6></a></li>
+    <li class="reports tabs-title"><a href="#invoiceSettings"><h6>Email Settings</h6></a></li>
+    <li class="reports tabs-title"><a href="#columnSettings"><h6>Display Settings</h6></a></li>
   </ul>
 </div>
 <form (ngSubmit)="submit($event)" [formGroup]="invoiceSettingsForm">
@@ -788,12 +788,6 @@
                             <td colspan="3">Amount Due</td>
                             <td colspan="2" class="text-right">$500.00</td>
                           </tr>
-                          <!--
-                          <tr  class="heading-color">
-                            <td  class="emptyCol" colspan="3"></td>
-                            <td>Total</td>
-                            <td colspan="2" class="text-right">$500.00</td>
-                          </tr>-->
                           </tbody>
                         </table>
                       </td>
@@ -852,20 +846,6 @@
               </div>
             </div>
             <div class="reports tabs-panel" id="invoiceSettings">
-              <!--<div class="row" style="margin-top: 1rem">
-                <div class="small-12 medium-2 columns text-right">
-                  <label>Default Payment terms:</label>
-                </div>
-                <div class="small-2 medium-2 columns">
-                  <select formControlName="defaultPaymentTerms" placeholder="Terms">
-                    <option [value]="'net30'">Net 30</option>
-                    <option [value]="'net45'">Net 45</option>
-                    <option [value]="'net60'">Net 60</option>
-                    <option [value]="'net90'">Net 90</option>
-                    <option [value]="'custom'">Custom</option>
-                  </select>
-                </div>
-              </div>-->
               <div class="row" style="margin-top: 1rem">
                 <div class="small-12 medium-2 columns text-right">
                   <label>Email Subject:</label>
@@ -874,37 +854,8 @@
                   <input type="text" formControlName="defaultTitle"/>
                 </div>
               </div>
-              <!--<div class="row">
-                <div class="small-12 medium-2 columns text-right">
-                  <label>Default Subheading:</label>
-                </div>
-                <div class="small-12 medium-6 columns">
-                  <input type="text" formControlName="defaultSubHeading"/>
-                </div>
-              </div>
-              <div class="row">
-                <div class="small-12 medium-2 columns text-right">
-                  <label>Default Footer:</label>
-                </div>
-                <div class="small-12 medium-6 columns">
-                  <input type="text" formControlName="defaultFooter"/>
-                </div>
-              </disv>-->
-              <!--<div class="row">
-                <div class="small-12 medium-2 columns text-right">
-                  <label>Standard Memo:</label>
-                </div>
-                <div class="small-12 medium-6 columns">
-                  <textarea formControlName="standardMemo"></textarea>
-                </div>
-              </div>-->
             </div>
             <div class="reports tabs-panel" id="columnSettings">
-              <!--<div class="row" style="margin-top: 1rem">
-                <div class="small-12 medium-12 columns">
-                  <label>Edit the titles of columns on your choice.</label>
-                </div>
-              </div>-->
               <div class="row" style="margin-top: 1rem">
                 <div class="small-12 medium-2 columns text-right">
                   <label>Items:</label>
@@ -1001,28 +952,6 @@
                   </div>
                 </div>
               </div>
-              <!--<div class="row">
-                  <div class="small-12 medium-3 columns text-right">
-                      <label>Amount:</label>
-                  </div>
-                  <div class="small-12 medium-6 columns">
-                      <div class="field-group">
-                          <div class="field-row">
-                              <label>
-                                  <input type="radio" formControlName="amount" value="Amount"/>
-                                  <span>Amount</span>
-                              </label>
-                          </div>
-                          <div class="field-row other">
-                              <label class="float-left">
-                                  <input type="radio" formControlName="amount" value="Other"/>
-                                  <span>Other</span>
-                              </label>
-                              <input class="float-left" type="text" [disabled]="isOtherAmount()" formControlName="otherAmount"/>
-                          </div>
-                      </div>
-                  </div>
-              </div>-->
               <div class="row">
                 <div class="small-12 medium-2 columns text-right">
                   <label>Hide columns:</label>
@@ -1046,11 +975,18 @@
                       <input type="checkbox" formControlName="hidePrice"/> <label>Hide Unit Cost</label>
                     </div>
                   </div>
-                  <!--<div class="row">
-                      <div class="small-12 medium-6 columns">
-                          <input type="checkbox" formControlName="hideAmount"/> <label>Hide Amount</label>
-                      </div>
-                  </div>-->
+                </div>
+              </div>
+              <div class="row">
+                <div class="small-12 medium-2 columns text-right">
+                  <label>Commission:</label>
+                </div>
+                <div class="small-12 medium-9 columns">
+                  <div class="row">
+                    <div class="small-12 medium-6 columns">
+                      <input type="checkbox" formControlName="displayCommission"/> <label>Show Commission</label>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
