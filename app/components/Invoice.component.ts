@@ -1420,8 +1420,9 @@ export class InvoiceComponent{
         }
         this.commission.lines=this.commissions;
         this.commission.vendor_id=this.commissionObj.vendor_id;
-        this.showCommission=false;
-        this.showInvoice=true;
+        /*this.showCommission=false;
+        this.showInvoice=true;*/
+        this.hideCommission();
     }
 
     validateCommission(){
