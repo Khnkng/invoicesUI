@@ -142,6 +142,7 @@ export class InvoiceComponent{
             this.loadCOA();
             this.getCompanyDetails();
             this.getCompanyPreferences();
+            this.loadVendors();
             this.uploader = new FileUploader(<FileUploaderOptions>{
                 url: invoiceService.getDocumentServiceUrl(),
                 headers: [{
