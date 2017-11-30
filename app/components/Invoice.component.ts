@@ -159,6 +159,8 @@ export class InvoiceComponent{
         this.routeSubscribe = switchBoard.onClickPrev.subscribe(title => {
             if(this.dimensionFlyoutCSS == "expanded"){
                 this.hideFlyout();
+            }else if(this.showCommission){
+                this.hideCommission();
             }else if(this.showInvoiceHistory){
                 this.hideHistoryFlyout();
             }else{
@@ -183,6 +185,17 @@ export class InvoiceComponent{
         }else {
             this._router.navigate([previousState.url]);
         }
+    }
+
+    hideCommission(){
+        this.showInvoice=true;
+        this.showCommission=false;
+        if(this.newInvoice){
+            this.titleService.setPageTitle("Add Invoice");
+        }else {
+            this.titleService.setPageTitle("Edit Invoice");
+        }
+
     }
 
     getCompanyPreferences(){
@@ -1348,6 +1361,13 @@ export class InvoiceComponent{
     applyCommission(){
         this.showCommission=true;
         this.showInvoice=false;
+        if(this.newInvoice){
+            this.titleService.setPageTitle("Add Commission");
+        }else if(!this.newInvoice&&this.invoice.commission){
+            this.titleService.setPageTitle("Edit Commission");
+        }else {
+            this.titleService.setPageTitle("Add Commission");
+        }
     }
 
     loadVendors(){
