@@ -359,6 +359,9 @@
                                                 <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;" *ngIf="!newInvoice&&(invoice&&(invoice.state!='draft'&&invoice.state!='paid'))">
                                                     <button (click)="submit($event,false,'save')" class="button small" [disabled]="hasPaid||!invoiceForm.valid||!validateTaskLines()" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;height: 25px;">Save</button>
                                                 </div>
+                                                <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;">
+                                                    <button (click)="applyCommission()" class="button small" [disabled]="hasPaid||!invoiceForm.valid||!validateTaskLines()" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;height: 25px;">Commission</button>
+                                                </div>
                                                 <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 40px;" *ngIf="newInvoice">
                                                     <button [disabled]="!invoiceForm.valid||!validateTaskLines()" (click)="submit($event,false,'preview')" class="button small" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;">{{preViewText}}</button>
                                                 </div>
@@ -657,3 +660,106 @@
         </div>
     </div>
 </div>-->
+
+<div class="small-12 medium-12 small-centered column" *ngIf="showCommission">
+    <div class="row">
+        <div class="column small-12 medium-2">
+            <label>
+                Vendor
+                <select  placeholder="Vendor *" [(ngModel)]="commissionObj.vendor_id">
+                    <option selected="selected" *ngFor="let vendor of vendors" value="{{vendor.id}}">{{vendor.name}}</option>
+                </select>
+            </label>
+        </div>
+        <div class="column small-12 medium-1">
+            <label>
+                Event At
+                <select  placeholder="Type *" [(ngModel)]="commissionObj.event_at">
+                    <option value="create">Create</option>
+                    <option value="paid">Paid</option>
+                    <option value="custom">Custom</option>
+                </select>
+            </label>
+        </div>
+        <div class="column small-12 medium-1" *ngIf="commissionObj.event_at=='custom'">
+            <label>
+                Event Date
+                <input type="text" invoice-custom-datepicker [(ngModel)]="commissionObj.event_date" [format]="dateFormat" [mindate]="'past'" (valueChanged)="setEventDate($event)" placeholder="Event Date"/>
+            </label>
+        </div>
+        <!--<div class="column small-12 medium-2">
+          <label>
+            Items
+            <select [(ngModel)]="commissionObj.item_id">
+              <option *ngFor="let item of itemItemCodes" [value]="item.id">{{item.name}}</option>
+            </select>
+          </label>
+        </div>-->
+        <div class="small-12 medium-2 column" style="margin-top: 1.6rem;">
+            <!--<button style="margin-top: 1.5rem;" class="button small" [disabled]="validateCommission()" (click)="createCommission()">Create</button>-->
+      <span class="pointer" (click)="addCommissionLine()">
+                          <i class=" icon ion-ios-plus-outline"></i>
+                          <span>Commission</span>
+                        </span>
+        </div>
+    </div>
+    <div class="row" *ngIf="showAddCommission">
+        <div class="column small-12 medium-2">
+            <label>
+                Items
+                <select [(ngModel)]="commissionObj.item_id">
+                    <option *ngFor="let item of itemItemCodes" [value]="item.id">{{item.name}}</option>
+                </select>
+            </label>
+        </div>
+        <div class="column small-12 medium-2">
+            <label>
+                Commission Type
+                <select [(ngModel)]="commissionObj.amount_type">
+                    <option value="flat_fee">Flat Fee</option>
+                    <option value="percentage">Percentage</option>
+                </select>
+            </label>
+        </div>
+        <div class="column small-12 medium-2">
+            <label>
+                Value
+                <input type="number" [(ngModel)]="commissionObj.amount">
+            </label>
+        </div>
+        <div class="small-12 medium-2 column">
+            <button style="margin-top: 1.5rem;" class="button small" [disabled]="validateCommission()" (click)="createCommission()">Save Line</button>
+        </div>
+    </div>
+    <div class="row" *ngIf="commissions.length>0">
+        <table border="1">
+            <thead>
+            <tr>
+                <th >Item</th>
+                <th >Commission Type</th>
+                <th >Value</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let commission of commissions;let i=index;">
+                <td>{{getItemCodeName(commission.item_id)}}
+                <td>{{getEventTypeName(commission.amount_type)}}</td>
+                <td *ngIf="commission.amount_type=='percentage'">{{commission.amount}}%</td>
+                <td *ngIf="commission.amount_type=='flat_fee'">{{formatAmount(commission.amount)}}</td>
+                <td>
+          <span (click)="editCommission(commission)">
+                                <!--<i class="icon ion-edit"></i>-->
+                            </span>
+                                    <span (click)="deleteCommission(commission,i)">
+                                <i class="icon ion-ios-trash-outline"></i>
+                            </span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="commissions.length>0">
+        <input style="margin-top: 1.5rem;float:right" type="button" class="button small" value="Save Commission" (click)="saveCommission()"/>
+    </div>
+</div>
