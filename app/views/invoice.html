@@ -671,7 +671,7 @@
                 </select>
             </label>
         </div>
-        <div class="column small-12 medium-1">
+        <div class="column small-12 medium-2">
             <label>
                 Event At
                 <select  placeholder="Type *" [(ngModel)]="commissionObj.event_at">
@@ -681,7 +681,7 @@
                 </select>
             </label>
         </div>
-        <div class="column small-12 medium-1" *ngIf="commissionObj.event_at=='custom'">
+        <div class="column small-12 medium-2" *ngIf="commissionObj.event_at=='custom'">
             <label>
                 Event Date
                 <input type="text" invoice-custom-datepicker [(ngModel)]="commissionObj.event_date" [format]="dateFormat" [mindate]="'past'" (valueChanged)="setEventDate($event)" placeholder="Event Date"/>
