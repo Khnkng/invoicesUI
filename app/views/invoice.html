@@ -681,7 +681,7 @@
         </div>
         <div class="column small-12 medium-2">
             <label>
-                Payment At
+                Pay Event
                 <select  placeholder="Type *" [(ngModel)]="commissionObj.event_at">
                     <option value="create">Create</option>
                     <option value="paid">Paid</option>
@@ -727,7 +727,7 @@
             <thead>
             <tr>
                 <th>Vendor</th>
-                <th>Payment At</th>
+                <th>Pay Event</th>
                 <th >Item</th>
                 <th >Commission Type</th>
                 <th >Value</th>
@@ -755,6 +755,6 @@
         </table>
     </div>
     <div>
-        <input style="margin-top: 1.5rem;float:right" type="button" class="button small" value="Save Commission" (click)="saveCommission()"/>
+        <input style="margin-top: 1.5rem;float:right" type="button" class="button small" value="Save" (click)="saveCommission()"/>
     </div>
 </div>
