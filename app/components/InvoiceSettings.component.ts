@@ -13,6 +13,7 @@ import {UUID} from "angular2-uuid";
 import {ToastService} from "qCommon/app/services/Toast.service";
 import {TOAST_TYPE} from "qCommon/app/constants/Qount.constants";
 import {LoadingService} from "qCommon/app/services/LoadingService";
+import {pageTitleService} from "qCommon/app/services/PageTitle";
 
 declare let jQuery:any;
 declare let Foundation:any;
@@ -37,10 +38,11 @@ export class InvoiceSettingsComponent implements  OnInit {
   showUploader:boolean;
 
   constructor(private _fb: FormBuilder, private _invoiceSettingsForm: InvoiceSettingsForm, private dss: DomSanitizer,
-      private invoiceService: InvoicesService, private toastService: ToastService, private loadingService: LoadingService){
+      private invoiceService: InvoicesService, private toastService: ToastService, private loadingService: LoadingService,private titleService:pageTitleService){
     this.invoiceSettingsForm = this._fb.group(this._invoiceSettingsForm.getForm());
     this.companyId = Session.getCurrentCompany();
     this.userID=Session.getUser().id;
+    this.titleService.setPageTitle("Invoice Settings");
     if(this.companyId){
       this.loadingService.triggerLoadingEvent(true);
       this.invoiceService.getPreference(this.companyId,this.userID)

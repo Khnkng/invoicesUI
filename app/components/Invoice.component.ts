@@ -114,6 +114,17 @@ export class InvoiceComponent{
     storedAttachments:Array<any>=[];
     showInvoiceHistory:boolean;
 
+    showCommission:boolean;
+    vendors:Array<string>=[];
+    commissionObj:any={vendor_id:"",event_type:"",event_at:"",event_date:"",updateBill:false,item_id:"",item_name:"",amount_type:"",amount:0};
+    commissions:Array<any>=[];
+    showAddCommission:boolean;
+    editCommissionIndex:any;
+    isEditCommissionMode:boolean;
+    commission:any={};
+    displayCommission:boolean;
+    deletedCommissions:Array<any>=[];
+
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
                 private customerService: CustomersService, private _invoiceForm:InvoiceForm, private _invoiceLineForm:InvoiceLineForm, private _invoiceLineTaxesForm:InvoiceLineTaxesForm,
@@ -135,6 +146,7 @@ export class InvoiceComponent{
             this.loadCOA();
             this.getCompanyDetails();
             this.getCompanyPreferences();
+            this.loadVendors();
             this.uploader = new FileUploader(<FileUploaderOptions>{
                 url: invoiceService.getDocumentServiceUrl(),
                 headers: [{
@@ -150,6 +162,8 @@ export class InvoiceComponent{
         this.routeSubscribe = switchBoard.onClickPrev.subscribe(title => {
             if(this.dimensionFlyoutCSS == "expanded"){
                 this.hideFlyout();
+            }else if(this.showCommission){
+                this.hideCommission();
             }else if(this.showInvoiceHistory){
                 this.hideHistoryFlyout();
             }else{
@@ -176,10 +190,22 @@ export class InvoiceComponent{
         }
     }
 
+    hideCommission(){
+        this.showInvoice=true;
+        this.showCommission=false;
+        if(this.newInvoice){
+            this.titleService.setPageTitle("Add Invoice");
+        }else {
+            this.titleService.setPageTitle("Edit Invoice");
+        }
+
+    }
+
     getCompanyPreferences(){
       this.invoiceService.getPreference(Session.getCurrentCompany(),Session.getUser().id)
         .subscribe(preference => {
           if(preference){
+            this.displayCommission=preference.displayCommission;
             this.tasks=preference.items;
             this.UOM=preference.units;
             this.unitCost=preference.price;
@@ -283,6 +309,14 @@ export class InvoiceComponent{
                     this.sourceId=attachmentObj.sourceId;
                     this.getInvoiceAttachments(this.sourceId);
                     this.storedAttachments=attachmentObj.attachments;
+                }
+                if(invoice.commissions&&invoice.commissions.length>0){
+                    this.commissions=invoice.commissions;
+                    this.commissions.forEach(function(commission:any){
+                        if(commission.event_type=='date'){
+                            commission.event_date=base.dateFormater.formatDate(commission.event_date,base.serviceDateformat,base.dateFormat);
+                        }
+                    });
                 }
                 //this.numeralService.switchLocale(invoice.currency.toLowerCase());
                 this.onCurrencySelect(invoice.currency);
@@ -589,6 +623,9 @@ export class InvoiceComponent{
         invoiceData.logoURL = this.logoURL;
         invoiceData.state=this.invoiceID?this.invoice.state:'draft';
         invoiceData.isPastDue=this.isPastDue;
+        if(this.commissions.length>0||this.deletedCommissions.length>0){
+            invoiceData.commissions=this.commissions.concat(this.deletedCommissions);
+        }
         if(this.attachments.length>0){
             let attachmentObj={
                 sourceId:this.sourceId,
@@ -601,6 +638,7 @@ export class InvoiceComponent{
         this.setTemplateSettings(invoiceData);
         this.invoiceProcessedData=invoiceData;
         if(action=='email'){
+          this.setBillUpdate(invoiceData);
           if(!this.showPreview)
           {
             this.togelPreview();
@@ -612,8 +650,10 @@ export class InvoiceComponent{
           });
           this.openEmailDailog();
         }else if (action=='draft'){
+            this.setBillUpdate(invoiceData);
             this.saveInvoiceDetails(invoiceData);
         }else if(action=='save'){
+            this.setBillUpdate(invoiceData);
             this.saveInvoiceDetails(invoiceData);
         }else if(action=='preview'){
             this.togelPreview();
@@ -626,6 +666,16 @@ export class InvoiceComponent{
             setTimeout(function(){
                 base.exportToPDF();
             })
+        }
+    }
+
+    setBillUpdate(invoiceData){
+        if(this.commissions.length>0||this.deletedCommissions.length>0){
+            invoiceData.commissions.forEach(function(commission:any){
+                if(commission.amount_type=='percentage'){
+                    commission.updateBill=true;
+                }
+            });
         }
     }
 
@@ -1311,4 +1361,125 @@ export class InvoiceComponent{
             });
         }
     }
+
+    //invoice commission changes
+
+    applyCommission(){
+        this.showCommission=true;
+        this.showInvoice=false;
+        if(this.newInvoice){
+            this.titleService.setPageTitle("Add Commission");
+        }else if(!this.newInvoice&&this.invoice.commission){
+            this.titleService.setPageTitle("Edit Commission");
+        }else {
+            this.titleService.setPageTitle("Add Commission");
+        }
+    }
+
+    loadVendors(){
+        this.companyService.vendors(Session.getCurrentCompany())
+            .subscribe(vendors => {
+                this.vendors=vendors;
+            }, error => this.handleError(error));
+    }
+
+    createCommission(){
+        let commission= _.clone(this.commissionObj);
+        if(this.isEditCommissionMode){
+            let commissionLine=this.getFormattedCommission(commission);
+            commissionLine.updateBill=true;
+            this.commissions[this.editCommissionIndex]=commissionLine;
+        }else {
+            let commissionLine=this.getFormattedCommission(commission);
+            this.commissions.push(commissionLine);
+        }
+        this.resetCommission();
+    }
+
+    getFormattedCommission(commission){
+        let commissionLine={amount:0,item_id:"",amount_type:"",item_name:"",vendor_id:"",event_at:"",updateBill:false,event_type:"",event_date:"",bill_id:""};
+        commissionLine.amount=commission.amount,
+            commissionLine.item_id=commission.item_id,
+            commissionLine.amount_type=commission.amount_type,
+            commissionLine.item_name=this.getItemCodeName(commission.item_id),
+            commissionLine.vendor_id=commission.vendor_id,
+            commissionLine.event_at=commission.event_at,
+            commissionLine.updateBill=true;
+        if(commission.bill_id){
+            commissionLine.bill_id=commission.bill_id
+        }
+        if(this.commissionObj.event_at!='custom'){
+            commissionLine.event_type='string';
+        }else {
+            commissionLine.event_type='date';
+            commissionLine.event_date=this.dateFormater.formatDate(this.commissionObj.event_date,this.dateFormat,this.serviceDateformat);
+        }
+        return commissionLine
+    }
+
+    resetCommission(){
+        this.commissionObj.amount=0;
+        this.commissionObj.item_id="";
+        this.commissionObj.amount_type="";
+        this.commissionObj.event_at="";
+        this.commissionObj.event_date="";
+        this.commissionObj.event_type="";
+        this.commissionObj.vendor_id="";
+        this.showAddCommission=false;
+        this.isEditCommissionMode=false;
+    }
+
+    getVendorName(id){
+        let vendor = _.find(this.vendors, {'id': id});
+        return vendor? vendor.name: '';
+    }
+
+    saveCommission(){
+        this.showCommission=false;
+        this.showInvoice=true;
+    }
+
+    validateCommission(){
+        if(this.commissionObj.vendor_id&&this.commissionObj.item_id&&this.commissionObj.amount>0){
+            return false;
+        }
+        return true;
+    }
+
+    deleteCommission(commissionObj,index){
+        let commission=this.commissions[index];
+        if(commissionObj.bill_id){
+            commission.delete=true;
+            this.deletedCommissions.push(commission);
+            this.commissions.splice(index, 1);
+        }else{
+            this.commissions.splice(index, 1);
+        }
+    }
+
+    setEventDate(date){
+        this.commissionObj.event_date=date;
+    }
+
+    editCommission(commission,index){
+        this.isEditCommissionMode=true;
+        this.showAddCommission=true;
+        this.commissionObj=_.clone(commission);
+        this.editCommissionIndex=index;
+    }
+
+    addCommissionLine(){
+        this.showAddCommission=true;
+    }
+
+    getEventTypeName(type){
+        let eventTypes={flat_fee:'Flat Fee',percentage:'Percentage'};
+        return eventTypes[type];
+    }
+
+    getEventAtName(type){
+        let eventAt={create:'Create',paid:'Paid',custom:'Custom'};
+        return eventAt[type];
+    }
+
 }
