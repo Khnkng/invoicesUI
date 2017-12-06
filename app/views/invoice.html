@@ -169,6 +169,26 @@
                                                                     <input type="text" formControlName="due_date" readonly>
                                                                 </label>
                                                             </div>
+                                                            <div class="row" *ngIf="!hasPaid&&!isPastDue">
+                                                                <div class="small-12 medium-12 columns" style="padding: 0px">
+                                                                    <label>
+                                                                        Late Fee
+                                                                        <select formControlName="late_fee_id">
+                                                                            <option *ngFor="let lateFee of lateFees" value="{{lateFee.id}}">{{lateFee.name}}</option>
+                                                                        </select>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row" *ngIf="hasPaid||isPastDue">
+                                                                <div class="small-12 medium-12 columns" style="padding: 0px">
+                                                                    <label>
+                                                                        Late Fee
+                                                                        <select class="jeSelect" formControlName="late_fee_id" disabled>
+                                                                            <option *ngFor="let lateFee of lateFees" value="{{lateFee.id}}">{{lateFee.name}}</option>
+                                                                        </select>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -324,6 +344,11 @@
                                                             </td>
                                                             <td><input type="text" formControlName="discount" numeral [format]="'$0,0.00'" [locale]="localeFormat" placeholder="Discount"></td>
                                                         </tr>-->
+                                                        <tr *ngIf="!newInvoice&&isPastDue&&validateLateFeeAmount()">
+                                                            <td style="background: #E5E5E5;">
+                                                                Late Fee
+                                                            </td>
+                                                            <td style="text-align:right;">{{formatAmount(lateFeeAmount)}}</td></tr>
                                                         <tr *ngIf="!newInvoice">
                                                             <td style="background: #E5E5E5;">
                                                                 Amount Paid

@@ -45,6 +45,7 @@ export class InvoicePaymentPreview{
     showUnitCost:boolean=true;
     showUOM:boolean=true;
     showItemName:boolean=true;
+    latefeeAmount:any=0;
     @Input()
     set invoices(invoices:any){
         this.invoiceData = invoices;
@@ -67,6 +68,7 @@ export class InvoicePaymentPreview{
         if(invoices.isPastDue){
           this.bgColor="#F06459";
           this.displayState="past_due";
+          this.latefeeAmount=invoices.late_fee_amount;
         }else {
           this.displayState=invoices.state;
           this.getHeaderColor(this.displayState);
@@ -175,6 +177,13 @@ export class InvoicePaymentPreview{
       }else {
         return this.termsList[this.invoiceData.term]
       }
+    }
+
+    validateLateFeeAmount(){
+        if(this.latefeeAmount>0){
+            return true;
+        }
+        return false;
     }
 
 }
