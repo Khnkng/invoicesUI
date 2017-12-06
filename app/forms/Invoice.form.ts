@@ -33,7 +33,8 @@ export class InvoiceForm extends abstractForm{
             "send_to":["",Validators.required],
             "tax_amount":[""],
             "payment_options":[""],
-            "attachments_metadata":[""]
+            "attachments_metadata":[""],
+            "late_fee_id":[""]
         }
     }
 

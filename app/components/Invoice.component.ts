@@ -24,6 +24,7 @@ import {DimensionService} from "qCommon/app/services/DimensionService.service";
 import {DateFormater} from "qCommon/app/services/DateFormatter.service";
 import {FileUploader, FileUploaderOptions} from "ng2-file-upload";
 import {UUID} from "angular2-uuid/index";
+import {LateFeesService} from "qCommon/app/services/LateFeesService.service";
 
 declare let _:any;
 declare let numeral:any;
@@ -124,12 +125,14 @@ export class InvoiceComponent{
     commission:any={};
     displayCommission:boolean;
     deletedCommissions:Array<any>=[];
+    lateFees:Array<any>=[];
+    lateFeeAmount:any=0;
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
                 private customerService: CustomersService, private _invoiceForm:InvoiceForm, private _invoiceLineForm:InvoiceLineForm, private _invoiceLineTaxesForm:InvoiceLineTaxesForm,
                 private coaService: ChartOfAccountsService,private titleService:pageTitleService,private stateService: StateService, private reportService: ReportService,private switchBoard: SwitchBoard,
-                private numeralService:NumeralService, private dimensionService: DimensionService, private dateFormater:DateFormater){
+                private numeralService:NumeralService, private dimensionService: DimensionService, private dateFormater:DateFormater,private lateFeesService: LateFeesService){
         this.titleService.setPageTitle("Invoices");
         let _form:any = this._invoiceForm.getForm();
         _form['invoiceLines'] = this.invoiceLineArray;
@@ -156,6 +159,7 @@ export class InvoiceComponent{
             });
         });
         this.getCompanyLogo();
+        this.getLateFees();
         if(this._router.url.indexOf('duplicate')!=-1){
             this.isDuplicate=true;
         };
@@ -188,6 +192,13 @@ export class InvoiceComponent{
         }else {
             this._router.navigate([previousState.url]);
         }
+    }
+
+    getLateFees(){
+        this.lateFeesService.lateFees(Session.getCurrentCompany())
+            .subscribe(lateFees => this.lateFees=lateFees, error=> {
+
+            });
     }
 
     hideCommission(){
@@ -324,6 +335,7 @@ export class InvoiceComponent{
                 this.taxTotal=invoice.tax_amount;
                 this.amount_paid=invoice.amount_paid;
                 this.isPastDue=invoice.is_past_due;
+                this.lateFeeAmount=invoice.late_fee_amount;
                 let _invoice = _.cloneDeep(invoice);
                 delete _invoice.invoiceLines;
         //        let taskLines:Array<any> = [];
@@ -623,6 +635,9 @@ export class InvoiceComponent{
         invoiceData.logoURL = this.logoURL;
         invoiceData.state=this.invoiceID?this.invoice.state:'draft';
         invoiceData.isPastDue=this.isPastDue;
+        if(this.isPastDue){
+            invoiceData.late_fee_amount=this.lateFeeAmount;
+        }
         if(this.commissions.length>0||this.deletedCommissions.length>0){
             invoiceData.commissions=this.commissions.concat(this.deletedCommissions);
         }
@@ -1048,6 +1063,9 @@ export class InvoiceComponent{
     calculateAmount(paidAmount){
         this.amount=Number(this.subTotal+this.taxTotal);
         this.totalAmount=Number(this.subTotal+this.taxTotal-(Number(this.amount_paid)));
+        if(this.isPastDue){
+            this.totalAmount=Number(this.totalAmount+this.lateFeeAmount);
+        }
         return this.totalAmount;
     }
 
@@ -1480,6 +1498,13 @@ export class InvoiceComponent{
     getEventAtName(type){
         let eventAt={create:'Create',paid:'Paid',custom:'Custom'};
         return eventAt[type];
+    }
+
+    validateLateFeeAmount(){
+        if(this.lateFeeAmount>0){
+            return true;
+        }
+        return false;
     }
 
 }
