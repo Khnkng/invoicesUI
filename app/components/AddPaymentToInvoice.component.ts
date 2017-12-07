@@ -125,6 +125,9 @@ export class InvoiceAddPayment{
                 invoices.company=this.companyAddress;
                 this.setTemplateSettings(invoices);
                 this.invoiceData = invoices;
+                if(invoices.is_past_due){
+                    this.invoiceData.isPastDue=invoices.is_past_due
+                }
                 this.applyObject.reference_number = invoices.number;
                 this.hasInvoiceData = true;
             }
