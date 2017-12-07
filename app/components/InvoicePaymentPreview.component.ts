@@ -72,7 +72,7 @@ export class InvoicePaymentPreview{
           this.displayState=invoices.state;
           this.getHeaderColor(this.displayState);
         }
-        this.latefeeAmount=invoices.late_fee_amount;
+        this.latefeeAmount=invoices.late_fee_amount?invoices.late_fee_amount:0;
 
         this.getZoomSize();
     }
