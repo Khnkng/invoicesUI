@@ -344,7 +344,7 @@
                                                             </td>
                                                             <td><input type="text" formControlName="discount" numeral [format]="'$0,0.00'" [locale]="localeFormat" placeholder="Discount"></td>
                                                         </tr>-->
-                                                        <tr *ngIf="!newInvoice&&isPastDue&&validateLateFeeAmount()">
+                                                        <tr *ngIf="!newInvoice&&validateLateFeeAmount()">
                                                             <td style="background: #E5E5E5;">
                                                                 Late Fee
                                                             </td>
