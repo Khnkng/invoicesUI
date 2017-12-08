@@ -465,7 +465,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="row" style="margin-top: 1.2rem" *ngIf="!showPreview&&!hasPaid">
+                                            <!--<div class="row" style="margin-top: 1.2rem" *ngIf="!showPreview&&!hasPaid">
                                                 <div class="small-12 medium-12 columns" style="padding: 0px">
                                                     <label>
                                                         Notes
@@ -480,7 +480,7 @@
                                                         <textarea readonly formControlName="notes" style="height: 130px;width: 80%;"></textarea>
                                                     </label>
                                                 </div>
-                                            </div>
+                                            </div>-->
 
                                             <!--<div class="row" style="margin-top: 0.5rem" *ngIf="!showPreview&&!hasPaid">
                                                 <div class="small-12 medium-12 columns" style="padding: 0px">
@@ -624,6 +624,11 @@
     <div class="row" style="padding: 1rem 1rem 0 1rem;margin-top: 1rem;">
         <div class="small-12 medium-12 columns">
             <input type="text" [(ngModel)]="additionalMails" placeholder="Please enter comma separated mails">
+        </div>
+    </div>
+    <div class="row" style="padding: 1rem 1rem 0 1rem;">
+        <div class="small-12 medium-12 columns">
+            <textarea [(ngModel)]="notes" rows="3" placeholder="Notes"></textarea>
         </div>
     </div>
     <div class="row" style="padding: 0rem 1rem;" >

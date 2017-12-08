@@ -127,6 +127,9 @@ export class InvoiceComponent{
     deletedCommissions:Array<any>=[];
     lateFees:Array<any>=[];
     lateFeeAmount:any=0;
+    customer_first_name:string;
+    customer_last_name:string;
+    notes:string;
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
@@ -736,6 +739,7 @@ export class InvoiceComponent{
     resetEmailDailogFields(){
         this.additionalMails=null;
         this.remainder_name="";
+        this.notes=null;
     }
 
     sendInvoiceMails(){
@@ -751,6 +755,9 @@ export class InvoiceComponent{
             this.invoiceProcessedData.recepientsMails=this.invoiceProcessedData.recepientsMails.concat(mails);
         }
         this.invoiceProcessedData.remainder_name=this.remainder_name;
+        this.invoiceProcessedData.notes=this.notes;
+        this.invoiceProcessedData.customer_first_name=this.selectedContact.first_name;
+        this.invoiceProcessedData.customer_last_name=this.selectedContact.last_name;
         this.saveInvoiceDetails(this.invoiceProcessedData);
         this.resetPopupFields();
     }
