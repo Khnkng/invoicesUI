@@ -127,8 +127,6 @@ export class InvoiceComponent{
     deletedCommissions:Array<any>=[];
     lateFees:Array<any>=[];
     lateFeeAmount:any=0;
-    customer_first_name:string;
-    customer_last_name:string;
     notes:string;
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
