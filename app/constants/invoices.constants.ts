@@ -10,5 +10,6 @@ export const INVOICE_PATHS={
     INVOICE_DASHBOARD_BOX: '/Invoices/users/:id/companies/:companyId/invoice/metrics',
     INVOICE_HISTORY:'/Invoices/users/:id/companies/:companyId/invoice_history/invoice/:invoiceId',
     DOCUMENTS_SERVICE: "/DocumentServices/user/:id/companies/:companyId/documents?mappedType=:type&mappedTo=:mappedId",
-    DOCUMENT_SERVICE_BASE:"/DocumentServices/user/:id/companies/:companyId/documents"
+    DOCUMENT_SERVICE_BASE:"/DocumentServices/user/:id/companies/:companyId/documents",
+    CUSTOMER_INVOICE:"/Invoices/users/:id/companies/:companyId/invoice/customer/:customerId"
 };
