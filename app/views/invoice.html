@@ -169,21 +169,23 @@
                                                                     <input type="text" formControlName="due_date" readonly>
                                                                 </label>
                                                             </div>
-                                                            <div class="row" *ngIf="!hasPaid&&!isPastDue">
+                                                            <div class="row" *ngIf="!hasPaid">
                                                                 <div class="small-12 medium-12 columns" style="padding: 0px">
                                                                     <label>
                                                                         Late Fee
                                                                         <select formControlName="late_fee_id">
+                                                                            <option value="">No Late Fee</option>
                                                                             <option *ngFor="let lateFee of lateFees" value="{{lateFee.id}}">{{lateFee.name}}</option>
                                                                         </select>
                                                                     </label>
                                                                 </div>
                                                             </div>
-                                                            <div class="row" *ngIf="hasPaid||isPastDue">
+                                                            <div class="row" *ngIf="hasPaid">
                                                                 <div class="small-12 medium-12 columns" style="padding: 0px">
                                                                     <label>
                                                                         Late Fee
                                                                         <select class="jeSelect" formControlName="late_fee_id" disabled>
+                                                                            <option value="">No Late Fee</option>
                                                                             <option *ngFor="let lateFee of lateFees" value="{{lateFee.id}}">{{lateFee.name}}</option>
                                                                         </select>
                                                                     </label>
