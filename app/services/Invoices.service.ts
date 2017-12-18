@@ -181,8 +181,11 @@ export class InvoicesService extends QountServices {
             .catch(this.handleError)
     }
 
-    customerInvoices(customerId) : Observable<any> {
+    customerInvoices(customerId,billId?) : Observable<any> {
         let url = this.interpolateUrl(INVOICE_PATHS.CUSTOMER_INVOICE,null,{id: Session.getUser().id,companyId:Session.getCurrentCompany(),customerId:customerId});
+        if(billId){
+        url=url+"?billId="+billId;
+        }
         return this.query(url, SOURCE_TYPE.JAVA).map(res => <any> res.json())
             .catch(this.handleError)
     }
