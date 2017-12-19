@@ -64,6 +64,7 @@ export class InvoiceDashboardComponent {
     hasProposals: boolean = false;
     invoices: any;
     companyCurrency: string = 'USD';
+    reportCurrency: string = 'USD';
     localeFortmat: string = 'en-US';
     customers: Array<any> = [];
     payments: Array<any> = [];
@@ -157,6 +158,9 @@ export class InvoiceDashboardComponent {
                 private stateService: StateService,private numeralService:NumeralService, private switchBoard:SwitchBoard,
                 private reportService: ReportService, private dateFormater: DateFormater) {
         this.currentCompanyId = Session.getCurrentCompany();
+        this.companyCurrency = Session.getCurrentCompanyCurrency();
+        this.reportCurrency = Session.getCompanyReportCurrency();
+        this.setReportCurrency();
         this.dateFormat = dateFormater.getFormat();
         this.serviceDateformat = dateFormater.getServiceDateformat();
         this.localeFortmat=CURRENCY_LOCALE_MAPPER[Session.getCurrentCompanyCurrency()]?CURRENCY_LOCALE_MAPPER[Session.getCurrentCompanyCurrency()]:'en-US';
@@ -184,7 +188,6 @@ export class InvoiceDashboardComponent {
             this.hasInvoices = false;
             this.hasPaidInvoices = false;
             this.showDownloadIcon = "hidden";
-            this.companyCurrency = Session.getCurrentCompanyCurrency();
         });
         this.localBadges = JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
         if (!this.localBadges) {
@@ -210,6 +213,14 @@ export class InvoiceDashboardComponent {
             this.searchString = data.searchString;
         }
         this.stateService.clearAllStates();
+    }
+
+    setBookCurrency(){
+      this.numeralService.switchLocale(this.companyCurrency);
+    }
+
+    setReportCurrency(){
+      this.numeralService.switchLocale(this.reportCurrency);
     }
 
     setSearchString($event){
@@ -278,7 +289,9 @@ export class InvoiceDashboardComponent {
         });
         this.tabDisplay[tabNo] = {'display': 'block'};
         this.tabBackground = this.bgColors[tabNo];
+        this.setBookCurrency();
         if (this.selectedTab == 0) {
+            this.setReportCurrency();
             this.isLoading = true;
             this.loadingService.triggerLoadingEvent(true);
             this.getDashboardData();
