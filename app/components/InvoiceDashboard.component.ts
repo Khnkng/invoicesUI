@@ -64,6 +64,7 @@ export class InvoiceDashboardComponent {
     hasProposals: boolean = false;
     invoices: any;
     companyCurrency: string = 'USD';
+    reportCurrency: string = 'USD';
     localeFortmat: string = 'en-US';
     customers: Array<any> = [];
     payments: Array<any> = [];
@@ -157,6 +158,8 @@ export class InvoiceDashboardComponent {
                 private stateService: StateService,private numeralService:NumeralService, private switchBoard:SwitchBoard,
                 private reportService: ReportService, private dateFormater: DateFormater) {
         this.currentCompanyId = Session.getCurrentCompany();
+        this.companyCurrency = Session.getCurrentCompanyCurrency();
+        this.setReportCurrency();
         this.dateFormat = dateFormater.getFormat();
         this.serviceDateformat = dateFormater.getServiceDateformat();
         this.localeFortmat=CURRENCY_LOCALE_MAPPER[Session.getCurrentCompanyCurrency()]?CURRENCY_LOCALE_MAPPER[Session.getCurrentCompanyCurrency()]:'en-US';
@@ -184,7 +187,6 @@ export class InvoiceDashboardComponent {
             this.hasInvoices = false;
             this.hasPaidInvoices = false;
             this.showDownloadIcon = "hidden";
-            this.companyCurrency = Session.getCurrentCompanyCurrency();
         });
         this.localBadges = JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
         if (!this.localBadges) {
@@ -210,6 +212,15 @@ export class InvoiceDashboardComponent {
             this.searchString = data.searchString;
         }
         this.stateService.clearAllStates();
+    }
+
+    setBookCurrency(){
+        this.numeralService.switchLocale(this.companyCurrency);
+    }
+
+    setReportCurrency(){
+        this.reportCurrency = Session.getCompanyReportCurrency()? Session.getCompanyReportCurrency(): this.companyCurrency;
+        this.numeralService.switchLocale(this.reportCurrency);
     }
 
     setSearchString($event){
@@ -278,7 +289,9 @@ export class InvoiceDashboardComponent {
         });
         this.tabDisplay[tabNo] = {'display': 'block'};
         this.tabBackground = this.bgColors[tabNo];
+        this.setBookCurrency();
         if (this.selectedTab == 0) {
+            this.setReportCurrency();
             this.isLoading = true;
             this.loadingService.triggerLoadingEvent(true);
             this.getDashboardData();
@@ -520,7 +533,9 @@ export class InvoiceDashboardComponent {
                     },
                     tooltip: {
                         headerFormat: '<b>{point.x}</b><br/>',
-                        pointFormat: '<span style="color:{series.color}">{series.name}: ${point.y:,.2f}</span><br/>',
+                        pointFormatter: function(){
+                            return '<span style="color:'+this.series.color+'">'+this.series.name+': '+base.formatAmount(this.y)+'</span><br/>'
+                        },
                         shared: true
                     },
                     yAxis: {
@@ -537,7 +552,7 @@ export class InvoiceDashboardComponent {
                         stackLabels: {
                             enabled: true,
                             formatter: function () {
-                                return '$'+Highcharts.numberFormat(this.total,2);
+                                return base.formatAmount(this.total)
                             },
                             style: {
                                 fontSize:'13px',
@@ -566,7 +581,7 @@ export class InvoiceDashboardComponent {
                             stacking: 'normal',
                             dataLabels: {
                                 enabled: false,
-                                format: '${y}',
+                                format: '{y}',
                                 fontSize:'13px',
                                 color:'#878787',
                                 fill:'#878787',
@@ -670,7 +685,7 @@ export class InvoiceDashboardComponent {
                             dataLabels: {
                                 enabled: true,
                                 formatter: function () {
-                                    return '$'+Highcharts.numberFormat(this.y,2);
+                                    return base.formatAmount(this.y);
                                 },
                                 fontSize:'13px',
                                 color:'#878787',
@@ -682,7 +697,9 @@ export class InvoiceDashboardComponent {
                         }
                     },
                     tooltip: {
-                        pointFormat: '<span style="color:{point.color};font-size: 13px">TOTAL</span>: <b>${point.y:,.2f}</b><br/>',
+                        pointFormatter: function(){
+                            return '<span style="color:'+this.series.color+'">'+this.series.name+': '+base.formatAmount(this.y)+'</span><br/>'
+                        }
                     },
                     series: [{
                         colorByPoint: true,
@@ -810,6 +827,7 @@ export class InvoiceDashboardComponent {
 
     ngOnDestroy() {
         this.routeSub.unsubscribe();
+        this.setBookCurrency();
     }
 
     addNewInvoice() {
