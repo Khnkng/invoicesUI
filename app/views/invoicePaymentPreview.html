@@ -677,14 +677,14 @@
 
               <td valign="top" style="vertical-align: top !important;padding:0 !important">
                 <p class="heading-color" style="padding:5px;background-color: #e2e2e2;font-weight: 600;">DATE</p>
-                <p class="company-style" style="padding:5px;background-color: #e2e2e2;">{{invoiceData.number}}</p>
+                <p class="company-style" style="padding:5px;background-color: #e2e2e2;">{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</p>
               </td>
               <td valign="top" style="vertical-align: top !important;padding:0 !important">
                 <p class="heading-color" style="padding:5px;background-color: #e2e2e2;font-weight: 600;">AMOUNT</p>
                 <p class="company-style" style="padding:5px;background-color: #e2e2e2;">{{formatAmount(invoiceData.amount)}}</p>
               </td>
               <td valign="top" style="vertical-align: top !important;padding:0 !important">
-                <p class="heading-color" style="padding:5px;background-color: #e2e2e2;font-weight: 600;">DUE DATE:</p>
+                <p class="heading-color" style="padding:5px;background-color: #e2e2e2;font-weight: 600;">DUE DATE</p>
                 <p class="company-style" style="padding:5px;background-color: #e2e2e2;">{{convertDateToLocaleFormat(invoiceData.due_date)}}</p>
               </td>
             </tr>
