@@ -128,7 +128,6 @@ export class InvoiceComponent{
     lateFees:Array<any>=[];
     lateFeeAmount:any=0;
     email_notes:string;
-    late_fee_name:string;
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
