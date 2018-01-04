@@ -202,6 +202,11 @@ export class InvoiceComponent{
             });
     }
 
+    getLateFeeName(lateFeeId){
+      let lateFee = _.find(this.lateFees, {'id': lateFeeId});
+      return lateFee? lateFee.name: '';
+    }
+
     hideCommission(){
         this.showInvoice=true;
         this.showCommission=false;
@@ -636,6 +641,7 @@ export class InvoiceComponent{
         invoiceData.logoURL = this.logoURL;
         invoiceData.state=this.invoiceID?this.invoice.state:'draft';
         invoiceData.isPastDue=this.isPastDue;
+        invoiceData.late_fee_name=invoiceData.late_fee_id?this.getLateFeeName(invoiceData.late_fee_id):'';
         if(this.isPastDue){
             invoiceData.late_fee_amount=this.lateFeeAmount;
         }
