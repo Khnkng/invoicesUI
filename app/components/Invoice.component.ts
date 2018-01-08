@@ -1075,6 +1075,7 @@ export class InvoiceComponent{
         this.amount=Number(this.subTotal+this.taxTotal);
         this.totalAmount=Number(this.subTotal+this.taxTotal-(Number(this.amount_paid)));
         if(this.lateFeeAmount>0){
+            this.amount=Number(this.subTotal+this.taxTotal+this.lateFeeAmount);
             this.totalAmount=Number(this.totalAmount+this.lateFeeAmount);
         }
         return this.totalAmount;
