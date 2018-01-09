@@ -218,32 +218,27 @@
             </tr>
             <tr >
               <td  colspan="2"></td>
-              <td width="8%" class="text-right">Subtotal</td>
-              <td  colspan="2"></td>
+              <td colspan="3" class="text-right">Subtotal</td>
               <td class="text-right">{{formatAmount(invoiceData.sub_total)}}</td>
             </tr>
             <tr >
               <td  class="emptyCol" colspan="2"></td>
-              <td class="text-right">Tax</td>
-              <td  class="emptyCol" colspan="2"></td>
+              <td colspan="3" class="text-right">Tax</td>
               <td  class="text-right">{{formatAmount(invoiceData.tax_amount)}}</td>
             </tr>
             <tr *ngIf="validateLateFeeAmount()">
               <td  class="emptyCol" colspan="2"></td>
-              <td colspan="2" class="text-right">Late Fee</td>
-              <td  class="emptyCol" colspan="1"></td>
+              <td colspan="3" class="text-right">Late Fee</td>
               <td  class="text-right">{{formatAmount(invoiceData.late_fee_amount)}}</td>
             </tr>
             <tr >
               <td  class="emptyCol" colspan="2"></td>
-              <td colspan="2" class="text-right">Amount Paid</td>
-              <td  class="emptyCol" colspan="1"></td>
+              <td colspan="3" class="text-right">Amount Paid</td>
               <td  class="text-right">{{formatAmount(invoiceData.amount_paid)}}</td>
             </tr>
             <tr >
               <td  class="emptyCol" colspan="2"></td>
-              <td colspan="2" class="text-right">Amount Due</td>
-              <td  class="emptyCol" colspan="1"></td>
+              <td colspan="3" class="text-right">Amount Due</td>
               <td  class="text-right">{{formatAmount(invoiceData.amount_due)}}</td>
             </tr>
           </table>
