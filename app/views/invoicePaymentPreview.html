@@ -195,90 +195,57 @@
             <tbody  cellpadding=5 cellspacing=5>
             <tr  class="heading-color" *ngIf="taskInvoices.length>0">
               <td width="30%" *ngIf="!showItemName">{{tasks}}</td>
-              <td width="15%" *ngIf="!showDescription">Description</td>
-              <td ></td>
+              <td style="min-width: 30%" *ngIf="!showDescription">Description</td>
               <td width="15%" *ngIf="!showUnitCost">{{unitCost}}</td>
               <td width="8%" *ngIf="!showUOM">{{UOM}}</td>
-              <td width="15%" *ngIf="showUnitCost"></td>
-              <td width="30%" *ngIf="showItemName"></td>
-              <td width="15%" *ngIf="showDescription"></td>
-              <td width="8%" *ngIf="showUOM"></td>
               <td width="18%" class="text-right">Line Total</td>
             </tr>
             <tr *ngFor="let taskInvoice of taskInvoices" [hidden]="taskInvoices.length<0">
               <td *ngIf="!showItemName">{{taskInvoice.item.name}}</td>
               <td class="truncate" *ngIf="!showDescription">{{taskInvoice.description}}</td>
-              <td ></td>
               <td *ngIf="!showUnitCost">{{formatAmount(taskInvoice.price)}}</td>
               <td *ngIf="!showUOM">{{formatQuantity(taskInvoice.quantity)}}</td>
-              <td *ngIf="showItemName"></td>
-              <td class="truncate" *ngIf="showDescription"></td>
-              <td *ngIf="showUnitCost"></td>
-              <td *ngIf="showUOM"></td>
               <td class="text-right">{{formatAmount(taskInvoice.amount)}}</td>
             </tr>
             <tr>
               <td  class="" colspan="6"></td>
             </tr>
-
+            </tbody>
+          </table>
+          <table>
             <tr>
               <td  class="dottedSeparator" colspan="6"></td>
             </tr>
             <tr >
               <td  colspan="2"></td>
-              <td width="8%">Subtotal</td>
+              <td width="8%" class="text-right">Subtotal</td>
               <td  colspan="2"></td>
               <td class="text-right">{{formatAmount(invoiceData.sub_total)}}</td>
             </tr>
             <tr >
               <td  class="emptyCol" colspan="2"></td>
-              <td>Tax</td>
+              <td class="text-right">Tax</td>
               <td  class="emptyCol" colspan="2"></td>
               <td  class="text-right">{{formatAmount(invoiceData.tax_amount)}}</td>
             </tr>
             <tr *ngIf="validateLateFeeAmount()">
               <td  class="emptyCol" colspan="2"></td>
-              <td colspan="2">Late Fee</td>
+              <td colspan="2" class="text-right">Late Fee</td>
               <td  class="emptyCol" colspan="1"></td>
               <td  class="text-right">{{formatAmount(invoiceData.late_fee_amount)}}</td>
             </tr>
             <tr >
               <td  class="emptyCol" colspan="2"></td>
-              <td colspan="2">Amount Paid</td>
+              <td colspan="2" class="text-right">Amount Paid</td>
               <td  class="emptyCol" colspan="1"></td>
               <td  class="text-right">{{formatAmount(invoiceData.amount_paid)}}</td>
             </tr>
             <tr >
               <td  class="emptyCol" colspan="2"></td>
-              <td colspan="2">Amount Due</td>
+              <td colspan="2" class="text-right">Amount Due</td>
               <td  class="emptyCol" colspan="1"></td>
               <td  class="text-right">{{formatAmount(invoiceData.amount_due)}}</td>
             </tr>
-            <!--<tr >
-              <td  class="emptyCol" colspan="2"></td>
-              <td  class="separator" colspan="4"></td>
-            </tr>-->
-            <!--<tr>
-              <td class="emptyCol" colspan="3"></td>
-              <td>Amount Paid</td>
-              <td colspan="2" class="text-right">{{formatAmount(invoiceData.amount_paid)}}</td>
-            </tr>
-            <tr>
-              <td class="emptyCol" colspan="3"></td>
-              <td>Amount Due</td>
-              <td colspan="2" class="text-right">{{formatAmount(invoiceData.amount_due)}}</td>
-            </tr>-->
-            <!--<tr  class="heading-color">
-              <td  class="emptyCol" colspan="2"></td>
-              <td>Total</td>
-              <td  class="emptyCol" colspan="2"></td>
-              <td class="text-right">{{formatAmount(invoiceData.amount)}}</td>
-            </tr>-->
-            <!--<tr >
-              <td  class="emptyCol" colspan="2"></td>
-              <td  class="separator" colspan="4"></td>
-            </tr>-->
-            </tbody>
           </table>
           <table class="middle-tables">
             <thead>
@@ -395,66 +362,52 @@
             <tbody  cellpadding=5 cellspacing=5>
             <tr  class="heading-color airy" *ngIf="taskInvoices.length>0">
               <td width="30%" *ngIf="!showItemName">{{tasks}}</td>
-              <td width="15%" *ngIf="!showDescription">Description</td>
-              <td ></td>
+              <td style="min-width: 30%" *ngIf="!showDescription">Description</td>
               <td width="15%" *ngIf="!showUnitCost">{{unitCost}}</td>
               <td width="8%" *ngIf="!showUOM">{{UOM}}</td>
-              <td width="15%" *ngIf="showUnitCost"></td>
-              <td width="30%" *ngIf="showItemName"></td>
-              <td width="15%" *ngIf="showDescription"></td>
-              <td width="8%" *ngIf="showUOM"></td>
               <td width="18%" class="text-right">Line Total</td>
             </tr>
             <tr *ngFor="let taskInvoice of taskInvoices" [hidden]="taskInvoices.length<0">
               <td *ngIf="!showItemName">{{taskInvoice.item.name}}</td>
               <td class="truncate" *ngIf="!showDescription">{{taskInvoice.description}}</td>
-              <td ></td>
               <td *ngIf="!showUnitCost">{{formatAmount(taskInvoice.price)}}</td>
               <td *ngIf="!showUOM">{{formatQuantity(taskInvoice.quantity)}}</td>
-              <td *ngIf="showItemName"></td>
-              <td class="truncate" *ngIf="showDescription"></td>
-              <td *ngIf="showUnitCost"></td>
-              <td *ngIf="showUOM"></td>
               <td class="text-right">{{formatAmount(taskInvoice.amount)}}</td>
             </tr>
             <tr>
               <td  class="" colspan="6"></td>
             </tr>
-
+            </tbody>
+          </table>
+          <table>
             <tr>
               <td  class="dottedSeparator" colspan="6"></td>
             </tr>
             <tr>
               <td  colspan="2"></td>
-              <td colspan="2">Subtotal</td>
+              <td colspan="2" class="text-right">Subtotal</td>
               <td colspan="2" class="text-right">{{formatAmount(invoiceData.sub_total)}}</td>
             </tr>
             <tr>
               <td class="emptyCol" colspan="2"></td>
-              <td colspan="2">Tax</td>
+              <td colspan="2" class="text-right">Tax</td>
               <td colspan="2" class="text-right">{{formatAmount(invoiceData.tax_amount)}}</td>
             </tr>
             <tr *ngIf="validateLateFeeAmount()">
               <td  class="emptyCol" colspan="2"></td>
-              <td colspan="2">Late Fee</td>
+              <td colspan="2" class="text-right">Late Fee</td>
               <td  colspan="2" class="text-right">{{formatAmount(invoiceData.late_fee_amount)}}</td>
             </tr>
             <tr>
               <td class="emptyCol" colspan="2"></td>
-              <td colspan="2">Amount Paid</td>
+              <td colspan="2" class="text-right">Amount Paid</td>
               <td colspan="2" class="text-right">{{formatAmount(invoiceData.amount_paid)}}</td>
             </tr>
             <tr>
               <td class="emptyCol" colspan="2"></td>
-              <td colspan="2">Amount Due</td>
+              <td colspan="2" class="text-right">Amount Due</td>
               <td colspan="2" class="text-right">{{formatAmount(invoiceData.amount_due)}}</td>
             </tr>
-            <!--<tr  class="heading-color">
-              <td  class="emptyCol" colspan="3"></td>
-              <td>Total</td>
-              <td colspan="2" class="text-right">{{formatAmount(invoiceData.amount)}}</td>
-            </tr>-->
-            </tbody>
           </table>
         </td>
       </tr>
@@ -538,65 +491,52 @@
             <tbody  cellpadding=5 cellspacing=5>
             <tr  class="heading-color airy" *ngIf="taskInvoices.length>0">
               <td width="30%" *ngIf="!showItemName">{{tasks}}</td>
-              <td width="15%" *ngIf="!showDescription">Description</td>
-              <td ></td>
+              <td style="min-width: 30%" *ngIf="!showDescription">Description</td>
               <td width="15%" *ngIf="!showUnitCost">{{unitCost}}</td>
               <td width="8%" *ngIf="!showUOM">{{UOM}}</td>
-              <td width="15%" *ngIf="showUnitCost"></td>
-              <td width="30%" *ngIf="showItemName"></td>
-              <td width="15%" *ngIf="showDescription"></td>
-              <td width="8%" *ngIf="showUOM"></td>
               <td width="18%" class="text-right">Line Total</td>
             </tr>
             <tr *ngFor="let taskInvoice of taskInvoices" [hidden]="taskInvoices.length<0">
               <td *ngIf="!showItemName">{{taskInvoice.item.name}}</td>
               <td class="truncate" *ngIf="!showDescription">{{taskInvoice.description}}</td>
-              <td ></td>
               <td *ngIf="!showUnitCost">{{formatAmount(taskInvoice.price)}}</td>
               <td *ngIf="!showUOM">{{formatQuantity(taskInvoice.quantity)}}</td>
-              <td *ngIf="showItemName"></td>
-              <td class="truncate" *ngIf="showDescription"></td>
-              <td *ngIf="showUnitCost"></td>
-              <td *ngIf="showUOM"></td>
               <td class="text-right">{{formatAmount(taskInvoice.amount)}}</td>
             </tr>
             <tr>
               <td  colspan="6"></td>
             </tr>
+            </tbody>
+          </table>
+          <table>
             <tr>
               <td  class="dottedSeparator" colspan="6"></td>
             </tr>
             <tr>
               <td  colspan="2"></td>
-              <td colspan="2">Subtotal</td>
+              <td colspan="2" class="text-right">Subtotal</td>
               <td colspan="2" class="text-right">{{formatAmount(invoiceData.sub_total)}}</td>
             </tr>
             <tr>
               <td class="emptyCol" colspan="2"></td>
-              <td colspan="2">Tax</td>
+              <td colspan="2" class="text-right">Tax</td>
               <td colspan="2" class="text-right">{{formatAmount(invoiceData.tax_amount)}}</td>
             </tr>
             <tr *ngIf="validateLateFeeAmount()">
               <td  class="emptyCol" colspan="2"></td>
-              <td colspan="2">Late Fee</td>
+              <td colspan="2" class="text-right">Late Fee</td>
               <td  colspan="2" class="text-right">{{formatAmount(invoiceData.late_fee_amount)}}</td>
             </tr>
             <tr>
               <td class="emptyCol" colspan="2"></td>
-              <td colspan="2">Amount Paid</td>
+              <td colspan="2" class="text-right">Amount Paid</td>
               <td colspan="2" class="text-right">{{formatAmount(invoiceData.amount_paid)}}</td>
             </tr>
             <tr>
               <td class="emptyCol" colspan="2"></td>
-              <td colspan="2">Amount Due</td>
+              <td colspan="2" class="text-right">Amount Due</td>
               <td colspan="2" class="text-right">{{formatAmount(invoiceData.amount_due)}}</td>
             </tr>
-            <!--<tr  class="heading-color">
-              <td  class="emptyCol" colspan="3"></td>
-              <td>Total</td>
-              <td colspan="2" class="text-right">{{formatAmount(invoiceData.amount)}}</td>
-            </tr>-->
-            </tbody>
           </table>
         </td>
       </tr>
@@ -694,65 +634,52 @@
             <tbody  cellpadding=5 cellspacing=5>
             <tr  class="heading-color friendly" *ngIf="taskInvoices.length>0">
               <td width="30%" *ngIf="!showItemName">{{tasks}}</td>
-              <td width="15%" *ngIf="!showDescription">Description</td>
-              <td ></td>
+              <td style="min-width: 30%" *ngIf="!showDescription">Description</td>
               <td width="15%" *ngIf="!showUnitCost">{{unitCost}}</td>
               <td width="8%" *ngIf="!showUOM">{{UOM}}</td>
-              <td width="15%" *ngIf="showUnitCost"></td>
-              <td width="30%" *ngIf="showItemName"></td>
-              <td width="15%" *ngIf="showDescription"></td>
-              <td width="8%" *ngIf="showUOM"></td>
               <td width="18%" class="text-right">Line Total</td>
             </tr>
             <tr *ngFor="let taskInvoice of taskInvoices" [hidden]="taskInvoices.length<0">
               <td *ngIf="!showItemName">{{taskInvoice.item.name}}</td>
               <td class="truncate" *ngIf="!showDescription">{{taskInvoice.description}}</td>
-              <td ></td>
               <td *ngIf="!showUnitCost">{{formatAmount(taskInvoice.price)}}</td>
               <td *ngIf="!showUOM">{{formatQuantity(taskInvoice.quantity)}}</td>
-              <td *ngIf="showItemName"></td>
-              <td class="truncate" *ngIf="showDescription"></td>
-              <td *ngIf="showUnitCost"></td>
-              <td *ngIf="showUOM"></td>
               <td class="text-right">{{formatAmount(taskInvoice.amount)}}</td>
             </tr>
             <tr>
               <td  class="" colspan="6"></td>
             </tr>
+            </tbody>
+          </table>
+          <table>
             <tr>
               <td  class="dottedSeparator" colspan="6"></td>
             </tr>
             <tr>
               <td  colspan="2"></td>
-              <td colspan="2">Subtotal</td>
+              <td colspan="2" class="text-right">Subtotal</td>
               <td colspan="2" class="text-right">{{formatAmount(invoiceData.sub_total)}}</td>
             </tr>
             <tr>
               <td class="emptyCol" colspan="2"></td>
-              <td colspan="2">Tax</td>
+              <td colspan="2" class="text-right">Tax</td>
               <td colspan="2" class="text-right">{{formatAmount(invoiceData.tax_amount)}}</td>
             </tr>
             <tr *ngIf="validateLateFeeAmount()">
               <td  class="emptyCol" colspan="2"></td>
-              <td colspan="2">Late Fee</td>
+              <td colspan="2" class="text-right">Late Fee</td>
               <td  colspan="2" class="text-right">{{formatAmount(invoiceData.late_fee_amount)}}</td>
             </tr>
             <tr>
               <td class="emptyCol" colspan="2"></td>
-              <td colspan="2">Amount Paid</td>
+              <td colspan="2" class="text-right">Amount Paid</td>
               <td colspan="2" class="text-right">{{formatAmount(invoiceData.amount_paid)}}</td>
             </tr>
             <tr>
               <td class="emptyCol" colspan="2"></td>
-              <td colspan="2">Amount Due</td>
+              <td colspan="2" class="text-right">Amount Due</td>
               <td colspan="2" class="text-right">{{formatAmount(invoiceData.amount_due)}}</td>
             </tr>
-            <!--<tr  class="heading-color">
-              <td  class="emptyCol" colspan="3"></td>
-              <td>Total</td>
-              <td colspan="2" class="text-right">{{formatAmount(invoiceData.amount)}}</td>
-            </tr>-->
-            </tbody>
           </table>
         </td>
       </tr>
@@ -871,62 +798,49 @@
             <tbody  cellpadding=5 cellspacing=5>
             <tr  class="heading-color friendly coloredHead" *ngIf="taskInvoices.length>0">
               <td width="30%" *ngIf="!showItemName">{{tasks}}</td>
-              <td width="15%" *ngIf="!showDescription">Description</td>
-              <td ></td>
+              <td style="min-width: 30%" *ngIf="!showDescription">Description</td>
               <td width="15%" *ngIf="!showUnitCost">{{unitCost}}</td>
               <td width="8%" *ngIf="!showUOM">{{UOM}}</td>
-              <td width="15%" *ngIf="showUnitCost"></td>
-              <td width="30%" *ngIf="showItemName"></td>
-              <td width="15%" *ngIf="showDescription"></td>
-              <td width="8%" *ngIf="showUOM"></td>
               <td width="18%" class="text-right">Line Total</td>
             </tr>
             <tr *ngFor="let taskInvoice of taskInvoices" [hidden]="taskInvoices.length<0">
               <td *ngIf="!showItemName">{{taskInvoice.item.name}}</td>
               <td class="truncate" *ngIf="!showDescription">{{taskInvoice.description}}</td>
-              <td ></td>
               <td *ngIf="!showUnitCost">{{formatAmount(taskInvoice.price)}}</td>
               <td *ngIf="!showUOM">{{formatQuantity(taskInvoice.quantity)}}</td>
-              <td *ngIf="showItemName"></td>
-              <td class="truncate" *ngIf="showDescription"></td>
-              <td *ngIf="showUnitCost"></td>
-              <td *ngIf="showUOM"></td>
               <td class="text-right">{{formatAmount(taskInvoice.amount)}}</td>
             </tr>
             <tr>
               <td  class="" colspan="6"></td>
             </tr>
+            </tbody>
+          </table>
+          <table>
             <tr>
               <td colspan="2" style="border-top:1px dotted #384986"></td>
-              <td colspan="2" style="border-top:1px dotted #384986">Subtotal</td>
+              <td colspan="2" style="border-top:1px dotted #384986" class="text-right">Subtotal</td>
               <td colspan="2" class="text-right" style="border-top:1px dotted #384986">{{formatAmount(invoiceData.sub_total)}}</td>
             </tr>
             <tr>
               <td class="emptyCol" colspan="2"></td>
-              <td colspan="2">Tax</td>
+              <td colspan="2" class="text-right">Tax</td>
               <td colspan="2" class="text-right">{{formatAmount(invoiceData.tax_amount)}}</td>
             </tr>
             <tr *ngIf="validateLateFeeAmount()">
               <td  class="emptyCol" colspan="2"></td>
-              <td colspan="2">Late Fee</td>
+              <td colspan="2" class="text-right">Late Fee</td>
               <td  colspan="2" class="text-right">{{formatAmount(invoiceData.late_fee_amount)}}</td>
             </tr>
             <tr>
               <td class="emptyCol" colspan="2"></td>
-              <td colspan="2">Amount Paid</td>
+              <td colspan="2" class="text-right">Amount Paid</td>
               <td colspan="2" class="text-right">{{formatAmount(invoiceData.amount_paid)}}</td>
             </tr>
             <tr>
               <td class="emptyCol" colspan="2"></td>
-              <td colspan="2">Amount Due</td>
+              <td colspan="2" class="text-right">Amount Due</td>
               <td colspan="2" class="text-right">{{formatAmount(invoiceData.amount_due)}}</td>
             </tr>
-            <!--<tr  class="heading-color">
-              <td  class="emptyCol" colspan="3"></td>
-              <td>Total</td>
-              <td colspan="2" class="text-right">{{formatAmount(invoiceData.amount)}}</td>
-            </tr>-->
-            </tbody>
           </table>
         </td>
       </tr>
