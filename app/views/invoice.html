@@ -388,7 +388,7 @@
                                                 <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;" *ngIf="!newInvoice&&(invoice&&(invoice.state!='draft'&&invoice.state!='paid'))">
                                                     <button (click)="submit($event,false,'save')" class="button small" [disabled]="hasPaid||!invoiceForm.valid||!validateTaskLines()" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;height: 25px;">Save</button>
                                                 </div>
-                                                <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;" *ngIf="!newInvoice&&(invoice&&(invoice.state!='draft'&&invoice.state!='paid'))">
+                                                <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;" *ngIf="newInvoice||(invoice&&(invoice.state!='paid'))">
                                                   <button (click)="submit($event,false,'recurring')" class="button small" [disabled]="hasPaid||!invoiceForm.valid||!validateTaskLines()" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;height: 25px;">Invoice Recurring</button>
                                                 </div>
                                                 <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;" *ngIf="displayCommission">
