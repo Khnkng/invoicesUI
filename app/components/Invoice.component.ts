@@ -128,6 +128,8 @@ export class InvoiceComponent{
     lateFees:Array<any>=[];
     lateFeeAmount:any=0;
     email_notes:string;
+    recurringFrequency:string;
+    recurringEnddate:string;
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
@@ -326,6 +328,10 @@ export class InvoiceComponent{
                     this.sourceId=attachmentObj.sourceId;
                     this.getInvoiceAttachments(this.sourceId);
                     this.storedAttachments=attachmentObj.attachments;
+                }
+                if(invoice.recurringFrequency){
+                  this.recurringFrequency=invoice.recurringFrequency;
+                  this.recurringEnddate=base.dateFormater.formatDate(invoice.recurringEnddate,base.serviceDateformat,base.dateFormat);
                 }
                 if(invoice.commissions&&invoice.commissions.length>0){
                     this.commissions=invoice.commissions;
@@ -688,6 +694,8 @@ export class InvoiceComponent{
             setTimeout(function(){
                 base.exportToPDF();
             })
+        }else if(action=='recurring'){
+         this.openRecurringDailog();
         }
     }
 
@@ -725,6 +733,31 @@ export class InvoiceComponent{
     openEmailDailog(){
         jQuery('#invoice-email-conformation').foundation('open');
     }
+
+    openRecurringDailog(){
+      jQuery('#recurring-invoice').foundation('open');
+    }
+
+    resetRecurringFields(){
+      this.resetRecurringInvoiceFields();
+      jQuery('#invoice-email-conformation').foundation('close');
+    }
+
+    closeRecurring(){
+      jQuery('#recurring-invoice').foundation('close');
+    }
+
+    saveRecurring(){
+      this.invoiceProcessedData.recurringEnddate=this.dateFormater.formatDate(this.recurringEnddate,this.dateFormat,this.serviceDateformat);
+      this.invoiceProcessedData.recurringFrequency=this.recurringFrequency;
+      this.closeRecurring();
+      this.saveInvoiceDetails(this.invoiceProcessedData);
+    }
+
+  resetRecurringInvoiceFields(){
+    this.recurringFrequency=null;
+    this.recurringEnddate=null;
+  }
 
     closeEmailDailog(){
         this.resetPopupFields();
@@ -1216,6 +1249,8 @@ export class InvoiceComponent{
         if(this.routeSubscribe){
             this.routeSubscribe.unsubscribe();
         }
+      if(jQuery('#recurring-invoice'))
+        jQuery('#recurring-invoice').remove();
         this.numeralService.switchLocale(Session.getCurrentCompanyCurrency());
     }
 
@@ -1517,6 +1552,9 @@ export class InvoiceComponent{
             return true;
         }
         return false;
+    }
+    setEndDate(date:string) {
+        this.recurringEnddate=date;
     }
 
 }
