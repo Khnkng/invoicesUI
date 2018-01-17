@@ -388,6 +388,9 @@
                                                 <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;" *ngIf="!newInvoice&&(invoice&&(invoice.state!='draft'&&invoice.state!='paid'))">
                                                     <button (click)="submit($event,false,'save')" class="button small" [disabled]="hasPaid||!invoiceForm.valid||!validateTaskLines()" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;height: 25px;">Save</button>
                                                 </div>
+                                                <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;" *ngIf="newInvoice||(invoice&&(invoice.state!='paid'))">
+                                                  <button (click)="submit($event,false,'recurring')" class="button small" [disabled]="hasPaid||!invoiceForm.valid||!validateTaskLines()" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;height: 25px;">Invoice Recurring</button>
+                                                </div>
                                                 <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;" *ngIf="displayCommission">
                                                     <button (click)="applyCommission()" class="button small" [disabled]="hasPaid||!invoiceForm.valid||!validateTaskLines()" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;height: 25px;">Sales Commission</button>
                                                 </div>
@@ -791,4 +794,29 @@
     <div>
         <input style="margin-top: 1.5rem;float:right" type="button" class="button small" value="Save" (click)="saveCommission()"/>
     </div>
+</div>
+
+
+<div class="reveal small bill-modal-container" style="width: 40%;padding: 0;border: 1px;margin-top: 6rem;" id="recurring-invoice" data-reveal foundation  data-close-on-click="false">
+  <div class="row" style="padding: 1rem 1rem 0 1rem;margin-top: 1rem;">
+    <div class="small-12 medium-6 columns">
+      <label style="text-align: left; font-size: 13pt;color: #878787">Recurring Frequency
+        <select [(ngModel)]="recurringFrequency">
+          <option value="">--None--</option>
+          <option value="weekly">Weekly</option>
+          <option value="monthly">Monthly</option>
+          <option value="quarterly">Quarterly</option>
+        </select>
+      </label>
+    </div>
+    <div class="small-12 medium-6 columns">
+      <label style="text-align: left; font-size: 13pt;color: #878787">End Date
+        <input type="text" invoice-custom-datepicker [(ngModel)]="recurringEnddate" [format]="dateFormat" [mindate]="'past'" (valueChanged)="setEndDate($event)" placeholder="Event Date"/>
+      </label>
+    </div>
+  </div>
+  <div class="text-right" style="padding-right:1rem">
+    <button class="button small" style="background: #00B1A9;" (click)="saveRecurring()">Save</button>
+    <button class="button small" style="background-color: white !important;color: #878787;" (click)="closeRecurring()">Cancel</button>
+  </div>
 </div>
