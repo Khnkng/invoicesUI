@@ -10,7 +10,7 @@ import {CustomersService} from "qCommon/app/services/Customers.service";
 import {CodesService} from "qCommon/app/services/CodesService.service";
 import {CompaniesService} from "qCommon/app/services/Companies.service";
 import {InvoiceForm} from "../forms/Invoice.form";
-import {FormGroup, FormBuilder, FormArray} from "@angular/forms";
+import {FormGroup, FormBuilder, FormArray,Validators} from "@angular/forms";
 import {InvoiceLineForm, InvoiceLineTaxesForm} from "../forms/InvoiceLine.form";
 import {ChartOfAccountsService} from "qCommon/app/services/ChartOfAccounts.service";
 import {pageTitleService} from "qCommon/app/services/PageTitle";
@@ -128,6 +128,7 @@ export class InvoiceComponent{
     lateFees:Array<any>=[];
     lateFeeAmount:any=0;
     email_notes:string;
+    isOtherTemplate:boolean;
     recurringFrequency:string;
     recurringEnddate:string;
 
@@ -234,6 +235,12 @@ export class InvoiceComponent{
             this.showItemName=preference.hideItemName;
             this.templateType=preference.templateType;
             this.showInvoice=true;
+            if(preference.templateType=='Other2'){
+              this.isOtherTemplate=true;
+              this.templateType='Other2'
+            }else if(preference.templateType=='Other1'){
+              this.templateType='Other1'
+            }
           }else {
             this.toastService.pop(TOAST_TYPE.error, "Please create invoice settings");
           }
@@ -302,6 +309,9 @@ export class InvoiceComponent{
         let base = this;
         if(!this.invoiceID){
             this.closeLoader();
+            if(this.templateType=="Other1"||this.templateType=="Other2"){
+              this.setInvoiceValidators();
+            }
             this.setInvoiceDate(this.defaultDate);
             this.setDefaultCurrency();
             this.numeralService.switchLocale(Session.getCurrentCompanyCurrency().toLowerCase());
@@ -318,6 +328,9 @@ export class InvoiceComponent{
                 invoice.invoice_date = base.dateFormater.formatDate(invoice['invoice_date'],base.serviceDateformat,base.dateFormat);
                 invoice.due_date = base.dateFormater.formatDate(invoice['due_date'],base.serviceDateformat,base.dateFormat);
                 this.invoice = invoice;
+                if(this.templateType=="Other1"||this.templateType=="Other2"){
+                  this.setInvoiceValidators();
+                }
                 if(invoice.state=='paid'){
                     this.titleService.setPageTitle("View Invoice");
                     this.hasPaid=true;
@@ -1553,8 +1566,28 @@ export class InvoiceComponent{
         }
         return false;
     }
-    setEndDate(date:string) {
-        this.recurringEnddate=date;
+
+    setInvoiceValidators(){
+      let validator = [Validators.required];
+      let tempForm = _.cloneDeep(this._invoiceForm.getForm());
+      tempForm.billing_from=['', validator];
+      tempForm.billing_to=['', validator];
+      tempForm['invoiceLines'] = this.invoiceLineArray;
+      this.invoiceForm = this._fb.group(tempForm);
     }
+
+  setBillingFromDate(date){
+    let paymentDateControl:any = this.invoiceForm.controls['billing_from'];
+    paymentDateControl.patchValue(date);
+  }
+
+  setBillingToDate(date){
+    let planEndDateControl:any = this.invoiceForm.controls['billing_to'];
+    planEndDateControl.patchValue(date);
+  }
+
+  setEndDate(date:string) {
+    this.recurringEnddate=date;
+  }
 
 }

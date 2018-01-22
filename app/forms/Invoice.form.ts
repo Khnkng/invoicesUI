@@ -34,7 +34,12 @@ export class InvoiceForm extends abstractForm{
             "tax_amount":[""],
             "payment_options":[""],
             "attachments_metadata":[""],
-            "late_fee_id":[""]
+            "late_fee_id":[""],
+            "billing_from":[""],
+            "billing_to":[""],
+            "po_number":"",
+            "billing_cycle":"",
+            "project_name":""
         }
     }
 

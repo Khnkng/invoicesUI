@@ -75,6 +75,58 @@
                                                             </label>
                                                         </div>
                                                     </div>
+                                                  <div class="row">
+                                                    <div class="small-12 medium-5 columns" style="padding:0px">
+                                                      <div class="row" *ngIf="!hasPaid&&(templateType=='Other2'||templateType=='Other1')">
+                                                        <label>
+                                                          PO No
+                                                          <input type="text" formControlName="po_number">
+                                                        </label>
+                                                      </div>
+                                                      <div class="row" *ngIf="hasPaid&&(templateType=='Other2'||templateType=='Other1')">
+                                                        <label>
+                                                          Po No
+                                                          <input type="text" formControlName="po_number" readonly>
+                                                        </label>
+                                                      </div>
+                                                    </div>
+                                                    <div class="small-12 medium-5 columns" style="padding:0px">
+                                                      <div class="row" *ngIf="!hasPaid&&templateType=='Other1'">
+                                                        <label>
+                                                          Billing Cycle
+                                                          <select formControlName="billing_cycle" placeholder="Billing Cycle">
+                                                            <option [value]="'Weekly'">Weekly</option>
+                                                            <option [value]="'Monthly'">Monthly</option>
+                                                            <option [value]="'Quarterly'">Quarterly</option>
+                                                            <option [value]="'yearly'">Yearly</option>
+                                                          </select>
+                                                        </label>
+                                                      </div>
+                                                      <div class="row" *ngIf="hasPaid&&templateType=='Other1'">
+                                                        <label>
+                                                          Billing Cycle
+                                                          <select class="jeSelect" formControlName="billing_cycle" placeholder="Billing Cycle" disabled>
+                                                            <option [value]="'Weekly'">Weekly</option>
+                                                            <option [value]="'Monthly'">Monthly</option>
+                                                            <option [value]="'Quarterly'">Quarterly</option>
+                                                            <option [value]="'yearly'">Yearly</option>
+                                                          </select>
+                                                        </label>
+                                                      </div>
+                                                      <div class="row" *ngIf="!hasPaid&&templateType=='Other2'">
+                                                        <label>
+                                                          Project Name
+                                                          <input type="text" formControlName="project_name">
+                                                        </label>
+                                                      </div>
+                                                      <div class="row" *ngIf="hasPaid&&templateType=='Other2'">
+                                                        <label>
+                                                          Project Name
+                                                          <input type="text" formControlName="project_name" readonly>
+                                                        </label>
+                                                      </div>
+                                                    </div>
+                                                  </div>
                                                 </div>
                                                 <div class="small-12 medium-5 columns">
                                                     <div class="row">
@@ -129,6 +181,18 @@
                                                                     </label>
                                                                 </div>
                                                             </div>
+                                                          <div class="row" *ngIf="!hasPaid&&(templateType=='Other2'||templateType=='Other1')">
+                                                            <label>
+                                                              Billing From*
+                                                              <input type="text" formControlName="billing_from" invoice-custom-datepicker datepicker1 [format]="dateFormat" [mindate]="'past'" (valueChanged)="setBillingFromDate($event)" placeholder="Billing From*">
+                                                            </label>
+                                                          </div>
+                                                          <div class="row" *ngIf="hasPaid&&(templateType=='Other2'||templateType=='Other1')">
+                                                            <label>
+                                                              Billing From*
+                                                              <input type="text" formControlName="billing_from" readonly>
+                                                            </label>
+                                                          </div>
                                                         </div>
                                                         <div class="small-12 medium-6 columns">
                                                             <div class="row" *ngIf="!hasPaid">
@@ -193,6 +257,18 @@
                                                                     </label>
                                                                 </div>
                                                             </div>
+                                                          <div class="row" *ngIf="!hasPaid&&(templateType=='Other2'||templateType=='Other1')">
+                                                            <label>
+                                                              Billing To*
+                                                              <input type="text" formControlName="billing_to" invoice-custom-datepicker datepicker1 [format]="dateFormat" [mindate]="'past'" (valueChanged)="setBillingToDate($event)" placeholder="Billing To*">
+                                                            </label>
+                                                          </div>
+                                                          <div class="row" *ngIf="hasPaid&&(templateType=='Other2'||templateType=='Other1')">
+                                                            <label>
+                                                              Billing To*
+                                                              <input type="text" formControlName="billing_to" readonly>
+                                                            </label>
+                                                          </div>
                                                         </div>
                                                     </div>
                                                 </div>
