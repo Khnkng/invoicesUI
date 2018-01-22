@@ -134,6 +134,27 @@
     width: 75px;
   }
 
+  .header-color {
+    color: #17457B;
+    font-weight: bold;
+  }
+
+  .amount-separator {
+    border-top:1px solid #384986;
+  }
+
+  .bottom-separator{
+    border-bottom:1px solid #384986;
+  }
+
+  table.line{
+    border-top:1px solid #384986;
+  }
+
+  .bottom-padding{
+   padding-bottom: 0px;
+  }
+
 </style>
 <div foundation class="reports">
   <ul class="reports tabs" data-tabs id="invoice-settings-tabs">
@@ -156,9 +177,12 @@
                   <input type="radio" formControlName="templateType" value="Fresh"/><label>Fresh</label>
                   <input type="radio" formControlName="templateType" value="Friendly"/><label>Friendly</label>
                   <input type="radio" formControlName="templateType" value="Modern"/><label>Modern</label>
+                  <input type="radio" formControlName="templateType" value="Other"/><label>Other</label>
+                  <input type="radio" formControlName="templateType" value="Other1"/><label>Other1</label>
+                  <input type="radio" formControlName="templateType" value="Other2"/><label>Other2</label>
                 </fieldset>
               </div>
-              <div class="row" *ngIf="invoiceSettingsForm.controls.templateType.value=='Default'">
+              <div class="row" *ngIf="invoiceSettingsForm.controls.templateType.value=='Other'">
                 <div style="box-shadow: 0 0 5px #ccc;-webkit-box-shadow: 0 0 5px #ccc;margin-top:15px;padding: 25px 15px;">
                   <table cellpadding='10' style="width:100%">
                     <tbody>
@@ -787,6 +811,456 @@
                             <td class="emptyCol" ></td>
                             <td colspan="3">Amount Due</td>
                             <td colspan="2" class="text-right">$500.00</td>
+                          </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="row" *ngIf="invoiceSettingsForm.controls.templateType.value=='Default'">
+                <div style="box-shadow: 0 0 5px #ccc;-webkit-box-shadow: 0 0 5px #ccc;margin-top:15px;padding: 25px 15px;">
+                  <table cellpadding='10' style="width:100%">
+                    <tbody>
+                    <tr>
+                      <td style="width: 100%;">
+                        <table class="address-tables">
+                          <thead>
+                          <tr><th></th><th class="text-right heading-color">Invoice From</th></tr>
+                          </thead>
+                          <tbody cellpadding=5 cellspacing=5>
+                          <tr>
+                            <td id="company-img"><!--<img src={{logoURL}} alt="" height="90" style="position: relative;bottom:30px;" [style.width]="logoWidth"/>--></td>
+                            <td>
+                              <p class="company-style text-right">Company Name</p>
+                              <p class="company-style text-right">123,Main Street</p>
+                              <p class="company-style text-right">New York, 10001</p>
+                              <p class="company-style text-right">United States</p>
+                            </td>
+                          </tr>
+                          </tbody>
+                        </table>
+                        <table class="middle-tables address-tables">
+                          <thead>
+                          <tr>
+                            <th class="heading-color bottom-padding" colspan="3">Prepared For</th>
+                            <th class="heading-color bottom-padding">Invoice Date</th>
+                            <th class="heading-color bottom-padding">Invoice Number</th>
+                            <th class="heading-color text-right bottom-padding"><span>Invoice Total</span><span style="margin-left:5px;"></span></th>
+                          </tr>
+                          </thead>
+                          <tbody cellpadding=5 cellspacing=5>
+                          <tr>
+                            <td valign="top" colspan="3" rowspan="2">
+                              <!--<p class="header-color">Prepared For</p>-->
+                              <p class="company-style">Company Name</p>
+                              <p class="company-style">123,Main Street</p>
+                              <p class="company-style">New York, 10001</p>
+                              <p class="company-style">United States</p>
+                            </td>
+                            <td valign="top"><!--<p class="header-color">Invoice Date</p>--><p>01/07/2017</p></td>
+                            <td valign="top"><!--<p class="header-color">Invoice Number</p>--><p>INV101</p></td>
+                            <td valign="top"><!--<p class="header-color" style="text-align: right"><span>Invoice Total</span><span style="margin-left:5px;">(USD)</span></p>--><p  class="text-right invoice-amount" style="font-size: 27pt">$500.00</p></td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <p class="header-color">Due Date</p>
+                              <p >02/08/2017</p>
+                            </td>
+                          </tr>
+                          </tbody>
+                        </table>
+                        <table class='items middle-tables'>
+                          <tbody  cellpadding=5 cellspacing=5>
+                          <tr  class="heading-color">
+                            <td width="30%">Item</td>
+                            <td width="15%">Description</td>
+                            <td ></td>
+                            <td width="15%">Rate</td>
+                            <td width="8%">Hours</td>
+                            <td width="18%" class="text-right">Line Total</td>
+                          </tr>
+                          <tr>
+                            <td>Item Name</td>
+                            <td class="truncate">Item Description</td>
+                            <td ></td>
+                            <td>$10.00</td>
+                            <td>50</td>
+                            <td class="text-right">$500.00</td>
+                          </tr>
+                          <!--<tr >
+                            <td  class="emptyCol" colspan="2"></td>
+                            <td  class="separator" colspan="4"></td>
+                          </tr>-->
+                          <tr>
+                            <td  class="dottedSeparator" colspan="6"></td>
+                          </tr>
+                          <tr>
+                            <td ></td>
+                            <td colspan="3" >Subtotal</td>
+                            <td colspan="2" class="text-right">$500.00</td>
+                          </tr>
+                          <tr>
+                            <td class="emptyCol"></td>
+                            <td colspan="3">Tax</td>
+                            <td colspan="2" class="text-right">$00.00</td>
+                          </tr>
+                          <tr>
+                            <td class="emptyCol"></td>
+                            <td colspan="3" class="amount-separator">Total</td>
+                            <td colspan="2" class="text-right amount-separator">$500.00</td>
+                          </tr>
+                          <tr>
+                            <td class="emptyCol"></td>
+                            <td colspan="3">Amount Paid</td>
+                            <td colspan="2" class="text-right">$00.00</td>
+                          </tr>
+                          <tr>
+                            <td class="emptyCol" ></td>
+                            <td colspan="3" class="amount-separator">Amount Due</td>
+                            <td colspan="2" class="text-right amount-separator">$500.00</td>
+                          </tr>
+                          </tbody>
+                        </table>
+                        <table class="middle-tables">
+                          <thead>
+                          <tr>
+                            <th class="heading-color">Notes</th>
+                          </tr>
+                          </thead>
+                          <tbody cellpadding=5 cellspacing=5>
+                          <tr>
+                            <td>
+                              <span></span>
+                            </td>
+                          </tr>
+                          </tbody>
+                        </table>
+                        <table class="middle-tables">
+                          <thead>
+                          <tr>
+                            <th class="heading-color">Payment Terms</th>
+                          </tr>
+                          </thead>
+                          <tbody cellpadding=5 cellspacing=5>
+                          <tr>
+                            <td>
+                              <span>Net 30</span>
+                            </td>
+                          </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="row" *ngIf="invoiceSettingsForm.controls.templateType.value=='Other1'">
+                <div style="box-shadow: 0 0 5px #ccc;-webkit-box-shadow: 0 0 5px #ccc;margin-top:15px;padding: 25px 15px;">
+                  <table cellpadding='10' style="width:100%">
+                    <tbody>
+                    <tr>
+                      <td style="width: 100%;">
+                        <table class="address-tables">
+                          <thead>
+                          <tr><th></th><th class="text-right heading-color">Invoice From</th></tr>
+                          </thead>
+                          <tbody cellpadding=5 cellspacing=5>
+                          <tr>
+                            <td id="company-img"><!--<img src={{logoURL}} alt="" height="90" style="position: relative;bottom:30px;" [style.width]="logoWidth"/>--></td>
+                            <td>
+                              <p class="company-style text-right">Company Name</p>
+                              <p class="company-style text-right">123,Main Street</p>
+                              <p class="company-style text-right">New York, 10001</p>
+                              <p class="company-style text-right">United States</p>
+                            </td>
+                          </tr>
+                          </tbody>
+                        </table>
+                        <table class="middle-tables address-tables">
+                          <thead>
+                          <tr>
+                            <th class="heading-color" colspan="3">Prepared For</th>
+                            <th class="heading-color">Invoice Date</th>
+                            <th class="heading-color">Invoice Number</th>
+                            <th class="heading-color text-right"><span>Invoice Total</span><span style="margin-left:5px;"></span></th>
+                          </tr>
+                          </thead>
+                          <tbody cellpadding=5 cellspacing=5>
+                          <tr>
+                            <td valign="top" colspan="3" rowspan="2">
+                              <!--<p class="header-color">Prepared For</p>-->
+                              <p class="company-style">Company Name</p>
+                              <p class="company-style">123,Main Street</p>
+                              <p class="company-style">New York, 10001</p>
+                              <p class="company-style">United States</p>
+                            </td>
+                            <td valign="top"><!--<p class="header-color">Invoice Date</p>--><p>01/07/2017</p></td>
+                            <td valign="top"><!--<p class="header-color">Invoice Number</p>--><p>INV101</p></td>
+                            <td valign="top"><!--<p class="header-color" style="text-align: right"><span>Invoice Total</span><span style="margin-left:5px;">(USD)</span></p>--><p  class="text-right invoice-amount" style="font-size: 27pt">$500.00</p></td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <p class="header-color">Due Date</p>
+                              <p >02/08/2017</p>
+                            </td>
+                          </tr>
+                          </tbody>
+                        </table>
+                        <table class='line'>
+                          <tr>
+                            <td colspan="3">
+                              <p class="header-color">Billing Period</p>
+                              <p>05-01-2017 to 05-31-2017</p>
+                            </td>
+                            <td>
+                              <p class="header-color">P.O No</p>
+                              <p>&nbsp;</p>
+                            </td>
+                            <td>
+                              <p class="header-color">Billing Cycle</p>
+                              <p>Monthly</p>
+                            </td>
+                          </tr>
+                        </table>
+                        <table class='items middle-tables'>
+                          <tbody  cellpadding=5 cellspacing=5>
+                          <tr  class="heading-color">
+                            <td width="30%">Item</td>
+                            <td width="15%">Description</td>
+                            <td ></td>
+                            <td width="15%">Rate</td>
+                            <td width="8%">Hours</td>
+                            <td width="18%" class="text-right">Line Total</td>
+                          </tr>
+                          <tr>
+                            <td>Item Name</td>
+                            <td class="truncate">Item Description</td>
+                            <td ></td>
+                            <td>$10.00</td>
+                            <td>50</td>
+                            <td class="text-right">$500.00</td>
+                          </tr>
+                          <!--<tr >
+                            <td  class="emptyCol" colspan="2"></td>
+                            <td  class="separator" colspan="4"></td>
+                          </tr>-->
+                          <tr>
+                            <td  class="dottedSeparator" colspan="6"></td>
+                          </tr>
+                          <tr>
+                            <td ></td>
+                            <td colspan="3" >Subtotal</td>
+                            <td colspan="2" class="text-right">$500.00</td>
+                          </tr>
+                          <tr>
+                            <td class="emptyCol"></td>
+                            <td colspan="3">Tax</td>
+                            <td colspan="2" class="text-right">$00.00</td>
+                          </tr>
+                          <tr>
+                            <td class="emptyCol"></td>
+                            <td colspan="3" class="amount-separator">Total</td>
+                            <td colspan="2" class="text-right amount-separator">$500.00</td>
+                          </tr>
+                          <tr>
+                            <td class="emptyCol"></td>
+                            <td colspan="3">Amount Paid</td>
+                            <td colspan="2" class="text-right">$00.00</td>
+                          </tr>
+                          <tr>
+                            <td class="emptyCol" ></td>
+                            <td colspan="3" class="amount-separator">Amount Due</td>
+                            <td colspan="2" class="text-right amount-separator">$500.00</td>
+                          </tr>
+                          </tbody>
+                        </table>
+                        <table class="middle-tables">
+                          <thead>
+                          <tr>
+                            <th class="heading-color">Notes</th>
+                          </tr>
+                          </thead>
+                          <tbody cellpadding=5 cellspacing=5>
+                          <tr>
+                            <td>
+                              <span></span>
+                            </td>
+                          </tr>
+                          </tbody>
+                        </table>
+                        <table class="middle-tables">
+                          <thead>
+                          <tr>
+                            <th class="heading-color">Payment Terms</th>
+                          </tr>
+                          </thead>
+                          <tbody cellpadding=5 cellspacing=5>
+                          <tr>
+                            <td>
+                              <span>Net 30</span>
+                            </td>
+                          </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="row" *ngIf="invoiceSettingsForm.controls.templateType.value=='Other2'">
+                <div style="box-shadow: 0 0 5px #ccc;-webkit-box-shadow: 0 0 5px #ccc;margin-top:15px;padding: 25px 15px;">
+                  <table cellpadding='10' style="width:100%">
+                    <tbody>
+                    <tr>
+                      <td style="width: 100%;">
+                        <table class="address-tables">
+                          <thead>
+                          <tr><th></th><th class="text-right heading-color">Invoice From</th></tr>
+                          </thead>
+                          <tbody cellpadding=5 cellspacing=5>
+                          <tr>
+                            <td id="company-img"><!--<img src={{logoURL}} alt="" height="90" style="position: relative;bottom:30px;" [style.width]="logoWidth"/>--></td>
+                            <td>
+                              <p class="company-style text-right">Company Name</p>
+                              <p class="company-style text-right">123,Main Street</p>
+                              <p class="company-style text-right">New York, 10001</p>
+                              <p class="company-style text-right">United States</p>
+                            </td>
+                          </tr>
+                          </tbody>
+                        </table>
+                        <table class="middle-tables address-tables">
+                          <thead>
+                          <tr>
+                            <th class="heading-color" colspan="3">Prepared For</th>
+                            <th class="heading-color">Invoice Date</th>
+                            <th class="heading-color">Invoice Number</th>
+                            <th class="heading-color text-right"><span>Invoice Total</span><span style="margin-left:5px;"></span></th>
+                          </tr>
+                          </thead>
+                          <tbody cellpadding=5 cellspacing=5>
+                          <tr>
+                            <td valign="top" colspan="3" rowspan="2">
+                              <!--<p class="header-color">Prepared For</p>-->
+                              <p class="company-style">Company Name</p>
+                              <p class="company-style">123,Main Street</p>
+                              <p class="company-style">New York, 10001</p>
+                              <p class="company-style">United States</p>
+                            </td>
+                            <td valign="top"><!--<p class="header-color">Invoice Date</p>--><p>01/07/2017</p></td>
+                            <td valign="top"><!--<p class="header-color">Invoice Number</p>--><p>INV101</p></td>
+                            <td valign="top"><!--<p class="header-color" style="text-align: right"><span>Invoice Total</span><span style="margin-left:5px;">(USD)</span></p>--><p  class="text-right invoice-amount" style="font-size: 27pt">$500.00</p></td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <p class="header-color">Due Date</p>
+                              <p >02/08/2017</p>
+                            </td>
+                          </tr>
+                          </tbody>
+                        </table>
+                        <table class='line'>
+                          <tr>
+                            <td colspan="3">
+                              <p class="header-color">Billing Period</p>
+                              <p>05-01-2017 to 05-31-2017</p>
+                            </td>
+                            <td>
+                              <p class="header-color">P.O No</p>
+                              <p>&nbsp;</p>
+                            </td>
+                            <td>
+                              <p class="header-color">Project Name</p>
+                              <p>Resource Augmentation</p>
+                            </td>
+                            <!--<td>
+                              <p class="header-color">Billing Cycle</p>
+                              <p>Monthly</p>
+                            </td>-->
+                          </tr>
+                        </table>
+                        <table class='items middle-tables'>
+                          <tbody  cellpadding=5 cellspacing=5>
+                          <tr  class="heading-color">
+                            <td width="30%">Item</td>
+                            <td width="15%">Description</td>
+                            <td ></td>
+                            <td width="15%">Rate</td>
+                            <td width="8%">Hours</td>
+                            <td width="18%" class="text-right">Line Total</td>
+                          </tr>
+                          <tr>
+                            <td>Item Name</td>
+                            <td class="truncate">Item Description</td>
+                            <td ></td>
+                            <td>$10.00</td>
+                            <td>50</td>
+                            <td class="text-right">$500.00</td>
+                          </tr>
+                          <!--<tr >
+                            <td  class="emptyCol" colspan="2"></td>
+                            <td  class="separator" colspan="4"></td>
+                          </tr>-->
+                          <tr>
+                            <td  class="dottedSeparator" colspan="6"></td>
+                          </tr>
+                          <tr>
+                            <td ></td>
+                            <td colspan="3" >Subtotal</td>
+                            <td colspan="2" class="text-right">$500.00</td>
+                          </tr>
+                          <tr>
+                            <td class="emptyCol"></td>
+                            <td colspan="3">Tax</td>
+                            <td colspan="2" class="text-right">$00.00</td>
+                          </tr>
+                          <tr>
+                            <td class="emptyCol"></td>
+                            <td colspan="3" class="amount-separator">Total</td>
+                            <td colspan="2" class="text-right amount-separator">$500.00</td>
+                          </tr>
+                          <tr>
+                            <td class="emptyCol"></td>
+                            <td colspan="3">Amount Paid</td>
+                            <td colspan="2" class="text-right">$00.00</td>
+                          </tr>
+                          <tr>
+                            <td class="emptyCol" ></td>
+                            <td colspan="3" class="amount-separator">Amount Due</td>
+                            <td colspan="2" class="text-right amount-separator">$500.00</td>
+                          </tr>
+                          </tbody>
+                        </table>
+                        <table class="middle-tables">
+                          <thead>
+                          <tr>
+                            <th class="heading-color">Notes</th>
+                          </tr>
+                          </thead>
+                          <tbody cellpadding=5 cellspacing=5>
+                          <tr>
+                            <td>
+                              <span></span>
+                            </td>
+                          </tr>
+                          </tbody>
+                        </table>
+                        <table class="middle-tables">
+                          <thead>
+                          <tr>
+                            <th class="heading-color">Payment Terms</th>
+                          </tr>
+                          </thead>
+                          <tbody cellpadding=5 cellspacing=5>
+                          <tr>
+                            <td>
+                              <span>Net 30</span>
+                            </td>
                           </tr>
                           </tbody>
                         </table>
