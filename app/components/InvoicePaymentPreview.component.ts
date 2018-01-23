@@ -46,6 +46,7 @@ export class InvoicePaymentPreview{
     showUOM:boolean=true;
     showItemName:boolean=true;
     latefeeAmount:any=0;
+    notesSize:any=0;
     @Input()
     set invoices(invoices:any){
         this.invoiceData = invoices;
@@ -57,6 +58,7 @@ export class InvoicePaymentPreview{
         this.showUnitCost=invoices.showUnitCost;
         this.showUOM=invoices.showUOM;
         this.showItemName=invoices.showItemName;
+        this.notesSize=invoices.notes;
         if(invoices.logoURL){
             this.logoWidth="90px";
             this.logoURL = invoices.logoURL;
@@ -184,6 +186,12 @@ export class InvoicePaymentPreview{
             return true;
         }
         return false;
+    }
+
+    validateNotes(){
+        if(this.notesSize.length>0){
+            return true;
+        }
     }
 
 }
