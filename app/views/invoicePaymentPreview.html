@@ -278,7 +278,7 @@
             </tr>
             </tbody>
           </table>
-          <table class="middle-tables">
+          <table class="middle-tables" *ngIf="validateNotes()">
             <thead>
             <tr>
               <th class="heading-color">Notes</th>
@@ -426,7 +426,7 @@
               <td colspan="2" class="text-right">{{formatAmount(invoiceData.amount_due)}}</td>
             </tr>
           </table>
-          <table class="middle-tables">
+          <table class="middle-tables" *ngIf="validateNotes()">
             <thead>
             <tr>
               <th class="heading-color">Notes</th>
@@ -583,7 +583,7 @@
               <td colspan="2" class="text-right">{{formatAmount(invoiceData.amount_due)}}</td>
             </tr>
           </table>
-          <table class="middle-tables">
+          <table class="middle-tables" *ngIf="validateNotes()">
             <thead>
             <tr>
               <th class="heading-color">Notes</th>
@@ -754,7 +754,7 @@
               <td colspan="2" class="text-right">{{formatAmount(invoiceData.amount_due)}}</td>
             </tr>
           </table>
-          <table class="middle-tables">
+          <table class="middle-tables" *ngIf="validateNotes()">
             <thead>
             <tr>
               <th class="heading-color">Notes</th>
@@ -943,7 +943,7 @@
               <td colspan="2" class="text-right">{{formatAmount(invoiceData.amount_due)}}</td>
             </tr>
           </table>
-          <table class="middle-tables">
+          <table class="middle-tables" *ngIf="validateNotes()">
             <thead>
             <tr>
               <th class="heading-color">Notes</th>
@@ -1109,7 +1109,7 @@
               <td  class="text-right  amount-separator">{{formatAmount(invoiceData.amount_due)}}</td>
             </tr>
           </table>
-          <table class="middle-tables">
+          <table class="middle-tables" *ngIf="validateNotes()">
             <thead>
             <tr>
               <th class="heading-color">Notes</th>
@@ -1291,7 +1291,7 @@
               <td  class="text-right  amount-separator">{{formatAmount(invoiceData.amount_due)}}</td>
             </tr>
           </table>
-          <table class="middle-tables">
+          <table class="middle-tables" *ngIf="validateNotes()">
             <thead>
             <tr>
               <th class="heading-color">Notes</th>
@@ -1477,7 +1477,7 @@
               <td  class="text-right  amount-separator">{{formatAmount(invoiceData.amount_due)}}</td>
             </tr>
           </table>
-          <table class="middle-tables">
+          <table class="middle-tables" *ngIf="validateNotes()">
             <thead>
             <tr>
               <th class="heading-color">Notes</th>
