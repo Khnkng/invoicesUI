@@ -1,5 +1,5 @@
 
-import {Component} from "@angular/core";
+import {Component,ViewChild} from "@angular/core";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Session} from "qCommon/app/services/Session";
 import {LoadingService} from "qCommon/app/services/LoadingService";
@@ -25,6 +25,7 @@ import {DateFormater} from "qCommon/app/services/DateFormatter.service";
 import {FileUploader, FileUploaderOptions} from "ng2-file-upload";
 import {UUID} from "angular2-uuid/index";
 import {LateFeesService} from "qCommon/app/services/LateFeesService.service";
+import {ComboBox} from "qCommon/app/directives/comboBox.directive";
 
 declare let _:any;
 declare let numeral:any;
@@ -131,6 +132,8 @@ export class InvoiceComponent{
     isOtherTemplate:boolean;
     recurringFrequency:string;
     recurringEnddate:string;
+    @ViewChild("customerComboBoxDir") customerComboBox: ComboBox;
+
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
@@ -336,6 +339,7 @@ export class InvoiceComponent{
                     this.hasPaid=true;
                     this.amount=invoice.amount;
                 };
+                this.setCustomerComboBoxValue(invoice.customer_id);
                 if(invoice.attachments_metadata){
                     let attachmentObj=JSON.parse(invoice.attachments_metadata);
                     this.sourceId=attachmentObj.sourceId;
@@ -397,6 +401,14 @@ export class InvoiceComponent{
     loadInitialData() {
         let companyId = Session.getCurrentCompany();
         this.loadCustomers(companyId);
+    }
+
+    setCustomerComboBoxValue(customerId){
+      let base=this;
+      let customer = _.find(this.customers, {'customer_id': customerId});
+      setTimeout(function(){
+        base.customerComboBox.setValue(customer, 'customer_name');
+      });
     }
 
     getCompanyDetails(){
@@ -646,6 +658,9 @@ export class InvoiceComponent{
         if(this.validateLines(itemLines,'item')){
             return;
         }
+        if(sendMail){
+          this.additionalMails=this.selectedContact.email;
+        }
         invoiceData.sub_total=Number((this.subTotal).toFixed(2));
         invoiceData.amount_due=Number((this.totalAmount).toFixed(2));
         invoiceData.tax_amount=Number((this.taxTotal).toFixed(2));
@@ -682,7 +697,7 @@ export class InvoiceComponent{
           this.setBillUpdate(invoiceData);
           if(!this.showPreview)
           {
-            this.togelPreview();
+            this.togelPreview(invoiceData);
           }
           invoiceData.state=this.invoiceID?this.invoice.state:'sent';
           let base=this;
@@ -697,11 +712,11 @@ export class InvoiceComponent{
             this.setBillUpdate(invoiceData);
             this.saveInvoiceDetails(invoiceData);
         }else if(action=='preview'){
-            this.togelPreview();
+            this.togelPreview(invoiceData);
         }else if(action=='download'){
             if(!this.showPreview)
             {
-                this.togelPreview();
+                this.togelPreview(invoiceData);
             }
             let base=this;
             setTimeout(function(){
@@ -722,12 +737,13 @@ export class InvoiceComponent{
         }
     }
 
-    togelPreview(){
+    togelPreview(invoiceData){
         this.showPreview=!this.showPreview;
         if(this.showPreview){
             this.preViewText="Close Preview"
         }else {
             this.preViewText="Preview Invoice"
+            this.setCustomerComboBoxValue(invoiceData.customer_id);
         }
     }
 
@@ -778,7 +794,8 @@ export class InvoiceComponent{
     }
 
     resetInvoiceState(){
-      this.togelPreview();
+      let invoiceData=this._invoiceForm.getData(this.invoiceForm);
+      this.togelPreview(invoiceData);
     };
 
     resetPopupFields(){
@@ -894,19 +911,26 @@ export class InvoiceComponent{
     }
 
 
-    onCustomerSelect(value){
+    onCustomerSelect(customer){
+      let data = this._invoiceForm.getData(this.invoiceForm);
+      if(customer && customer.customer_id){
+        data.customer_id = customer.customer_id;
         this.selectedContact=null;
         this.maillIds=[];
-        this.getCustomerContacts(value);
-        let customer = _.find(this.customers, {'customer_id': value});
-        this.selectedCustomer=customer;
-        if(customer){
-            if(customer.term){
-                this.selectTerm(customer.term);
-                let term:any = this.invoiceForm.controls['term'];
-                term.patchValue(customer.term);
-            }
+        this.getCustomerContacts(customer.customer_id);
+        let selectedCustomer = _.find(this.customers, {'customer_id': customer.customer_id});
+        this.selectedCustomer=selectedCustomer;
+        if(selectedCustomer){
+          if(selectedCustomer.term){
+            this.selectTerm(selectedCustomer.term);
+            let term:any = this.invoiceForm.controls['term'];
+            term.patchValue(selectedCustomer.term);
+          }
         }
+      }else if(!customer||customer=='--None--'){
+        data.customer_id='';
+      }
+      this._invoiceForm.updateForm(this.invoiceForm, data);
     }
 
     getCustomrtDetails(value){
@@ -1021,6 +1045,8 @@ export class InvoiceComponent{
         this.titleService.setPageTitle("Edit Invoice");
         this.historyList=[];
         this.count=0;
+        let invoiceData = this._invoiceForm.getData(this.invoiceForm);
+        this.setCustomerComboBoxValue(invoiceData.customer_id);
   }
 
   saveItem(){

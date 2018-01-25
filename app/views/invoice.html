@@ -16,8 +16,8 @@
                                                         <div class="small-12 medium-8 columns" style="padding:0" *ngIf="!hasPaid">
                                                             <label>
                                                                 Select Customer*
-                                                                <select formControlName="customer_id" (change)="onCustomerSelect($event.target.value,customer)">
-                                                                    <option *ngFor="let customer of customers" value="{{customer.customer_id}}">{{customer.customer_name}}</option>
+                                                                <select combo-box #customerComboBoxDir="comboBox" data-placeholder="Select Account" [listObject]="customers" formControlName="customer_id" (valueChanged)="onCustomerSelect($event)">
+                                                                    <option *ngFor="let customer of customers" [value]="customer.customer_id">{{customer.customer_name}}</option>
                                                                 </select>
                                                             </label>
                                                         </div>
