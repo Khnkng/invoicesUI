@@ -135,7 +135,7 @@ export class InvoiceComponent{
     @ViewChild("customerComboBoxDir") customerComboBox: ComboBox;
 
 
-    constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
+  constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
                 private customerService: CustomersService, private _invoiceForm:InvoiceForm, private _invoiceLineForm:InvoiceLineForm, private _invoiceLineTaxesForm:InvoiceLineTaxesForm,
                 private coaService: ChartOfAccountsService,private titleService:pageTitleService,private stateService: StateService, private reportService: ReportService,private switchBoard: SwitchBoard,
@@ -330,6 +330,9 @@ export class InvoiceComponent{
                 let base=this;
                 invoice.invoice_date = base.dateFormater.formatDate(invoice['invoice_date'],base.serviceDateformat,base.dateFormat);
                 invoice.due_date = base.dateFormater.formatDate(invoice['due_date'],base.serviceDateformat,base.dateFormat);
+                if(invoice['job_date']){
+                  invoice.job_date = base.dateFormater.formatDate(invoice['job_date'],base.serviceDateformat,base.dateFormat);
+                }
                 this.invoice = invoice;
                 if(this.templateType=="Other1"||this.templateType=="Other2"){
                   this.setInvoiceValidators();
@@ -500,6 +503,11 @@ export class InvoiceComponent{
             this.selectTerm(term);
     }
 
+    setJobDate(date){
+      let jobDateControl:any = this.invoiceForm.controls['job_date'];
+      jobDateControl.patchValue(date);
+    }
+
     setPaymentDate(date){
         let paymentDateControl:any = this.invoiceForm.controls['due_date'];
         paymentDateControl.patchValue(date);
@@ -640,6 +648,9 @@ export class InvoiceComponent{
         let base = this;
         invoiceData.invoice_date = this.dateFormater.formatDate(invoiceData.invoice_date,this.dateFormat,this.serviceDateformat);
         invoiceData.due_date = this.dateFormater.formatDate(invoiceData.due_date,this.dateFormat,this.serviceDateformat);
+        if(invoiceData.job_date){
+          invoiceData.job_date = this.dateFormater.formatDate(invoiceData.job_date,this.dateFormat,this.serviceDateformat);
+        }
         invoiceData.amount = Number((this.amount).toFixed(2));
         delete invoiceData.invoiceLines;
         //taskLines=this.getInvoiceLines('task');
@@ -666,7 +677,7 @@ export class InvoiceComponent{
         invoiceData.tax_amount=Number((this.taxTotal).toFixed(2));
         //invoiceData.invoiceLines=itemLines.concat(taskLines);
         invoiceData.invoiceLines=itemLines;
-        invoiceData.recepientsMails=this.maillIds;
+        invoiceData.recepientsMails=_.uniq(this.maillIds);
         invoiceData.sendMail=sendMail;
         invoiceData.company=this.companyAddress;
         invoiceData.customer=this.selectedCustomer;
@@ -819,7 +830,7 @@ export class InvoiceComponent{
                     mails.push(value);
                 }
             });
-            this.invoiceProcessedData.recepientsMails=this.invoiceProcessedData.recepientsMails.concat(mails);
+            this.invoiceProcessedData.recepientsMails=_.uniq(this.invoiceProcessedData.recepientsMails.concat(mails));
         }
         this.invoiceProcessedData.remainder_name=this.remainder_name;
         this.invoiceProcessedData.email_notes=this.email_notes;
@@ -937,6 +948,7 @@ export class InvoiceComponent{
         //this.getCustomerContacts(value);
         let customer = _.find(this.customers, {'customer_id': value});
         this.selectedCustomer=customer;
+        this.additionalMails=customer.email;
     }
 
     onCustomerContactSelect(id){
