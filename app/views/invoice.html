@@ -16,8 +16,8 @@
                                                         <div class="small-12 medium-8 columns" style="padding:0" *ngIf="!hasPaid">
                                                             <label>
                                                                 Select Customer*
-                                                                <select formControlName="customer_id" (change)="onCustomerSelect($event.target.value,customer)">
-                                                                    <option *ngFor="let customer of customers" value="{{customer.customer_id}}">{{customer.customer_name}}</option>
+                                                                <select combo-box #customerComboBoxDir="comboBox" data-placeholder="Select Account" [listObject]="customers" formControlName="customer_id" (valueChanged)="onCustomerSelect($event)">
+                                                                    <option *ngFor="let customer of customers" [value]="customer.customer_id">{{customer.customer_name}}</option>
                                                                 </select>
                                                             </label>
                                                         </div>
@@ -181,6 +181,22 @@
                                                                     </label>
                                                                 </div>
                                                             </div>
+                                                          <div class="row" *ngIf="!hasPaid">
+                                                            <div class="small-12 medium-12 columns" style="padding: 0px">
+                                                              <label>
+                                                                Job Date
+                                                                <input type="text" formControlName="job_date" invoice-custom-datepicker [format]="dateFormat" [mindate]="'past'" (valueChanged)="setJobDate($event)" placeholder="Job Date" />
+                                                              </label>
+                                                            </div>
+                                                          </div>
+                                                          <div class="row" *ngIf="hasPaid">
+                                                            <div class="small-12 medium-12 columns" style="padding: 0px">
+                                                              <label>
+                                                                Job Date
+                                                                <input type="text" formControlName="job_date" type="text" formControlName="invoice_date" readonly />
+                                                              </label>
+                                                            </div>
+                                                          </div>
                                                           <div class="row" *ngIf="!hasPaid&&(templateType=='Other2'||templateType=='Other1')">
                                                             <label>
                                                               Billing From*
