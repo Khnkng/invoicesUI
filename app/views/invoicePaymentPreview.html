@@ -203,7 +203,7 @@
             <tr>
               <td valign="top" colspan="3">
                 <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_name:""}}</p>
-                <p class="company-style">{{invoiceData.customer?invoiceData.customer.street_1:""}}</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.street_1:""}} {{invoiceData.customer?invoiceData.customer.street_2?" ,"+invoiceData.customer.street_2:"":""}}</p>
                 <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_city:""}}, {{invoiceData.customer?invoiceData.customer.customer_zipcode:""}}</p>
                 <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_country:""}}</p>
               </td>
@@ -348,7 +348,7 @@
               <td valign="top" colspan="3">
                 <p class="heading-color" style="font-weight: 600">Bill To</p>
                 <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_name:""}}</p>
-                <p class="company-style">{{invoiceData.customer?invoiceData.customer.street_1:""}}</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.street_1:""}} {{invoiceData.customer?invoiceData.customer.street_2?" ,"+invoiceData.customer.street_2:"":""}}</p>
                 <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_city:""}}, {{invoiceData.customer?invoiceData.customer.customer_zipcode:""}}</p>
                 <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_country:""}}</p>
               </td>
@@ -503,7 +503,7 @@
               <td valign="top" colspan="3" style="border-bottom:5px solid #384986;">
                 <p class="heading-color" style="font-weight: 600">Bill To</p>
                 <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_name:""}}</p>
-                <p class="company-style">{{invoiceData.customer?invoiceData.customer.street_1:""}}</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.street_1:""}} {{invoiceData.customer?invoiceData.customer.street_2?" ,"+invoiceData.customer.street_2:"":""}}</p>
                 <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_city:""}}, {{invoiceData.customer?invoiceData.customer.customer_zipcode:""}}</p>
                 <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_country:""}}</p>
               </td>
@@ -676,7 +676,7 @@
               <td valign="top" colspan="3">
                 <p class="heading-color" style="font-weight: 600">Bill To</p>
                 <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_name:""}}</p>
-                <p class="company-style">{{invoiceData.customer?invoiceData.customer.street_1:""}}</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.street_1:""}} {{invoiceData.customer?invoiceData.customer.street_2?" ,"+invoiceData.customer.street_2:"":""}}</p>
                 <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_city:""}}, {{invoiceData.customer?invoiceData.customer.customer_zipcode:""}}</p>
                 <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_country:""}}</p>
               </td>
@@ -842,7 +842,7 @@
                   <tr>
                     <td valign="top" align="center">
                       <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_name:""}}</p>
-                      <p class="company-style">{{invoiceData.customer?invoiceData.customer.street_1:""}}</p>
+                      <p class="company-style">{{invoiceData.customer?invoiceData.customer.street_1:""}} {{invoiceData.customer?invoiceData.customer.street_2?" ,"+invoiceData.customer.street_2:"":""}}</p>
                       <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_city:""}}, {{invoiceData.customer?invoiceData.customer.customer_zipcode:""}}</p>
                       <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_country:""}}</p>
                     </td>
@@ -1029,7 +1029,7 @@
               <td valign="top" colspan="3" rowspan="2">
                 <!--<p class="header-color">Prepared For</p>-->
                 <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_name:""}}</p>
-                <p class="company-style">{{invoiceData.customer?invoiceData.customer.street_1:""}}</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.street_1:""}} {{invoiceData.customer?invoiceData.customer.street_2?" ,"+invoiceData.customer.street_2:"":""}}</p>
                 <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_city:""}}, {{invoiceData.customer?invoiceData.customer.customer_zipcode:""}}</p>
                 <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_country:""}}</p>
               </td>
@@ -1195,7 +1195,7 @@
               <td valign="top" colspan="3" rowspan="2">
                 <!--<p class="header-color">Prepared For</p>-->
                 <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_name:""}}</p>
-                <p class="company-style">{{invoiceData.customer?invoiceData.customer.street_1:""}}</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.street_1:""}} {{invoiceData.customer?invoiceData.customer.street_2?" ,"+invoiceData.customer.street_2:"":""}}</p>
                 <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_city:""}}, {{invoiceData.customer?invoiceData.customer.customer_zipcode:""}}</p>
                 <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_country:""}}</p>
               </td>
@@ -1377,7 +1377,7 @@
               <td valign="top" colspan="3" rowspan="2">
                 <!--<p class="header-color">Prepared For</p>-->
                 <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_name:""}}</p>
-                <p class="company-style">{{invoiceData.customer?invoiceData.customer.street_1:""}}</p>
+                <p class="company-style">{{invoiceData.customer?invoiceData.customer.street_1:""}} {{invoiceData.customer?invoiceData.customer.street_2?" ,"+invoiceData.customer.street_2:"":""}}</p>
                 <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_city:""}}, {{invoiceData.customer?invoiceData.customer.customer_zipcode:""}}</p>
                 <p class="company-style">{{invoiceData.customer?invoiceData.customer.customer_country:""}}</p>
               </td>
