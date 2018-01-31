@@ -572,13 +572,13 @@ export class InvoiceComponent{
         let invoiceData = this._invoiceForm.getData(this.invoiceForm);
         let total = 0;
         let base = this;
-        let taskTotal=0;
         let baseTotal=0;
 
         if(invoiceData.invoiceLines) {
             invoiceData.invoiceLines.forEach(function (invoiceLine) {
                 if(!invoiceLine.destroy){
-                    total = total +base.calcAmt(invoiceLine.price, invoiceLine.quantity);
+                    total=base.roundOffValue(total +base.roundOffValue(base.calcAmt(invoiceLine.price, invoiceLine.quantity)));
+                    //total = total +base.calcAmt(invoiceLine.price, invoiceLine.quantity);
                 }
 
             });
@@ -590,7 +590,7 @@ export class InvoiceComponent{
                 }
             });
         }*/
-        baseTotal=Number(total.toFixed(2))+Number(taskTotal.toFixed(2));
+        baseTotal=Number(total.toFixed(2));
 
         this.subTotal=baseTotal;
         return this.subTotal;
@@ -1615,5 +1615,9 @@ export class InvoiceComponent{
   setEndDate(date:string) {
     this.recurringEnddate=date;
   }
+
+    roundOffValue(num){
+        return Math.round(num * 100) / 100
+    }
 
 }
