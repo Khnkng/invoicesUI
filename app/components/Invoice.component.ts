@@ -1183,7 +1183,8 @@ export class InvoiceComponent{
                     lineData.type=type;
                     lineData.quantity=lineData.quantity.toFixed(4);
                     lineData.price=lineData.price.toFixed(2);
-                    lineData.amount=Number((lineData.quantity*lineData.price).toFixed(2));
+                    let calcAmount=lineData.quantity*lineData.price;
+                    lineData.amount=base.roundOffValue(calcAmount);
                     if(!lineData.destroy){
                         lines.push(lineData);
                     }
@@ -1195,7 +1196,8 @@ export class InvoiceComponent{
                     lineData.item.name=base.getItemCodeName(lineData.item_id);
                     lineData.quantity=lineData.quantity.toFixed(4);
                     lineData.price=lineData.price.toFixed(2);
-                    lineData.amount=Number((lineData.quantity*lineData.price).toFixed(2));
+                    let calcAmount=lineData.quantity*lineData.price;
+                    lineData.amount=base.roundOffValue(calcAmount);
                     if(!lineData.destroy){
                         lines.push(lineData);
                     }
@@ -1206,7 +1208,8 @@ export class InvoiceComponent{
                     lineData.type=type;
                     lineData.quantity=lineData.quantity.toFixed(4);
                     lineData.price=lineData.price.toFixed(2);
-                    lineData.amount=Number((lineData.quantity*lineData.price).toFixed(2));
+                    let calcAmount=lineData.quantity*lineData.price;
+                    lineData.amount=base.roundOffValue(calcAmount);
                     if(!lineData.destroy){
                         lines.push(lineData);
                     }
