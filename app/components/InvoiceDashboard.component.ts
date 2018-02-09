@@ -144,7 +144,7 @@ export class InvoiceDashboardComponent {
     customerAgingSummary:any;
     dateFormat:string;
     serviceDateformat:string;
-    invoicesTableColumns: Array<any> = ['Number', 'Customer', 'Due Date', 'Invoice Amount', 'Due Amount', 'Status'];
+    invoicesTableColumns: Array<any> = ['Number', 'Customer','Invoice Date', 'Due Date', 'Invoice Amount', 'Due Amount', 'Status'];
     paymentsTableColumns: Array<any> = ['Payment type/#', 'Received From', 'Date Received', 'Amount/Status'];
     // proposalsTableColumns: Array<any> = ['Number', 'Customer', 'Due Date', 'Invoice Amount', 'Due Amount', 'Status'];
     pdfTableData: any = {"tableHeader": {"values": []}, "tableRows" : {"rows": []} };
@@ -867,6 +867,7 @@ export class InvoiceDashboardComponent {
             {"name": "paymentId", "title": "Payment ID", 'visible': false, 'filterable': false},
             {"name": "number", "title": "Number"},
             {"name": "customer", "title": "Customer"},
+            {"name": "invoice_date", "title": "Invoice Date"},
             {"name": "due_date", "title": "Due Date"},
             {
                 "name": "amount", "title": "Invoice Amount"
@@ -887,6 +888,7 @@ export class InvoiceDashboardComponent {
             row['number'] = invoice['number'];
             row['customer'] = invoice['customer_name'];
             //row['due_date'] = invoice['due_date'];
+            row['invoice_date'] = (invoice['invoice_date']) ? base.dateFormater.formatDate(invoice['invoice_date'],base.serviceDateformat,base.dateFormat) : invoice['invoice_date'];
             row['due_date'] = (invoice['due_date']) ? base.dateFormater.formatDate(invoice['due_date'],base.serviceDateformat,base.dateFormat) : invoice['due_date'];
             let amount=invoice['amount']?Number(invoice['amount']):0;
             let amount_due=invoice['amount_due']?Number(invoice['amount_due']):0;
@@ -1303,6 +1305,7 @@ export class InvoiceDashboardComponent {
             tempJsonArray = {};
             tempJsonArray["Number"] = tempData[i].number;
             tempJsonArray["Customer"] = tempData[i].customer;
+            tempJsonArray["Invoice Date"] = tempData[i].invoice_date;
             tempJsonArray["Due Date"] = tempData[i].due_date;
             tempJsonArray["Invoice Amount"] = tempData[i].amount;
             tempJsonArray["Due Amount"] = tempData[i].amount_due;
