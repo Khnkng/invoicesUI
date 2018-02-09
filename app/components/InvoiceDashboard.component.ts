@@ -989,14 +989,14 @@ export class InvoiceDashboardComponent {
 
             if(assignedAmount >= payment.paymentAmount) {
                 assignStatus = "Assigned";
-                assignmentHtml = "<small style='color:#00B1A9'>"+assignStatus+"</small>"
+                assignmentHtml = "<small style='color:#00B1A9'>"+"Applied"+"</small>"
 
             } else if(assignedAmount > 0) {
                 assignStatus = "Partially Assigned";
-                assignmentHtml = "<small style='color:#ff3219'>"+assignStatus+"</small>"
+                assignmentHtml = "<small style='color:#ff3219'>"+"Partially Applied"+"</small>"
             } else {
                 assignStatus = "Unassigned";
-                assignmentHtml = "<small style='color:#ff3219'>"+assignStatus+"</small>"
+                assignmentHtml = "<small style='color:#ff3219'>"+"Not Applied"+"</small>"
             }
             row["invoiceIds"]=invoicesIds.toString();
             if(invoicesIds.length>0){
