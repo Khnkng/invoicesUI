@@ -892,22 +892,24 @@ export class InvoiceComponent{
     }
 
     itemChange(item,index,type){
-        let itemCode = _.find(this.itemCodes, {'id': item});
-        let itemsControl:any;
-        let itemControl:any;
-        /*if(type=='item'){
+        if(this.newInvoice){
+            let itemCode = _.find(this.itemCodes, {'id': item});
+            let itemsControl:any;
+            let itemControl:any;
+            /*if(type=='item'){
+             itemsControl=this.invoiceForm.controls['invoiceLines'];
+             }else if(type=='task'){
+             itemsControl=this.invoiceForm.controls['taskLines'];
+             }*/
             itemsControl=this.invoiceForm.controls['invoiceLines'];
-        }else if(type=='task'){
-            itemsControl=this.invoiceForm.controls['taskLines'];
-        }*/
-      itemsControl=this.invoiceForm.controls['invoiceLines'];
-        if(itemCode){
-            itemControl= itemsControl.controls[index];
-            itemControl.controls['description'].patchValue(itemCode.desc);
-            itemControl.controls['price'].patchValue(itemCode.sales_price);
-        }
+            if(itemCode){
+                itemControl= itemsControl.controls[index];
+                itemControl.controls['description'].patchValue(itemCode.desc);
+                itemControl.controls['price'].patchValue(itemCode.sales_price);
+            }
 
-        this.calculateTotals();
+            this.calculateTotals();
+        }
     }
 
 
@@ -984,10 +986,12 @@ export class InvoiceComponent{
     displayItemCodeCOA(itemId){
         if(itemId){
             let itemCode = _.find(this.itemCodes, {'id': itemId});
-            this.updateCOADisplay(itemId);
-            if(itemCode){
-                this.editItemForm.controls['description'].patchValue(itemCode.desc);
-                this.editItemForm.controls['price'].patchValue(itemCode.sales_price);
+                this.updateCOADisplay(itemId);
+            if(this.newInvoice){
+                if(itemCode){
+                    this.editItemForm.controls['description'].patchValue(itemCode.desc);
+                    this.editItemForm.controls['price'].patchValue(itemCode.sales_price);
+                }
             }
         } else{
             this.paymentCOAName = "";
