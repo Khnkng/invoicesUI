@@ -827,6 +827,7 @@ export class InvoiceDashboardComponent {
 
     ngOnDestroy() {
         this.routeSub.unsubscribe();
+        this.routeSubscribe.unsubscribe();
         this.setBookCurrency();
     }
 
@@ -961,6 +962,7 @@ export class InvoiceDashboardComponent {
             {"name": "receivedFrom", "title": "Received From"},
             {"name": "dateReceived", "title": "Date Received"},
             {"name": "amount", "title": "Amount/Status"},
+            {"name": "payment_applied_amount", "title": "Applied Amount"},
             {"name": "actions", "title": "", "type": "html", "sortable": false, "filterable": false}
         ];
 
@@ -971,9 +973,11 @@ export class InvoiceDashboardComponent {
             row['journalId'] = payment['journalID'];
             row['selectCol'] = "<input type='checkbox' class='checkbox'/>";
             let paymentType=payment.type=='cheque'?'Check':payment.type;
-            row['type'] = "<div>"+paymentType+"</div><div><small>"+payment.referenceNo+"</small></div>";
+            row['type'] = "<div>"+paymentType+"</div>";
+            if(payment.referenceNo){
+              row['type'] += "<div><small>"+payment.referenceNo+"</small></div>";
+            }
             row['receivedFrom'] = payment['customerName'];
-            //row['dateReceived'] = payment.paymentDate;
             row['dateReceived'] = (payment['paymentDate']) ? base.dateFormater.formatDate(payment['paymentDate'],base.serviceDateformat,base.dateFormat) : payment['paymentDate'];
             let assignStatus = "";
             let assignedAmount = 0;
@@ -1024,6 +1028,7 @@ export class InvoiceDashboardComponent {
             }
             base.numeralService.switchLocale(payment.currencyCode.toLowerCase());
             row['amount'] = "<div>"+base.numeralService.format("$0,0.00", payment.paymentAmount)+"</div><div>"+assignmentHtml+"</div>";
+            row['payment_applied_amount'] = "<div>"+base.numeralService.format("$0,0.00", payment.payment_applied_amount)+"</div>";
             /*if(payment.journalID){
              row['actions'] = "<a class='action' data-action='navigation'><span class='icon badge je-badge'>JE</span></a>";
              }*/
