@@ -120,6 +120,7 @@ export class InvoiceAddPaymentComponent {
                 paymentFormValues.depositedTo = null;
             }
             delete paymentFormValues['paymentLines'];
+            delete paymentFormValues['payment_applied_amount'];
 
             this.invoicePaymentForm.setValue(paymentFormValues);
             setTimeout(() => {
