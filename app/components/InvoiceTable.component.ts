@@ -72,8 +72,10 @@ export class InvoiceTableComponent {
             this.titleService.setPageTitle(this.invoiceState);
         });
 
+        this.loadingService.triggerLoadingEvent(true);
         this.invoicesService.getInvoiceTable(this.companyId,this.currentpayment)
             .subscribe(invoiceTabledata  => {
+                this.loadingService.triggerLoadingEvent(false);
                 this.invoiceTabledata=invoiceTabledata;
                 this.buildTableData();
             }, error =>{
@@ -83,7 +85,11 @@ export class InvoiceTableComponent {
     }
 
     hideFlyout(){
+        let prevState = this.stateService.getPrevState();
         let link = ['invoices/dashboard','0'];
+        if(prevState){
+            link = [prevState.url];
+        }
         this._router.navigate(link);
     }
 
@@ -128,6 +134,10 @@ export class InvoiceTableComponent {
             base.hasItemCodes = true;
         }, 0)
         this.loadingService.triggerLoadingEvent(false);
+    }
+
+    ngOnDestroy() {
+      this.routeSubscribe.unsubscribe();
     }
 
     buildPdfTabledata(fileType){
