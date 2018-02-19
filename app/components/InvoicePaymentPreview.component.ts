@@ -11,6 +11,7 @@ import {CustomersService} from "qCommon/app/services/Customers.service";
 import {Session} from "qCommon/app/services/Session";
 import {NumeralService} from "qCommon/app/services/Numeral.service";
 import {DateFormater} from "qCommon/app/services/DateFormatter.service";
+import {DiscountService} from "qCommon/app/services/Discounts.service";
 
 declare let jQuery:any;
 declare let _:any;
@@ -46,7 +47,9 @@ export class InvoicePaymentPreview{
     showUOM:boolean=true;
     showItemName:boolean=true;
     latefeeAmount:any=0;
+    discountAmount:any=0;
     notesSize:any=0;
+    invoiceAmount:any=0;
     @Input()
     set invoices(invoices:any){
         this.invoiceData = invoices;
@@ -75,6 +78,9 @@ export class InvoicePaymentPreview{
           this.getHeaderColor(this.displayState);
         }
         this.latefeeAmount=invoices.late_fee_amount?invoices.late_fee_amount:0;
+        if(invoices.state!="partially_paid"&&invoices.is_discount_applied&&invoices.discount_id){
+          this.getDiscountAmount();
+        }
 
         this.getZoomSize();
     }
@@ -82,7 +88,7 @@ export class InvoicePaymentPreview{
 
     constructor(private switchBoard: SwitchBoard, private _router:Router, private _route: ActivatedRoute, private toastService: ToastService,
                 private loadingService:LoadingService, private titleService:pageTitleService, private invoiceService: InvoicesService,private customerService: CustomersService,
-                private numeralService:NumeralService,private dateFormater: DateFormater){
+                private numeralService:NumeralService,private dateFormater: DateFormater,private  discountsService:DiscountService){
         this.serviceDateformat = dateFormater.getServiceDateformat();
         this.dateFormat = dateFormater.getFormat();
     }
@@ -194,4 +200,41 @@ export class InvoicePaymentPreview{
         }
     }
 
+    getDiscountAmount(){
+      let dueDate=this.dateFormater.formatDate(this.invoiceData.due_date,this.dateFormat,this.serviceDateformat);
+      let data={
+        due_date:dueDate,
+        amount:this.invoiceData.amount
+      };
+      this.discountsService.getDiscountAmount(data,this.invoiceData.discount_id,Session.getCurrentCompany()).subscribe(discount => {
+        this.discountAmount=this.roundOffValue(discount.discount_amount);
+      }, error => this.handleError(error));
+    }
+
+    validateDiscountAmount(){
+      if(this.discountAmount>0){
+        return true;
+      }
+      return false;
+    }
+
+    calculateDueTotal(){
+      if(this.invoiceData.is_discount_applied&&this.invoiceData.discount_id){
+        return this.roundOffValue(this.invoiceData.amount_due-this.discountAmount);
+      }else {
+        return  this.invoiceData.amount_due;
+      }
+    }
+
+    calculateAmountTotal(){
+      if(this.invoiceData.is_discount_applied&&this.invoiceData.discount_id){
+        return this.roundOffValue(this.invoiceData.amount-this.discountAmount);
+      }else {
+        return this.invoiceData.amount;
+      }
+    }
+
+  roundOffValue(num){
+    return Math.round(num * 100) / 100
+  }
 }
