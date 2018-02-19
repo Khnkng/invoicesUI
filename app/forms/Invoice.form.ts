@@ -39,7 +39,10 @@ export class InvoiceForm extends abstractForm{
             "billing_to":[""],
             "po_number":"",
             "billing_cycle":"",
-            "project_name":""
+            "project_name":"",
+            "job_date":"",
+            "is_discount_applied":false,
+            "discount_id":""
         }
     }
 

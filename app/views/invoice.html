@@ -181,6 +181,22 @@
                                                                     </label>
                                                                 </div>
                                                             </div>
+                                                          <div class="row" *ngIf="!hasPaid">
+                                                            <div class="small-12 medium-12 columns" style="padding: 0px">
+                                                              <label>
+                                                                Job Date
+                                                                <input type="text" formControlName="job_date" invoice-custom-datepicker [format]="dateFormat" [mindate]="'past'" (valueChanged)="setJobDate($event)" placeholder="Job Date" />
+                                                              </label>
+                                                            </div>
+                                                          </div>
+                                                          <div class="row" *ngIf="hasPaid">
+                                                            <div class="small-12 medium-12 columns" style="padding: 0px">
+                                                              <label>
+                                                                Job Date
+                                                                <input type="text" formControlName="job_date" type="text" formControlName="invoice_date" readonly />
+                                                              </label>
+                                                            </div>
+                                                          </div>
                                                           <div class="row" *ngIf="!hasPaid&&(templateType=='Other2'||templateType=='Other1')">
                                                             <label>
                                                               Billing From*
@@ -257,6 +273,24 @@
                                                                     </label>
                                                                 </div>
                                                             </div>
+                                                          <div class="row" *ngIf="!hasPaid">
+                                                            <label>
+                                                              Discount
+                                                              <select formControlName="discount_id" (change)="onDiscountSelect($event.target.value)">
+                                                                <option value="">No Discount</option>
+                                                                <option *ngFor="let discount of discounts" value="{{discount.id}}">{{discount.name}}</option>
+                                                              </select>
+                                                            </label>
+                                                          </div>
+                                                          <div class="row" *ngIf="hasPaid">
+                                                            <label>
+                                                              Discount
+                                                              <select class="jeSelect" formControlName="discount_id" (change)="onDiscountSelect($event.target.value)" disabled>
+                                                                <option value="">No Discount</option>
+                                                                <option *ngFor="let discount of discounts" value="{{discount.id}}">{{discount.name}}</option>
+                                                              </select>
+                                                            </label>
+                                                          </div>
                                                           <div class="row" *ngIf="!hasPaid&&(templateType=='Other2'||templateType=='Other1')">
                                                             <label>
                                                               Billing To*
@@ -429,6 +463,11 @@
                                                                 Late Fee
                                                             </td>
                                                             <td style="text-align:right;">{{formatAmount(lateFeeAmount)}}</td></tr>
+                                                        <tr *ngIf="!newInvoice&&validateDiscountAmount()">
+                                                          <td style="background: #E5E5E5;">
+                                                            Discount
+                                                          </td>
+                                                          <td style="text-align:right;">{{formatAmount(discountAmount)}}</td></tr>
                                                         <tr *ngIf="!newInvoice">
                                                             <td style="background: #E5E5E5;">
                                                                 Amount Paid
