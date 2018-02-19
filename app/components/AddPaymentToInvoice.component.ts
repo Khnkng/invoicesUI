@@ -12,7 +12,7 @@ import {StateService} from "qCommon/app/services/StateService";
 import {FinancialAccountsService} from "qCommon/app/services/FinancialAccounts.service";
 import {Session} from "qCommon/app/services/Session";
 import {CompaniesService} from "qCommon/app/services/Companies.service";
-
+import {DiscountService} from "qCommon/app/services/Discounts.service";
 
 declare let jQuery:any;
 declare let _:any;
@@ -46,10 +46,11 @@ export class InvoiceAddPayment{
     showItemName:boolean=true;
     showInvoice:boolean;
     templateType:string;
+    discountAmount:number=0;
 
     constructor(private switchBoard: SwitchBoard, private _router:Router, private _route: ActivatedRoute, private toastService: ToastService,
                 private loadingService:LoadingService, private titleService:pageTitleService, private stateService: StateService, private invoiceService: InvoicesService,private customerService: CustomersService,private dateFormater:DateFormater,
-                private accountsService: FinancialAccountsService, private companyService: CompaniesService){
+                private accountsService: FinancialAccountsService, private companyService: CompaniesService,private  discountsService:DiscountService){
         this.titleService.setPageTitle("Add Payment To Invoice");
         this.dateFormat = dateFormater.getFormat();
         this.serviceDateformat = dateFormater.getServiceDateformat();
@@ -128,6 +129,9 @@ export class InvoiceAddPayment{
                 if(invoices.is_past_due){
                     this.invoiceData.isPastDue=invoices.is_past_due
                 }
+                if(this.invoiceData.state!="partially_paid"&&this.invoiceData.is_discount_applied&&this.invoiceData.discount_id){
+                  this.getDiscountAmount();
+                }
                 this.applyObject.reference_number = invoices.number;
                 this.hasInvoiceData = true;
             }
@@ -156,7 +160,6 @@ export class InvoiceAddPayment{
     }
 
     applyPayment(){
-        console.log(this.applyObject);
         if(!this.applyObject.bank_account_id){
             this.toastService.pop(TOAST_TYPE.error, "Please select bank account");
             return;
@@ -176,6 +179,9 @@ export class InvoiceAddPayment{
         this.applyObject['state'] = 'paid';
         this.applyObject['currency'] = this.invoiceData.currency;
         this.applyObject['customer_id'] = this.invoiceData.customer_id;
+        if(this.discountAmount>0&&this.invoiceData.is_discount_applied&&this.invoiceData.discount_id&&(this.invoiceData.amount==this.roundOffValue(this.applyObject.amount+this.discountAmount))){
+          this.applyObject['discount']=this.discountAmount;
+        }
         this.applyObject.payment_date = this.dateFormater.formatDate(this.applyObject.payment_date, this.dateFormat, this.serviceDateformat);
         this.loadingService.triggerLoadingEvent(true);
         this.invoiceService.markAsPaid(this.applyObject,this.invoiceID).subscribe(success => {
@@ -221,5 +227,20 @@ export class InvoiceAddPayment{
     setDate(date){
         this.applyObject.payment_date = date;
     }
+
+  getDiscountAmount(){
+    let dueDate=this.dateFormater.formatDate(this.invoiceData.due_date,this.dateFormat,this.serviceDateformat);
+    let data={
+      due_date:dueDate,
+      amount:this.invoiceData.amount
+    };
+    this.discountsService.getDiscountAmount(data,this.invoiceData.discount_id,Session.getCurrentCompany()).subscribe(discount => {
+      this.discountAmount=this.roundOffValue(discount.discount_amount);
+    }, error => this.handleError(error));
+  }
+
+  roundOffValue(num){
+    return Math.round(num * 100) / 100
+  }
 
 }

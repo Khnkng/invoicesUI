@@ -163,7 +163,7 @@
         <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
       </tr>
       <tr>
-        <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(invoiceData.amount_due)}}</td>
+        <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(calculateDueTotal())}}</td>
         <td class="text-right font-color" colspan="2">{{getInvoiceDisplayState(displayState)}}</td>
       </tr>
       </tbody>
@@ -253,6 +253,11 @@
               <td colspan="3" class="text-right">Late Fee</td>
               <td  class="text-right">{{formatAmount(invoiceData.late_fee_amount)}}</td>
             </tr>
+            <tr *ngIf="validateDiscountAmount()">
+              <td  class="emptyCol" colspan="2"></td>
+              <td colspan="3" class="text-right">Discount</td>
+              <td  class="text-right">{{formatAmount(discountAmount)}}</td>
+            </tr>
             <tr >
               <td  class="emptyCol" colspan="2"></td>
               <td colspan="3" class="text-right">Amount Paid</td>
@@ -261,7 +266,7 @@
             <tr >
               <td  class="emptyCol" colspan="2"></td>
               <td colspan="3" class="text-right">Amount Due</td>
-              <td  class="text-right">{{formatAmount(invoiceData.amount_due)}}</td>
+              <td  class="text-right">{{formatAmount(calculateDueTotal())}}</td>
             </tr>
           </table>
           <table class="middle-tables">
@@ -308,7 +313,7 @@
         <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
       </tr>
       <tr>
-        <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(invoiceData.amount_due)}}</td>
+        <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(calculateDueTotal())}}</td>
         <td class="text-right font-color" colspan="2">{{getInvoiceDisplayState(displayState)}}</td>
       </tr>
       </tbody>
@@ -415,6 +420,11 @@
               <td colspan="2" class="text-right">Late Fee</td>
               <td  colspan="2" class="text-right">{{formatAmount(invoiceData.late_fee_amount)}}</td>
             </tr>
+            <tr *ngIf="validateDiscountAmount()">
+              <td  class="emptyCol" colspan="2"></td>
+              <td colspan="3" class="text-right">Discount</td>
+              <td  class="text-right">{{formatAmount(discountAmount)}}</td>
+            </tr>
             <tr>
               <td class="emptyCol" colspan="2"></td>
               <td colspan="2" class="text-right">Amount Paid</td>
@@ -423,7 +433,7 @@
             <tr>
               <td class="emptyCol" colspan="2"></td>
               <td colspan="2" class="text-right">Amount Due</td>
-              <td colspan="2" class="text-right">{{formatAmount(invoiceData.amount_due)}}</td>
+              <td colspan="2" class="text-right">{{formatAmount(calculateDueTotal())}}</td>
             </tr>
           </table>
           <table class="middle-tables" *ngIf="validateNotes()">
@@ -470,7 +480,7 @@
         <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
       </tr>
       <tr>
-        <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(invoiceData.amount_due)}}</td>
+        <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(calculateDueTotal())}}</td>
         <td class="text-right font-color" colspan="2">{{getInvoiceDisplayState(invoiceData.state)}}</td>
       </tr>
       </tbody>
@@ -572,6 +582,11 @@
               <td colspan="2" class="text-right">Late Fee</td>
               <td  colspan="2" class="text-right">{{formatAmount(invoiceData.late_fee_amount)}}</td>
             </tr>
+            <tr *ngIf="validateDiscountAmount()">
+              <td  class="emptyCol" colspan="2"></td>
+              <td colspan="3" class="text-right">Discount</td>
+              <td  class="text-right">{{formatAmount(discountAmount)}}</td>
+            </tr>
             <tr>
               <td class="emptyCol" colspan="2"></td>
               <td colspan="2" class="text-right">Amount Paid</td>
@@ -580,7 +595,7 @@
             <tr>
               <td class="emptyCol" colspan="2"></td>
               <td colspan="2" class="text-right">Amount Due</td>
-              <td colspan="2" class="text-right">{{formatAmount(invoiceData.amount_due)}}</td>
+              <td colspan="2" class="text-right">{{formatAmount(calculateDueTotal())}}</td>
             </tr>
           </table>
           <table class="middle-tables" *ngIf="validateNotes()">
@@ -627,7 +642,7 @@
         <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
       </tr>
       <tr>
-        <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(invoiceData.amount_due)}}</td>
+        <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(calculateDueTotal())}}</td>
         <td class="text-right font-color" colspan="2">{{getInvoiceDisplayState(invoiceData.state)}}</td>
       </tr>
       </tbody>
@@ -743,6 +758,11 @@
               <td colspan="2" class="text-right">Late Fee</td>
               <td  colspan="2" class="text-right">{{formatAmount(invoiceData.late_fee_amount)}}</td>
             </tr>
+            <tr *ngIf="validateDiscountAmount()">
+              <td  class="emptyCol" colspan="2"></td>
+              <td colspan="3" class="text-right">Discount</td>
+              <td  class="text-right">{{formatAmount(discountAmount)}}</td>
+            </tr>
             <tr>
               <td class="emptyCol" colspan="2"></td>
               <td colspan="2" class="text-right">Amount Paid</td>
@@ -751,7 +771,7 @@
             <tr>
               <td class="emptyCol" colspan="2"></td>
               <td colspan="2" class="text-right">Amount Due</td>
-              <td colspan="2" class="text-right">{{formatAmount(invoiceData.amount_due)}}</td>
+              <td colspan="2" class="text-right">{{formatAmount(calculateDueTotal())}}</td>
             </tr>
           </table>
           <table class="middle-tables" *ngIf="validateNotes()">
@@ -798,7 +818,7 @@
         <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
       </tr>
       <tr>
-        <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(invoiceData.amount_due)}}</td>
+        <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(calculateDueTotal())}}</td>
         <td class="text-right font-color" colspan="2">{{getInvoiceDisplayState(invoiceData.state)}}</td>
       </tr>
       </tbody>
@@ -932,6 +952,11 @@
               <td colspan="2" class="text-right">Late Fee</td>
               <td  colspan="2" class="text-right">{{formatAmount(invoiceData.late_fee_amount)}}</td>
             </tr>
+            <tr *ngIf="validateDiscountAmount()">
+              <td  class="emptyCol" colspan="2"></td>
+              <td colspan="3" class="text-right">Discount</td>
+              <td  class="text-right">{{formatAmount(discountAmount)}}</td>
+            </tr>
             <tr>
               <td class="emptyCol" colspan="2"></td>
               <td colspan="2" class="text-right">Amount Paid</td>
@@ -940,7 +965,7 @@
             <tr>
               <td class="emptyCol" colspan="2"></td>
               <td colspan="2" class="text-right">Amount Due</td>
-              <td colspan="2" class="text-right">{{formatAmount(invoiceData.amount_due)}}</td>
+              <td colspan="2" class="text-right">{{formatAmount(calculateDueTotal())}}</td>
             </tr>
           </table>
           <table class="middle-tables" *ngIf="validateNotes()">
@@ -987,7 +1012,7 @@
         <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
       </tr>
       <tr>
-        <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(invoiceData.amount_due)}}</td>
+        <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(calculateDueTotal())}}</td>
         <td class="text-right font-color" colspan="2">{{getInvoiceDisplayState(displayState)}}</td>
       </tr>
       </tbody>
@@ -1092,10 +1117,15 @@
               <td  class="text-right">Tax</td>
               <td  class="text-right">{{formatAmount(invoiceData.tax_amount)}}</td>
             </tr>
+            <tr *ngIf="validateDiscountAmount()">
+              <td  colspan="4" style="width: 50%"></td>
+              <td  class="text-right">Discount</td>
+              <td  class="text-right">{{formatAmount(discountAmount)}}</td>
+            </tr>
             <tr >
               <td  colspan="4" style="width: 50%"></td>
               <td  class="text-right  amount-separator">Total</td>
-              <td  class="text-right  amount-separator">{{formatAmount(invoiceData.amount)}}</td>
+              <td  class="text-right  amount-separator">{{formatAmount(calculateAmountTotal())}}</td>
             </tr>
             <tr >
               <td   colspan="4" style="width: 50%"></td>
@@ -1106,7 +1136,7 @@
               <td  colspan="4" style="width: 50%">
               </td>
               <td  class="text-right  amount-separator">Amount Due</td>
-              <td  class="text-right  amount-separator">{{formatAmount(invoiceData.amount_due)}}</td>
+              <td  class="text-right  amount-separator">{{formatAmount(calculateDueTotal())}}</td>
             </tr>
           </table>
           <table class="middle-tables" *ngIf="validateNotes()">
@@ -1153,7 +1183,7 @@
         <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
       </tr>
       <tr>
-        <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(invoiceData.amount_due)}}</td>
+        <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(calculateDueTotal())}}</td>
         <td class="text-right font-color" colspan="2">{{getInvoiceDisplayState(displayState)}}</td>
       </tr>
       </tbody>
@@ -1274,10 +1304,15 @@
               <td  class="text-right">Tax</td>
               <td  class="text-right">{{formatAmount(invoiceData.tax_amount)}}</td>
             </tr>
+            <tr *ngIf="validateDiscountAmount()">
+              <td  colspan="4" style="width: 50%"></td>
+              <td  class="text-right">Discount</td>
+              <td  class="text-right">{{formatAmount(discountAmount)}}</td>
+            </tr>
             <tr >
               <td  colspan="4" style="width: 50%"></td>
               <td  class="text-right  amount-separator">Total</td>
-              <td  class="text-right  amount-separator">{{formatAmount(invoiceData.amount)}}</td>
+              <td  class="text-right  amount-separator">{{formatAmount(calculateAmountTotal())}}</td>
             </tr>
             <tr >
               <td   colspan="4" style="width: 50%"></td>
@@ -1288,7 +1323,7 @@
               <td  colspan="4" style="width: 50%">
               </td>
               <td  class="text-right  amount-separator">Amount Due</td>
-              <td  class="text-right  amount-separator">{{formatAmount(invoiceData.amount_due)}}</td>
+              <td  class="text-right  amount-separator">{{formatAmount(calculateDueTotal())}}</td>
             </tr>
           </table>
           <table class="middle-tables" *ngIf="validateNotes()">
@@ -1335,7 +1370,7 @@
         <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
       </tr>
       <tr>
-        <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(invoiceData.amount_due)}}</td>
+        <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(calculateDueTotal())}}</td>
         <td class="text-right font-color" colspan="2">{{getInvoiceDisplayState(displayState)}}</td>
       </tr>
       </tbody>
@@ -1460,10 +1495,15 @@
               <td  class="text-right">Tax</td>
               <td  class="text-right">{{formatAmount(invoiceData.tax_amount)}}</td>
             </tr>
+            <tr *ngIf="validateDiscountAmount()">
+              <td  colspan="4" style="width: 50%"></td>
+              <td  class="text-right">Discount</td>
+              <td  class="text-right">{{formatAmount(discountAmount)}}</td>
+            </tr>
             <tr >
               <td  colspan="4" style="width: 50%"></td>
               <td  class="text-right  amount-separator">Total</td>
-              <td  class="text-right  amount-separator">{{formatAmount(invoiceData.amount)}}</td>
+              <td  class="text-right  amount-separator">{{formatAmount(calculateAmountTotal())}}</td>
             </tr>
             <tr >
               <td   colspan="4" style="width: 50%"></td>
@@ -1474,7 +1514,7 @@
               <td  colspan="4" style="width: 50%">
               </td>
               <td  class="text-right  amount-separator">Amount Due</td>
-              <td  class="text-right  amount-separator">{{formatAmount(invoiceData.amount_due)}}</td>
+              <td  class="text-right  amount-separator">{{formatAmount(calculateDueTotal())}}</td>
             </tr>
           </table>
           <table class="middle-tables" *ngIf="validateNotes()">
