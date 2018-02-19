@@ -222,7 +222,7 @@ export class InvoicePaymentPreview{
       if(this.invoiceData.is_discount_applied&&this.invoiceData.discount_id){
         return this.roundOffValue(this.invoiceData.amount_due-this.discountAmount);
       }else {
-        this.invoiceData.amount_due;
+        return  this.invoiceData.amount_due;
       }
     }
 
@@ -230,7 +230,7 @@ export class InvoicePaymentPreview{
       if(this.invoiceData.is_discount_applied&&this.invoiceData.discount_id){
         return this.roundOffValue(this.invoiceData.amount-this.discountAmount);
       }else {
-        this.invoiceData.amount;
+        return this.invoiceData.amount;
       }
     }
 
