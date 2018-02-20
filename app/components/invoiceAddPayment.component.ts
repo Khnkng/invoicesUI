@@ -121,6 +121,7 @@ export class InvoiceAddPaymentComponent {
             }
             delete paymentFormValues['paymentLines'];
             delete paymentFormValues['payment_applied_amount'];
+            delete paymentFormValues['payment_unapplied_amount'];
 
             this.invoicePaymentForm.setValue(paymentFormValues);
             setTimeout(() => {
@@ -179,6 +180,7 @@ export class InvoiceAddPaymentComponent {
         payment.paymentLines = this.paymentLines;
         if(payment.paymentLines.length >0) {
             for (let i in payment.paymentLines) {
+                payment.paymentLines[i].amount=this.unFormatAmount(payment.paymentLines[i].amount);
                 payment.paymentLines[i].invoiceDate = this.dateFormater.formatDate(payment.paymentLines[i].invoiceDate, this.dateFormat, this.serviceDateformat);
                 payment.paymentLines[i].dueDate = this.dateFormater.formatDate(payment.paymentLines[i].dueDate, this.dateFormat, this.serviceDateformat);
             }
@@ -295,6 +297,7 @@ export class InvoiceAddPaymentComponent {
             paymentLine.dueDate = moment(invoice.due_date).format(this.dateFormat);
             if(!this.paymentId) {
                 paymentLine.amount = "";
+                paymentLine.isSelected=false;
                 if(invoice.state != "paid" && invoice.state != "draft") {
                     this.paymentLines.push(paymentLine);
                 }
@@ -302,8 +305,14 @@ export class InvoiceAddPaymentComponent {
 
                 if(invoice.state == "partially_paid" && !invoice.paymentLine) {
                     paymentLine.amount = 0;
+                    paymentLine.isSelected=false;
                 } else {
                     paymentLine.amount = invoice.paymentLine ? invoice.paymentLine.amount : 0;
+                    if(paymentLine.amount>0){
+                      paymentLine.isSelected=true;
+                    }else{
+                      paymentLine.isSelected=false;
+                    }
                 }
 
                 let paymentAmount = parseFloat(this.invoicePaymentForm.controls['paymentAmount'].value) || 0;
@@ -323,8 +332,8 @@ export class InvoiceAddPaymentComponent {
     getAppliedAmount() {
         let appliedAmount:number = 0;
         this.paymentLines.forEach((line) => {
-            appliedAmount += line.amount ? parseFloat(line.amount) : 0;
-        })
+            appliedAmount += this.unFormatAmount(line.amount) ? this.unFormatAmount(line.amount) : 0;
+        });
         return appliedAmount;
     }
 
@@ -366,5 +375,48 @@ export class InvoiceAddPaymentComponent {
     ngOnDestroy(){
         this.routeSubscribe.unsubscribe();
     }
+
+    onSelectAll(e){
+      var isChecked = e.target.checked;
+      if(isChecked){
+        this.paymentLines.forEach((line) => {
+          line.isSelected=true;
+          if(line.state!='paid')
+          line.amount=this.forAmountInCompanyCurrency(line.dueAmount);
+        })
+      }else {
+        this.paymentLines.forEach((line) => {
+          line.isSelected=false;
+          if(line.state!='paid')
+          line.amount=this.forAmountInCompanyCurrency(0);
+        })
+      }
+    }
+
+  onPaymentChange(e,index){
+    var isChecked = e.target.checked;
+    let payment=this.paymentLines[index];
+    if(isChecked){
+      payment.isSelected=true;
+      payment.amount=this.forAmountInCompanyCurrency(payment.dueAmount);
+    }else {
+      payment.isSelected=false;
+      payment.amount=this.forAmountInCompanyCurrency(0);
+    }
+    this.paymentLines[index]=payment;
+   // this.getOutstandingBalance();
+  }
+
+  forAmountInCompanyCurrency(value){
+    this.numeralService.switchLocale(this.currentLocale);
+    let formattedValue=this.numeralService.format('$0,0.00', value);
+    return formattedValue;
+  }
+
+  unFormatAmount(value){
+    this.numeralService.switchLocale(this.currentLocale);
+    let formattedValue=this.numeralService.value(value);
+    return formattedValue;
+  }
 
 }
