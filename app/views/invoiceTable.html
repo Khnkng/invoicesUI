@@ -11,7 +11,7 @@
         </span>
             </div>
         </div>
-        <foo-table #fooTableDir="fooTable" class="bighalf-footable" *ngIf="hasItemCodes" [data]="tableData" [options]="tableOptions"></foo-table>
+        <foo-table #fooTableDir="fooTable" class="bighalf-footable" *ngIf="hasItemCodes" [data]="tableData" [options]="tableOptions" (onRowClick)="handleAction($event)"></foo-table>
     </div>
 </div>
 
