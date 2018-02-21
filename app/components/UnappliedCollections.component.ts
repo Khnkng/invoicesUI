@@ -71,7 +71,8 @@ export class UnappliedCollections{
         this.unappliedCollectionData.rows = [];
         this.unappliedCollectionData.columns = [
             {"name": "id", "title": "id", "visible": false},
-            {"name": "type", "title": "Payment type/#"},
+            {"name": "type", "title": "Payment type"},
+            {"name": "refNo", "title": "Ref #"},
             {"name": "receivedFrom", "title": "Received From"},
             {"name": "dateReceived", "title": "Date Received"},
             {"name": "amount", "title": "Amount"},
@@ -82,20 +83,17 @@ export class UnappliedCollections{
         unappliedCollections.forEach(function(payment) {
             let row:any = {};
             row['id'] = payment['id'];
-            let paymentType= payment.type =='cheque'?'Check':payment.type;
-            row['type'] = "<div>"+paymentType+"</div>";
-            if(payment.referenceNo){
-                row['type'] += "<div><small>"+payment.referenceNo+"</small></div>";
-            }
+            row['type'] = payment.type =='cheque'?'Check':payment.type;
+            row['refNo'] = payment.referenceNo? payment.referenceNo: "";
             row['receivedFrom'] = payment['customerName'];
             row['dateReceived'] = (payment['paymentDate']) ? base.dateFormater.formatDate(payment['paymentDate'],base.serviceDateformat, base.dateFormat) : payment['paymentDate'];
             let assignStatus = "";
             let assignmentHtml = "";
-            if(row['payment_applied_amount'] >= payment.paymentAmount) {
+            if(payment['payment_applied_amount'] >= payment.paymentAmount) {
                 assignStatus = "Assigned";
                 assignmentHtml = "<small style='color:#00B1A9'>"+"Applied"+"</small>"
 
-            } else if(row['payment_applied_amount'] > 0) {
+            } else if(payment['payment_applied_amount'] > 0) {
                 assignStatus = "Partially Assigned";
                 assignmentHtml = "<small style='color:#ff3219'>"+"Partially Applied"+"</small>"
             } else {
