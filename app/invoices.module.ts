@@ -36,7 +36,7 @@ import {UnappliedCollections} from "./components/UnappliedCollections.component"
         {path: 'payments/edit/:paymentID', component: InvoiceAddPaymentComponent, canActivate: [LoggedInActivator]},
         {path: 'payment/invoices/:invoiceID', component: InvoicePayComponent, canActivate: [DashBoardActivator]},
         {path: 'invoices/:invoiceID', component: InvoiceAddPayment,canActivate: [LoggedInActivator]},
-        {path: 'invoice/:invoiceTableID', component: InvoiceTableComponent,canActivate: [LoggedInActivator]}
+        {path: 'invoice/:invoiceTableID', component: InvoiceTableComponent,canActivate: [LoggedInActivator]},
         {path: 'payments/unapplied', component: UnappliedCollections,canActivate: [LoggedInActivator]}
     ])],
     declarations: [InvoiceCustomDatepicker, CustomDatepicker1, InvoiceSettingsComponent, InvoiceDashboardComponent,
