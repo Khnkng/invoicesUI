@@ -216,7 +216,7 @@ export class InvoiceDashboardComponent {
 
     goToTools(key){
         if(key == 'unapplied'){
-            this.stateService.addState(new State("INVOICE_DASHBOARD"), this._router.url, null, null);
+            this.stateService.addState(new State("INVOICE_DASHBOARD", this._router.url, null, null));
             let link = ['payments/unapplied'];
             this._router.navigate(link);
         }
@@ -326,7 +326,7 @@ export class InvoiceDashboardComponent {
             this.titleService.setPageTitle("Payments");
             this.invoiceService.getPayments().subscribe(payments => {
                 this.payments = payments;
-                this.mentsTableData();
+                this.buildPaymentsTableData();
             }, error => this.handleError(error));
         }
     }
