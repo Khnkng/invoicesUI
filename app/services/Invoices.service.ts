@@ -190,4 +190,11 @@ export class InvoicesService extends QountServices {
             .catch(this.handleError)
     }
 
+    getInvoicePayments(invoiceId){
+      let url = this.interpolateUrl(INVOICE_PATHS.INVOICE_PAYMENTS,null,{id: Session.getUser().id,companyId:Session.getCurrentCompany()});
+        url=url+"?invoiceId="+invoiceId;
+      return this.query(url, SOURCE_TYPE.JAVA).map(res => <any> res.json())
+        .catch(this.handleError)
+    }
+
 }
