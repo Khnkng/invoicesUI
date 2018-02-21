@@ -197,10 +197,13 @@ export class InvoiceComponent{
 
     gotoPreviousState() {
         let previousState=this.stateService.getPrevState();
-        if(previousState&&previousState.key=="New-Payment-Invoice"){
+        if(previousState && previousState.key=="New-Payment-Invoice"){
             let link = [previousState.url];
             this._router.navigate(link);
-        }else {
+        } else if(previousState && previousState.key == 'RECEIVABLES'){
+            this.stateService.pop();
+            this._router.navigate([previousState.url]);
+        } else {
             this._router.navigate([previousState.url]);
         }
     }

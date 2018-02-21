@@ -16,6 +16,7 @@ import {DateFormater} from "qCommon/app/services/DateFormatter.service";
 import {ReportService} from "reportsUI/app/services/Reports.service";
 import {ToastService} from "qCommon/app/services/Toast.service";
 import {TOAST_TYPE} from "qCommon/app/constants/Qount.constants";
+import {State} from "qCommon/app/models/State";
 
 declare let jQuery:any;
 declare let _:any;
@@ -88,6 +89,7 @@ export class InvoiceTableComponent {
         let prevState = this.stateService.getPrevState();
         let link = ['invoices/dashboard','0'];
         if(prevState){
+            this.stateService.pop();
             link = [prevState.url];
         }
         this._router.navigate(link);
@@ -134,6 +136,12 @@ export class InvoiceTableComponent {
             base.hasItemCodes = true;
         }, 0)
         this.loadingService.triggerLoadingEvent(false);
+    }
+
+    handleAction(invoice){
+        this.stateService.addState(new State("RECEIVABLES", this._router.url, null, null, null));
+        let link = ['invoices/edit/', invoice.id];
+        this._router.navigate(link);
     }
 
     ngOnDestroy() {
