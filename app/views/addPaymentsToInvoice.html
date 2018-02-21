@@ -44,6 +44,12 @@
             </div>
         </div>
         <button class="button create medium" type="submit" (click)="applyPayment()">Apply Payment</button>
+        <div class="row" *ngIf="discountAmount>0">
+          <div class="column medium-12" style="padding-left: 0">
+            <label>**Discount applies on full payment invoice
+            </label>
+          </div>
+        </div>
     </div>
 
 </div>

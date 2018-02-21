@@ -117,6 +117,7 @@ remember them later…" formControlName="paymentNote">
         <table style="margin-top: 15px;">
             <thead>
             <tr>
+                <th><span><input type="checkbox" (change)="onSelectAll($event)" style="margin-bottom:0px;margin-top: 5px;"></span></th>
                 <th>Invoice</th>
                 <th>Invoice Date</th>
                 <th>Due Date/Status</th>
@@ -126,7 +127,8 @@ remember them later…" formControlName="paymentNote">
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let paymentLine of paymentLines">
+            <tr *ngFor="let paymentLine of paymentLines;let i=index">
+                <td><input type="checkbox" [(ngModel)]="paymentLine.isSelected" (change)="onPaymentChange($event,i)" style="margin-bottom:0px;margin-top: 5px;"></td>
                 <td>
                     <div>{{paymentLine.number}}</div>
                 </td>

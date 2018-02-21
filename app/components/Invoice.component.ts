@@ -26,6 +26,7 @@ import {FileUploader, FileUploaderOptions} from "ng2-file-upload";
 import {UUID} from "angular2-uuid/index";
 import {LateFeesService} from "qCommon/app/services/LateFeesService.service";
 import {ComboBox} from "qCommon/app/directives/comboBox.directive";
+import {DiscountService} from "qCommon/app/services/Discounts.service";
 
 declare let _:any;
 declare let numeral:any;
@@ -133,13 +134,15 @@ export class InvoiceComponent{
     recurringFrequency:string;
     recurringEnddate:string;
     @ViewChild("customerComboBoxDir") customerComboBox: ComboBox;
-
+    discounts:Array<any>=[];
+    discountAmount:any=0;
 
   constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
                 private customerService: CustomersService, private _invoiceForm:InvoiceForm, private _invoiceLineForm:InvoiceLineForm, private _invoiceLineTaxesForm:InvoiceLineTaxesForm,
                 private coaService: ChartOfAccountsService,private titleService:pageTitleService,private stateService: StateService, private reportService: ReportService,private switchBoard: SwitchBoard,
-                private numeralService:NumeralService, private dimensionService: DimensionService, private dateFormater:DateFormater,private lateFeesService: LateFeesService){
+                private numeralService:NumeralService, private dimensionService: DimensionService, private dateFormater:DateFormater,private lateFeesService: LateFeesService,
+                private  discountsService:DiscountService){
         this.titleService.setPageTitle("Invoices");
         let _form:any = this._invoiceForm.getForm();
         _form['invoiceLines'] = this.invoiceLineArray;
@@ -157,6 +160,7 @@ export class InvoiceComponent{
             this.getCompanyDetails();
             this.getCompanyPreferences();
             this.loadVendors();
+            this.loadDiscounts();
             this.uploader = new FileUploader(<FileUploaderOptions>{
                 url: invoiceService.getDocumentServiceUrl(),
                 headers: [{
@@ -210,6 +214,12 @@ export class InvoiceComponent{
 
             });
     }
+
+   loadDiscounts(){
+     this.discountsService.discounts(Session.getCurrentCompany()).subscribe(discounts => {
+       this.discounts=discounts;
+     }, error => this.handleError(error));
+   }
 
     getLateFeeName(lateFeeId){
       let lateFee = _.find(this.lateFees, {'id': lateFeeId});
@@ -344,7 +354,13 @@ export class InvoiceComponent{
                     this.titleService.setPageTitle("View Invoice");
                     this.hasPaid=true;
                     this.amount=invoice.amount;
-                };
+                    if(invoice.is_discount_applied&&invoice.discount_id){
+                      this.discountAmount=invoice.discount;
+                    }
+                }
+                if((invoice.state!='partially_paid'&&invoice.state!='paid')&&invoice.is_discount_applied&&invoice.discount_id){
+                  this.getDiscountAmountValue();
+                }
                 this.setCustomerComboBoxValue(invoice.customer_id);
                 if(invoice.attachments_metadata){
                     let attachmentObj=JSON.parse(invoice.attachments_metadata);
@@ -535,7 +551,7 @@ export class InvoiceComponent{
         if(taxId && price && quantity && tax) {
             let priceVal = Number(price).toFixed(2);
             let quantityVal =Number(quantity).toFixed(4);
-            return Number((tax.taxRate * parseFloat(priceVal) * parseFloat(quantityVal))/100);
+            return this.roundOffValue((tax.taxRate * parseFloat(priceVal) * parseFloat(quantityVal))/100);
         }
         return numeral(0).value();
     }
@@ -544,7 +560,7 @@ export class InvoiceComponent{
         if(price && quantity) {
             let priceVal = Number(price).toFixed(2);
             let quantityVal =Number(quantity).toFixed(4);
-            return Number(parseFloat(priceVal) * parseFloat(quantityVal));
+            return this.roundOffValue(parseFloat(priceVal) * parseFloat(quantityVal));
         }
         return numeral(0).value();
     }
@@ -601,7 +617,7 @@ export class InvoiceComponent{
                 }
             });
         }*/
-        baseTotal=Number(total.toFixed(2));
+        baseTotal=this.roundOffValue(total);
 
         this.subTotal=baseTotal;
         return this.subTotal;
@@ -620,7 +636,7 @@ export class InvoiceComponent{
                 if(invoiceLine.tax_id) {
                     let taxAmt=base.calcLineTax(invoiceLine.tax_id, 1, total);
                     if(!invoiceLine.destroy){
-                        itemTaxTotal=itemTaxTotal+taxAmt;
+                        itemTaxTotal=base.roundOffValue(itemTaxTotal+taxAmt);
                     }
                 }
             });
@@ -636,7 +652,7 @@ export class InvoiceComponent{
                 }
             });
         }*/
-        baseTotal=Number(lineTaxTotal.toFixed(2))+Number(itemTaxTotal.toFixed(2));
+        baseTotal=this.roundOffValue(itemTaxTotal);
         this.taxTotal=baseTotal;
         return this.taxTotal;
     }
@@ -654,7 +670,7 @@ export class InvoiceComponent{
         if(invoiceData.job_date){
           invoiceData.job_date = this.dateFormater.formatDate(invoiceData.job_date,this.dateFormat,this.serviceDateformat);
         }
-        invoiceData.amount = Number((this.amount).toFixed(2));
+        invoiceData.amount = this.roundOffValue(this.amount);
         delete invoiceData.invoiceLines;
         //taskLines=this.getInvoiceLines('task');
         itemLines=this.getInvoiceLines('item');
@@ -665,7 +681,7 @@ export class InvoiceComponent{
         }
 
         if(itemLines.length==0){
-            this.toastService.pop(TOAST_TYPE.error, "Please add invoive lines");
+            this.toastService.pop(TOAST_TYPE.error, "Please add invoice lines");
             return
         }
 
@@ -675,9 +691,14 @@ export class InvoiceComponent{
         if(sendMail){
           this.additionalMails=this.selectedContact.email;
         }
-        invoiceData.sub_total=Number((this.subTotal).toFixed(2));
-        invoiceData.amount_due=Number((this.totalAmount).toFixed(2));
-        invoiceData.tax_amount=Number((this.taxTotal).toFixed(2));
+        if(invoiceData.discount_id){
+          invoiceData.is_discount_applied=true;
+        }else {
+          invoiceData.is_discount_applied=false;
+        }
+        invoiceData.sub_total=this.roundOffValue(this.subTotal);
+        invoiceData.amount_due=this.roundOffValue(this.totalAmount+this.discountAmount);
+        invoiceData.tax_amount=this.roundOffValue(this.taxTotal);
         //invoiceData.invoiceLines=itemLines.concat(taskLines);
         invoiceData.invoiceLines=itemLines;
         invoiceData.recepientsMails=_.uniq(this.maillIds);
@@ -1163,11 +1184,14 @@ export class InvoiceComponent{
     }
 
     calculateAmount(paidAmount){
-        this.amount=Number(this.subTotal+this.taxTotal);
-        this.totalAmount=Number(this.subTotal+this.taxTotal-(Number(this.amount_paid)));
+        this.amount=this.roundOffValue(this.subTotal+this.taxTotal);
+        this.totalAmount=this.roundOffValue(this.amount-this.amount_paid);
         if(this.lateFeeAmount>0){
-            this.amount=Number(this.subTotal+this.taxTotal+this.lateFeeAmount);
-            this.totalAmount=Number(this.totalAmount+this.lateFeeAmount);
+            this.amount=this.roundOffValue(this.subTotal+this.taxTotal+this.lateFeeAmount);
+            this.totalAmount=this.roundOffValue(this.totalAmount+this.lateFeeAmount);
+        }
+        if(this.discountAmount>0){
+          this.totalAmount=this.roundOffValue(this.totalAmount-this.discountAmount);
         }
         return this.totalAmount;
     }
@@ -1615,6 +1639,13 @@ export class InvoiceComponent{
         return false;
     }
 
+    validateDiscountAmount(){
+      if(this.discountAmount>0){
+        return true;
+      }
+      return false;
+    }
+
     setInvoiceValidators(){
       let validator = [Validators.required];
       let tempForm = _.cloneDeep(this._invoiceForm.getForm());
@@ -1641,5 +1672,18 @@ export class InvoiceComponent{
     roundOffValue(num){
         return Math.round(num * 100) / 100
     }
+
+
+
+  getDiscountAmountValue(){
+    let dueDate=this.dateFormater.formatDate(this.invoice.due_date,this.dateFormat,this.serviceDateformat);
+    let data={
+      due_date:dueDate,
+      amount:this.invoice.amount
+    };
+    this.discountsService.getDiscountAmount(data,this.invoice.discount_id,Session.getCurrentCompany()).subscribe(discount => {
+      this.discountAmount=this.roundOffValue(discount.discount_amount);
+    }, error => this.handleError(error));
+  }
 
 }
