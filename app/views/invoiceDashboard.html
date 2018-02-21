@@ -223,6 +223,14 @@
             </div>
         </div>
     </div>
+
+    <div *ngIf="tabDisplay[3].display == 'block'" class="row box-notifiers box-notifiers-alignment">
+        <span class="pointer" (click)="goToTools('unapplied')">
+            <span>Unapplied</span>
+            <!-- <span class="notifiers-count">({{paymentsCount}})</span> -->
+        </span>
+    </div>
+
     <div class="row chart-margin" *ngIf="showDetailedChart">
         <div class="column medium-12 expanded charts-main">
             <div style="min-width: 300px;height: calc(100vh - 150px);">
