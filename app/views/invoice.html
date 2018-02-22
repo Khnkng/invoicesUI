@@ -473,7 +473,7 @@
                                                                 Amount Paid
                                                             </td>
                                                             <td style="text-align:right;" *ngIf="amount_paid==0">{{formatAmount(amount_paid)}}</td>
-                                                            <td style="text-align:right;" *ngIf="amount_paid>0" (click)="showPaymentDetails()"><span style="text-decoration: underline;cursor: pointer">{{formatAmount(amount_paid)}}</span></td>
+                                                            <td style="text-align:right;cursor: pointer" *ngIf="amount_paid>0" (click)="showPaymentDetails()">{{formatAmount(amount_paid)}}</td>
                                                         </tr>
                                                         <tr *ngIf="!newInvoice">
                                                             <td style="background: #E5E5E5;">
