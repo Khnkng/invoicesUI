@@ -472,7 +472,9 @@
                                                             <td style="background: #E5E5E5;">
                                                                 Amount Paid
                                                             </td>
-                                                            <td style="text-align:right;">{{formatAmount(amount_paid)}}</td></tr>
+                                                            <td style="text-align:right;" *ngIf="amount_paid==0">{{formatAmount(amount_paid)}}</td>
+                                                            <td style="text-align:right;" *ngIf="amount_paid>0" (click)="showPaymentDetails()"><span style="text-decoration: underline;cursor: pointer">{{formatAmount(amount_paid)}}</span></td>
+                                                        </tr>
                                                         <tr *ngIf="!newInvoice">
                                                             <td style="background: #E5E5E5;">
                                                                 Amount Due
@@ -803,6 +805,9 @@
         </div>
         <div *ngIf="historyList.length==0" class="text-center">History is not available.</div>
     </div>
+</div>
+<div class="small-12 medium-12 small-centered column" *ngIf="showInvoicePaymentDetails">
+  <foo-table class="bigpay-dashboard bighalf-footable invoice-table" *ngIf="hasPaidInvoices" [data]="paidInvoiceTableData" [options]="paidInvoiceTableOptions" (onSearch)="setSearchString($event)" (onRowAction)="handleAction($event)"></foo-table>
 </div>
 <!--
 <div class="report-wrapper journal-flyout">

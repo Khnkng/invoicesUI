@@ -27,6 +27,7 @@ import {UUID} from "angular2-uuid/index";
 import {LateFeesService} from "qCommon/app/services/LateFeesService.service";
 import {ComboBox} from "qCommon/app/directives/comboBox.directive";
 import {DiscountService} from "qCommon/app/services/Discounts.service";
+import {State} from "qCommon/app/models/State";
 
 declare let _:any;
 declare let numeral:any;
@@ -136,6 +137,12 @@ export class InvoiceComponent{
     @ViewChild("customerComboBoxDir") customerComboBox: ComboBox;
     discounts:Array<any>=[];
     discountAmount:any=0;
+    showInvoicePaymentDetails:boolean=false;
+    hasPaidInvoices: boolean = false;
+    paidInvoiceTableData: any = {};
+    paidInvoiceTableOptions: any = {search: true, pageSize: 10};
+    payments: Array<any> = [];
+    isPaymentsNavigation:boolean=false;
 
   constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
@@ -181,11 +188,24 @@ export class InvoiceComponent{
                 this.hideCommission();
             }else if(this.showInvoiceHistory){
                 this.hideHistoryFlyout();
+            }else if(this.showInvoicePaymentDetails){
+                this.hideInvoicePayments();
             }else{
                 this.gotoPreviousState();
             }
-
         });
+
+    let previousState = this.stateService.getPrevState();
+    if(previousState && previousState.key == 'InvoicePayments'){
+      this.stateService.pop();
+      this.isPaymentsNavigation=true;
+      this.closeLoader();
+      let data=previousState.data;
+      this.showInvoicePaymentDetails=true;
+      this.titleService.setPageTitle("Invoice Payments");
+      this.payments=data.paymentsData;
+      this.buildInvoicePaymentsData();
+    }
 
         this.dimensionService.dimensions(Session.getCurrentCompany())
             .subscribe(dimensions =>{
@@ -206,6 +226,14 @@ export class InvoiceComponent{
         } else {
             this._router.navigate([previousState.url]);
         }
+    }
+
+    hideInvoicePayments(){
+      this.titleService.setPageTitle("Edit invoice");
+      this.showInvoicePaymentDetails=false;
+      this.showInvoice=true;
+      let invoiceData = this._invoiceForm.getData(this.invoiceForm);
+      this.setCustomerComboBoxValue(invoiceData.customer_id);
     }
 
     getLateFees(){
@@ -250,7 +278,9 @@ export class InvoiceComponent{
             this.showUOM=preference.hideUnits;
             this.showItemName=preference.hideItemName;
             this.templateType=preference.templateType;
-            this.showInvoice=true;
+            if(!this.isPaymentsNavigation){
+              this.showInvoice=true;
+            }
             if(preference.templateType=='Other2'){
               this.isOtherTemplate=true;
               this.templateType='Other2'
@@ -266,6 +296,7 @@ export class InvoiceComponent{
     }
 
     loadCustomers(companyId:any) {
+        if(!this.isPaymentsNavigation)
         this.loadingService.triggerLoadingEvent(true);
         this.customerService.customers(companyId)
             .subscribe(customers => {
@@ -338,7 +369,7 @@ export class InvoiceComponent{
             }
             this.titleService.setPageTitle("New Invoice");
         } else {
-            this.titleService.setPageTitle("Edit Invoice");
+            if(!this.isPaymentsNavigation)this.titleService.setPageTitle("Edit Invoice");
             this.invoiceService.getInvoice(this.invoiceID).subscribe(invoice=>{
                 let base=this;
                 invoice.invoice_date = base.dateFormater.formatDate(invoice['invoice_date'],base.serviceDateformat,base.dateFormat);
@@ -984,11 +1015,13 @@ export class InvoiceComponent{
     }
 
     getCustomerContacts(id){
+      if(!this.isPaymentsNavigation)
         this.loadingService.triggerLoadingEvent(true);
         this.loadContacts(id);
     }
 
     loadContacts(id){
+      if(!this.isPaymentsNavigation)
         this.loadingService.triggerLoadingEvent(true);
         this.customerService.customer(id,Session.getCurrentCompany())
             .subscribe(customers => {
@@ -1684,6 +1717,78 @@ export class InvoiceComponent{
     this.discountsService.getDiscountAmount(data,this.invoice.discount_id,Session.getCurrentCompany()).subscribe(discount => {
       this.discountAmount=this.roundOffValue(discount.discount_amount);
     }, error => this.handleError(error));
+  }
+
+  showPaymentDetails(){
+    this.showInvoicePaymentDetails=true;
+    this.showInvoice=false;
+    this.titleService.setPageTitle("Invoice Payments");
+    this.loadingService.triggerLoadingEvent(true);
+    this.invoiceService.getInvoicePayments(this.invoiceID).subscribe(payments=>{
+    this.payments=payments;
+    this.buildInvoicePaymentsData();
+    },error=>{
+      this.toastService.pop(TOAST_TYPE.error, "Failed to get payment details");
+    })
+  }
+
+  buildInvoicePaymentsData(){
+    this.hasPaidInvoices = false;
+    this.paidInvoiceTableData.defSearch = true;
+    this.paidInvoiceTableData.rows = [];
+    this.paidInvoiceTableData.columns = [
+      {"name": "id", "title": "id", "visible": false},
+      {"name": "type", "title": "Payment type/#"},
+      {"name": "receivedFrom", "title": "Received From"},
+      {"name": "dateReceived", "title": "Date Received"},
+      {"name": "amount", "title": "Amount/Status"},
+      {"name": "actions", "title": "", "type": "html", "sortable": false, "filterable": false}
+    ];
+
+    let base = this;
+    this.payments.forEach(function(payment) {
+      let row:any = {};
+      row['id'] = payment['id'];
+      let paymentType=payment.type=='cheque'?'Check':payment.type;
+      row['type'] = "<div>"+paymentType+"</div><div><small>"+payment.referenceNo+"</small></div>";
+      row['receivedFrom'] = payment['customerName'];
+      row['dateReceived'] = (payment['paymentDate']) ? base.dateFormater.formatDate(payment['paymentDate'],base.serviceDateformat,base.dateFormat) : payment['paymentDate'];
+      let assignStatus = "";
+      let assignedAmount = 0;
+      let assignmentHtml = "";
+
+      if(assignedAmount >= payment.paymentAmount) {
+        assignStatus = "Assigned";
+        assignmentHtml = "<small style='color:#00B1A9'>"+"Applied"+"</small>"
+
+      } else if(assignedAmount > 0) {
+        assignStatus = "Partially Assigned";
+        assignmentHtml = "<small style='color:#ff3219'>"+"Partially Applied"+"</small>"
+      } else {
+        assignStatus = "Unassigned";
+        assignmentHtml = "<small style='color:#ff3219'>"+"Not Applied"+"</small>"
+      }
+      base.numeralService.switchLocale(payment.currencyCode.toLowerCase());
+      row['amount'] = "<div>"+base.numeralService.format("$0,0.00", payment.paymentAmount)+"</div><div>"+assignmentHtml+"</div>";
+      row['actions'] = "<a class='action' data-action='edit' style='margin:0px 0px 0px 5px;'><i class='icon ion-edit'></i></a>";
+      base.paidInvoiceTableData.rows.push(row);
+    });
+
+    setTimeout(function(){
+      base.hasPaidInvoices = true;
+    }, 0);
+    this.loadingService.triggerLoadingEvent(false);
+  }
+
+  handleAction($event){
+    let data={
+      invoiceData:this.invoice,
+      historyData:this.historyList,
+      paymentsData:this.payments
+    };
+    this.stateService.addState(new State('InvoicePayments', this._router.url, data, null));
+    let link = ['payments/edit', $event.id];
+    this._router.navigate(link);
   }
 
 }

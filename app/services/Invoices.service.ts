@@ -191,9 +191,19 @@ export class InvoicesService extends QountServices {
     }
 
     getUnappliedCollections(companyId) {
-        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE_PAYMENTS + "?unapplied=true",null,{id: Session.getUser().id, companyId: companyId});
+        let url = this.interpolateUrl(INVOICE_PATHS.INVOICE_PAYMENTS + "?unapplied=true", null, {
+            id: Session.getUser().id,
+            companyId: companyId
+        });
         return this.query(url, SOURCE_TYPE.JAVA).map(res => <any> res.json())
             .catch(this.handleError)
+    }
+
+    getInvoicePayments(invoiceId){
+      let url = this.interpolateUrl(INVOICE_PATHS.INVOICE_PAYMENTS,null,{id: Session.getUser().id,companyId:Session.getCurrentCompany()});
+        url=url+"?invoiceId="+invoiceId;
+      return this.query(url, SOURCE_TYPE.JAVA).map(res => <any> res.json())
+        .catch(this.handleError)
     }
 
 }
