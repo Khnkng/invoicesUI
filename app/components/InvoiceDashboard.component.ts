@@ -190,7 +190,7 @@ export class InvoiceDashboardComponent {
         });
         this.localBadges = JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
         if (!this.localBadges) {
-            this.localBadges = {proposal_count: 0, payment_count: 0, invoice_count: 0};
+            this.localBadges = {proposal_count: 0, payment_count: 0, invoice_count: 0, unappliedPaymentsCount: 0};
             sessionStorage.setItem('localInvoicesBadges', JSON.stringify(this.localBadges));
         } else {
             this.localBadges = JSON.parse(sessionStorage.getItem("localInvoicesBadges"));
