@@ -874,7 +874,7 @@ export class InvoiceDashboardComponent {
             },
             {"name": "journalId", "title": "Journal ID", 'visible': false, 'filterable': false},
             {"name": "paymentId", "title": "Payment ID", 'visible': false, 'filterable': false},
-            {"name": "number", "title": "Number"},
+            {"name": "number", "type": "html", "title": "Number"},
             {"name": "customer", "title": "Customer"},
             {"name": "invoice_date", "title": "Invoice Date"},
             {"name": "due_date", "title": "Due Date"},
@@ -894,9 +894,8 @@ export class InvoiceDashboardComponent {
             row['journalId'] = invoice['journalID'];
             row['paymentId'] = invoice['payment_ids'];
             row['selectCol'] = "<input type='checkbox' class='checkbox'/>";
-            row['number'] = invoice['number'];
+            row['number'] = "<a class='actionOnId' data-action='viewInvoice'><span class='icon'>"+invoice['number']+"</span></a>";
             row['customer'] = invoice['customer_name'];
-            //row['due_date'] = invoice['due_date'];
             row['invoice_date'] = (invoice['invoice_date']) ? base.dateFormater.formatDate(invoice['invoice_date'],base.serviceDateformat,base.dateFormat) : invoice['invoice_date'];
             row['due_date'] = (invoice['due_date']) ? base.dateFormater.formatDate(invoice['due_date'],base.serviceDateformat,base.dateFormat) : invoice['due_date'];
             let amount=invoice['amount']?Number(invoice['amount']):0;
@@ -966,7 +965,7 @@ export class InvoiceDashboardComponent {
             },
             {"name": "journalId", "title": "Journal ID", 'visible': false, 'filterable': false},
             {"name": "invoiceIds", "title": "Invoice ID", 'visible': false, 'filterable': false},
-            {"name": "type", "title": "Payment type/#"},
+            {"name": "type", "title": "Payment type/#", "type": "html"},
             {"name": "receivedFrom", "title": "Received From"},
             {"name": "dateReceived", "title": "Date Received"},
             {"name": "amount", "title": "Amount/Status"},
@@ -981,10 +980,12 @@ export class InvoiceDashboardComponent {
             row['journalId'] = payment['journalID'];
             row['selectCol'] = "<input type='checkbox' class='checkbox'/>";
             let paymentType=payment.type=='cheque'?'Check':payment.type;
-            row['type'] = "<div>"+paymentType+"</div>";
-            if(payment.referenceNo){
+            // row['type'] = "<div>"+paymentType+"</div>";
+            let type = (payment.referenceNo) ? (paymentType+'<br><small>'+payment.referenceNo+'</small>') : paymentType;
+            /*if(payment.referenceNo){
               row['type'] += "<div><small>"+payment.referenceNo+"</small></div>";
-            }
+            }*/
+            row['type'] = "<a class='actionOnId' data-action='viewPayment'><span class='icon'>"+type+"</span></a>";
             row['receivedFrom'] = payment['customerName'];
             row['dateReceived'] = (payment['paymentDate']) ? base.dateFormater.formatDate(payment['paymentDate'],base.serviceDateformat,base.dateFormat) : payment['paymentDate'];
             let assignStatus = "";
@@ -1159,6 +1160,16 @@ export class InvoiceDashboardComponent {
         } else if(action == 'paymentsCollaboration'){
             console.log($event);
             let link = ['collaboration', 'payments', $event.id,];
+            this._router.navigate(link);
+        } else if(action == 'viewInvoice'){
+            this.addInvoiceState();
+            let invoiceId= $event.id;
+            let link = ['invoices/edit', invoiceId];
+            this._router.navigate(link);
+        } else if(action == 'viewPayment'){
+            this.addInvoiceState();
+            let paymentId = $event.id;
+            let link = ['payments/edit', paymentId];
             this._router.navigate(link);
         }
     }
