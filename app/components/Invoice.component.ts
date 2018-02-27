@@ -720,7 +720,12 @@ export class InvoiceComponent{
             return;
         }
         if(sendMail){
-          this.additionalMails=this.selectedContact.email;
+          if(this.selectedContact){
+            this.additionalMails=this.selectedContact.email;
+          }else{
+            this.toastService.pop(TOAST_TYPE.error, "Please select send to contact");
+            return;
+          }
         }
         if(invoiceData.discount_id){
           invoiceData.is_discount_applied=true;
@@ -728,7 +733,9 @@ export class InvoiceComponent{
           invoiceData.is_discount_applied=false;
         }
         invoiceData.sub_total=this.roundOffValue(this.subTotal);
-        invoiceData.amount_due=this.roundOffValue(this.totalAmount+this.discountAmount);
+        if(this.invoiceID){
+          invoiceData.amount_due=this.invoice.amount_due;
+        }
         invoiceData.tax_amount=this.roundOffValue(this.taxTotal);
         //invoiceData.invoiceLines=itemLines.concat(taskLines);
         invoiceData.invoiceLines=itemLines;
@@ -1034,7 +1041,15 @@ export class InvoiceComponent{
                             this.selectedContact=contact;
                             this.maillIds.push(contact.email);
                         }
-
+                    }else if(this.newInvoice){
+                      let invoiceData=this._invoiceForm.getData(this.invoiceForm);
+                      if(invoiceData&&invoiceData.send_to){
+                        let contact = _.find(this.customerContacts, {'id': invoiceData.send_to});
+                        if(contact){
+                          this.selectedContact=contact;
+                          this.maillIds.push(contact.email);
+                        }
+                      }
                     }
                 }
             }, error =>{
