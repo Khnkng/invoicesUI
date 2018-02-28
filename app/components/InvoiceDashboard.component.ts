@@ -875,7 +875,7 @@ export class InvoiceDashboardComponent {
             {"name": "journalId", "title": "Journal ID", 'visible': false, 'filterable': false},
             {"name": "paymentId", "title": "Payment ID", 'visible': false, 'filterable': false},
             {"name": "number", "type": "html", "title": "Number", "classes": "text-capitalize"},
-            {"name": "customer", "title": "Customer"},
+            {"name": "customer", "title": "Customer", "classes": "text-capitalize"},
             {"name": "invoice_date", "title": "Invoice Date"},
             {"name": "due_date", "title": "Due Date"},
             {
@@ -966,7 +966,7 @@ export class InvoiceDashboardComponent {
             {"name": "journalId", "title": "Journal ID", 'visible': false, 'filterable': false},
             {"name": "invoiceIds", "title": "Invoice ID", 'visible': false, 'filterable': false},
             {"name": "type", "title": "Payment type/#", "type": "html", "classes": "text-capitalize"},
-            {"name": "receivedFrom", "title": "Received From"},
+            {"name": "receivedFrom", "title": "Received From", "classes": "text-capitalize"},
             {"name": "dateReceived", "title": "Date Received"},
             {"name": "amount", "title": "Amount/Status"},
             {"name": "payment_applied_amount", "title": "Applied Amount"},
