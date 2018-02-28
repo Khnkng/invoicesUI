@@ -19,7 +19,7 @@
                         </label>
                     </div>
                     <div class="column medium-3 tab" (click)="reRoutePage(3)" [ngClass]="{'selected': tabDisplay[3].display == 'block'}">
-                        <label [ngClass]="{'whiteColor': tabDisplay[3].display == 'block'}"><span>Payments</span>
+                        <label [ngClass]="{'whiteColor': tabDisplay[3].display == 'block'}"><span>Collections</span>
                             <span>({{badges.payment_count ? badges.payment_count : localBadges ? localBadges.payment_count: 0 }})</span>
                         </label>
                     </div>
