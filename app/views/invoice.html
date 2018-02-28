@@ -13,7 +13,7 @@
                                             <div class="row">
                                                 <div class="small-12 medium-6 columns">
                                                     <div class="row">
-                                                        <div class="small-12 medium-8 columns" style="padding:0" *ngIf="!hasPaid">
+                                                        <div class="small-12 medium-8 columns" style="padding:0">
                                                             <label>
                                                                 Select Customer*
                                                                 <select combo-box #customerComboBoxDir="comboBox" data-placeholder="Select Account" [listObject]="customers" formControlName="customer_id" (valueChanged)="onCustomerSelect($event)">
@@ -21,17 +21,17 @@
                                                                 </select>
                                                             </label>
                                                         </div>
-                                                        <div class="small-12 medium-8 columns" style="padding:0" *ngIf="hasPaid">
+                                                        <!--<div class="small-12 medium-8 columns" style="padding:0" *ngIf="hasPaid">
                                                             <label>
                                                                 Select Customer*
                                                                 <select class="jeSelect" formControlName="customer_id" (change)="onCustomerSelect($event.target.value,customer)" disabled>
                                                                     <option *ngFor="let customer of customers" value="{{customer.customer_id}}">{{customer.customer_name}}</option>
                                                                 </select>
                                                             </label>
-                                                        </div>
+                                                        </div>-->
                                                     </div>
                                                     <div class="row">
-                                                        <div class="small-12 medium-6 columns" style="padding:0" *ngIf="!hasPaid">
+                                                        <div class="small-12 medium-6 columns" style="padding:0">
                                                             <label>
                                                                 Send To*
                                                                 <select formControlName="send_to" (change)="onCustomerContactSelect($event.target.value)">
@@ -39,14 +39,14 @@
                                                                 </select>
                                                             </label>
                                                         </div>
-                                                        <div class="small-12 medium-6 columns" style="padding:0" *ngIf="hasPaid">
+                                                        <!--<div class="small-12 medium-6 columns" style="padding:0" *ngIf="hasPaid">
                                                             <label>
                                                                 Send To*
                                                                 <select class="jeSelect" formControlName="send_to" (change)="onCustomerContactSelect($event.target.value)" disabled>
                                                                     <option *ngFor="let customerContact of customerContacts" value="{{customerContact.id}}">{{customerContact.first_name +" "+ customerContact.last_name}}</option>
                                                                 </select>
                                                             </label>
-                                                        </div>
+                                                        </div>-->
                                                     </div>
                                                     <div class="row">
                                                         <div class="small-12 medium-5 columns" style="padding: 0px">
@@ -131,18 +131,18 @@
                                                 <div class="small-12 medium-5 columns">
                                                     <div class="row">
                                                         <div class="small-12 medium-6 columns">
-                                                            <div class="row" *ngIf="!hasPaid">
+                                                            <div class="row">
                                                                 <label>
                                                                     Invoice Number*
                                                                     <input type="text" formControlName="number"/>
                                                                 </label>
                                                             </div>
-                                                            <div class="row" *ngIf="hasPaid">
+                                                            <!--<div class="row" *ngIf="hasPaid">
                                                                 <label>
                                                                     Invoice Number*
                                                                     <input type="text" formControlName="number" readonly />
                                                                 </label>
-                                                            </div>
+                                                            </div>-->
                                                             <div class="row" *ngIf="!hasPaid">
                                                                 <label>
                                                                     Invoice Date*
@@ -181,7 +181,7 @@
                                                                     </label>
                                                                 </div>
                                                             </div>
-                                                          <div class="row" *ngIf="!hasPaid">
+                                                          <div class="row">
                                                             <div class="small-12 medium-12 columns" style="padding: 0px">
                                                               <label>
                                                                 Job Date
@@ -189,14 +189,14 @@
                                                               </label>
                                                             </div>
                                                           </div>
-                                                          <div class="row" *ngIf="hasPaid">
+                                                          <!--<div class="row" *ngIf="hasPaid">
                                                             <div class="small-12 medium-12 columns" style="padding: 0px">
                                                               <label>
                                                                 Job Date
                                                                 <input type="text" formControlName="job_date" type="text" formControlName="invoice_date" readonly />
                                                               </label>
                                                             </div>
-                                                          </div>
+                                                          </div>-->
                                                           <div class="row" *ngIf="!hasPaid&&(templateType=='Other2'||templateType=='Other1')">
                                                             <label>
                                                               Billing From*
@@ -383,7 +383,7 @@
                                                         <th width="13%;">Tax</th>
                                                         <th width="7%">Tax Amount</th>
                                                         <th width="7%;">Line Total</th>
-                                                        <th width="5%" *ngIf="!hasPaid"></th>
+                                                        <th width="5%"></th>
                                                     </tr>
                                                     </thead>
 
@@ -431,6 +431,10 @@
                                                         <i class="icon ion-ios-trash-outline"></i>
                                                             </span>
                                                         </td>
+                                                      <td *ngIf="hasPaid">
+                                                            <span (click)="editInvoiceLine($event, iindex,'invoiceLines')">
+                                                        <i class="icon ion-edit"></i></span>
+                                                      </td>
                                                     </tr>
                                                     </tbody>
                                                 </table>
@@ -502,8 +506,8 @@
                                                 <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;" *ngIf="newInvoice||(invoice&&invoice.state=='draft')">
                                                     <button (click)="submit($event,false,'draft')" class="button small" [disabled]="hasPaid||!invoiceForm.valid||!validateTaskLines()" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;height: 25px;">Save as Draft</button>
                                                 </div>
-                                                <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;" *ngIf="!newInvoice&&(invoice&&(invoice.state!='draft'&&invoice.state!='paid'))">
-                                                    <button (click)="submit($event,false,'save')" class="button small" [disabled]="hasPaid||!invoiceForm.valid||!validateTaskLines()" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;height: 25px;">Save</button>
+                                                <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;" *ngIf="!newInvoice&&(invoice&&(invoice.state!='draft'))">
+                                                    <button (click)="submit($event,false,'save')" class="button small" [disabled]="!invoiceForm.valid||!validateTaskLines()" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;height: 25px;">Save</button>
                                                 </div>
                                                 <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;" *ngIf="newInvoice||(invoice&&(invoice.state!='paid'))">
                                                   <button (click)="submit($event,false,'recurring')" class="button small" [disabled]="hasPaid||!invoiceForm.valid||!validateTaskLines()" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;height: 25px;">Recurring</button>
@@ -589,7 +593,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="row" style="margin-top: 1.2rem" *ngIf="!showPreview&&!hasPaid">
+                                            <div class="row" style="margin-top: 1.2rem" *ngIf="!showPreview">
                                                 <div class="small-12 medium-12 columns" style="padding: 0px">
                                                     <label>
                                                         Notes
@@ -597,14 +601,14 @@
                                                     </label>
                                                 </div>
                                             </div>
-                                            <div class="row" style="margin-top: 1.2rem" *ngIf="!showPreview&&hasPaid">
+                                            <!--<div class="row" style="margin-top: 1.2rem" *ngIf="!showPreview&&hasPaid">
                                                 <div class="small-12 medium-12 columns" style="padding: 0px">
                                                     <label>
                                                         Notes
                                                         <textarea readonly formControlName="notes" style="height: 130px;width: 80%;"></textarea>
                                                     </label>
                                                 </div>
-                                            </div>
+                                            </div>-->
 
                                             <!--<div class="row" style="margin-top: 0.5rem" *ngIf="!showPreview&&!hasPaid">
                                                 <div class="small-12 medium-12 columns" style="padding: 0px">
@@ -655,12 +659,18 @@
                     <div class="small-12 medium-6 columns">
                         <div class="row">
                             <div class="column small-12 medium-6">
-                                <label>
+                                <label *ngIf="!hasPaid">
                                     Item Code
                                     <select formControlName="item_id" (change)="displayItemCodeCOA($event.target.value)">
                                         <option *ngFor="let item of itemCodes" [value]="item.id">{{item.name}}</option>
                                     </select>
                                 </label>
+                              <label *ngIf="hasPaid">
+                                Item Code
+                                <select class="jeSelect" formControlName="item_id" (change)="displayItemCodeCOA($event.target.value)" disabled>
+                                  <option *ngFor="let item of itemCodes" [value]="item.id">{{item.name}}</option>
+                                </select>
+                              </label>
                             </div>
                             <div class="column small-12 medium-6">
                                 <label>
@@ -670,25 +680,39 @@
                             </div>
 
                             <div class="column small-12 medium-6">
-                                <label>
+                                <label *ngIf="!hasPaid">
                                     Quantity
                                     <input [locale]="localeFormat" [isNumber]="true" [format]="'0,0.0000'" numeral type="text" formControlName="quantity" placeholder="Quantity">
                                 </label>
+                              <label *ngIf="hasPaid">
+                                Quantity
+                                <input [locale]="localeFormat" [isNumber]="true" [format]="'0,0.0000'" numeral type="text" formControlName="quantity" placeholder="Quantity" readonly>
+                              </label>
                             </div>
 
                             <div class="column  small-12 medium-6">
-                                <label>
+                                <label *ngIf="!hasPaid">
                                     Price
                                     <input type="text" formControlName="price" numeral [format]="'$0,0.00'" [locale]="localeFormat" placeholder="Price">
                                 </label>
+                              <label *ngIf="hasPaid">
+                                Price
+                                <input type="text" formControlName="price" numeral [format]="'$0,0.00'" [locale]="localeFormat" placeholder="Price" readonly>
+                              </label>
                             </div>
                             <div class="column small-12 medium-6">
-                                <label>
+                                <label *ngIf="!hasPaid">
                                     Tax
                                     <select formControlName="tax_id" (change)="calculateTotals()">
                                         <option *ngFor="let taxItem of taxesList" [value]="taxItem.id">{{taxItem.name}} - {{taxItem.taxRate}}</option>
                                     </select>
                                 </label>
+                              <label *ngIf="hasPaid">
+                                Tax
+                                <select class="jeSelect" formControlName="tax_id" (change)="calculateTotals()" disabled>
+                                  <option *ngFor="let taxItem of taxesList" [value]="taxItem.id">{{taxItem.name}} - {{taxItem.taxRate}}</option>
+                                </select>
+                              </label>
                             </div>
                             <div class="column small-12 medium-6">
                                 <label>
