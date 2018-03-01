@@ -18,6 +18,7 @@ import {SwitchBoard} from "qCommon/app/services/SwitchBoard";
 import {FinancialAccountsService} from "qCommon/app/services/FinancialAccounts.service";
 import {State} from "qCommon/app/models/State";
 import {DateFormater} from "qCommon/app/services/DateFormatter.service";
+import {pageTitleService} from "qCommon/app/services/PageTitle";
 
 declare let _:any;
 declare let numeral:any;
@@ -54,7 +55,7 @@ export class InvoiceAddPaymentComponent {
                 private _invoicePaymentForm:InvoicePaymentForm, private _router:Router,
                 private numeralService:NumeralService, private _route: ActivatedRoute,
                 private stateService: StateService,private switchBoard: SwitchBoard,
-                private accountsService: FinancialAccountsService, private dateFormater:DateFormater) {
+                private accountsService: FinancialAccountsService, private dateFormater:DateFormater, private titleService: pageTitleService) {
         this.loadCustomers(Session.getCurrentCompany());
         this.dateFormat = dateFormater.getFormat();
         this.serviceDateformat = dateFormater.getServiceDateformat();
@@ -62,7 +63,10 @@ export class InvoiceAddPaymentComponent {
         this.routeSub = this._route.params.subscribe(params => {
             this.paymentId = params['paymentID'];
             if(this.paymentId) {
+                this.titleService.setPageTitle("Edit Collection");
                 this.loadPayment();
+            } else {
+                this.titleService.setPageTitle("New Collection");
             }
         });
         this.routeSubscribe = switchBoard.onClickPrev.subscribe(title => {
@@ -137,7 +141,7 @@ export class InvoiceAddPaymentComponent {
                 this.customers = customers;
                 this.closeLoader();
             }, error =>{
-                this.toastService.pop(TOAST_TYPE.error, "Failed to load your customers");
+                this.toastService.pop(TOAST_TYPE.error, "Failed To Load Your Customers");
                 this.closeLoader();
             });
     }
@@ -160,7 +164,7 @@ export class InvoiceAddPaymentComponent {
     }
 
     handleError(error){
-        this.toastService.pop(TOAST_TYPE.error, "Could not perform operation");
+        this.toastService.pop(TOAST_TYPE.error, "Could Not Perform Operation");
     }
 
     closeLoader(){
@@ -197,17 +201,17 @@ export class InvoiceAddPaymentComponent {
         }*/
         if(this.getAppliedAmount() <= paymentAmount) {
             this.invoiceService.addPayment(payment).subscribe(response => {
-                this.toastService.pop(TOAST_TYPE.success, "Payment created successfully");
+                this.toastService.pop(TOAST_TYPE.success, "Payment Created Successfully");
                 this.loadingService.triggerLoadingEvent(false);
                 this.setUpdatedFlagInStates();
                 this.handleState();
             }, error => {
-                this.toastService.pop(TOAST_TYPE.error, "Failed to create payment");
+                this.toastService.pop(TOAST_TYPE.error, "Failed To Create Payment");
                 this.saving = false;
                 this.loadingService.triggerLoadingEvent(false);
             })
         } else {
-            this.toastService.pop(TOAST_TYPE.error, "Applied amount cannot be greater than payment amount");
+            this.toastService.pop(TOAST_TYPE.error, "Applied Amount Cannot Be Greater Than Payment Amount");
             this.saving = false;
             this.loadingService.triggerLoadingEvent(false);
         }
