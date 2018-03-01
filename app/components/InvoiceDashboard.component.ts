@@ -259,7 +259,7 @@ export class InvoiceDashboardComponent {
             .subscribe(customers => {
                 this.customers = customers;
             }, error => {
-                this.toastService.pop(TOAST_TYPE.error, "Failed to load your customers");
+                this.toastService.pop(TOAST_TYPE.error, "Failed To Load Your Customers");
                 this.loadingService.triggerLoadingEvent(false);
             });
     }
@@ -323,7 +323,7 @@ export class InvoiceDashboardComponent {
             }, error => this.handleError(error));
         } else if (this.selectedTab == 3) {
             this.isLoading = false;
-            this.titleService.setPageTitle("Payments");
+            this.titleService.setPageTitle("Collections");
             this.invoiceService.getPayments().subscribe(payments => {
                 this.payments = payments;
                 this.buildPaymentsTableData();
@@ -351,7 +351,7 @@ export class InvoiceDashboardComponent {
             this.loadingService.triggerLoadingEvent(false);
         }, error => {
             this.loadingService.triggerLoadingEvent(false);
-            this.toastService.pop(TOAST_TYPE.error, "Failed to get box data");
+            this.toastService.pop(TOAST_TYPE.error, "Failed To Get Box Data");
         });
         this.getTotalReceivablesByCustomer();
         this.getAgingTotalReceivablesByCustomer();
@@ -743,15 +743,15 @@ export class InvoiceDashboardComponent {
         let selectedIds = _.map(this.selectedTableRows, 'id');
         if(!hasPaidInvoices){
             this.invoiceService.deleteInvoice(selectedIds).subscribe(success => {
-                    this.toastService.pop(TOAST_TYPE.success, "Invoice deleted successfully.");
+                    this.toastService.pop(TOAST_TYPE.success, "Invoice Deleted Successfully.");
                     this.hasInvoices = false;
                     this.selectTab(2, "");
                 },
                 error => {
-                    this.toastService.pop(TOAST_TYPE.error, "Invoice deletion failed.")
+                    this.toastService.pop(TOAST_TYPE.error, "Invoice Deletion Failed.")
                 });
         }else {
-            this.toastService.pop(TOAST_TYPE.error, "cannot delete paid or partially paid invoices");
+            this.toastService.pop(TOAST_TYPE.error, "Cannot Delete Paid Or Partially Paid Invoices");
         }
 
     }
@@ -760,7 +760,7 @@ export class InvoiceDashboardComponent {
         let base = this;
         let selectedIds = _.map(this.selectedTableRows, 'id');
         this.invoiceService.markAsSentInvoice(selectedIds).subscribe(success => {
-                this.toastService.pop(TOAST_TYPE.success, "Invoice mark as sent successfully.");
+                this.toastService.pop(TOAST_TYPE.success, "Invoice Mark As Sent Successfully.");
                 this.hasInvoices = false;
                 this.selectTab(2, "");
             },
@@ -768,7 +768,7 @@ export class InvoiceDashboardComponent {
                 if(error&&JSON.parse(error))
                     this.toastService.pop(TOAST_TYPE.error, JSON.parse(error).message);
                 else
-                    this.toastService.pop(TOAST_TYPE.error, "Invoice mark as sent failed.")
+                    this.toastService.pop(TOAST_TYPE.error, "Invoice Mark As Sent Failed.")
 
             });
     }
@@ -793,7 +793,7 @@ export class InvoiceDashboardComponent {
 
     handleError(error) {
         this.loadingService.triggerLoadingEvent(false);
-        this.toastService.pop(TOAST_TYPE.error, "Could not perform action.")
+        this.toastService.pop(TOAST_TYPE.error, "Could Not Perform Action.")
     }
 
     handleBadges(length, selectedTab) {
@@ -874,8 +874,8 @@ export class InvoiceDashboardComponent {
             },
             {"name": "journalId", "title": "Journal ID", 'visible': false, 'filterable': false},
             {"name": "paymentId", "title": "Payment ID", 'visible': false, 'filterable': false},
-            {"name": "number", "type": "html", "title": "Number", "classes": "text-capitalize"},
-            {"name": "customer", "title": "Customer", "classes": "text-capitalize"},
+            {"name": "number", "type": "html", "title": "Number"},
+            {"name": "customer", "title": "Customer"},
             {"name": "invoice_date", "title": "Invoice Date"},
             {"name": "due_date", "title": "Due Date"},
             {
@@ -965,8 +965,8 @@ export class InvoiceDashboardComponent {
             },
             {"name": "journalId", "title": "Journal ID", 'visible': false, 'filterable': false},
             {"name": "invoiceIds", "title": "Invoice ID", 'visible': false, 'filterable': false},
-            {"name": "type", "title": "Payment type/#", "type": "html", "classes": "text-capitalize"},
-            {"name": "receivedFrom", "title": "Received From", "classes": "text-capitalize"},
+            {"name": "type", "title": "Collection Type/#", "type": "html"},
+            {"name": "receivedFrom", "title": "Received From"},
             {"name": "dateReceived", "title": "Date Received"},
             {"name": "amount", "title": "Amount/Status"},
             {"name": "payment_applied_amount", "title": "Applied Amount"},
@@ -981,7 +981,7 @@ export class InvoiceDashboardComponent {
             row['selectCol'] = "<input type='checkbox' class='checkbox'/>";
             let paymentType=payment.type=='cheque'?'Check':payment.type;
             // row['type'] = "<div>"+paymentType+"</div>";
-            let type = (payment.referenceNo) ? (paymentType+'<br><small>'+payment.referenceNo+'</small>') : paymentType;
+            let type = (payment.referenceNo) ? ('<span class="text-capitalize">'+paymentType+'</span><br><small>'+payment.referenceNo+'</small>') : paymentType;
             /*if(payment.referenceNo){
               row['type'] += "<div><small>"+payment.referenceNo+"</small></div>";
             }*/
@@ -1183,7 +1183,7 @@ export class InvoiceDashboardComponent {
             this.titleService.setPageTitle("Invoice History");
             this.loadingService.triggerLoadingEvent(false);
         }, error => {
-            this.toastService.pop(TOAST_TYPE.error, "Failed to load invoice history");
+            this.toastService.pop(TOAST_TYPE.error, "Failed To Load Invoice History");
             this.loadingService.triggerLoadingEvent(false);
         });
     }
@@ -1404,7 +1404,7 @@ export class InvoiceDashboardComponent {
                 link['download'] = tabId+".xls";
                 link.click();
             }, error =>{
-                this.toastService.pop(TOAST_TYPE.error, "Failed to Export table into Excel");
+                this.toastService.pop(TOAST_TYPE.error, "Failed To Export Table Into Excel");
             });
         // jQuery('#example-dropdown').foundation('close');
 
@@ -1421,7 +1421,7 @@ export class InvoiceDashboardComponent {
                 link[0].download = tabId+".pdf";
                 link[0].click();
             }, error =>{
-                this.toastService.pop(TOAST_TYPE.error, "Failed to Export table into PDF");
+                this.toastService.pop(TOAST_TYPE.error, "Failed To Export Table Into PDF");
             });
 
     }

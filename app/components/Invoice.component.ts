@@ -288,10 +288,10 @@ export class InvoiceComponent{
               this.templateType='Other1'
             }
           }else {
-            this.toastService.pop(TOAST_TYPE.error, "Please create invoice settings");
+            this.toastService.pop(TOAST_TYPE.error, "Please Create Invoice Settings");
           }
         }, error =>{
-          this.toastService.pop(TOAST_TYPE.error, "Please create invoice settings");
+          this.toastService.pop(TOAST_TYPE.error, "Please Create Invoice Settings");
         });
     }
 
@@ -303,7 +303,7 @@ export class InvoiceComponent{
                 this.customers = customers;
                 this.loadItemCodes(companyId);
             }, error =>{
-                this.toastService.pop(TOAST_TYPE.error, "Failed to load your customers");
+                this.toastService.pop(TOAST_TYPE.error, "Failed To Load Your Customers");
                 this.closeLoader();
             });
     }
@@ -321,7 +321,7 @@ export class InvoiceComponent{
 
     handleError(error) {
         this.loadingService.triggerLoadingEvent(false);
-        this.toastService.pop(TOAST_TYPE.error, "Failed to perform operation");
+        this.toastService.pop(TOAST_TYPE.error, "Failed To Perform Operation");
     }
 
     closeLoader(){
@@ -336,7 +336,7 @@ export class InvoiceComponent{
                 this.itemItemCodes = itemCodes;
                 this.loadTaxList(companyId);
             },error=>{
-                this.toastService.pop(TOAST_TYPE.error, "Failed to load your Items");
+                this.toastService.pop(TOAST_TYPE.error, "Failed To Load Your Items");
                 this.closeLoader();
             });
     }
@@ -347,7 +347,7 @@ export class InvoiceComponent{
                 this.taxesList=taxesList;
                 this.setupForm();
             },error=>{
-                this.toastService.pop(TOAST_TYPE.error, "Failed to load your Taxes");
+                this.toastService.pop(TOAST_TYPE.error, "Failed To Load Your Taxes");
                 this.closeLoader();
             });
     }
@@ -479,7 +479,7 @@ export class InvoiceComponent{
                 }
 
             },error=>{
-                this.toastService.pop(TOAST_TYPE.error, "Failed to load your Company details");
+                this.toastService.pop(TOAST_TYPE.error, "Failed To Load Your Company Details");
             });
 
     }
@@ -707,12 +707,12 @@ export class InvoiceComponent{
         itemLines=this.getInvoiceLines('item');
 
         if(this.totalAmount<0){
-            this.toastService.pop(TOAST_TYPE.error, "Invoice amount should grater than or equal to zero");
+            this.toastService.pop(TOAST_TYPE.error, "Invoice Amount Should Grater Than Or Equal To Zero");
             return
         }
 
         if(itemLines.length==0){
-            this.toastService.pop(TOAST_TYPE.error, "Please add invoice lines");
+            this.toastService.pop(TOAST_TYPE.error, "Please Add Invoice Lines");
             return
         }
 
@@ -723,7 +723,7 @@ export class InvoiceComponent{
           if(this.selectedContact){
             this.additionalMails=this.selectedContact.email;
           }else{
-            this.toastService.pop(TOAST_TYPE.error, "Please select send to contact");
+            this.toastService.pop(TOAST_TYPE.error, "Please Select Send To Contact");
             return;
           }
         }
@@ -912,25 +912,25 @@ export class InvoiceComponent{
         }
         if(this.newInvoice||this.isDuplicate) {
             this.invoiceService.createInvoice(invoiceData).subscribe(resp => {
-                this.toastService.pop(TOAST_TYPE.success, "Invoice created successfully");
+                this.toastService.pop(TOAST_TYPE.success, "Invoice Created Successfully");
                 this.gotoPreviousState();
             }, error=>{
                 if(error&&JSON.parse(error))
                     this.toastService.pop(TOAST_TYPE.error, JSON.parse(error).message);
                 else
-                    this.toastService.pop(TOAST_TYPE.error, "Invoice creation  failed");
+                    this.toastService.pop(TOAST_TYPE.error, "Invoice Creation  Failed");
                 this.closeLoader();
             });
         } else {
             this.invoiceService.updateInvoice(invoiceData).subscribe(resp => {
-                this.toastService.pop(TOAST_TYPE.success, "Invoice updated successfully");
+                this.toastService.pop(TOAST_TYPE.success, "Invoice Updated Successfully");
                 this.setUpdatedFlagInStates();
                 this.navigateToDashborad();
             }, error=>{
                 if(error&&JSON.parse(error))
                     this.toastService.pop(TOAST_TYPE.error, JSON.parse(error).message);
                 else
-                    this.toastService.pop(TOAST_TYPE.error, "Invoice update failed");
+                    this.toastService.pop(TOAST_TYPE.error, "Invoice Update Failed");
                 this.closeLoader();
             });
         }
@@ -1053,7 +1053,7 @@ export class InvoiceComponent{
                     }
                 }
             }, error =>{
-                this.toastService.pop(TOAST_TYPE.error, "Failed to load your customers");
+                this.toastService.pop(TOAST_TYPE.error, "Failed To Load Your Customers");
                 this.closeLoader();
             });
     }
@@ -1316,17 +1316,17 @@ export class InvoiceComponent{
         _.each(lines, function(line){
             if(!line.destroy){
                 if(!line.item_id){
-                    base.toastService.pop(TOAST_TYPE.error, "Please select "+base.tasks);
+                    base.toastService.pop(TOAST_TYPE.error, "Please Select "+base.tasks);
                     result = true;
                     return false;
                 }
                 if(!line.quantity){
-                    base.toastService.pop(TOAST_TYPE.error, base.UOM+" should grater than zero");
+                    base.toastService.pop(TOAST_TYPE.error, base.UOM+" Should Grater Than Zero");
                     result = true;
                     return false;
                 }
                 if(!line.price){
-                    base.toastService.pop(TOAST_TYPE.error, base.unitCost +" grater than zero");
+                    base.toastService.pop(TOAST_TYPE.error, base.unitCost +" Grater Than Zero");
                     result = true;
                     return false;
                 }
@@ -1348,7 +1348,7 @@ export class InvoiceComponent{
                 link[0].click();
               this.loadingService.triggerLoadingEvent(false);
             }, error =>{
-                this.toastService.pop(TOAST_TYPE.error, "Failed to Export report into PDF");
+                this.toastService.pop(TOAST_TYPE.error, "Failed To Export Report Into PDF");
               this.loadingService.triggerLoadingEvent(false);
             });
     }
@@ -1465,7 +1465,7 @@ export class InvoiceComponent{
             this.updateCredits(this.historyList);
             this.loadingService.triggerLoadingEvent(false);
         }, error => {
-            this.toastService.pop(TOAST_TYPE.error, "Failed to load invoice history");
+            this.toastService.pop(TOAST_TYPE.error, "Failed To Load Invoice History");
             this.loadingService.triggerLoadingEvent(false);
         });
     }
@@ -1528,13 +1528,13 @@ export class InvoiceComponent{
                 id: attachment.id
             });
             this.closeLoader();
-            this.toastService.pop(TOAST_TYPE.success, "Attachment deleted successfully");
+            this.toastService.pop(TOAST_TYPE.success, "Attachment Deleted Successfully");
         }, error => {
             if(error){
                 if(error&&JSON.parse(error))
                     this.toastService.pop(TOAST_TYPE.error, JSON.parse(error).message);
                 else
-                    this.toastService.pop(TOAST_TYPE.error, "Failed to delete attachment");
+                    this.toastService.pop(TOAST_TYPE.error, "Failed To Delete Attachment");
                 this.closeLoader();
             }
         });
@@ -1743,7 +1743,7 @@ export class InvoiceComponent{
     this.payments=payments;
     this.buildInvoicePaymentsData();
     },error=>{
-      this.toastService.pop(TOAST_TYPE.error, "Failed to get payment details");
+      this.toastService.pop(TOAST_TYPE.error, "Failed To Get Payment Details");
     })
   }
 
