@@ -125,18 +125,18 @@ export class InvoicePayComponent{
         this.invoiceService.payInvoice(data,this.invoiceID).subscribe(res => {
             this.loadingService.triggerLoadingEvent(false);
             this.resetCardFields();
-            this.toastService.pop(TOAST_TYPE.success, "Invoice paid successfully");
+            this.toastService.pop(TOAST_TYPE.success, "Invoice Paid Successfully");
             this.isPaid=true;
         }, error=>{
             this.loadingService.triggerLoadingEvent(false);
             this.resetCardFields();
-            this.toastService.pop(TOAST_TYPE.error, "Invoice Payment failed");
+            this.toastService.pop(TOAST_TYPE.error, "Invoice Payment Failed");
         });
     }
 
     handleError(error) {
         this.loadingService.triggerLoadingEvent(false);
-        this.toastService.pop(TOAST_TYPE.error, "Failed to perform operation");
+        this.toastService.pop(TOAST_TYPE.error, "Failed To Perform Operation");
     }
 
     openCreditCardFlyout(){
@@ -169,7 +169,7 @@ export class InvoicePayComponent{
                     this.getCardTokenDetails();
                 }else {
                     this.loadingService.triggerLoadingEvent(false);
-                    this.toastService.pop(TOAST_TYPE.error, "Add company to payment spring");
+                    this.toastService.pop(TOAST_TYPE.error, "Add Company To Payment Spring");
                 }
             }, error =>  this.handleError(error));
     }
@@ -252,7 +252,7 @@ export class InvoicePayComponent{
                 link[0].download= "Invoice.pdf";
                 link[0].click();
             }, error =>{
-                this.toastService.pop(TOAST_TYPE.error, "Failed to Export report into PDF");
+                this.toastService.pop(TOAST_TYPE.error, "Failed To Export Report Into PDF");
             });
     }
 

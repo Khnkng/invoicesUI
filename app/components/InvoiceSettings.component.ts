@@ -48,7 +48,7 @@ export class InvoiceSettingsComponent implements  OnInit {
       this.invoiceService.getPreference(this.companyId,this.userID)
           .subscribe(preference => this.processPreference(preference), error => {
             this.loadingService.triggerLoadingEvent(false);
-            this.toastService.pop(TOAST_TYPE.error, "Failed to load invoice preferences");
+            this.toastService.pop(TOAST_TYPE.error, "Failed To Load Invoice Preferences");
           });
     }
     this.getCompanyLogo();
@@ -149,20 +149,20 @@ export class InvoiceSettingsComponent implements  OnInit {
       this.invoiceService.updatePreference(this.cleanData(data), this.preference.id, this.companyId)
           .subscribe(response => {
             this.loadingService.triggerLoadingEvent(false);
-            this.toastService.pop(TOAST_TYPE.success, "Invoice Preference updated successfully");
+            this.toastService.pop(TOAST_TYPE.success, "Invoice Preference Updated Successfully");
           }, error => {
             this.loadingService.triggerLoadingEvent(false);
-            this.toastService.pop(TOAST_TYPE.error, "Could not update Invoice Preference");
+            this.toastService.pop(TOAST_TYPE.error, "Could Not Update Invoice Preference");
           });
     } else{
       data.id = UUID.UUID();
       this.invoiceService.createPreference(this.cleanData(data), this.companyId)
           .subscribe(response => {
             this.loadingService.triggerLoadingEvent(false);
-            this.toastService.pop(TOAST_TYPE.success, "Invoice Preference created successfully");
+            this.toastService.pop(TOAST_TYPE.success, "Invoice Preference Created Successfully");
           }, error => {
             this.loadingService.triggerLoadingEvent(false);
-            this.toastService.pop(TOAST_TYPE.error, "Could not create Invoice Preference");
+            this.toastService.pop(TOAST_TYPE.error, "Could Not Create Invoice Preference");
           });
     }
   }

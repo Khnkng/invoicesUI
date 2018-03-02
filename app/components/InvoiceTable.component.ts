@@ -187,7 +187,7 @@ export class InvoiceTableComponent {
                 link['download'] = "InvoicesDetails.xls";
                 link.click();
             }, error =>{
-                this._toastService.pop(TOAST_TYPE.error, "Failed to Export table into Excel");
+                this._toastService.pop(TOAST_TYPE.error, "Failed To Export Table Into Excel");
             });
         // jQuery('#example-dropdown').foundation('close');
 
@@ -204,7 +204,7 @@ export class InvoiceTableComponent {
                 link[0].download = "InvoicesDetails.pdf";
                 link[0].click();
             }, error =>{
-                this._toastService.pop(TOAST_TYPE.error, "Failed to Export table into PDF");
+                this._toastService.pop(TOAST_TYPE.error, "Failed To Export Table Into PDF");
             });
 
     }
