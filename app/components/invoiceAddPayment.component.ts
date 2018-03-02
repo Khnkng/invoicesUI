@@ -87,9 +87,20 @@ export class InvoiceAddPaymentComponent {
         this.accountsService.financialAccounts(Session.getCurrentCompany())
             .subscribe(accounts=> {
                 this.accounts = accounts.accounts;
+              if(!this.paymentId){
+                this.setDefaultBankAccount();
+              }
             }, error => {
 
             });
+    }
+
+    setDefaultBankAccount(){
+      let mappings = this.invoicePaymentForm.controls['depositedTo'];
+      if(this.accounts&&this.accounts.length>0){
+        let accountId=this.accounts[0].id;
+        mappings.patchValue(accountId);
+      }
     }
 
     gotoPreviousState() {
