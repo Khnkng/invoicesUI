@@ -26,6 +26,7 @@ export class InvoicesComponent{
     tableOptions:any = {};
     row:any;
     tableColumns:Array<string> = ['name', 'id', 'payment_coa_mapping', 'invoice_coa_mapping', 'desc'];
+    editMode: boolean = false;
 
     constructor(private switchBoard: SwitchBoard,
                 private toastService: ToastService, private loadingService:LoadingService,

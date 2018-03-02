@@ -13,7 +13,6 @@ import {InvoiceDashboardComponent} from "./components/InvoiceDashboard.component
 import {InvoiceComponent} from "./components/Invoice.component";
 import {InvoiceForm} from "./forms/Invoice.form";
 import {InvoiceLineForm, InvoiceLineTaxesForm} from "./forms/InvoiceLine.form";
-import {InvoicesComponent} from "./components/invoices.component";
 import {CustomDatepicker1} from "./directives/customDatepicker1";
 import {InvoicePayComponent} from "./components/invoicePay.component";
 import {DashBoardActivator} from "qCommon/app/services/DashBoardActivator";
@@ -30,7 +29,6 @@ import {UnappliedCollections} from "./components/UnappliedCollections.component"
         {path: 'invoices/edit/:invoiceID', component: InvoiceComponent, canActivate: [LoggedInActivator]},
         {path: 'invoices/duplicate/:invoiceID', component: InvoiceComponent, canActivate: [LoggedInActivator]},
         {path: 'invoices/NewInvoice', component: InvoiceComponent, canActivate: [LoggedInActivator]},
-        {path: 'invoices/', component: InvoicesComponent, canActivate: [LoggedInActivator]},
         {path: 'invoices/invoiceSettings', component: InvoiceSettingsComponent, canActivate: [LoggedInActivator]},
         {path: 'invoices/addPayment', component: InvoiceAddPaymentComponent, canActivate: [LoggedInActivator]},
         {path: 'payments/edit/:paymentID', component: InvoiceAddPaymentComponent, canActivate: [LoggedInActivator]},
@@ -40,7 +38,7 @@ import {UnappliedCollections} from "./components/UnappliedCollections.component"
         {path: 'payments/unapplied', component: UnappliedCollections,canActivate: [LoggedInActivator]}
     ])],
     declarations: [InvoiceCustomDatepicker, CustomDatepicker1, InvoiceSettingsComponent, InvoiceDashboardComponent,
-            InvoiceComponent, InvoicesComponent, InvoiceCustomDatepicker,InvoicePayComponent,InvoiceAddPaymentComponent,
+            InvoiceComponent, InvoiceCustomDatepicker,InvoicePayComponent,InvoiceAddPaymentComponent,
             InvoiceAddPayment,InvoicePaymentPreview, InvoiceTableComponent, UnappliedCollections],
     exports: [RouterModule, CustomDatepicker1],
     providers: [InvoiceSettingsForm, InvoicesService, InvoiceForm, InvoiceLineForm, InvoiceLineTaxesForm, InvoicePaymentForm],
