@@ -40,7 +40,7 @@ export class InvoicesComponent{
 
     handleError(error){
         this.row = {};
-        this.toastService.pop(TOAST_TYPE.error, "Could not perform operation");
+        this.toastService.pop(TOAST_TYPE.error, "Could Not Perform Operation");
     }
 
 

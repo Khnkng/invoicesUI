@@ -86,7 +86,7 @@ export class InvoiceAddPayment{
                 this.loadInvoicePreferences();
             },error=>{
                 this.loadingService.triggerLoadingEvent(false);
-                this.toastService.pop(TOAST_TYPE.error, "Failed to load your Company details");
+                this.toastService.pop(TOAST_TYPE.error, "Failed To Load Your Company Details");
             });
 
     }
@@ -113,10 +113,10 @@ export class InvoiceAddPayment{
             this.loadInvoiceData();
           }else {
             this.loadingService.triggerLoadingEvent(false);
-            this.toastService.pop(TOAST_TYPE.error, "Please create invoice settings");
+            this.toastService.pop(TOAST_TYPE.error, "Please Create Invoice Settings");
           }
         }, error =>{
-          this.toastService.pop(TOAST_TYPE.error, "Please create invoice settings");
+          this.toastService.pop(TOAST_TYPE.error, "Please Create Invoice Settings");
         });
     }
 
@@ -156,24 +156,24 @@ export class InvoiceAddPayment{
 
     handleError(error) {
         this.loadingService.triggerLoadingEvent(false);
-        this.toastService.pop(TOAST_TYPE.error, "Failed to perform operation");
+        this.toastService.pop(TOAST_TYPE.error, "Failed To Perform Operation");
     }
 
     applyPayment(){
         if(!this.applyObject.bank_account_id){
-            this.toastService.pop(TOAST_TYPE.error, "Please select bank account");
+            this.toastService.pop(TOAST_TYPE.error, "Please Select Bank Account");
             return;
         }
         if(!this.applyObject.reference_number){
-            this.toastService.pop(TOAST_TYPE.error, "Please enter reference number");
+            this.toastService.pop(TOAST_TYPE.error, "Please Enter Reference Number");
             return;
         }
         if(!this.applyObject.payment_date){
-            this.toastService.pop(TOAST_TYPE.error, "Please select date");
+            this.toastService.pop(TOAST_TYPE.error, "Please Select Date");
             return;
         }
         if(!this.applyObject.amount){
-            this.toastService.pop(TOAST_TYPE.error, "Please enter amount");
+            this.toastService.pop(TOAST_TYPE.error, "Please Enter Amount");
             return;
         }
         this.applyObject['state'] = 'paid';
@@ -185,7 +185,7 @@ export class InvoiceAddPayment{
         this.applyObject.payment_date = this.dateFormater.formatDate(this.applyObject.payment_date, this.dateFormat, this.serviceDateformat);
         this.loadingService.triggerLoadingEvent(true);
         this.invoiceService.markAsPaid(this.applyObject,this.invoiceID).subscribe(success => {
-                this.toastService.pop(TOAST_TYPE.success, "Invoice paid successfully.");
+                this.toastService.pop(TOAST_TYPE.success, "Invoice Paid Successfully.");
                 this.loadingService.triggerLoadingEvent(false);
                 this.navigateToDashborad();
             },
@@ -196,10 +196,10 @@ export class InvoiceAddPayment{
                     if(res&&res.message){
                         this.toastService.pop(TOAST_TYPE.error, res.message);
                     }else {
-                        this.toastService.pop(TOAST_TYPE.error, "Invoice payment failed.");
+                        this.toastService.pop(TOAST_TYPE.error, "Invoice Payment Failed.");
                     }
                 }else {
-                    this.toastService.pop(TOAST_TYPE.error, "Invoice payment failed.");
+                    this.toastService.pop(TOAST_TYPE.error, "Invoice Payment Failed.");
                 }
             });
     }

@@ -103,7 +103,7 @@ export class InvoicePaymentPreview{
             .subscribe(customers => {
                 this.customers = customers;
             }, error => {
-                this.toastService.pop(TOAST_TYPE.error, "Failed to load your customers");
+                this.toastService.pop(TOAST_TYPE.error, "Failed To Load Your Customers");
                 this.loadingService.triggerLoadingEvent(false);
             });
     }
@@ -126,7 +126,7 @@ export class InvoicePaymentPreview{
 
     handleError(error) {
         this.loadingService.triggerLoadingEvent(false);
-        this.toastService.pop(TOAST_TYPE.error, "Failed to perform operation");
+        this.toastService.pop(TOAST_TYPE.error, "Failed To Perform Operation");
     }
 
     ngOnDestroy(){
