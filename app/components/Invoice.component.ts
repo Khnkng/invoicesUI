@@ -143,6 +143,7 @@ export class InvoiceComponent{
     paidInvoiceTableOptions: any = {search: true, pageSize: 10};
     payments: Array<any> = [];
     isPaymentsNavigation:boolean=false;
+    bgColor: string = '#878787';
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
@@ -153,7 +154,7 @@ export class InvoiceComponent{
         this.titleService.setPageTitle("Invoices");
         let _form:any = this._invoiceForm.getForm();
         _form['invoiceLines'] = this.invoiceLineArray;
-       // _form['taskLines'] = this.tasksLineArray;
+        // _form['taskLines'] = this.tasksLineArray;
         this.dateFormat = dateFormater.getFormat();
         this.serviceDateformat = dateFormater.getServiceDateformat();
         this.companyCurrency=Session.getCurrentCompanyCurrency();
@@ -195,17 +196,17 @@ export class InvoiceComponent{
             }
         });
 
-    let previousState = this.stateService.getPrevState();
-    if(previousState && previousState.key == 'InvoicePayments'){
-      this.stateService.pop();
-      this.isPaymentsNavigation=true;
-      this.closeLoader();
-      let data=previousState.data;
-      this.showInvoicePaymentDetails=true;
-      this.titleService.setPageTitle("Invoice Payments");
-      this.payments=data.paymentsData;
-      this.buildInvoicePaymentsData();
-    }
+        let previousState = this.stateService.getPrevState();
+        if(previousState && previousState.key == 'InvoicePayments'){
+            this.stateService.pop();
+            this.isPaymentsNavigation=true;
+            this.closeLoader();
+            let data=previousState.data;
+            this.showInvoicePaymentDetails=true;
+            this.titleService.setPageTitle("Invoice Payments");
+            this.payments=data.paymentsData;
+            this.buildInvoicePaymentsData();
+        }
 
         this.dimensionService.dimensions(Session.getCurrentCompany())
             .subscribe(dimensions =>{
@@ -229,11 +230,11 @@ export class InvoiceComponent{
     }
 
     hideInvoicePayments(){
-      this.titleService.setPageTitle("Edit invoice");
-      this.showInvoicePaymentDetails=false;
-      this.showInvoice=true;
-      let invoiceData = this._invoiceForm.getData(this.invoiceForm);
-      this.setCustomerComboBoxValue(invoiceData.customer_id);
+        this.titleService.setPageTitle("Edit invoice");
+        this.showInvoicePaymentDetails=false;
+        this.showInvoice=true;
+        let invoiceData = this._invoiceForm.getData(this.invoiceForm);
+        this.setCustomerComboBoxValue(invoiceData.customer_id);
     }
 
     getLateFees(){
@@ -243,15 +244,15 @@ export class InvoiceComponent{
             });
     }
 
-   loadDiscounts(){
-     this.discountsService.discounts(Session.getCurrentCompany()).subscribe(discounts => {
-       this.discounts=discounts;
-     }, error => this.handleError(error));
-   }
+    loadDiscounts(){
+        this.discountsService.discounts(Session.getCurrentCompany()).subscribe(discounts => {
+            this.discounts=discounts;
+        }, error => this.handleError(error));
+    }
 
     getLateFeeName(lateFeeId){
-      let lateFee = _.find(this.lateFees, {'id': lateFeeId});
-      return lateFee? lateFee.name: '';
+        let lateFee = _.find(this.lateFees, {'id': lateFeeId});
+        return lateFee? lateFee.name: '';
     }
 
     hideCommission(){
@@ -266,38 +267,38 @@ export class InvoiceComponent{
     }
 
     getCompanyPreferences(){
-      this.invoiceService.getPreference(Session.getCurrentCompany(),Session.getUser().id)
-        .subscribe(preference => {
-          if(preference){
-            this.displayCommission=preference.displayCommission;
-            this.tasks=preference.items;
-            this.UOM=preference.units;
-            this.unitCost=preference.price;
-            this.showDescription=preference.hideItemDescription;
-            this.showUnitCost=preference.hidePrice;
-            this.showUOM=preference.hideUnits;
-            this.showItemName=preference.hideItemName;
-            this.templateType=preference.templateType;
-            if(!this.isPaymentsNavigation){
-              this.showInvoice=true;
-            }
-            if(preference.templateType=='Other2'){
-              this.isOtherTemplate=true;
-              this.templateType='Other2'
-            }else if(preference.templateType=='Other1'){
-              this.templateType='Other1'
-            }
-          }else {
-            this.toastService.pop(TOAST_TYPE.error, "Please Create Invoice Settings");
-          }
-        }, error =>{
-          this.toastService.pop(TOAST_TYPE.error, "Please Create Invoice Settings");
-        });
+        this.invoiceService.getPreference(Session.getCurrentCompany(),Session.getUser().id)
+            .subscribe(preference => {
+                if(preference){
+                    this.displayCommission=preference.displayCommission;
+                    this.tasks=preference.items;
+                    this.UOM=preference.units;
+                    this.unitCost=preference.price;
+                    this.showDescription=preference.hideItemDescription;
+                    this.showUnitCost=preference.hidePrice;
+                    this.showUOM=preference.hideUnits;
+                    this.showItemName=preference.hideItemName;
+                    this.templateType=preference.templateType;
+                    if(!this.isPaymentsNavigation){
+                        this.showInvoice=true;
+                    }
+                    if(preference.templateType=='Other2'){
+                        this.isOtherTemplate=true;
+                        this.templateType='Other2'
+                    }else if(preference.templateType=='Other1'){
+                        this.templateType='Other1'
+                    }
+                }else {
+                    this.toastService.pop(TOAST_TYPE.error, "Please Create Invoice Settings");
+                }
+            }, error =>{
+                this.toastService.pop(TOAST_TYPE.error, "Please Create Invoice Settings");
+            });
     }
 
     loadCustomers(companyId:any) {
         if(!this.isPaymentsNavigation)
-        this.loadingService.triggerLoadingEvent(true);
+            this.loadingService.triggerLoadingEvent(true);
         this.customerService.customers(companyId)
             .subscribe(customers => {
                 this.customers = customers;
@@ -357,7 +358,7 @@ export class InvoiceComponent{
         if(!this.invoiceID){
             this.closeLoader();
             if(this.templateType=="Other1"||this.templateType=="Other2"){
-              this.setInvoiceValidators();
+                this.setInvoiceValidators();
             }
             this.setInvoiceDate(this.defaultDate);
             this.setDefaultCurrency();
@@ -365,7 +366,7 @@ export class InvoiceComponent{
             this.newInvoice = true;
             for(let i=0; i<2; i++){
                 this.addInvoiceList(null,'item');
-               // this.addInvoiceList(null,'task');
+                // this.addInvoiceList(null,'task');
             }
             this.titleService.setPageTitle("New Invoice");
         } else {
@@ -375,22 +376,22 @@ export class InvoiceComponent{
                 invoice.invoice_date = base.dateFormater.formatDate(invoice['invoice_date'],base.serviceDateformat,base.dateFormat);
                 invoice.due_date = base.dateFormater.formatDate(invoice['due_date'],base.serviceDateformat,base.dateFormat);
                 if(invoice['job_date']){
-                  invoice.job_date = base.dateFormater.formatDate(invoice['job_date'],base.serviceDateformat,base.dateFormat);
+                    invoice.job_date = base.dateFormater.formatDate(invoice['job_date'],base.serviceDateformat,base.dateFormat);
                 }
                 this.invoice = invoice;
                 if(this.templateType=="Other1"||this.templateType=="Other2"){
-                  this.setInvoiceValidators();
+                    this.setInvoiceValidators();
                 }
                 if(invoice.state=='paid'){
                     this.titleService.setPageTitle("View Invoice");
                     this.hasPaid=true;
                     this.amount=invoice.amount;
                     if(invoice.is_discount_applied&&invoice.discount_id){
-                      this.discountAmount=invoice.discount;
+                        this.discountAmount=invoice.discount;
                     }
                 }
                 if((invoice.state!='partially_paid'&&invoice.state!='paid')&&invoice.is_discount_applied&&invoice.discount_id){
-                  this.getDiscountAmountValue();
+                    this.getDiscountAmountValue();
                 }
                 this.setCustomerComboBoxValue(invoice.customer_id);
                 if(invoice.attachments_metadata){
@@ -400,8 +401,8 @@ export class InvoiceComponent{
                     this.storedAttachments=attachmentObj.attachments;
                 }
                 if(invoice.recurringFrequency){
-                  this.recurringFrequency=invoice.recurringFrequency;
-                  this.recurringEnddate=base.dateFormater.formatDate(invoice.recurringEnddate,base.serviceDateformat,base.dateFormat);
+                    this.recurringFrequency=invoice.recurringFrequency;
+                    this.recurringEnddate=base.dateFormater.formatDate(invoice.recurringEnddate,base.serviceDateformat,base.dateFormat);
                 }
                 if(invoice.commissions&&invoice.commissions.length>0){
                     this.commissions=invoice.commissions;
@@ -420,14 +421,14 @@ export class InvoiceComponent{
                 this.lateFeeAmount=invoice.late_fee_amount;
                 let _invoice = _.cloneDeep(invoice);
                 delete _invoice.invoiceLines;
-        //        let taskLines:Array<any> = [];
+                //        let taskLines:Array<any> = [];
                 let itemLines:Array<any> = [];
                 if(invoice.remainder_name){
-                  this.remainder_name=invoice.remainder_name;
+                    this.remainder_name=invoice.remainder_name;
                 }
-        //        taskLines =  _.filter(this.invoice.invoiceLines, function(invoice) { return invoice.type == 'task'; });
-       // itemLines =  _.filter(this.invoice.invoiceLines, function(invoice) { return invoice.type == 'item'; });
-        itemLines =this.invoice.invoiceLines;  //_.filter(, function(invoice) { return invoice.type == 'item'; });
+                //        taskLines =  _.filter(this.invoice.invoiceLines, function(invoice) { return invoice.type == 'task'; });
+                // itemLines =  _.filter(this.invoice.invoiceLines, function(invoice) { return invoice.type == 'item'; });
+                itemLines =this.invoice.invoiceLines;  //_.filter(, function(invoice) { return invoice.type == 'item'; });
 
                 /*if(taskLines.length==0){
                     for(let i=0; i<2; i++){
@@ -457,11 +458,11 @@ export class InvoiceComponent{
     }
 
     setCustomerComboBoxValue(customerId){
-      let base=this;
-      let customer = _.find(this.customers, {'customer_id': customerId});
-      setTimeout(function(){
-        base.customerComboBox.setValue(customer, 'customer_name');
-      });
+        let base=this;
+        let customer = _.find(this.customers, {'customer_id': customerId});
+        setTimeout(function(){
+            base.customerComboBox.setValue(customer, 'customer_name');
+        });
     }
 
     getCompanyDetails(){
@@ -484,19 +485,19 @@ export class InvoiceComponent{
 
     }
 
-  addInvoiceList(line?:any,type?:any) {
-    let base = this;
-    /*if(type=='task'){
-      let _taskForm:any = this._invoiceLineForm.getForm(line);
-      let tasksListForm = this._fb.group(_taskForm);
-      this.tasksLineArray.push(tasksListForm);
-    }else if(type=='item'){
+    addInvoiceList(line?:any,type?:any) {
+        let base = this;
+        /*if(type=='task'){
+          let _taskForm:any = this._invoiceLineForm.getForm(line);
+          let tasksListForm = this._fb.group(_taskForm);
+          this.tasksLineArray.push(tasksListForm);
+        }else if(type=='item'){
 
-    }*/
-    let _form:any = this._invoiceLineForm.getForm(line);
-    let invoiceListForm = this._fb.group(_form);
-    this.invoiceLineArray.push(invoiceListForm);
-  }
+        }*/
+        let _form:any = this._invoiceLineForm.getForm(line);
+        let invoiceListForm = this._fb.group(_form);
+        this.invoiceLineArray.push(invoiceListForm);
+    }
 
     deleteInvoiceLine(index,type) {
         if(type=='item'){
@@ -554,8 +555,8 @@ export class InvoiceComponent{
     }
 
     setJobDate(date){
-      let jobDateControl:any = this.invoiceForm.controls['job_date'];
-      jobDateControl.patchValue(date);
+        let jobDateControl:any = this.invoiceForm.controls['job_date'];
+        jobDateControl.patchValue(date);
     }
 
     setPaymentDate(date){
@@ -699,7 +700,7 @@ export class InvoiceComponent{
         invoiceData.invoice_date = this.dateFormater.formatDate(invoiceData.invoice_date,this.dateFormat,this.serviceDateformat);
         invoiceData.due_date = this.dateFormater.formatDate(invoiceData.due_date,this.dateFormat,this.serviceDateformat);
         if(invoiceData.job_date){
-          invoiceData.job_date = this.dateFormater.formatDate(invoiceData.job_date,this.dateFormat,this.serviceDateformat);
+            invoiceData.job_date = this.dateFormater.formatDate(invoiceData.job_date,this.dateFormat,this.serviceDateformat);
         }
         invoiceData.amount = this.roundOffValue(this.amount);
         delete invoiceData.invoiceLines;
@@ -720,21 +721,21 @@ export class InvoiceComponent{
             return;
         }
         if(sendMail){
-          if(this.selectedContact){
-            this.additionalMails=this.selectedContact.email;
-          }else{
-            this.toastService.pop(TOAST_TYPE.error, "Please Select Send To Contact");
-            return;
-          }
+            if(this.selectedContact){
+                this.additionalMails=this.selectedContact.email;
+            }else{
+                this.toastService.pop(TOAST_TYPE.error, "Please Select Send To Contact");
+                return;
+            }
         }
         if(invoiceData.discount_id){
-          invoiceData.is_discount_applied=true;
+            invoiceData.is_discount_applied=true;
         }else {
-          invoiceData.is_discount_applied=false;
+            invoiceData.is_discount_applied=false;
         }
         invoiceData.sub_total=this.roundOffValue(this.subTotal);
         if(this.invoiceID){
-          invoiceData.amount_due=this.invoice.amount_due;
+            invoiceData.amount_due=this.invoice.amount_due;
         }
         invoiceData.tax_amount=this.roundOffValue(this.taxTotal);
         //invoiceData.invoiceLines=itemLines.concat(taskLines);
@@ -767,17 +768,17 @@ export class InvoiceComponent{
         this.setTemplateSettings(invoiceData);
         this.invoiceProcessedData=invoiceData;
         if(action=='email'){
-          this.setBillUpdate(invoiceData);
-          if(!this.showPreview)
-          {
-            this.togelPreview(invoiceData);
-          }
-          invoiceData.state=this.invoiceID?this.invoice.state:'sent';
-          let base=this;
-          setTimeout(function(){
-            base.PdfData=base.getPdfData();
-          });
-          this.openEmailDailog();
+            this.setBillUpdate(invoiceData);
+            if(!this.showPreview)
+            {
+                this.togelPreview(invoiceData);
+            }
+            invoiceData.state=this.invoiceID?this.invoice.state:'sent';
+            let base=this;
+            setTimeout(function(){
+                base.PdfData=base.getPdfData();
+            });
+            this.openEmailDailog();
         }else if (action=='draft'){
             this.setBillUpdate(invoiceData);
             this.saveInvoiceDetails(invoiceData);
@@ -785,6 +786,7 @@ export class InvoiceComponent{
             this.setBillUpdate(invoiceData);
             this.saveInvoiceDetails(invoiceData);
         }else if(action=='preview'){
+            this.getMessageHeaderColor(this.invoiceProcessedData);
             this.togelPreview(invoiceData);
         }else if(action=='download'){
             if(!this.showPreview)
@@ -796,7 +798,7 @@ export class InvoiceComponent{
                 base.exportToPDF();
             })
         }else if(action=='recurring'){
-         this.openRecurringDailog();
+            this.openRecurringDailog();
         }
     }
 
@@ -821,14 +823,14 @@ export class InvoiceComponent{
     }
 
     setTemplateSettings(data){
-      data.templateType=this.templateType;
-      data.tasks=this.tasks;
-      data.UOM=this.UOM;
-      data.unitCost=this.unitCost;
-      data.showDescription=this.showDescription;
-      data.showUnitCost=this.showUnitCost;
-      data.showUOM=this.showUOM;
-      data.showItemName=this.showItemName;
+        data.templateType=this.templateType;
+        data.tasks=this.tasks;
+        data.UOM=this.UOM;
+        data.unitCost=this.unitCost;
+        data.showDescription=this.showDescription;
+        data.showUnitCost=this.showUnitCost;
+        data.showUOM=this.showUOM;
+        data.showItemName=this.showItemName;
     }
 
 
@@ -837,29 +839,29 @@ export class InvoiceComponent{
     }
 
     openRecurringDailog(){
-      jQuery('#recurring-invoice').foundation('open');
+        jQuery('#recurring-invoice').foundation('open');
     }
 
     resetRecurringFields(){
-      this.resetRecurringInvoiceFields();
-      jQuery('#invoice-email-conformation').foundation('close');
+        this.resetRecurringInvoiceFields();
+        jQuery('#invoice-email-conformation').foundation('close');
     }
 
     closeRecurring(){
-      jQuery('#recurring-invoice').foundation('close');
+        jQuery('#recurring-invoice').foundation('close');
     }
 
     saveRecurring(){
-      this.invoiceProcessedData.recurringEnddate=this.dateFormater.formatDate(this.recurringEnddate,this.dateFormat,this.serviceDateformat);
-      this.invoiceProcessedData.recurringFrequency=this.recurringFrequency;
-      this.closeRecurring();
-      this.saveInvoiceDetails(this.invoiceProcessedData);
+        this.invoiceProcessedData.recurringEnddate=this.dateFormater.formatDate(this.recurringEnddate,this.dateFormat,this.serviceDateformat);
+        this.invoiceProcessedData.recurringFrequency=this.recurringFrequency;
+        this.closeRecurring();
+        this.saveInvoiceDetails(this.invoiceProcessedData);
     }
 
-  resetRecurringInvoiceFields(){
-    this.recurringFrequency=null;
-    this.recurringEnddate=null;
-  }
+    resetRecurringInvoiceFields(){
+        this.recurringFrequency=null;
+        this.recurringEnddate=null;
+    }
 
     closeEmailDailog(){
         this.resetPopupFields();
@@ -867,13 +869,13 @@ export class InvoiceComponent{
     }
 
     resetInvoiceState(){
-      let invoiceData=this._invoiceForm.getData(this.invoiceForm);
-      this.togelPreview(invoiceData);
+        let invoiceData=this._invoiceForm.getData(this.invoiceForm);
+        this.togelPreview(invoiceData);
     };
 
     resetPopupFields(){
-      this.resetEmailDailogFields();
-      jQuery('#invoice-email-conformation').foundation('close');
+        this.resetEmailDailogFields();
+        jQuery('#invoice-email-conformation').foundation('close');
     }
 
     resetEmailDailogFields(){
@@ -908,7 +910,7 @@ export class InvoiceComponent{
         delete invoiceData.customer;
         delete invoiceData.logoURL;
         if(invoiceData.sendMail){
-          invoiceData.pdf_data=this.PdfData;
+            invoiceData.pdf_data=this.PdfData;
         }
         if(this.newInvoice||this.isDuplicate) {
             this.invoiceService.createInvoice(invoiceData).subscribe(resp => {
@@ -987,25 +989,25 @@ export class InvoiceComponent{
 
 
     onCustomerSelect(customer){
-      let data = this._invoiceForm.getData(this.invoiceForm);
-      if(customer && customer.customer_id){
-        data.customer_id = customer.customer_id;
-        this.selectedContact=null;
-        this.maillIds=[];
-        this.getCustomerContacts(customer.customer_id);
-        let selectedCustomer = _.find(this.customers, {'customer_id': customer.customer_id});
-        this.selectedCustomer=selectedCustomer;
-        if(selectedCustomer){
-          if(selectedCustomer.term){
-            this.selectTerm(selectedCustomer.term);
-            let term:any = this.invoiceForm.controls['term'];
-            term.patchValue(selectedCustomer.term);
-          }
+        let data = this._invoiceForm.getData(this.invoiceForm);
+        if(customer && customer.customer_id){
+            data.customer_id = customer.customer_id;
+            this.selectedContact=null;
+            this.maillIds=[];
+            this.getCustomerContacts(customer.customer_id);
+            let selectedCustomer = _.find(this.customers, {'customer_id': customer.customer_id});
+            this.selectedCustomer=selectedCustomer;
+            if(selectedCustomer){
+                if(selectedCustomer.term){
+                    this.selectTerm(selectedCustomer.term);
+                    let term:any = this.invoiceForm.controls['term'];
+                    term.patchValue(selectedCustomer.term);
+                }
+            }
+        }else if(!customer||customer=='--None--'){
+            data.customer_id='';
         }
-      }else if(!customer||customer=='--None--'){
-        data.customer_id='';
-      }
-      this._invoiceForm.updateForm(this.invoiceForm, data);
+        this._invoiceForm.updateForm(this.invoiceForm, data);
     }
 
     getCustomrtDetails(value){
@@ -1022,14 +1024,14 @@ export class InvoiceComponent{
     }
 
     getCustomerContacts(id){
-      if(!this.isPaymentsNavigation)
-        this.loadingService.triggerLoadingEvent(true);
+        if(!this.isPaymentsNavigation)
+            this.loadingService.triggerLoadingEvent(true);
         this.loadContacts(id);
     }
 
     loadContacts(id){
-      if(!this.isPaymentsNavigation)
-        this.loadingService.triggerLoadingEvent(true);
+        if(!this.isPaymentsNavigation)
+            this.loadingService.triggerLoadingEvent(true);
         this.customerService.customer(id,Session.getCurrentCompany())
             .subscribe(customers => {
                 this.loadingService.triggerLoadingEvent(false);
@@ -1042,14 +1044,14 @@ export class InvoiceComponent{
                             this.maillIds.push(contact.email);
                         }
                     }else if(this.newInvoice){
-                      let invoiceData=this._invoiceForm.getData(this.invoiceForm);
-                      if(invoiceData&&invoiceData.send_to){
-                        let contact = _.find(this.customerContacts, {'id': invoiceData.send_to});
-                        if(contact){
-                          this.selectedContact=contact;
-                          this.maillIds.push(contact.email);
+                        let invoiceData=this._invoiceForm.getData(this.invoiceForm);
+                        if(invoiceData&&invoiceData.send_to){
+                            let contact = _.find(this.customerContacts, {'id': invoiceData.send_to});
+                            if(contact){
+                                this.selectedContact=contact;
+                                this.maillIds.push(contact.email);
+                            }
                         }
-                      }
                     }
                 }
             }, error =>{
@@ -1070,7 +1072,7 @@ export class InvoiceComponent{
     displayItemCodeCOA(itemId){
         if(itemId){
             let itemCode = _.find(this.itemCodes, {'id': itemId});
-                this.updateCOADisplay(itemId);
+            this.updateCOADisplay(itemId);
             if(this.newInvoice){
                 if(itemCode){
                     this.editItemForm.controls['description'].patchValue(itemCode.desc);
@@ -1127,7 +1129,7 @@ export class InvoiceComponent{
         this.selectedDimensions = [];
     }
 
-  hideHistoryFlyout(){
+    hideHistoryFlyout(){
         this.showInvoiceHistory=false;
         this.showInvoice=true;
         this.titleService.setPageTitle("Edit Invoice");
@@ -1135,15 +1137,15 @@ export class InvoiceComponent{
         this.count=0;
         let invoiceData = this._invoiceForm.getData(this.invoiceForm);
         this.setCustomerComboBoxValue(invoiceData.customer_id);
-  }
+    }
 
-  saveItem(){
-    let dimensions = this.editItemForm.controls['dimensions'];
-    dimensions.patchValue(this.selectedDimensions);
-    let itemData = this._invoiceLineForm.getData(this.editItemForm);
-    this.updateLineInView(itemData);
-    this.hideFlyout();
-  }
+    saveItem(){
+        let dimensions = this.editItemForm.controls['dimensions'];
+        dimensions.patchValue(this.selectedDimensions);
+        let itemData = this._invoiceLineForm.getData(this.editItemForm);
+        this.updateLineInView(itemData);
+        this.hideFlyout();
+    }
 
     updateLineInView(item){
         let itemsControl:any;
@@ -1239,7 +1241,7 @@ export class InvoiceComponent{
             this.totalAmount=this.roundOffValue(this.totalAmount+this.lateFeeAmount);
         }
         if(this.discountAmount>0){
-          this.totalAmount=this.roundOffValue(this.totalAmount-this.discountAmount);
+            this.totalAmount=this.roundOffValue(this.totalAmount-this.discountAmount);
         }
         return this.totalAmount;
     }
@@ -1338,7 +1340,7 @@ export class InvoiceComponent{
 
     exportToPDF(){
         let  pdfReq=this.getPdfData();
-      this.loadingService.triggerLoadingEvent(true);
+        this.loadingService.triggerLoadingEvent(true);
         this.reportService.exportReportIntoFile(PAYMENTSPATHS.PDF_SERVICE, pdfReq)
             .subscribe(data =>{
                 var blob=new Blob([data._body], {type:"application/pdf"});
@@ -1346,34 +1348,34 @@ export class InvoiceComponent{
                 link[0].href= URL.createObjectURL(blob);
                 link[0].download= "Invoice.pdf";
                 link[0].click();
-              this.loadingService.triggerLoadingEvent(false);
+                this.loadingService.triggerLoadingEvent(false);
             }, error =>{
                 this.toastService.pop(TOAST_TYPE.error, "Failed To Export Report Into PDF");
-              this.loadingService.triggerLoadingEvent(false);
+                this.loadingService.triggerLoadingEvent(false);
             });
     }
 
 
     getPdfData(){
-      let imgString = jQuery('#company-img').clone().html();
-      let styleString = "";
-      let styleHtml = jQuery('style').clone();
-      if(styleHtml && styleHtml.length >= 2){
-        for(let i=1; i<styleHtml.length; i++){
-          styleString += styleHtml[i].outerHTML;
+        let imgString = jQuery('#company-img').clone().html();
+        let styleString = "";
+        let styleHtml = jQuery('style').clone();
+        if(styleHtml && styleHtml.length >= 2){
+            for(let i=1; i<styleHtml.length; i++){
+                styleString += styleHtml[i].outerHTML;
+            }
         }
-      }
-      let html = jQuery('<div>').append(styleString).append(jQuery('#prev-'+this.templateType).clone()).html();
-      if(imgString)
-        html = html.replace(imgString,imgString.replace('>','/>'));
-      let pdfReq={
-        "version" : "1.1",
-        "genericReport": {
-          "payload": html
-        },
-      };
+        let html = jQuery('<div>').append(styleString).append(jQuery('#prev-'+this.templateType).clone()).html();
+        if(imgString)
+            html = html.replace(imgString,imgString.replace('>','/>'));
+        let pdfReq={
+            "version" : "1.1",
+            "genericReport": {
+                "payload": html
+            },
+        };
 
-      return pdfReq;
+        return pdfReq;
     }
 
     ngOnDestroy(){
@@ -1382,8 +1384,8 @@ export class InvoiceComponent{
         if(this.routeSubscribe){
             this.routeSubscribe.unsubscribe();
         }
-      if(jQuery('#recurring-invoice'))
-        jQuery('#recurring-invoice').remove();
+        if(jQuery('#recurring-invoice'))
+            jQuery('#recurring-invoice').remove();
         this.numeralService.switchLocale(Session.getCurrentCompanyCurrency());
     }
 
@@ -1394,9 +1396,9 @@ export class InvoiceComponent{
         let itemControl = itemsList.controls[index];
         itemControl.controls['destroy'].patchValue(true);
         let base=this;
-         setTimeout(function(){
-         base.calculateTotals();
-         });
+        setTimeout(function(){
+            base.calculateTotals();
+        });
     }
 
     calculateTotals(){
@@ -1688,34 +1690,34 @@ export class InvoiceComponent{
     }
 
     validateDiscountAmount(){
-      if(this.discountAmount>0){
-        return true;
-      }
-      return false;
+        if(this.discountAmount>0){
+            return true;
+        }
+        return false;
     }
 
     setInvoiceValidators(){
-      let validator = [Validators.required];
-      let tempForm = _.cloneDeep(this._invoiceForm.getForm());
-      tempForm.billing_from=['', validator];
-      tempForm.billing_to=['', validator];
-      tempForm['invoiceLines'] = this.invoiceLineArray;
-      this.invoiceForm = this._fb.group(tempForm);
+        let validator = [Validators.required];
+        let tempForm = _.cloneDeep(this._invoiceForm.getForm());
+        tempForm.billing_from=['', validator];
+        tempForm.billing_to=['', validator];
+        tempForm['invoiceLines'] = this.invoiceLineArray;
+        this.invoiceForm = this._fb.group(tempForm);
     }
 
-  setBillingFromDate(date){
-    let paymentDateControl:any = this.invoiceForm.controls['billing_from'];
-    paymentDateControl.patchValue(date);
-  }
+    setBillingFromDate(date){
+        let paymentDateControl:any = this.invoiceForm.controls['billing_from'];
+        paymentDateControl.patchValue(date);
+    }
 
-  setBillingToDate(date){
-    let planEndDateControl:any = this.invoiceForm.controls['billing_to'];
-    planEndDateControl.patchValue(date);
-  }
+    setBillingToDate(date){
+        let planEndDateControl:any = this.invoiceForm.controls['billing_to'];
+        planEndDateControl.patchValue(date);
+    }
 
-  setEndDate(date:string) {
-    this.recurringEnddate=date;
-  }
+    setEndDate(date:string) {
+        this.recurringEnddate=date;
+    }
 
     roundOffValue(num){
         return Math.round(num * 100) / 100
@@ -1723,87 +1725,137 @@ export class InvoiceComponent{
 
 
 
-  getDiscountAmountValue(){
-    let dueDate=this.dateFormater.formatDate(this.invoice.due_date,this.dateFormat,this.serviceDateformat);
-    let data={
-      due_date:dueDate,
-      amount:this.invoice.amount
-    };
-    this.discountsService.getDiscountAmount(data,this.invoice.discount_id,Session.getCurrentCompany()).subscribe(discount => {
-      this.discountAmount=this.roundOffValue(discount.discount_amount);
-    }, error => this.handleError(error));
-  }
+    getDiscountAmountValue(){
+        let dueDate=this.dateFormater.formatDate(this.invoice.due_date,this.dateFormat,this.serviceDateformat);
+        let data={
+            due_date:dueDate,
+            amount:this.invoice.amount
+        };
+        this.discountsService.getDiscountAmount(data,this.invoice.discount_id,Session.getCurrentCompany()).subscribe(discount => {
+            this.discountAmount=this.roundOffValue(discount.discount_amount);
+        }, error => this.handleError(error));
+    }
 
-  showPaymentDetails(){
-    this.showInvoicePaymentDetails=true;
-    this.showInvoice=false;
-    this.titleService.setPageTitle("Invoice Payments");
-    this.loadingService.triggerLoadingEvent(true);
-    this.invoiceService.getInvoicePayments(this.invoiceID).subscribe(payments=>{
-    this.payments=payments;
-    this.buildInvoicePaymentsData();
-    },error=>{
-      this.toastService.pop(TOAST_TYPE.error, "Failed To Get Payment Details");
-    })
-  }
+    showPaymentDetails(){
+        this.showInvoicePaymentDetails=true;
+        this.showInvoice=false;
+        this.titleService.setPageTitle("Invoice Payments");
+        this.loadingService.triggerLoadingEvent(true);
+        this.invoiceService.getInvoicePayments(this.invoiceID).subscribe(payments=>{
+            this.payments=payments;
+            this.buildInvoicePaymentsData();
+        },error=>{
+            this.toastService.pop(TOAST_TYPE.error, "Failed To Get Payment Details");
+        })
+    }
 
-  buildInvoicePaymentsData(){
-    this.hasPaidInvoices = false;
-    this.paidInvoiceTableData.defSearch = true;
-    this.paidInvoiceTableData.rows = [];
-    this.paidInvoiceTableData.columns = [
-      {"name": "id", "title": "id", "visible": false},
-      {"name": "type", "title": "Payment type/#"},
-      {"name": "receivedFrom", "title": "Received From"},
-      {"name": "dateReceived", "title": "Date Received"},
-      {"name": "amount", "title": "Amount/Status"},
-      {"name": "actions", "title": "", "type": "html", "sortable": false, "filterable": false}
-    ];
+    buildInvoicePaymentsData(){
+        this.hasPaidInvoices = false;
+        this.paidInvoiceTableData.defSearch = true;
+        this.paidInvoiceTableData.rows = [];
+        this.paidInvoiceTableData.columns = [
+            {"name": "id", "title": "id", "visible": false},
+            {"name": "type", "title": "Payment type/#"},
+            {"name": "receivedFrom", "title": "Received From"},
+            {"name": "dateReceived", "title": "Date Received"},
+            {"name": "amount", "title": "Amount/Status"},
+            {"name": "actions", "title": "", "type": "html", "sortable": false, "filterable": false}
+        ];
 
-    let base = this;
-    this.payments.forEach(function(payment) {
-      let row:any = {};
-      row['id'] = payment['id'];
-      let paymentType=payment.type=='cheque'?'Check':payment.type;
-      row['type'] = "<div>"+paymentType+"</div><div><small>"+payment.referenceNo+"</small></div>";
-      row['receivedFrom'] = payment['customerName'];
-      row['dateReceived'] = (payment['paymentDate']) ? base.dateFormater.formatDate(payment['paymentDate'],base.serviceDateformat,base.dateFormat) : payment['paymentDate'];
-      let assignStatus = "";
-      let assignedAmount = 0;
-      let assignmentHtml = "";
+        let base = this;
+        this.payments.forEach(function(payment) {
+            let row:any = {};
+            row['id'] = payment['id'];
+            let paymentType=payment.type=='cheque'?'Check':payment.type;
+            row['type'] = "<div>"+paymentType+"</div><div><small>"+payment.referenceNo+"</small></div>";
+            row['receivedFrom'] = payment['customerName'];
+            row['dateReceived'] = (payment['paymentDate']) ? base.dateFormater.formatDate(payment['paymentDate'],base.serviceDateformat,base.dateFormat) : payment['paymentDate'];
+            let assignStatus = "";
+            let assignedAmount = 0;
+            let assignmentHtml = "";
 
-      if(assignedAmount >= payment.paymentAmount) {
-        assignStatus = "Assigned";
-        assignmentHtml = "<small style='color:#00B1A9'>"+"Applied"+"</small>"
+            if(assignedAmount >= payment.paymentAmount) {
+                assignStatus = "Assigned";
+                assignmentHtml = "<small style='color:#00B1A9'>"+"Applied"+"</small>"
 
-      } else if(assignedAmount > 0) {
-        assignStatus = "Partially Assigned";
-        assignmentHtml = "<small style='color:#ff3219'>"+"Partially Applied"+"</small>"
-      } else {
-        assignStatus = "Unassigned";
-        assignmentHtml = "<small style='color:#ff3219'>"+"Not Applied"+"</small>"
-      }
-      base.numeralService.switchLocale(payment.currencyCode.toLowerCase());
-      row['amount'] = "<div>"+base.numeralService.format("$0,0.00", payment.paymentAmount)+"</div><div>"+assignmentHtml+"</div>";
-      row['actions'] = "<a class='action' data-action='edit' style='margin:0px 0px 0px 5px;'><i class='icon ion-edit'></i></a>";
-      base.paidInvoiceTableData.rows.push(row);
-    });
+            } else if(assignedAmount > 0) {
+                assignStatus = "Partially Assigned";
+                assignmentHtml = "<small style='color:#ff3219'>"+"Partially Applied"+"</small>"
+            } else {
+                assignStatus = "Unassigned";
+                assignmentHtml = "<small style='color:#ff3219'>"+"Not Applied"+"</small>"
+            }
+            base.numeralService.switchLocale(payment.currencyCode.toLowerCase());
+            row['amount'] = "<div>"+base.numeralService.format("$0,0.00", payment.paymentAmount)+"</div><div>"+assignmentHtml+"</div>";
+            row['actions'] = "<a class='action' data-action='edit' style='margin:0px 0px 0px 5px;'><i class='icon ion-edit'></i></a>";
+            base.paidInvoiceTableData.rows.push(row);
+        });
 
-    setTimeout(function(){
-      base.hasPaidInvoices = true;
-    }, 0);
-    this.loadingService.triggerLoadingEvent(false);
-  }
+        setTimeout(function(){
+            base.hasPaidInvoices = true;
+        }, 0);
+        this.loadingService.triggerLoadingEvent(false);
+    }
 
-  handleAction($event){
-    let data={
-      invoiceData:this.invoice,
-      historyData:this.historyList,
-      paymentsData:this.payments
-    };
-    this.stateService.addState(new State('InvoicePayments', this._router.url, data, null));
-    let link = ['payments/edit', $event.id];
-    this._router.navigate(link);
-  }
+    handleAction($event){
+        let data={
+            invoiceData:this.invoice,
+            historyData:this.historyList,
+            paymentsData:this.payments
+        };
+        this.stateService.addState(new State('InvoicePayments', this._router.url, data, null));
+        let link = ['payments/edit', $event.id];
+        this._router.navigate(link);
+    }
+
+    getInvoiceDisplayMessage(invoiceData) {
+        let invoiceMessage;
+        let invoiceState = invoiceData.isPastDue ? 'past_due' : invoiceData.state;
+        switch (invoiceState) {
+            case 'paid':
+                invoiceMessage = 'PAID : Paid on ' + this.convertDateToLocaleFormat(invoiceData.payment_date);
+                break;
+            case 'sent':
+                invoiceMessage = 'SENT : Sent by ' + invoiceData.company.name;
+                break;
+            case 'partially_paid':
+                invoiceMessage = 'PARTIALLY PAID';
+                break;
+            case 'draft':
+                invoiceMessage = 'DRAFT';
+                break;
+            case 'past_due':
+                invoiceMessage = 'PAST DUE : Over Due from ' + this.convertDateToLocaleFormat(invoiceData.due_date);
+                break;
+        }
+        return invoiceMessage;
+    }
+
+    convertDateToLocaleFormat(inputDate){
+        return (inputDate) ? this.dateFormater.formatDate(inputDate, this.serviceDateformat, this.dateFormat) : inputDate;
+    }
+
+    getMessageHeaderColor(invoiceData) {
+        let state = invoiceData.isPastDue ? 'past_due' : invoiceData.state;
+
+        switch (state) {
+            case "draft":
+                this.bgColor = "#C9E9E9";
+                break;
+            case "past_due":
+                this.bgColor = "#FBDBD9";
+                break;
+            case "sent":
+                this.bgColor = "#C9E9E9";
+                break;
+            case "paid":
+                this.bgColor = "#D1D5E4";
+                break;
+            default:
+                this.bgColor = "#C9E9E9";
+                break;
+        }
+    }
+
 
 }
