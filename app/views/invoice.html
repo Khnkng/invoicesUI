@@ -511,14 +511,14 @@
                                                                         <button data-toggle="export-dropdown" style="padding: 0.60em 1.5em;line-height: 50px;">
                                                                             <span class="actionsbutton button hollow dropbtn span-dropdow" style="color: #7985CB !important;font-weight:bold;font-size: 15px !important;border: 2px solid #cacaca;">More Actions <i class="actionsbutton icon ion-chevron-down" style="top: 3px;font-size: 1.1em !important;"></i></span>
                                                                         </button>
-                                                                        <div id="export-dropdown" class="dropdown-pane bottom export-dropdown dropdown-list" style="text-align:left;right: 137px !important;width: 173px !important;" data-dropdown data-hover="true" data-hover-pane="true" foundation>
+                                                                        <div id="export-dropdown" class="dropdown-pane bottom export-dropdown dropdown-list" style="text-align:left;right: 137px !important;width: 173px !important;top: 92.8px !important;" data-dropdown data-hover="true" data-hover-pane="true" foundation>
                                                                             <div class="export-option pointer" *ngIf="newInvoice||(invoice&&invoice.state=='draft')" (click)="submit($event,false,'draft')">Save as Draft</div>
                                                                             <div class="export-option pointer" *ngIf="!newInvoice&&(invoice&&(invoice.state!='draft'))" (click)="submit($event,false,'save')">Save</div>
                                                                             <div class="export-option pointer" *ngIf="newInvoice||(invoice&&(invoice.state!='paid'))" (click)="submit($event,false,'recurring')">Recurring</div>
                                                                             <div class="export-option pointer" *ngIf="displayCommission" (click)="applyCommission()">Sales Commission</div>
                                                                             <div class="export-option pointer" *ngIf="!newInvoice" (click)="showHistory()">View History</div>
                                                                             <!--<div class="export-option pointer">Print</div>-->
-                                                                            <div class="export-option pointer" (click)="submit($event,false,'download')">Download PDF</div>
+                                                                            <!--<div class="export-option pointer" (click)="submit($event,false,'download')">Download PDF</div>-->
                                                                         </div>
                                                                     </div>
                                                                 </div>
