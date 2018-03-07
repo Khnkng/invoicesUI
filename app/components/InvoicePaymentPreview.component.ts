@@ -157,10 +157,10 @@ export class InvoicePaymentPreview{
                 this.bgColor="#F06459";
                 break;
             case "sent":
-                this.bgColor="#00b1a9";
+                this.bgColor="#384986";
                 break;
             case "paid":
-                this.bgColor="#384986";
+                this.bgColor="#00b1a9";
                 break;
             default:
                 this.bgColor="#00b1a9";

@@ -225,6 +225,7 @@ export class InvoiceComponent{
             this.stateService.pop();
             this._router.navigate([previousState.url]);
         } else {
+            this.stateService.pop();
             this._router.navigate([previousState.url]);
         }
     }
@@ -1846,10 +1847,10 @@ export class InvoiceComponent{
                 this.bgColor = "#FBDBD9";
                 break;
             case "sent":
-                this.bgColor = "#C9E9E9";
+                this.bgColor = "#D1D5E4";
                 break;
             case "paid":
-                this.bgColor = "#D1D5E4";
+                this.bgColor = "#C9E9E9";
                 break;
             default:
                 this.bgColor = "#C9E9E9";
