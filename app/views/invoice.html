@@ -75,58 +75,58 @@
                                                             </label>
                                                         </div>
                                                     </div>
-                                                  <div class="row">
-                                                    <div class="small-12 medium-5 columns" style="padding:0px">
-                                                      <div class="row" *ngIf="!hasPaid&&(templateType=='Other2'||templateType=='Other1')">
-                                                        <label>
-                                                          PO No
-                                                          <input type="text" formControlName="po_number">
-                                                        </label>
-                                                      </div>
-                                                      <div class="row" *ngIf="hasPaid&&(templateType=='Other2'||templateType=='Other1')">
-                                                        <label>
-                                                          Po No
-                                                          <input type="text" formControlName="po_number" readonly>
-                                                        </label>
-                                                      </div>
+                                                    <div class="row">
+                                                        <div class="small-12 medium-5 columns" style="padding:0px">
+                                                            <div class="row" *ngIf="!hasPaid&&(templateType=='Other2'||templateType=='Other1')">
+                                                                <label>
+                                                                    PO No
+                                                                    <input type="text" formControlName="po_number">
+                                                                </label>
+                                                            </div>
+                                                            <div class="row" *ngIf="hasPaid&&(templateType=='Other2'||templateType=='Other1')">
+                                                                <label>
+                                                                    Po No
+                                                                    <input type="text" formControlName="po_number" readonly>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="small-12 medium-5 columns" style="padding:0px">
+                                                            <div class="row" *ngIf="!hasPaid&&templateType=='Other1'">
+                                                                <label>
+                                                                    Billing Cycle
+                                                                    <select formControlName="billing_cycle" placeholder="Billing Cycle">
+                                                                        <option [value]="'Weekly'">Weekly</option>
+                                                                        <option [value]="'Monthly'">Monthly</option>
+                                                                        <option [value]="'Quarterly'">Quarterly</option>
+                                                                        <option [value]="'yearly'">Yearly</option>
+                                                                    </select>
+                                                                </label>
+                                                            </div>
+                                                            <div class="row" *ngIf="hasPaid&&templateType=='Other1'">
+                                                                <label>
+                                                                    Billing Cycle
+                                                                    <select class="jeSelect" formControlName="billing_cycle" placeholder="Billing Cycle" disabled>
+                                                                        <option [value]="'Weekly'">Weekly</option>
+                                                                        <option [value]="'Monthly'">Monthly</option>
+                                                                        <option [value]="'Quarterly'">Quarterly</option>
+                                                                        <option [value]="'yearly'">Yearly</option>
+                                                                    </select>
+                                                                </label>
+                                                            </div>
+                                                            <div class="row" *ngIf="!hasPaid&&templateType=='Other2'">
+                                                                <label>
+                                                                    Project Name
+                                                                    <input type="text" formControlName="project_name">
+                                                                </label>
+                                                            </div>
+                                                            <div class="row" *ngIf="hasPaid&&templateType=='Other2'">
+                                                                <label>
+                                                                    Project Name
+                                                                    <input type="text" formControlName="project_name" readonly>
+                                                                </label>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <div class="small-12 medium-5 columns" style="padding:0px">
-                                                      <div class="row" *ngIf="!hasPaid&&templateType=='Other1'">
-                                                        <label>
-                                                          Billing Cycle
-                                                          <select formControlName="billing_cycle" placeholder="Billing Cycle">
-                                                            <option [value]="'Weekly'">Weekly</option>
-                                                            <option [value]="'Monthly'">Monthly</option>
-                                                            <option [value]="'Quarterly'">Quarterly</option>
-                                                            <option [value]="'yearly'">Yearly</option>
-                                                          </select>
-                                                        </label>
-                                                      </div>
-                                                      <div class="row" *ngIf="hasPaid&&templateType=='Other1'">
-                                                        <label>
-                                                          Billing Cycle
-                                                          <select class="jeSelect" formControlName="billing_cycle" placeholder="Billing Cycle" disabled>
-                                                            <option [value]="'Weekly'">Weekly</option>
-                                                            <option [value]="'Monthly'">Monthly</option>
-                                                            <option [value]="'Quarterly'">Quarterly</option>
-                                                            <option [value]="'yearly'">Yearly</option>
-                                                          </select>
-                                                        </label>
-                                                      </div>
-                                                      <div class="row" *ngIf="!hasPaid&&templateType=='Other2'">
-                                                        <label>
-                                                          Project Name
-                                                          <input type="text" formControlName="project_name">
-                                                        </label>
-                                                      </div>
-                                                      <div class="row" *ngIf="hasPaid&&templateType=='Other2'">
-                                                        <label>
-                                                          Project Name
-                                                          <input type="text" formControlName="project_name" readonly>
-                                                        </label>
-                                                      </div>
-                                                    </div>
-                                                  </div>
                                                 </div>
                                                 <div class="small-12 medium-5 columns">
                                                     <div class="row">
@@ -181,34 +181,34 @@
                                                                     </label>
                                                                 </div>
                                                             </div>
-                                                          <div class="row">
-                                                            <div class="small-12 medium-12 columns" style="padding: 0px">
-                                                              <label>
-                                                                Job Date
-                                                                <input type="text" formControlName="job_date" invoice-custom-datepicker [format]="dateFormat" [mindate]="'past'" (valueChanged)="setJobDate($event)" placeholder="Job Date" />
-                                                              </label>
+                                                            <div class="row">
+                                                                <div class="small-12 medium-12 columns" style="padding: 0px">
+                                                                    <label>
+                                                                        Job Date
+                                                                        <input type="text" formControlName="job_date" invoice-custom-datepicker [format]="dateFormat" [mindate]="'past'" (valueChanged)="setJobDate($event)" placeholder="Job Date" />
+                                                                    </label>
+                                                                </div>
                                                             </div>
-                                                          </div>
-                                                          <!--<div class="row" *ngIf="hasPaid">
-                                                            <div class="small-12 medium-12 columns" style="padding: 0px">
-                                                              <label>
-                                                                Job Date
-                                                                <input type="text" formControlName="job_date" type="text" formControlName="invoice_date" readonly />
-                                                              </label>
+                                                            <!--<div class="row" *ngIf="hasPaid">
+                                                              <div class="small-12 medium-12 columns" style="padding: 0px">
+                                                                <label>
+                                                                  Job Date
+                                                                  <input type="text" formControlName="job_date" type="text" formControlName="invoice_date" readonly />
+                                                                </label>
+                                                              </div>
+                                                            </div>-->
+                                                            <div class="row" *ngIf="!hasPaid&&(templateType=='Other2'||templateType=='Other1')">
+                                                                <label>
+                                                                    Billing From*
+                                                                    <input type="text" formControlName="billing_from" invoice-custom-datepicker datepicker1 [format]="dateFormat" [mindate]="'past'" (valueChanged)="setBillingFromDate($event)" placeholder="Billing From*">
+                                                                </label>
                                                             </div>
-                                                          </div>-->
-                                                          <div class="row" *ngIf="!hasPaid&&(templateType=='Other2'||templateType=='Other1')">
-                                                            <label>
-                                                              Billing From*
-                                                              <input type="text" formControlName="billing_from" invoice-custom-datepicker datepicker1 [format]="dateFormat" [mindate]="'past'" (valueChanged)="setBillingFromDate($event)" placeholder="Billing From*">
-                                                            </label>
-                                                          </div>
-                                                          <div class="row" *ngIf="hasPaid&&(templateType=='Other2'||templateType=='Other1')">
-                                                            <label>
-                                                              Billing From*
-                                                              <input type="text" formControlName="billing_from" readonly>
-                                                            </label>
-                                                          </div>
+                                                            <div class="row" *ngIf="hasPaid&&(templateType=='Other2'||templateType=='Other1')">
+                                                                <label>
+                                                                    Billing From*
+                                                                    <input type="text" formControlName="billing_from" readonly>
+                                                                </label>
+                                                            </div>
                                                         </div>
                                                         <div class="small-12 medium-6 columns">
                                                             <div class="row" *ngIf="!hasPaid">
@@ -273,36 +273,36 @@
                                                                     </label>
                                                                 </div>
                                                             </div>
-                                                          <div class="row" *ngIf="!hasPaid">
-                                                            <label>
-                                                              Discount
-                                                              <select formControlName="discount_id" (change)="onDiscountSelect($event.target.value)">
-                                                                <option value="">No Discount</option>
-                                                                <option *ngFor="let discount of discounts" value="{{discount.id}}">{{discount.name}}</option>
-                                                              </select>
-                                                            </label>
-                                                          </div>
-                                                          <div class="row" *ngIf="hasPaid">
-                                                            <label>
-                                                              Discount
-                                                              <select class="jeSelect" formControlName="discount_id" (change)="onDiscountSelect($event.target.value)" disabled>
-                                                                <option value="">No Discount</option>
-                                                                <option *ngFor="let discount of discounts" value="{{discount.id}}">{{discount.name}}</option>
-                                                              </select>
-                                                            </label>
-                                                          </div>
-                                                          <div class="row" *ngIf="!hasPaid&&(templateType=='Other2'||templateType=='Other1')">
-                                                            <label>
-                                                              Billing To*
-                                                              <input type="text" formControlName="billing_to" invoice-custom-datepicker datepicker1 [format]="dateFormat" [mindate]="'past'" (valueChanged)="setBillingToDate($event)" placeholder="Billing To*">
-                                                            </label>
-                                                          </div>
-                                                          <div class="row" *ngIf="hasPaid&&(templateType=='Other2'||templateType=='Other1')">
-                                                            <label>
-                                                              Billing To*
-                                                              <input type="text" formControlName="billing_to" readonly>
-                                                            </label>
-                                                          </div>
+                                                            <div class="row" *ngIf="!hasPaid">
+                                                                <label>
+                                                                    Discount
+                                                                    <select formControlName="discount_id" (change)="onDiscountSelect($event.target.value)">
+                                                                        <option value="">No Discount</option>
+                                                                        <option *ngFor="let discount of discounts" value="{{discount.id}}">{{discount.name}}</option>
+                                                                    </select>
+                                                                </label>
+                                                            </div>
+                                                            <div class="row" *ngIf="hasPaid">
+                                                                <label>
+                                                                    Discount
+                                                                    <select class="jeSelect" formControlName="discount_id" (change)="onDiscountSelect($event.target.value)" disabled>
+                                                                        <option value="">No Discount</option>
+                                                                        <option *ngFor="let discount of discounts" value="{{discount.id}}">{{discount.name}}</option>
+                                                                    </select>
+                                                                </label>
+                                                            </div>
+                                                            <div class="row" *ngIf="!hasPaid&&(templateType=='Other2'||templateType=='Other1')">
+                                                                <label>
+                                                                    Billing To*
+                                                                    <input type="text" formControlName="billing_to" invoice-custom-datepicker datepicker1 [format]="dateFormat" [mindate]="'past'" (valueChanged)="setBillingToDate($event)" placeholder="Billing To*">
+                                                                </label>
+                                                            </div>
+                                                            <div class="row" *ngIf="hasPaid&&(templateType=='Other2'||templateType=='Other1')">
+                                                                <label>
+                                                                    Billing To*
+                                                                    <input type="text" formControlName="billing_to" readonly>
+                                                                </label>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -431,10 +431,10 @@
                                                         <i class="icon ion-ios-trash-outline"></i>
                                                             </span>
                                                         </td>
-                                                      <td *ngIf="hasPaid">
+                                                        <td *ngIf="hasPaid">
                                                             <span (click)="editInvoiceLine($event, iindex,'invoiceLines')">
                                                         <i class="icon ion-edit"></i></span>
-                                                      </td>
+                                                        </td>
                                                     </tr>
                                                     </tbody>
                                                 </table>
@@ -468,10 +468,10 @@
                                                             </td>
                                                             <td style="text-align:right;">{{formatAmount(lateFeeAmount)}}</td></tr>
                                                         <tr *ngIf="!newInvoice&&validateDiscountAmount()">
-                                                          <td style="background: #E5E5E5;">
-                                                            Discount
-                                                          </td>
-                                                          <td style="text-align:right;">{{formatAmount(discountAmount)}}</td></tr>
+                                                            <td style="background: #E5E5E5;">
+                                                                Discount
+                                                            </td>
+                                                            <td style="text-align:right;">{{formatAmount(discountAmount)}}</td></tr>
                                                         <tr *ngIf="!newInvoice">
                                                             <td style="background: #E5E5E5;">
                                                                 Amount Paid
@@ -534,7 +534,7 @@
                                                             <section>
                                                                 <div style="padding-right: 20px;text-align: left;width: auto;display: table-cell;vertical-align: inherit;margin-left:0px">
                                                                     <div style="display: inline-block;">
-                                                                        <span style="display: inline-block;">{{getInvoiceDisplayMessage(invoiceProcessedData)}}</span>
+                                                                        <span style="display: inline-block;">{{getInvoiceDisplayMessage(invoice)}}</span>
                                                                     </div>
                                                                 </div>
                                                                 <div>
@@ -563,7 +563,7 @@
                                                     <button (click)="submit($event,false,'save')" class="button small" [disabled]="!invoiceForm.valid||!validateTaskLines()" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;height: 25px;">Save</button>
                                                 </div>
                                                 <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;" *ngIf="newInvoice||(invoice&&(invoice.state!='paid'))">
-                                                  <button (click)="submit($event,false,'recurring')" class="button small" [disabled]="hasPaid||!invoiceForm.valid||!validateTaskLines()" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;height: 25px;">Recurring</button>
+                                                    <button (click)="submit($event,false,'recurring')" class="button small" [disabled]="hasPaid||!invoiceForm.valid||!validateTaskLines()" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;height: 25px;">Recurring</button>
                                                 </div>
                                                 <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;" *ngIf="displayCommission">
                                                     <button (click)="applyCommission()" class="button small" [disabled]="hasPaid||!invoiceForm.valid||!validateTaskLines()" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;height: 25px;">Sales Commission</button>
@@ -703,9 +703,9 @@
                 </span>
             </button>-->
             <div class="row collapse dimension-flyout">
-                    <div class="small-12 medium-12 small-centered column">
-                        <h5>Invoice Details</h5>
-                    </div>
+                <div class="small-12 medium-12 small-centered column">
+                    <h5>Invoice Details</h5>
+                </div>
             </div>
             <form *ngIf="itemActive" novalidate [formGroup]="editItemForm">
                 <div class="row collapse dimension-flyout">
@@ -718,12 +718,12 @@
                                         <option *ngFor="let item of itemCodes" [value]="item.id">{{item.name}}</option>
                                     </select>
                                 </label>
-                              <label *ngIf="hasPaid">
-                                Item Code
-                                <select class="jeSelect" formControlName="item_id" (change)="displayItemCodeCOA($event.target.value)" disabled>
-                                  <option *ngFor="let item of itemCodes" [value]="item.id">{{item.name}}</option>
-                                </select>
-                              </label>
+                                <label *ngIf="hasPaid">
+                                    Item Code
+                                    <select class="jeSelect" formControlName="item_id" (change)="displayItemCodeCOA($event.target.value)" disabled>
+                                        <option *ngFor="let item of itemCodes" [value]="item.id">{{item.name}}</option>
+                                    </select>
+                                </label>
                             </div>
                             <div class="column small-12 medium-6">
                                 <label>
@@ -737,10 +737,10 @@
                                     Quantity
                                     <input [locale]="localeFormat" [isNumber]="true" [format]="'0,0.0000'" numeral type="text" formControlName="quantity" placeholder="Quantity">
                                 </label>
-                              <label *ngIf="hasPaid">
-                                Quantity
-                                <input [locale]="localeFormat" [isNumber]="true" [format]="'0,0.0000'" numeral type="text" formControlName="quantity" placeholder="Quantity" readonly>
-                              </label>
+                                <label *ngIf="hasPaid">
+                                    Quantity
+                                    <input [locale]="localeFormat" [isNumber]="true" [format]="'0,0.0000'" numeral type="text" formControlName="quantity" placeholder="Quantity" readonly>
+                                </label>
                             </div>
 
                             <div class="column  small-12 medium-6">
@@ -748,10 +748,10 @@
                                     Price
                                     <input type="text" formControlName="price" numeral [format]="'$0,0.00'" [locale]="localeFormat" placeholder="Price">
                                 </label>
-                              <label *ngIf="hasPaid">
-                                Price
-                                <input type="text" formControlName="price" numeral [format]="'$0,0.00'" [locale]="localeFormat" placeholder="Price" readonly>
-                              </label>
+                                <label *ngIf="hasPaid">
+                                    Price
+                                    <input type="text" formControlName="price" numeral [format]="'$0,0.00'" [locale]="localeFormat" placeholder="Price" readonly>
+                                </label>
                             </div>
                             <div class="column small-12 medium-6">
                                 <label *ngIf="!hasPaid">
@@ -760,12 +760,12 @@
                                         <option *ngFor="let taxItem of taxesList" [value]="taxItem.id">{{taxItem.name}} - {{taxItem.taxRate}}</option>
                                     </select>
                                 </label>
-                              <label *ngIf="hasPaid">
-                                Tax
-                                <select class="jeSelect" formControlName="tax_id" (change)="calculateTotals()" disabled>
-                                  <option *ngFor="let taxItem of taxesList" [value]="taxItem.id">{{taxItem.name}} - {{taxItem.taxRate}}</option>
-                                </select>
-                              </label>
+                                <label *ngIf="hasPaid">
+                                    Tax
+                                    <select class="jeSelect" formControlName="tax_id" (change)="calculateTotals()" disabled>
+                                        <option *ngFor="let taxItem of taxesList" [value]="taxItem.id">{{taxItem.name}} - {{taxItem.taxRate}}</option>
+                                    </select>
+                                </label>
                             </div>
                             <div class="column small-12 medium-6">
                                 <label>
@@ -788,7 +788,7 @@
                                     <div class="dimension-header">
                                         <div>
                                             <span class="float-left">{{dimension.name}}</span>
-                                        <span class="float-right">
+                                            <span class="float-right">
                                                     <i class="icon ion-checkmark-circled" [ngClass]="{'selected': isDimensionSelected(dimension.name)}"
                                                        (click)="selectDimension($event, dimension.name)"></i>
                                                 </span>
@@ -836,7 +836,7 @@
         <div class="small-12 medium-9 columns">
             <label style="text-align: left; font-size: 13pt;color: #878787">Set email alerts when invoice is due ?
                 <select [(ngModel)]="remainder_name">
-                  <option value="">--None--</option>
+                    <option value="">--None--</option>
                     <option value="weekly start two weeks before due">Weekly, start two weeks before due</option>
                     <option value="on due date,then weekly afterward">On date due, then weekly afterward</option>
                     <option value="weekly until paid">Weekly until paid</option>
@@ -884,7 +884,7 @@
     </div>
 </div>
 <div class="small-12 medium-12 small-centered column" *ngIf="showInvoicePaymentDetails">
-  <foo-table class="bigpay-dashboard bighalf-footable invoice-table" *ngIf="hasPaidInvoices" [data]="paidInvoiceTableData" [options]="paidInvoiceTableOptions" (onSearch)="setSearchString($event)" (onRowAction)="handleAction($event)"></foo-table>
+    <foo-table class="bigpay-dashboard bighalf-footable invoice-table" *ngIf="hasPaidInvoices" [data]="paidInvoiceTableData" [options]="paidInvoiceTableOptions" (onSearch)="setSearchString($event)" (onRowAction)="handleAction($event)"></foo-table>
 </div>
 <!--
 <div class="report-wrapper journal-flyout">
@@ -980,7 +980,7 @@
           <span (click)="editCommission(commission,i)">
                                 <i class="icon ion-edit"></i>
                             </span>
-                                    <span (click)="deleteCommission(commission,i)">
+                    <span (click)="deleteCommission(commission,i)">
                                 <i class="icon ion-ios-trash-outline"></i>
                             </span>
                 </td>
@@ -995,25 +995,25 @@
 
 
 <div class="reveal small bill-modal-container" style="width: 40%;padding: 0;border: 1px;margin-top: 6rem;" id="recurring-invoice" data-reveal foundation  data-close-on-click="false">
-  <div class="row" style="padding: 1rem 1rem 0 1rem;margin-top: 1rem;">
-    <div class="small-12 medium-6 columns">
-      <label style="text-align: left; font-size: 13pt;color: #878787">Recurring Frequency
-        <select [(ngModel)]="recurringFrequency">
-          <option value="">--None--</option>
-          <option value="weekly">Weekly</option>
-          <option value="monthly">Monthly</option>
-          <option value="quarterly">Quarterly</option>
-        </select>
-      </label>
+    <div class="row" style="padding: 1rem 1rem 0 1rem;margin-top: 1rem;">
+        <div class="small-12 medium-6 columns">
+            <label style="text-align: left; font-size: 13pt;color: #878787">Recurring Frequency
+                <select [(ngModel)]="recurringFrequency">
+                    <option value="">--None--</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="quarterly">Quarterly</option>
+                </select>
+            </label>
+        </div>
+        <div class="small-12 medium-6 columns">
+            <label style="text-align: left; font-size: 13pt;color: #878787">End Date
+                <input type="text" invoice-custom-datepicker [(ngModel)]="recurringEnddate" [format]="dateFormat" [mindate]="'past'" (valueChanged)="setEndDate($event)" placeholder="Event Date"/>
+            </label>
+        </div>
     </div>
-    <div class="small-12 medium-6 columns">
-      <label style="text-align: left; font-size: 13pt;color: #878787">End Date
-        <input type="text" invoice-custom-datepicker [(ngModel)]="recurringEnddate" [format]="dateFormat" [mindate]="'past'" (valueChanged)="setEndDate($event)" placeholder="Event Date"/>
-      </label>
+    <div class="text-right" style="padding-right:1rem">
+        <button class="button small" style="background: #00B1A9;" (click)="saveRecurring()">Save</button>
+        <button class="button small" style="background-color: white !important;color: #878787;" (click)="closeRecurring()">Cancel</button>
     </div>
-  </div>
-  <div class="text-right" style="padding-right:1rem">
-    <button class="button small" style="background: #00B1A9;" (click)="saveRecurring()">Save</button>
-    <button class="button small" style="background-color: white !important;color: #878787;" (click)="closeRecurring()">Cancel</button>
-  </div>
 </div>
