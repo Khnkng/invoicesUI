@@ -497,12 +497,65 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="small-12 medium-7 large-7 columns" *ngIf="showPreview" style="margin-bottom:2rem">
+                                        <div class="small-12 medium-12 large-12 columns" *ngIf="showPreview" style="margin-bottom:2rem">
+                                            <div>
+                                                <section style="padding-bottom: 24px;">
+                                                    <section style="width:960px;margin:0 auto;padding-left:0px">
+                                                        <div style="display:table;width:100%;vertical-align: middle;">
+                                                            <div style="width: auto;display: table-cell;text-align:left;vertical-align: inherit;">
+                                                                <div style="font-size: 36px;line-height: 48px;font-weight: 300;">{{invoiceProcessedData.number}}</div>
+                                                            </div>
+                                                            <div style="width: auto;display: table-cell;vertical-align: inherit;text-align:right;">
+                                                                <div>
+                                                                    <div style="display: inline-block;z-index: 3;" class="dropdown invoice-footable-doanload">
+                                                                        <button data-toggle="export-dropdown" style="padding: 0.60em 1.5em;line-height: 50px;">
+                                                                            <span class="actionsbutton button hollow dropbtn span-dropdow" style="color: #7985CB !important;font-weight:bold;font-size: 15px !important;border: 2px solid #cacaca;">More Actions <i class="actionsbutton icon ion-chevron-down" style="top: 3px;font-size: 1.1em !important;"></i></span>
+                                                                        </button>
+                                                                        <div id="export-dropdown" class="dropdown-pane bottom export-dropdown dropdown-list" style="text-align:left;right: 137px !important;width: 173px !important;top: 92.8px !important;" data-dropdown data-hover="true" data-hover-pane="true" foundation>
+                                                                            <!--<div class="export-option pointer" *ngIf="newInvoice||(invoice&&invoice.state=='draft')" (click)="submit($event,false,'draft')">Save as Draft</div>
+                                                                            <div class="export-option pointer" *ngIf="!newInvoice&&(invoice&&(invoice.state!='draft'))" (click)="submit($event,false,'save')">Save</div>-->
+                                                                            <div class="export-option pointer" *ngIf="newInvoice||(invoice&&(invoice.state!='paid'))" (click)="submit($event,false,'recurring')">Recurring</div>
+                                                                            <div class="export-option pointer" *ngIf="displayCommission" (click)="applyCommission()">Sales Commission</div>
+                                                                            <div class="export-option pointer" *ngIf="!newInvoice" (click)="showHistory()">View History</div>
+                                                                            <!--<div class="export-option pointer">Print</div>-->
+                                                                            <!--<div class="export-option pointer" (click)="submit($event,false,'download')">Download PDF</div>-->
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </section>
+                                                </section>
+                                            </div>
+                                            <div>
+                                                <div [style.background-color]="bgColor" style="position: relative;z-index: 2;padding: 10px 0;width: 100%;border-color: #cee8a5;">
+                                                    <div style="width:960px;transition-property: none;margin: 0 auto;position: relative;padding: 0 10px;padding-left: 0px;">
+                                                        <div [style.background-color]="bgColor" style="display: table;width: 100%;border-color: #cee8a5;">
+                                                            <section>
+                                                                <div style="padding-right: 20px;text-align: left;width: auto;display: table-cell;vertical-align: inherit;margin-left:0px">
+                                                                    <div style="display: inline-block;">
+                                                                        <span style="display: inline-block;">{{getInvoiceDisplayMessage(invoiceProcessedData)}}</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div>
+                                                                    <div style="position: absolute;right: 1rem;overflow: visible">
+                                                                        <i class='material-icons' (click)="submit($event,false,'preview')" style="cursor:pointer;line-height: 36px;margin-top: 1.5rem;position: absolute;font-size: 1.3rem;color: #878787;left: 17px">create</i>
+                                                                        <i class="icon ion-ios-email-outline" (click)="submit($event,true,'email')" style="cursor:pointer;line-height: 36px;margin-top: 1.6rem;position: absolute;font-size: 1.8rem;color: #878787;left: 50px"></i>
+                                                                        <!--<i class='material-icons' style="cursor:pointer;line-height: 36px;margin-top: 1.6rem;position: absolute;font-size: 1.5rem;color: #4554A4;left: 84px">comment</i>-->
+                                                                        <i class="icon ion-ios-cloud-download-outline" (click)="submit($event,false,'download')" style="cursor:pointer;line-height: 36px;margin-top: 1.6rem;position: absolute;font-size: 1.5rem;color: #878787;left: 84px"></i>
+                                                                    </div>
+                                                                </div>
+                                                            </section>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                             <invoicePaymentPreview [invoices]="invoiceProcessedData"></invoicePaymentPreview>
                                         </div>
 
-                                        <div class="small-12 medium-3 columns">
-                                            <div class="row" >
+                                        <div class="small-12 medium-3 columns" *ngIf="!showPreview">
+                                            <div class="row">
                                                 <div class="small-12 medium-12 columns" style="padding: 0;color: #4b4b9e;font-size: 14px;font-weight: 600;height: 25px;" *ngIf="newInvoice||(invoice&&invoice.state=='draft')">
                                                     <button (click)="submit($event,false,'draft')" class="button small" [disabled]="hasPaid||!invoiceForm.valid||!validateTaskLines()" style="padding: 0;height: 20px;background-color: white !important;color: #4b4b9e;font-size: 14px;height: 25px;">Save as Draft</button>
                                                 </div>
