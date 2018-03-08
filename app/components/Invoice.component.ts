@@ -787,7 +787,6 @@ export class InvoiceComponent{
             this.setBillUpdate(invoiceData);
             this.saveInvoiceDetails(invoiceData);
         }else if(action=='preview'){
-            this.getMessageHeaderColor(this.invoiceProcessedData);
             this.togelPreview(invoiceData);
         }else if(action=='download'){
             if(!this.showPreview)
@@ -816,8 +815,11 @@ export class InvoiceComponent{
     togelPreview(invoiceData){
         this.showPreview=!this.showPreview;
         if(this.showPreview){
-            this.preViewText="Close Preview"
+            this.titleService.setPageTitle("View Invoice");
+            this.getMessageHeaderColor(this.invoiceProcessedData);
+            // this.preViewText="Close Preview"
         }else {
+            this.titleService.setPageTitle("Edit Invoice");
             this.preViewText="Preview Invoice"
             this.setCustomerComboBoxValue(invoiceData.customer_id);
         }
@@ -1858,5 +1860,9 @@ export class InvoiceComponent{
         }
     }
 
+    postComment() {
+        let link = ['collaboration', 'invoice', this.invoice.id];
+        this._router.navigate(link);
+    }
 
 }

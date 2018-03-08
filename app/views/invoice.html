@@ -518,7 +518,7 @@
                                                                             <div class="export-option pointer" *ngIf="displayCommission" (click)="applyCommission()">Sales Commission</div>
                                                                             <div class="export-option pointer" *ngIf="!newInvoice" (click)="showHistory()">View History</div>
                                                                             <!--<div class="export-option pointer">Print</div>-->
-                                                                            <!--<div class="export-option pointer" (click)="submit($event,false,'download')">Download PDF</div>-->
+                                                                            <div class="export-option pointer" (click)="submit($event,false,'download')">Download PDF</div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -541,8 +541,7 @@
                                                                     <div style="position: absolute;right: 1rem;overflow: visible">
                                                                         <i class='material-icons' (click)="submit($event,false,'preview')" style="cursor:pointer;line-height: 36px;margin-top: 1.5rem;position: absolute;font-size: 1.3rem;color: #878787;left: 17px">create</i>
                                                                         <i class="icon ion-ios-email-outline" (click)="submit($event,true,'email')" style="cursor:pointer;line-height: 36px;margin-top: 1.6rem;position: absolute;font-size: 1.8rem;color: #878787;left: 50px"></i>
-                                                                        <!--<i class='material-icons' style="cursor:pointer;line-height: 36px;margin-top: 1.6rem;position: absolute;font-size: 1.5rem;color: #4554A4;left: 84px">comment</i>-->
-                                                                        <i class="icon ion-ios-cloud-download-outline" (click)="submit($event,false,'download')" style="cursor:pointer;line-height: 36px;margin-top: 1.6rem;position: absolute;font-size: 1.5rem;color: #878787;left: 84px"></i>
+                                                                        <i class='material-icons' (click)="postComment()" style="cursor:pointer;line-height: 36px;margin-top: 1.6rem;position: absolute;font-size: 1.5rem;color: #4554A4;left: 84px">comment</i>
                                                                     </div>
                                                                 </div>
                                                             </section>
