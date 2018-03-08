@@ -1168,6 +1168,11 @@ export class InvoiceDashboardComponent {
             let paymentId = $event.id;
             let link = ['payments/edit', paymentId];
             this._router.navigate(link);
+        }else if(action=='paymentInvoice'){
+            this.addInvoiceState();
+            let paymentId = $event.id;
+            let link = ['payments',paymentId,'invoices'];
+            this._router.navigate(link);
         }
     }
 
