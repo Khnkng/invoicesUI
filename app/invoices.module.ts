@@ -22,6 +22,7 @@ import {InvoiceAddPayment} from "./components/AddPaymentToInvoice.component";
 import {InvoicePaymentPreview} from "./components/InvoicePaymentPreview.component";
 import {InvoiceTableComponent} from "./components/InvoiceTable.component";
 import {UnappliedCollections} from "./components/UnappliedCollections.component";
+import {PaymentInvoices} from "./components/PaymentInvoices.component";
 
 @NgModule({
     imports: [CommonModule, FormsModule, ReactiveFormsModule, ShareModule, RouterModule.forChild([
@@ -35,11 +36,12 @@ import {UnappliedCollections} from "./components/UnappliedCollections.component"
         {path: 'payment/invoices/:invoiceID', component: InvoicePayComponent, canActivate: [DashBoardActivator]},
         {path: 'invoices/:invoiceID', component: InvoiceAddPayment,canActivate: [LoggedInActivator]},
         {path: 'invoice/:invoiceTableID', component: InvoiceTableComponent,canActivate: [LoggedInActivator]},
-        {path: 'payments/unapplied', component: UnappliedCollections,canActivate: [LoggedInActivator]}
+        {path: 'payments/unapplied', component: UnappliedCollections,canActivate: [LoggedInActivator]},
+        {path: 'payments/:paymentID/invoices', component: PaymentInvoices, canActivate: [LoggedInActivator]}
     ])],
     declarations: [InvoiceCustomDatepicker, CustomDatepicker1, InvoiceSettingsComponent, InvoiceDashboardComponent,
             InvoiceComponent, InvoiceCustomDatepicker,InvoicePayComponent,InvoiceAddPaymentComponent,
-            InvoiceAddPayment,InvoicePaymentPreview, InvoiceTableComponent, UnappliedCollections],
+            InvoiceAddPayment,InvoicePaymentPreview, InvoiceTableComponent, UnappliedCollections, PaymentInvoices],
     exports: [RouterModule, CustomDatepicker1],
     providers: [InvoiceSettingsForm, InvoicesService, InvoiceForm, InvoiceLineForm, InvoiceLineTaxesForm, InvoicePaymentForm],
     schemas: [ CUSTOM_ELEMENTS_SCHEMA ]

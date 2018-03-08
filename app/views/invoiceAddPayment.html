@@ -129,7 +129,7 @@ remember them later…" formControlName="paymentNote">
             <tr *ngFor="let paymentLine of paymentLines;let i=index">
                 <td><input type="checkbox" [(ngModel)]="paymentLine.isSelected" (change)="onPaymentChange($event,i)" style="margin-bottom:0px;margin-top: 5px;"></td>
                 <td>
-                    <div>{{paymentLine.number}}</div>
+                    <div (click)="navigateToInvoice(paymentLine)" style="cursor: pointer">{{paymentLine.number}}</div>
                 </td>
                 <td>{{paymentLine.invoiceDate}}</td>
                 <td>

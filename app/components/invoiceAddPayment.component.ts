@@ -434,4 +434,19 @@ export class InvoiceAddPaymentComponent {
     return formattedValue;
   }
 
+  navigateToInvoice(paymentLine){
+    this.addInvoiceLineState();
+    let invoiceId= paymentLine.invoiceId;
+    let link = ['invoices/edit', invoiceId];
+    this._router.navigate(link);
+  }
+  addInvoiceLineState(){
+    if(this.paymentId){
+      this.stateService.addState(new State("PAYMENT_LINE", this._router.url, null, null));
+    }
+    else {
+      let tempData=this.invoicePaymentForm.value;
+      this.stateService.addState(new State('New-Payment-Invoice', this._router.url, tempData, null));
+    }
+  }
 }
