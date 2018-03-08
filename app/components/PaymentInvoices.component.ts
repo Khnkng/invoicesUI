@@ -104,7 +104,6 @@ export class PaymentInvoices{
     let base = this;
     invoices.forEach(function (invoice) {
       let row: any = {};
-      invoice['currency']='USD';
       row['id'] = invoice['id'];
       row['number'] = invoice['number'];
       row['customer'] = invoice['customer_name'];
