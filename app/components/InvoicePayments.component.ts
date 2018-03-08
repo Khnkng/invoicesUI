@@ -33,7 +33,7 @@ export class InvoicePayments{
   dateFormat:string;
   serviceDateformat:string;
   invoiceID:string;
-  hasPayents:boolean;
+  hasPayments:boolean;
 
   constructor(private switchBoard: SwitchBoard, private toastService: ToastService, private loadingService:LoadingService,
               private invoiceService:InvoicesService,private _router:Router, private _route: ActivatedRoute,
@@ -120,7 +120,7 @@ export class InvoicePayments{
       base.paymentTableData.rows.push(row);
     });
     setTimeout(function () {
-      base.hasPayents = true;
+      base.hasPayments = true;
     }, 0);
     this.loadingService.triggerLoadingEvent(false);
   }
