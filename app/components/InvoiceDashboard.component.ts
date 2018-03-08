@@ -907,9 +907,9 @@ export class InvoiceDashboardComponent {
             }else {
                 row['status'] = invoice['state']?_.startCase((invoice['state'])):"";
             }
-            let paymentsString="";
+            let paymentsString="<a class='action' data-action='navigatePayment'><span class='icon badge je-badge'>P</span></a>";
             let historyBadge="<a class='action' data-action='history'><span class='icon badge je-badge'>H</span></a>";
-            if(invoice['state']=='paid'||invoice['state']=='partially_paid'){
+            /*if(invoice['state']=='paid'||invoice['state']=='partially_paid'){
                 if(invoice['payment_ids']){
                     let paymentsList=invoice['payment_ids'].split(',');
                     if(paymentsList.length>0){
@@ -924,7 +924,7 @@ export class InvoiceDashboardComponent {
                         }
                     }
                 }
-            }
+            }*/
             let JeString="";
             if(invoice.journalID){
                 JeString= "<a class='action' data-action='navigation'><span class='icon badge je-badge'>JE</span></a>";
@@ -964,7 +964,7 @@ export class InvoiceDashboardComponent {
                 "filterable": false
             },
             {"name": "journalId", "title": "Journal ID", 'visible': false, 'filterable': false},
-            /*{"name": "invoiceIds", "title": "Invoice ID", 'visible': false, 'filterable': false},*/
+            {"name": "depositID", "title": "Deposit ID", 'visible': false, 'filterable': false},
             {"name": "type", "title": "Collection Type/#", "type": "html"},
             {"name": "receivedFrom", "title": "Received From"},
             {"name": "dateReceived", "title": "Date Received"},
@@ -978,6 +978,7 @@ export class InvoiceDashboardComponent {
             let row:any = {};
             row['id'] = payment['id'];
             row['journalId'] = payment['journalID'];
+            row['depositID'] = payment['depositID'];
             row['selectCol'] = "<input type='checkbox' class='checkbox'/>";
             let paymentType=payment.type=='cheque'?'Check':payment.type;
             // row['type'] = "<div>"+paymentType+"</div>";
@@ -998,17 +999,14 @@ export class InvoiceDashboardComponent {
                 }
             });*/
             let assignmentHtml = "";
-            let invoicesString="<a class='action' data-action='paymentInvoice'><span class='icon badge je-badge'>I</span></a>";
-            if(assignedAmount >= payment.paymentAmount) {
-                assignStatus = "Assigned";
-                assignmentHtml = "<small style='color:#00B1A9'>"+"Applied"+"</small>"
+            let invoicesString="";
 
-            } else if(assignedAmount > 0) {
-                assignStatus = "Partially Assigned";
-                assignmentHtml = "<small style='color:#ff3219'>"+"Partially Applied"+"</small>"
-            } else {
-                assignStatus = "Unassigned";
-                assignmentHtml = "<small style='color:#ff3219'>"+"Not Applied"+"</small>"
+            if(payment['payment_status']=='Assigned') {
+              assignmentHtml = "<small style='color:#00B1A9'>"+"Applied"+"</small>"
+            } else if(payment['payment_status']=='Partially Applied') {
+              assignmentHtml = "<small style='color:#ff3219'>"+"Partially Applied"+"</small>"
+            } else if(payment['payment_status']=='Unapplied') {
+              assignmentHtml = "<small style='color:#ff3219'>"+"Unapplied"+"</small>"
             }
             /*row["invoiceIds"]=invoicesIds.toString();
             if(invoicesIds.length>0){
@@ -1022,15 +1020,20 @@ export class InvoiceDashboardComponent {
                     }
                 }
             }*/
+            invoicesString+="<a class='action' data-action='paymentInvoice'><span class='icon badge je-badge'>I</span></a>"
             let JeString="";
+            let depositString="";
             if(payment.journalID){
                 JeString= "<a class='action' data-action='navigation'><span class='icon badge je-badge'>JE</span></a>";
             }
+            if(payment.depositID){
+              depositString= "<a class='action' data-action='deposit'><span class='icon badge je-badge'>D</span></a>";
+            }
             let postString = "<a class='action' data-action='paymentsCollaboration'><span class='comment-badge'><i class='material-icons'>comment</i></span></a>";
             if(invoicesString&&JeString){
-                row['actions']=invoicesString+JeString+postString;
+                row['actions']=invoicesString+JeString+postString+depositString;
             }else if(invoicesString){
-                row['actions']=invoicesString+postString;
+                row['actions']=invoicesString+postString+depositString;
             }
             base.numeralService.switchLocale(payment.currencyCode.toLowerCase());
             row['amount'] = "<div>"+base.numeralService.format("$0,0.00", payment.paymentAmount)+"</div><div>"+assignmentHtml+"</div>";
@@ -1173,6 +1176,16 @@ export class InvoiceDashboardComponent {
             let paymentId = $event.id;
             let link = ['payments',paymentId,'invoices'];
             this._router.navigate(link);
+        }else if(action=='deposit'){
+          this.addInvoiceState();
+          let depositID = $event.depositID;
+          let link = ['deposit',depositID];
+          this._router.navigate(link);
+        }else if(action=='navigatePayment'){
+          this.addInvoiceState();
+          let invoiceId = $event.id;
+          let link = ['invoices',invoiceId,'payments'];
+          this._router.navigate(link);
         }
     }
 
