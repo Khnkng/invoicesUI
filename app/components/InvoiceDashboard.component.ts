@@ -964,7 +964,7 @@ export class InvoiceDashboardComponent {
                 "filterable": false
             },
             {"name": "journalId", "title": "Journal ID", 'visible': false, 'filterable': false},
-            {"name": "invoiceIds", "title": "Invoice ID", 'visible': false, 'filterable': false},
+            /*{"name": "invoiceIds", "title": "Invoice ID", 'visible': false, 'filterable': false},*/
             {"name": "type", "title": "Collection Type/#", "type": "html"},
             {"name": "receivedFrom", "title": "Received From"},
             {"name": "dateReceived", "title": "Date Received"},
@@ -990,16 +990,15 @@ export class InvoiceDashboardComponent {
             row['dateReceived'] = (payment['paymentDate']) ? base.dateFormater.formatDate(payment['paymentDate'],base.serviceDateformat,base.dateFormat) : payment['paymentDate'];
             let assignStatus = "";
             let assignedAmount = 0;
-            let invoicesIds=[];
+            /*let invoicesIds=[];
             payment.paymentLines.forEach((line) => {
                 assignedAmount += line.amount ? parseFloat(line.amount) : 0;
                 if(line.amount>0){
                     invoicesIds.push(line.invoiceId);
                 }
-            });
+            });*/
             let assignmentHtml = "";
-            let invoicesString="";
-
+            let invoicesString="<a class='action' data-action='paymentInvoice'><span class='icon badge je-badge'>I</span></a>";
             if(assignedAmount >= payment.paymentAmount) {
                 assignStatus = "Assigned";
                 assignmentHtml = "<small style='color:#00B1A9'>"+"Applied"+"</small>"
@@ -1011,7 +1010,7 @@ export class InvoiceDashboardComponent {
                 assignStatus = "Unassigned";
                 assignmentHtml = "<small style='color:#ff3219'>"+"Not Applied"+"</small>"
             }
-            row["invoiceIds"]=invoicesIds.toString();
+            /*row["invoiceIds"]=invoicesIds.toString();
             if(invoicesIds.length>0){
                 if(invoicesIds.length==1){
                     let paymentIdString='invoiceAction-'+0;
@@ -1022,7 +1021,7 @@ export class InvoiceDashboardComponent {
                         invoicesString+="<a class='action' data-action="+paymentIdString+"><span class='icon badge je-badge'>I"+(i+1)+"</span></a>"
                     }
                 }
-            }
+            }*/
             let JeString="";
             if(payment.journalID){
                 JeString= "<a class='action' data-action='navigation'><span class='icon badge je-badge'>JE</span></a>";
@@ -1032,8 +1031,6 @@ export class InvoiceDashboardComponent {
                 row['actions']=invoicesString+JeString+postString;
             }else if(invoicesString){
                 row['actions']=invoicesString+postString;
-            }else if(JeString){
-                row['actions']=JeString+postString;
             }
             base.numeralService.switchLocale(payment.currencyCode.toLowerCase());
             row['amount'] = "<div>"+base.numeralService.format("$0,0.00", payment.paymentAmount)+"</div><div>"+assignmentHtml+"</div>";
@@ -1170,6 +1167,11 @@ export class InvoiceDashboardComponent {
             this.addInvoiceState();
             let paymentId = $event.id;
             let link = ['payments/edit', paymentId];
+            this._router.navigate(link);
+        }else if(action=='paymentInvoice'){
+            this.addInvoiceState();
+            let paymentId = $event.id;
+            let link = ['payments',paymentId,'invoices'];
             this._router.navigate(link);
         }
     }
