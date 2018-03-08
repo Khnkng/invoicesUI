@@ -1,0 +1,3 @@
+<div class="small-12 medium-12 small-centered column">
+  <foo-table *ngIf="hasInvoices" class="bigpay-dashboard bighalf-footable invoice-table" [data]="invoiceTableData" [options]="invoiceTableOptions" (onSearch)="setSearchString($event)" (onRowAction)="handleAction($event)"></foo-table>
+</div>
