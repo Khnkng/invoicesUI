@@ -87,18 +87,13 @@ export class UnappliedCollections{
             row['refNo'] = payment.referenceNo? payment.referenceNo: "";
             row['receivedFrom'] = payment['customerName'];
             row['dateReceived'] = (payment['paymentDate']) ? base.dateFormater.formatDate(payment['paymentDate'],base.serviceDateformat, base.dateFormat) : payment['paymentDate'];
-            let assignStatus = "";
             let assignmentHtml = "";
-            if(payment['payment_applied_amount'] >= payment.paymentAmount) {
-                assignStatus = "Assigned";
-                assignmentHtml = "<small style='color:#00B1A9'>"+"Applied"+"</small>"
-
-            } else if(payment['payment_applied_amount'] > 0) {
-                assignStatus = "Partially Assigned";
-                assignmentHtml = "<small style='color:#ff3219'>"+"Partially Applied"+"</small>"
-            } else {
-                assignStatus = "Unassigned";
-                assignmentHtml = "<small style='color:#ff3219'>"+"Not Applied"+"</small>"
+            if(payment['payment_status']=='Applied') {
+                assignmentHtml = "<small style='color:#00B1A9'>"+payment['payment_status']+"</small>"
+            } else if(payment['payment_status']=='Partially Applied') {
+                assignmentHtml = "<small style='color:#ff3219'>"+payment['payment_status']+"</small>"
+            } else if(payment['payment_status']=='Unapplied') {
+                assignmentHtml = "<small style='color:#ff3219'>"+payment['payment_status']+"</small>"
             }
             row['status'] = assignmentHtml;
             row['amount'] = "<div>"+base.numeralService.format("$0,0.00", payment.paymentAmount)+"</div>";
