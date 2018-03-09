@@ -5,11 +5,11 @@
                 <div class="medium-12 columns">
                     <label>
                         <div class="payment-tabs">
-                            <input type="button" class="button" [ngClass]="{'hollow grey': type!='cheque', 'sky-blue-button': type=='cheque'}" value="Check" (click)="setType('cheque')"/>
-                            <input type="button" class="button" [ngClass]="{'hollow grey': type!='cash', 'sky-blue-button': type=='cash'}" value="Cash" (click)="setType('cash')"/>
-                            <input type="button" class="button" [ngClass]="{'hollow grey': type!='card', 'sky-blue-button': type=='card'}" value="Credit/Debit" (click)="setType('card')"/>
-                            <input type="button" class="button" [ngClass]="{'hollow grey': type!='paypal', 'sky-blue-button': type=='paypal'}" value="PayPal" (click)="setType('paypal')"/>
-                            <input type="button" class="button" [ngClass]="{'hollow grey': type!='other', 'sky-blue-button': type=='other'}" value="Other" (click)="setType('other')"/>
+                            <input type="button" class="button" [ngClass]="{'hollow grey': type!='Check', 'sky-blue-button': type=='Check'}" value="Check" (click)="setType('Check')"/>
+                            <input type="button" class="button" [ngClass]="{'hollow grey': type!='Cash', 'sky-blue-button': type=='Cash'}" value="Cash" (click)="setType('Cash')"/>
+                            <input type="button" class="button" [ngClass]="{'hollow grey': type!='Card', 'sky-blue-button': type=='Card'}" value="Credit/Debit" (click)="setType('Card')"/>
+                            <input type="button" class="button" [ngClass]="{'hollow grey': type!='Paypal', 'sky-blue-button': type=='Paypal'}" value="PayPal" (click)="setType('Paypal')"/>
+                            <input type="button" class="button" [ngClass]="{'hollow grey': type!='Other', 'sky-blue-button': type=='Other'}" value="Other" (click)="setType('Other')"/>
                         </div>
                     </label>
                     <input style="visibility: hidden" type="input" formControlName="type"/>

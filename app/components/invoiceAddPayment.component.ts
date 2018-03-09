@@ -36,7 +36,7 @@ export class InvoiceAddPaymentComponent {
     invoices: Array<any> = [];
     invoicePaymentForm: FormGroup;
     paymentLines: Array<any> = [];
-    type: string = 'cheque';
+    type: string = 'Check';
     showInvoices: boolean = false;
     currentClientName:string = "";
     currentLocale:string = "";
@@ -383,9 +383,9 @@ export class InvoiceAddPaymentComponent {
     }
 
     ngAfterViewInit() {
-        this.invoicePaymentForm.controls['type'].setValue("cheque");
+        this.invoicePaymentForm.controls['type'].setValue("Check");
         this.invoicePaymentForm.controls['currencyCode'].setValue("USD");
-        this.numeralService.switchLocale("USD")
+        this.numeralService.switchLocale("USD");
     }
 
     ngOnDestroy(){
