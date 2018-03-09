@@ -549,8 +549,13 @@
                                                     </div>
                                                 </div>
                                             </div>
-
-                                            <invoicePaymentPreview [invoices]="invoiceProcessedData"></invoicePaymentPreview>
+                                            <div style="line-height: 1.2">
+                                                <div>
+                                                    <div style="margin-bottom: 2rem;width:55.6%;margin:0 auto;margin-top:1.5rem">
+                                                        <invoicePaymentPreview [invoices]="invoiceProcessedData"></invoicePaymentPreview>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <div class="small-12 medium-3 columns" *ngIf="!showPreview">
