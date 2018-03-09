@@ -134,7 +134,7 @@ remember them later…" formControlName="paymentNote">
                 <td>{{paymentLine.invoiceDate}}</td>
                 <td>
                     <div>{{paymentLine.dueDate || "-"}}</div>
-                    <div><small>{{paymentLine.state || "-"}}</small></div>
+                    <div><small>{{paymentLine.displayState || "-"}}</small></div>
                 </td>
                 <td>{{numeralService.format('$0,0.00', paymentLine.invoiceAmount)}}</td>
                 <td>{{numeralService.format('$0,0.00', paymentLine.dueAmount)}}</td>
