@@ -331,7 +331,7 @@ export class InvoiceComponent{
     }
 
     loadItemCodes(companyId:any) {
-        this.codeService.itemCodes(companyId)
+        this.codeService.itemCodes(companyId,true)
             .subscribe(itemCodes => {
                 this.itemCodes = itemCodes;
                 //this.taskItemCodes = _.filter(itemCodes, {'is_service': true});
@@ -1773,20 +1773,13 @@ export class InvoiceComponent{
             row['type'] = "<div>"+paymentType+"</div><div><small>"+payment.referenceNo+"</small></div>";
             row['receivedFrom'] = payment['customerName'];
             row['dateReceived'] = (payment['paymentDate']) ? base.dateFormater.formatDate(payment['paymentDate'],base.serviceDateformat,base.dateFormat) : payment['paymentDate'];
-            let assignStatus = "";
-            let assignedAmount = 0;
             let assignmentHtml = "";
-
-            if(assignedAmount >= payment.paymentAmount) {
-                assignStatus = "Assigned";
+            if(payment['payment_status']=='Assigned') {
                 assignmentHtml = "<small style='color:#00B1A9'>"+"Applied"+"</small>"
-
-            } else if(assignedAmount > 0) {
-                assignStatus = "Partially Assigned";
+            } else if(payment['payment_status']=='Partially Applied') {
                 assignmentHtml = "<small style='color:#ff3219'>"+"Partially Applied"+"</small>"
-            } else {
-                assignStatus = "Unassigned";
-                assignmentHtml = "<small style='color:#ff3219'>"+"Not Applied"+"</small>"
+            } else if(payment['payment_status']=='Unapplied') {
+                assignmentHtml = "<small style='color:#ff3219'>"+"Unapplied"+"</small>"
             }
             base.numeralService.switchLocale(payment.currencyCode.toLowerCase());
             row['amount'] = "<div>"+base.numeralService.format("$0,0.00", payment.paymentAmount)+"</div><div>"+assignmentHtml+"</div>";
