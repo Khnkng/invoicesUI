@@ -991,13 +991,13 @@ export class InvoiceDashboardComponent {
             row['dateReceived'] = (payment['paymentDate']) ? base.dateFormater.formatDate(payment['paymentDate'],base.serviceDateformat,base.dateFormat) : payment['paymentDate'];
             let assignStatus = "";
             let assignedAmount = 0;
-            /*let invoicesIds=[];
+            let invoicesIds=[];
             payment.paymentLines.forEach((line) => {
                 assignedAmount += line.amount ? parseFloat(line.amount) : 0;
                 if(line.amount>0){
                     invoicesIds.push(line.invoiceId);
                 }
-            });*/
+            });
             let assignmentHtml = "";
             let invoicesString="";
 
