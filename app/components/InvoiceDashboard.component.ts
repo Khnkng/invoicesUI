@@ -1001,12 +1001,12 @@ export class InvoiceDashboardComponent {
             let assignmentHtml = "";
             let invoicesString="";
 
-            if(payment['payment_status']=='Assigned') {
-              assignmentHtml = "<small style='color:#00B1A9'>"+"Applied"+"</small>"
+            if(payment['payment_status']=='Applied') {
+              assignmentHtml = "<small style='color:#00B1A9'>"+payment['payment_status']+"</small>"
             } else if(payment['payment_status']=='Partially Applied') {
-              assignmentHtml = "<small style='color:#ff3219'>"+"Partially Applied"+"</small>"
+              assignmentHtml = "<small style='color:#ff3219'>"+payment['payment_status']+"</small>"
             } else if(payment['payment_status']=='Unapplied') {
-              assignmentHtml = "<small style='color:#ff3219'>"+"Unapplied"+"</small>"
+              assignmentHtml = "<small style='color:#ff3219'>"+payment['payment_status']+"</small>"
             }
             /*row["invoiceIds"]=invoicesIds.toString();
             if(invoicesIds.length>0){
