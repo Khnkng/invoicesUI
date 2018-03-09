@@ -300,7 +300,7 @@ export class InvoiceAddPaymentComponent {
             paymentLine.invoiceId = invoice.id;
             paymentLine.number = invoice.number;
             paymentLine.invoiceAmount = invoice.amount;
-
+            paymentLine.displayState=invoice.displayState;
             paymentLine.dueAmount = invoice.amount_due || "";
             //paymentLine.invoiceDate = invoice.invoice_date;
             paymentLine.invoiceDate = moment(invoice.invoice_date).format(this.dateFormat);
