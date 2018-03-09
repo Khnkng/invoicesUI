@@ -331,7 +331,7 @@ export class InvoiceComponent{
     }
 
     loadItemCodes(companyId:any) {
-        this.codeService.itemCodes(companyId)
+        this.codeService.itemCodes(companyId,true)
             .subscribe(itemCodes => {
                 this.itemCodes = itemCodes;
                 //this.taskItemCodes = _.filter(itemCodes, {'is_service': true});
