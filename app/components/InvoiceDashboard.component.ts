@@ -1031,9 +1031,9 @@ export class InvoiceDashboardComponent {
             }
             let postString = "<a class='action' data-action='paymentsCollaboration'><span class='comment-badge'><i class='material-icons'>comment</i></span></a>";
             if(invoicesString&&JeString){
-                row['actions']=invoicesString+JeString+postString+depositString;
+                row['actions']=invoicesString+JeString+depositString+postString;
             }else if(invoicesString){
-                row['actions']=invoicesString+postString+depositString;
+                row['actions']=invoicesString+depositString+postString;
             }
             base.numeralService.switchLocale(payment.currencyCode.toLowerCase());
             row['amount'] = "<div>"+base.numeralService.format("$0,0.00", payment.paymentAmount)+"</div><div>"+assignmentHtml+"</div>";
