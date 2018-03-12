@@ -930,9 +930,9 @@ export class InvoiceDashboardComponent {
                 JeString= "<a class='action' data-action='navigation'><span class='icon badge je-badge'>JE</span></a>";
             }
             let postString = "<a class='action' data-action='invoiceCollaboration'><span class='comment-badge'><i class='material-icons'>comment</i></span></a>";
-            if(paymentsString&&JeString){
+            if(invoice['payment_ids']&&JeString){
                 row['actions']=historyBadge+paymentsString+JeString+postString;
-            }else if(paymentsString){
+            }else if(invoice['payment_ids']){
                 row['actions']=historyBadge+paymentsString+postString;
             }else if(JeString){
                 row['actions']=historyBadge+JeString+postString;
@@ -1031,9 +1031,9 @@ export class InvoiceDashboardComponent {
             }
             let postString = "<a class='action' data-action='paymentsCollaboration'><span class='comment-badge'><i class='material-icons'>comment</i></span></a>";
             if(invoicesString&&JeString){
-                row['actions']=invoicesString+JeString+postString+depositString;
+                row['actions']=invoicesString+JeString+depositString+postString;
             }else if(invoicesString){
-                row['actions']=invoicesString+postString+depositString;
+                row['actions']=invoicesString+depositString+postString;
             }
             base.numeralService.switchLocale(payment.currencyCode.toLowerCase());
             row['amount'] = "<div>"+base.numeralService.format("$0,0.00", payment.paymentAmount)+"</div><div>"+assignmentHtml+"</div>";
