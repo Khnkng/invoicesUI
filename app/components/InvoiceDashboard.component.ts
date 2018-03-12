@@ -930,9 +930,9 @@ export class InvoiceDashboardComponent {
                 JeString= "<a class='action' data-action='navigation'><span class='icon badge je-badge'>JE</span></a>";
             }
             let postString = "<a class='action' data-action='invoiceCollaboration'><span class='comment-badge'><i class='material-icons'>comment</i></span></a>";
-            if(paymentsString&&JeString){
+            if(invoice['payment_ids']&&JeString){
                 row['actions']=historyBadge+paymentsString+JeString+postString;
-            }else if(paymentsString){
+            }else if(invoice['payment_ids']){
                 row['actions']=historyBadge+paymentsString+postString;
             }else if(JeString){
                 row['actions']=historyBadge+JeString+postString;
