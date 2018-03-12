@@ -182,7 +182,7 @@
                   <input type="radio" formControlName="templateType" value="Other2"/><label>Other2</label>
                 </fieldset>
               </div>
-              <div class="row" *ngIf="invoiceSettingsForm.controls.templateType.value=='Other'">
+              <div class="row" *ngIf="invoiceSettingsForm.get('templateType').value=='Other'">
                 <div style="box-shadow: 0 0 5px #ccc;-webkit-box-shadow: 0 0 5px #ccc;margin-top:15px;padding: 25px 15px;">
                   <table cellpadding='10' style="width:100%">
                     <tbody>
@@ -333,7 +333,7 @@
                   </table>
                 </div>
               </div>
-              <div class="row" *ngIf="invoiceSettingsForm.controls.templateType.value=='Airy'">
+              <div class="row" *ngIf="invoiceSettingsForm.get('templateType').value=='Airy'">
                 <div style="box-shadow: 0 0 5px #ccc;-webkit-box-shadow: 0 0 5px #ccc;margin-top:15px;padding: 25px 15px;">
                   <table cellpadding='10' style="width:100%">
                     <tbody>
@@ -449,7 +449,7 @@
                   </table>
                 </div>
               </div>
-              <div class="row" *ngIf="invoiceSettingsForm.controls.templateType.value=='Fresh'">
+              <div class="row" *ngIf="invoiceSettingsForm.get('templateType').value=='Fresh'">
                 <div style="box-shadow: 0 0 5px #ccc;-webkit-box-shadow: 0 0 5px #ccc;margin-top:15px;padding: 25px 15px;" [style.zoom]="zoomSize">
                   <table cellpadding='10' style="width:100%">
                     <tbody>
@@ -557,7 +557,7 @@
                   </table>
                 </div>
               </div>
-              <div class="row" *ngIf="invoiceSettingsForm.controls.templateType.value=='Friendly'">
+              <div class="row" *ngIf="invoiceSettingsForm.get('templateType').value=='Friendly'">
                 <div style="box-shadow: 0 0 5px #ccc;-webkit-box-shadow: 0 0 5px #ccc;margin-top:15px;padding: 25px 15px;">
                   <table cellpadding='10' style="width:100%">
                     <tbody>
@@ -679,7 +679,7 @@
                   </table>
                 </div>
               </div>
-              <div class="row" *ngIf="invoiceSettingsForm.controls.templateType.value=='Modern'">
+              <div class="row" *ngIf="invoiceSettingsForm.get('templateType').value=='Modern'">
                 <div style="box-shadow: 0 0 5px #ccc;-webkit-box-shadow: 0 0 5px #ccc;margin-top:15px;padding: 25px 15px;">
                   <table cellpadding='10' style="width:100%">
                     <tbody>
@@ -820,7 +820,7 @@
                   </table>
                 </div>
               </div>
-              <div class="row" *ngIf="invoiceSettingsForm.controls.templateType.value=='Default'">
+              <div class="row" *ngIf="invoiceSettingsForm.get('templateType').value=='Default'">
                 <div style="box-shadow: 0 0 5px #ccc;-webkit-box-shadow: 0 0 5px #ccc;margin-top:15px;padding: 25px 15px;">
                   <table cellpadding='10' style="width:100%">
                     <tbody>
@@ -958,7 +958,7 @@
                   </table>
                 </div>
               </div>
-              <div class="row" *ngIf="invoiceSettingsForm.controls.templateType.value=='Other1'">
+              <div class="row" *ngIf="invoiceSettingsForm.get('templateType').value=='Other1'">
                 <div style="box-shadow: 0 0 5px #ccc;-webkit-box-shadow: 0 0 5px #ccc;margin-top:15px;padding: 25px 15px;">
                   <table cellpadding='10' style="width:100%">
                     <tbody>
@@ -1112,7 +1112,7 @@
                   </table>
                 </div>
               </div>
-              <div class="row" *ngIf="invoiceSettingsForm.controls.templateType.value=='Other2'">
+              <div class="row" *ngIf="invoiceSettingsForm.get('templateType').value=='Other2'">
                 <div style="box-shadow: 0 0 5px #ccc;-webkit-box-shadow: 0 0 5px #ccc;margin-top:15px;padding: 25px 15px;">
                   <table cellpadding='10' style="width:100%">
                     <tbody>

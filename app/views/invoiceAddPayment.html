@@ -103,7 +103,7 @@ remember them later…" formControlName="paymentNote">
     </div>
 </form>
 
-<div class="row" *ngIf="invoicePaymentForm.controls.receivedFrom.value">
+<div class="row" *ngIf="invoicePaymentForm.get('receivedFrom').value">
     <div class="medium-12 columns">
         <h5 style="margin-bottom: 0px;">Invoices - {{currentClientName}}</h5>
         <span style="color: #878787">Outstanding balance: {{getOutstandingBalance()}}</span>
