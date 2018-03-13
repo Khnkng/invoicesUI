@@ -391,14 +391,14 @@
                                                     <tr [formGroupName]="iindex">
                                                         <td class="truncate" *ngIf="!invoiceLine.editable">{{getItemCodeName(invoiceLine.get('item_id').value)}}</td>
                                                         <td *ngIf="invoiceLine.editable" class="combo-box-field">
-                                                            <select [formControl]="invoiceLine.get('item_id" (change)="itemChange($event.target.value,iindex,'item')">
+                                                            <select [formControl]="invoiceLine.get('item_id')" (change)="itemChange($event.target.value,iindex,'item')">
                                                                 <option *ngFor="let item of itemItemCodes" [value]="item.id">{{item.name}}</option>
                                                             </select>
                                                         </td>
                                                         <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.get('description').value}}</td>
 
                                                         <td *ngIf="invoiceLine.editable">
-                                                            <input type="text" [formControl]="invoiceLine.get('description"/>
+                                                            <input type="text" [formControl]="invoiceLine.get('description')"/>
                                                         </td>
 
                                                         <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.get('price').value?formatAmount(invoiceLine.get('price').value):null}}</td>
@@ -410,7 +410,7 @@
                                                         <td class="truncate" *ngIf="!invoiceLine.editable">{{invoiceLine.get('quantity').value?formatQuantity(invoiceLine.get('quantity').value):null}}</td>
 
                                                         <td *ngIf="invoiceLine.editable">
-                                                            <input type="text" [locale]="localeFormat" [isNumber]="true" [format]="'0,0.0000'" numeral [formControl]="invoiceLine.get('quantity" (change)="calculateTotals()" />
+                                                            <input type="text" [locale]="localeFormat" [isNumber]="true" [format]="'0,0.0000'" numeral [formControl]="invoiceLine.get('quantity')" (change)="calculateTotals()" />
                                                         </td>
                                                         <td class="truncate" *ngIf="!invoiceLine.editable">{{getTaxName(invoiceLine.get('tax_id').value)}}</td>
                                                         <td class="combo-box-field" *ngIf="invoiceLine.editable">
