@@ -384,8 +384,9 @@ export class InvoiceAddPaymentComponent {
 
     ngAfterViewInit() {
         this.invoicePaymentForm.controls['type'].setValue("Check");
-        this.invoicePaymentForm.controls['currencyCode'].setValue("USD");
-        this.numeralService.switchLocale("USD");
+        let companyCurrency=Session.getCurrentCompanyCurrency()?Session.getCurrentCompanyCurrency():'USD';
+        this.invoicePaymentForm.controls['currencyCode'].setValue(companyCurrency);
+        this.numeralService.switchLocale(companyCurrency);
     }
 
     ngOnDestroy(){
