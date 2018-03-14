@@ -107,12 +107,12 @@ export class InvoicePayments{
       row['receivedFrom'] = payment['customerName'];
       row['dateReceived'] = (payment['paymentDate']) ? base.dateFormater.formatDate(payment['paymentDate'],base.serviceDateformat,base.dateFormat) : payment['paymentDate'];
       let assignmentHtml = "";
-      if(payment['payment_status']=='Assigned') {
-        assignmentHtml = "<small style='color:#00B1A9'>"+"Applied"+"</small>"
+      if(payment['payment_status']=='Applied') {
+        assignmentHtml = "<small style='color:#00B1A9'>"+payment['payment_status']+"</small>"
       } else if(payment['payment_status']=='Partially Applied') {
-        assignmentHtml = "<small style='color:#ff3219'>"+"Partially Applied"+"</small>"
+        assignmentHtml = "<small style='color:#ff3219'>"+payment['payment_status']+"</small>"
       } else if(payment['payment_status']=='Unapplied') {
-        assignmentHtml = "<small style='color:#ff3219'>"+"Unapplied"+"</small>"
+        assignmentHtml = "<small style='color:#ff3219'>"+payment['payment_status']+"</small>"
       }
       base.numeralService.switchLocale(payment.currencyCode.toLowerCase());
       row['amount'] = "<div>"+base.numeralService.format("$0,0.00", payment.paymentAmount)+"</div><div>"+assignmentHtml+"</div>";
