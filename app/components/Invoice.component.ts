@@ -1806,10 +1806,10 @@ export class InvoiceComponent{
 
     getInvoiceDisplayMessage(invoiceData) {
         let invoiceMessage;
-        let invoiceState = invoiceData.is_past_due ? 'past_due' : invoiceData.state;
+        let invoiceState = invoiceData.isPastDue ? 'past_due' : invoiceData.state;
         switch (invoiceState) {
             case 'paid':
-                invoiceMessage = 'PAID : Paid on ' + this.convertDateToLocaleFormat(invoiceData.payment_date);
+                invoiceMessage = 'PAID : Paid on ' + this.convertDateToLocaleFormat(this.invoice.payment_date);
                 break;
             case 'sent':
                 invoiceMessage = 'SENT : Sent by ' + invoiceData.company.name;
