@@ -498,7 +498,36 @@
                                             </div>
                                         </div>
                                         <div class="small-12 medium-12 large-12 columns" *ngIf="showPreview" style="margin-bottom:2rem">
-                                            <div>
+                                            <div class="row" style="padding-bottom: 24px;">
+                                                <div class="columns medium-8">
+                                                    <div style="font-size: 36px;margin: 6px 0 0 80px;">{{invoiceProcessedData.number}}</div>
+                                                </div>
+                                                <div class="columns medium-4">
+                                                    <div class="view-more-actions" style="margin: 0 70px">
+                                                        <button data-toggle="export-dropdown" style="padding: 0.60em 1.5em;line-height: 50px;">
+                                                            <span class="actionsbutton button hollow dropbtn span-dropdow" style="color: #7985CB !important;font-weight:bold;font-size: 15px !important;border: 2px solid #cacaca;">More Actions <i class="actionsbutton icon ion-chevron-down" style="top: 3px;font-size: 1.1em !important;"></i></span>
+                                                        </button>
+                                                        <div id="export-dropdown" class="dropdown-pane bottom export-dropdown dropdown-list" style="text-align:left;" data-dropdown data-hover="true" data-hover-pane="true" foundation>
+                                                            <!--<div class="export-option pointer" *ngIf="newInvoice||(invoice&&invoice.state=='draft')" (click)="submit($event,false,'draft')">Save as Draft</div>
+                                                            <div class="export-option pointer" *ngIf="!newInvoice&&(invoice&&(invoice.state!='draft'))" (click)="submit($event,false,'save')">Save</div>-->
+                                                            <div class="export-option pointer" *ngIf="newInvoice||(invoice&&(invoice.state!='paid'))" (click)="submit($event,false,'recurring')">Recurring</div>
+                                                            <div class="export-option pointer" *ngIf="displayCommission" (click)="applyCommission()">Sales Commission</div>
+                                                            <div class="export-option pointer" *ngIf="!newInvoice" (click)="showHistory()">View History</div>
+                                                            <!--<div class="export-option pointer">Print</div>-->
+                                                            <div class="export-option pointer" (click)="submit($event,false,'download')">Download PDF</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row" [style.background-color]="bgColor" style="padding: 10px 0;">
+                                                <div style="margin-left: 96px">{{getInvoiceDisplayMessage(invoiceProcessedData)}}</div>
+                                                <div style="position: absolute;right: 1rem;overflow: visible;right: 8.5rem;top: 9.6rem;">
+                                                    <i class='material-icons' (click)="submit($event,false,'preview')" style="cursor:pointer;line-height: 36px;margin-top: 1.5rem;position: absolute;font-size: 1.3rem;color: #878787;left: 17px">create</i>
+                                                    <i class="icon ion-ios-email-outline" (click)="submit($event,true,'email')" style="cursor:pointer;line-height: 36px;margin-top: 1.6rem;position: absolute;font-size: 1.8rem;color: #878787;left: 50px"></i>
+                                                    <i class='material-icons' (click)="postComment()" style="cursor:pointer;line-height: 36px;margin-top: 1.6rem;position: absolute;font-size: 1.5rem;color: #4554A4;left: 84px">comment</i>
+                                                </div>
+                                            </div>
+       <!--                                     <div>
                                                 <section style="padding-bottom: 24px;">
                                                     <section style="width:960px;margin:0 auto;padding-left:0px">
                                                         <div style="display:table;width:100%;vertical-align: middle;">
@@ -512,12 +541,12 @@
                                                                             <span class="actionsbutton button hollow dropbtn span-dropdow" style="color: #7985CB !important;font-weight:bold;font-size: 15px !important;border: 2px solid #cacaca;">More Actions <i class="actionsbutton icon ion-chevron-down" style="top: 3px;font-size: 1.1em !important;"></i></span>
                                                                         </button>
                                                                         <div id="export-dropdown" class="dropdown-pane bottom export-dropdown dropdown-list" style="text-align:left;right: 137px !important;width: 173px !important;top: 92.8px !important;" data-dropdown data-hover="true" data-hover-pane="true" foundation>
-                                                                            <!--<div class="export-option pointer" *ngIf="newInvoice||(invoice&&invoice.state=='draft')" (click)="submit($event,false,'draft')">Save as Draft</div>
-                                                                            <div class="export-option pointer" *ngIf="!newInvoice&&(invoice&&(invoice.state!='draft'))" (click)="submit($event,false,'save')">Save</div>-->
+                                                                            &lt;!&ndash;<div class="export-option pointer" *ngIf="newInvoice||(invoice&&invoice.state=='draft')" (click)="submit($event,false,'draft')">Save as Draft</div>
+                                                                            <div class="export-option pointer" *ngIf="!newInvoice&&(invoice&&(invoice.state!='draft'))" (click)="submit($event,false,'save')">Save</div>&ndash;&gt;
                                                                             <div class="export-option pointer" *ngIf="newInvoice||(invoice&&(invoice.state!='paid'))" (click)="submit($event,false,'recurring')">Recurring</div>
                                                                             <div class="export-option pointer" *ngIf="displayCommission" (click)="applyCommission()">Sales Commission</div>
                                                                             <div class="export-option pointer" *ngIf="!newInvoice" (click)="showHistory()">View History</div>
-                                                                            <!--<div class="export-option pointer">Print</div>-->
+                                                                            &lt;!&ndash;<div class="export-option pointer">Print</div>&ndash;&gt;
                                                                             <div class="export-option pointer" (click)="submit($event,false,'download')">Download PDF</div>
                                                                         </div>
                                                                     </div>
@@ -526,8 +555,8 @@
                                                         </div>
                                                     </section>
                                                 </section>
-                                            </div>
-                                            <div>
+                                            </div>-->
+       <!--                                     <div>
                                                 <div [style.background-color]="bgColor" style="position: relative;z-index: 2;padding: 10px 0;width: 100%;border-color: #cee8a5;">
                                                     <div style="width:960px;transition-property: none;margin: 0 auto;position: relative;padding: 0 10px;padding-left: 0px;">
                                                         <div [style.background-color]="bgColor" style="display: table;width: 100%;border-color: #cee8a5;">
@@ -548,7 +577,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div>-->
                                             <div style="line-height: 1.2">
                                                 <div>
                                                     <div style="margin-bottom: 2rem;width:55.6%;margin:0 auto;margin-top:1.5rem">
