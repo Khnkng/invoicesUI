@@ -76,7 +76,7 @@ export class InvoiceAddPaymentComponent {
         let previousState=this.stateService.getPrevState();
         if(previousState&&previousState.key=="New-Payment-Invoice"){
             this.invoicePaymentForm.setValue(previousState.data);
-            this.loadInvoices();
+           // this.loadInvoices();
             this.stateService.pop();
         };
 
@@ -138,11 +138,24 @@ export class InvoiceAddPaymentComponent {
             delete paymentFormValues['paymentLines'];
             delete paymentFormValues['payment_applied_amount'];
             delete paymentFormValues['payment_unapplied_amount'];
-
-            this.invoicePaymentForm.setValue(paymentFormValues);
+            this.paymentLines=payment.paymentLines;
+           // this.invoicePaymentForm.setValue(paymentFormValues);
+            this._invoicePaymentForm.updateForm(this.invoicePaymentForm,paymentFormValues);
+            let clientId = payment['receivedFrom'];
             setTimeout(() => {
-                this.setCustomerName();
+              let customer = _.find(base.customers, function(customer) {
+                return customer.customer_id == clientId;
+              });
+              base.currentClientName = customer.customer_name;
+                //this.setCustomerName();
             }, 50);
+            _.each(this.paymentLines, function(paymentLine){
+              if(paymentLine.amount>0){
+                paymentLine.isSelected=true;
+              }else{
+                paymentLine.isSelected=false;
+              }
+            })
         })
     }
 
@@ -159,10 +172,20 @@ export class InvoiceAddPaymentComponent {
     }
 
     loadInvoices() {
+        this.loadingService.triggerLoadingEvent(true);
         let clientID = this.invoicePaymentForm.controls['receivedFrom'].value;
-        this.invoiceService.invoicesByClientId(clientID).subscribe(invoices => {
-            this.invoices = invoices;
-            this.addPaymentLines(this.invoices);
+        this.invoiceService.invoicesByClientId(clientID,this.paymentId).subscribe(invoices => {
+            //this.invoices = invoices;
+            //this.addPaymentLines(this.invoices);
+            this.paymentLines=invoices;
+            this.paymentLines=[];
+            _.each(this.paymentLines, function(paymentLine){
+              if(paymentLine.amount>0){
+                paymentLine.isSelected=true;
+              }else{
+                paymentLine.isSelected=false;
+              }
+            });
             this.closeLoader();
         }, error => {
             this.handleError(error);
@@ -188,20 +211,32 @@ export class InvoiceAddPaymentComponent {
         paymentDateControl.setValue(date);
     }
 
+  updatePaymentLines(lines){
+    let paymentLines=[];
+    for (let i in lines) {
+      lines[i].amount=this.unFormatAmount(lines[i].amount);
+      if(lines[i].amount>0||lines[i].id){
+        lines[i].invoiceDate = this.dateFormater.formatDate(lines[i].invoiceDate, this.dateFormat, this.serviceDateformat);
+        lines[i].dueDate = this.dateFormater.formatDate(lines[i].dueDate, this.dateFormat, this.serviceDateformat);
+        paymentLines.push(lines[i]);
+      }
+    }
+    return paymentLines;
+  }
+
     save() {
         this.saving = true;
         this.loadingService.triggerLoadingEvent(true);
         let payment:any = this.invoicePaymentForm.value;
         payment.paymentDate = this.dateFormater.formatDate(payment.paymentDate,this.dateFormat,this.serviceDateformat);
-        payment.paymentLines = this.paymentLines;
-        if(payment.paymentLines.length >0) {
+        payment.paymentLines = this.updatePaymentLines(this.paymentLines);
+        /*if(payment.paymentLines.length >0) {
             for (let i in payment.paymentLines) {
                 payment.paymentLines[i].amount=this.unFormatAmount(payment.paymentLines[i].amount);
                 payment.paymentLines[i].invoiceDate = this.dateFormater.formatDate(payment.paymentLines[i].invoiceDate, this.dateFormat, this.serviceDateformat);
                 payment.paymentLines[i].dueDate = this.dateFormater.formatDate(payment.paymentLines[i].dueDate, this.dateFormat, this.serviceDateformat);
             }
-        }
-        console.log("pament--", payment);
+        }*/
         if(!payment.depositedTo) {
             payment.depositedTo = null;
         }
@@ -212,18 +247,32 @@ export class InvoiceAddPaymentComponent {
             return;
         }*/
         if(this.getAppliedAmount() <= paymentAmount) {
-            this.invoiceService.addPayment(payment).subscribe(response => {
-                this.toastService.pop(TOAST_TYPE.success, "Payment Created Successfully");
-                this.loadingService.triggerLoadingEvent(false);
-                this.setUpdatedFlagInStates();
-                this.handleState();
+          if(this.paymentId){
+            this.invoiceService.updatePayment(payment,this.paymentId).subscribe(response => {
+              this.toastService.pop(TOAST_TYPE.success, "Collection Updated Successfully");
+              this.loadingService.triggerLoadingEvent(false);
+              this.setUpdatedFlagInStates();
+              this.handleState();
             }, error => {
-                this.toastService.pop(TOAST_TYPE.error, "Failed To Create Payment");
-                this.saving = false;
-                this.loadingService.triggerLoadingEvent(false);
+              this.toastService.pop(TOAST_TYPE.error, "Failed To Create Collection");
+              this.saving = false;
+              this.loadingService.triggerLoadingEvent(false);
             })
+          }else {
+            this.invoiceService.addPayment(payment).subscribe(response => {
+              this.toastService.pop(TOAST_TYPE.success, "Collection Created Successfully");
+              this.loadingService.triggerLoadingEvent(false);
+              this.setUpdatedFlagInStates();
+              this.handleState();
+            }, error => {
+              this.toastService.pop(TOAST_TYPE.error, "Failed To Create Collection");
+              this.saving = false;
+              this.loadingService.triggerLoadingEvent(false);
+            })
+          }
+
         } else {
-            this.toastService.pop(TOAST_TYPE.error, "Applied Amount Cannot Be Greater Than Payment Amount");
+            this.toastService.pop(TOAST_TYPE.error, "Applied Amount Cannot Be Greater Than Collection Amount");
             this.saving = false;
             this.loadingService.triggerLoadingEvent(false);
         }
@@ -250,7 +299,7 @@ export class InvoiceAddPaymentComponent {
     }
 
     setCustomerName() {
-        this.loadInvoices();
+        //this.loadInvoices();
 
         let clientId = this.invoicePaymentForm.controls['receivedFrom'].value;
         if(clientId) {
@@ -258,6 +307,7 @@ export class InvoiceAddPaymentComponent {
                 return customer.customer_id == clientId;
             });
             this.currentClientName = customer.customer_name;
+          this.loadInvoices();
         } else {
             this.currentClientName = "";
         }
@@ -365,7 +415,7 @@ export class InvoiceAddPaymentComponent {
     getOutstandingBalance() {
         let outstanding = 0;
         this.paymentLines.forEach((line) => {
-            outstanding += line.dueAmount ? parseFloat(line.dueAmount) : 0;
+            outstanding += line.amountDue ? parseFloat(line.amountDue) : 0;
         });
         return this.numeralService.format("$0,0.00", outstanding || 0);
     }
@@ -399,7 +449,7 @@ export class InvoiceAddPaymentComponent {
         this.paymentLines.forEach((line) => {
           line.isSelected=true;
           if(line.state!='paid')
-          line.amount=this.forAmountInCompanyCurrency(line.dueAmount);
+          line.amount=this.forAmountInCompanyCurrency(line.amountDue);
         })
       }else {
         this.paymentLines.forEach((line) => {
@@ -415,10 +465,12 @@ export class InvoiceAddPaymentComponent {
     let payment=this.paymentLines[index];
     if(isChecked){
       payment.isSelected=true;
-      payment.amount=this.forAmountInCompanyCurrency(payment.dueAmount);
+      if(payment.state!='paid')
+        payment.amount=this.forAmountInCompanyCurrency(payment.amountDue);
     }else {
       payment.isSelected=false;
-      payment.amount=this.forAmountInCompanyCurrency(0);
+      if(payment.state!='paid')
+        payment.amount=this.forAmountInCompanyCurrency(0);
     }
     this.paymentLines[index]=payment;
    // this.getOutstandingBalance();
@@ -450,5 +502,9 @@ export class InvoiceAddPaymentComponent {
       let tempData=this.invoicePaymentForm.value;
       this.stateService.addState(new State('New-Payment-Invoice', this._router.url, tempData, null));
     }
+  }
+
+  getFormattedDate(date){
+    return this.dateFormater.formatDate(date,this.serviceDateformat,this.dateFormat);
   }
 }
