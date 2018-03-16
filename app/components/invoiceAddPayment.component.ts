@@ -177,8 +177,8 @@ export class InvoiceAddPaymentComponent {
         this.invoiceService.invoicesByClientId(clientID,this.paymentId).subscribe(invoices => {
             //this.invoices = invoices;
             //this.addPaymentLines(this.invoices);
-            this.paymentLines=invoices;
             this.paymentLines=[];
+            this.paymentLines=invoices;
             _.each(this.paymentLines, function(paymentLine){
               if(paymentLine.amount>0){
                 paymentLine.isSelected=true;
