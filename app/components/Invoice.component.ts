@@ -815,7 +815,7 @@ export class InvoiceComponent{
     togelPreview(invoiceData){
         this.showPreview=!this.showPreview;
         if(this.showPreview){
-            this.titleService.setPageTitle("View Invoice");
+            this.titleService.setPageTitle(this.invoiceProcessedData.number);
             this.getMessageHeaderColor(this.invoiceProcessedData);
             // this.preViewText="Close Preview"
         }else {

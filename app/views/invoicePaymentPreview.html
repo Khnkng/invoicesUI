@@ -166,14 +166,14 @@
   <div class="preview-table-header" [style.background-color]="bgColor">
     <table style='width:100%;margin-bottom:10px;'>
       <tbody style="background-color: #384986;" cellpadding=5 cellspacing=5 [style.background-color]="bgColor">
+      <tr><td class="font-color" style="font-weight: bold" colspan="2">{{getInvoiceDisplayState(displayState)}}</td></tr>
       <tr>
         <td class="font-color">Invoice:&nbsp;&nbsp;{{invoiceData.number}}</td>
-        <td class="font-color">Invoice Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
-        <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
+        <td class="text-right font-color">Invoice Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
       </tr>
       <tr>
         <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(calculateDueTotal())}}</td>
-        <td class="text-right font-color" colspan="2">{{getInvoiceDisplayState(displayState)}}</td>
+        <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
       </tr>
       </tbody>
     </table>
@@ -316,14 +316,14 @@
   <div class="preview-table-header" [style.background-color]="bgColor">
     <table style='width:100%;margin-bottom:10px;'>
       <tbody style="background-color: #384986;" cellpadding=5 cellspacing=5 [style.background-color]="bgColor">
+      <tr><td class="font-color" style="font-weight: bold" colspan="2">{{getInvoiceDisplayState(displayState)}}</td></tr>
       <tr>
         <td class="font-color">Invoice:&nbsp;&nbsp;{{invoiceData.number}}</td>
-        <td class="font-color">Invoice Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
-        <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
+        <td class="text-right font-color">Invoice Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
       </tr>
       <tr>
         <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(calculateDueTotal())}}</td>
-        <td class="text-right font-color" colspan="2">{{getInvoiceDisplayState(displayState)}}</td>
+        <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
       </tr>
       </tbody>
     </table>
@@ -483,14 +483,14 @@
   <div class="preview-table-header" [style.background-color]="bgColor">
     <table style='width:100%;margin-bottom:10px;'>
       <tbody style="background-color: #384986;" cellpadding=5 cellspacing=5 [style.background-color]="bgColor">
+      <tr><td class="font-color" style="font-weight: bold" colspan="2">{{getInvoiceDisplayState(displayState)}}</td></tr>
       <tr>
         <td class="font-color">Invoice:&nbsp;&nbsp;{{invoiceData.number}}</td>
-        <td class="font-color">Invoice Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
-        <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
+        <td class="text-right font-color">Invoice Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
       </tr>
       <tr>
         <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(calculateDueTotal())}}</td>
-        <td class="text-right font-color" colspan="2">{{getInvoiceDisplayState(displayState)}}</td>
+        <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
       </tr>
       </tbody>
     </table>
@@ -645,14 +645,14 @@
   <div class="preview-table-header" [style.background-color]="bgColor">
     <table style='width:100%;margin-bottom:10px;'>
       <tbody style="background-color: #384986;" cellpadding=5 cellspacing=5 [style.background-color]="bgColor">
+      <tr><td class="font-color" style="font-weight: bold" colspan="2">{{getInvoiceDisplayState(displayState)}}</td></tr>
       <tr>
         <td class="font-color">Invoice:&nbsp;&nbsp;{{invoiceData.number}}</td>
-        <td class="font-color">Invoice Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
-        <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
+        <td class="text-right font-color">Invoice Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
       </tr>
       <tr>
         <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(calculateDueTotal())}}</td>
-        <td class="text-right font-color" colspan="2">{{getInvoiceDisplayState(displayState)}}</td>
+        <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
       </tr>
       </tbody>
     </table>
@@ -821,14 +821,15 @@
   <div class="preview-table-header" [style.background-color]="bgColor">
     <table style='width:100%;margin-bottom:10px;'>
       <tbody style="background-color: #384986;" cellpadding=5 cellspacing=5 [style.background-color]="bgColor">
+      <tr><td class="font-color" style="font-weight: bold" colspan="2">{{getInvoiceDisplayState(displayState)}}</td></tr>
       <tr>
         <td class="font-color">Invoice:&nbsp;&nbsp;{{invoiceData.number}}</td>
-        <td class="font-color">Invoice Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
-        <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
+        <td class="text-right font-color">Invoice Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
+
       </tr>
       <tr>
         <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(calculateDueTotal())}}</td>
-        <td class="text-right font-color" colspan="2">{{getInvoiceDisplayState(displayState)}}</td>
+        <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
       </tr>
       </tbody>
     </table>
@@ -1015,14 +1016,14 @@
   <div class="preview-table-header" [style.background-color]="bgColor">
     <table style='width:100%;margin-bottom:10px;'>
       <tbody style="background-color: #384986;" cellpadding=5 cellspacing=5 [style.background-color]="bgColor">
+      <tr><td class="font-color" style="font-weight: bold" colspan="2">{{getInvoiceDisplayState(displayState)}}</td></tr>
       <tr>
         <td class="font-color">Invoice:&nbsp;&nbsp;{{invoiceData.number}}</td>
-        <td class="font-color">Invoice Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
-        <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
+        <td class="text-right font-color">Invoice Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
       </tr>
       <tr>
         <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(calculateDueTotal())}}</td>
-        <td class="text-right font-color" colspan="2">{{getInvoiceDisplayState(displayState)}}</td>
+        <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
       </tr>
       </tbody>
     </table>
@@ -1186,14 +1187,14 @@
   <div class="preview-table-header" [style.background-color]="bgColor">
     <table style='width:100%;margin-bottom:10px;'>
       <tbody style="background-color: #384986;" cellpadding=5 cellspacing=5 [style.background-color]="bgColor">
+      <tr><td class="font-color" style="font-weight: bold" colspan="2">{{getInvoiceDisplayState(displayState)}}</td></tr>
       <tr>
         <td class="font-color">Invoice:&nbsp;&nbsp;{{invoiceData.number}}</td>
-        <td class="font-color">Invoice Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
-        <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
+        <td class="text-right font-color">Invoice Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
       </tr>
       <tr>
         <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(calculateDueTotal())}}</td>
-        <td class="text-right font-color" colspan="2">{{getInvoiceDisplayState(displayState)}}</td>
+        <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
       </tr>
       </tbody>
     </table>
@@ -1373,14 +1374,14 @@
   <div class="preview-table-header" [style.background-color]="bgColor">
     <table style='width:100%;margin-bottom:10px;'>
       <tbody style="background-color: #384986;" cellpadding=5 cellspacing=5 [style.background-color]="bgColor">
+      <tr><td class="font-color" style="font-weight: bold" colspan="2">{{getInvoiceDisplayState(displayState)}}</td></tr>
       <tr>
         <td class="font-color">Invoice:&nbsp;&nbsp;{{invoiceData.number}}</td>
-        <td class="font-color">Invoice Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
-        <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
+        <td class="text-right font-color">Invoice Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.invoice_date)}}</td>
       </tr>
       <tr>
         <td class="font-color">Balance Due:&nbsp;&nbsp;{{formatAmount(calculateDueTotal())}}</td>
-        <td class="text-right font-color" colspan="2">{{getInvoiceDisplayState(displayState)}}</td>
+        <td class="text-right font-color">Due Date:&nbsp;&nbsp;{{convertDateToLocaleFormat(invoiceData.due_date)}}</td>
       </tr>
       </tbody>
     </table>
