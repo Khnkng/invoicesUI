@@ -64,9 +64,14 @@ export class InvoicesService extends QountServices {
             .catch(this.handleError)
     }
 
-    invoicesByClientId(clientID): Observable<any> {
+    invoicesByClientId(clientID,paymentID): Observable<any> {
         let url = this.interpolateUrl(INVOICE_PATHS.INVOICE_BY_CLIENTID,
             null,{id: Session.getUser().id,companyId:Session.getCurrentCompany(),clientId:clientID});
+        if(paymentID){
+          url=url+"?payment=true&paymentId="+paymentID;
+        }else{
+          url=url+"?payment=true";
+        }
         return this.query(url, SOURCE_TYPE.JAVA).map(res => <any> res.json())
             .catch(this.handleError)
     }
@@ -113,9 +118,15 @@ export class InvoicesService extends QountServices {
             .catch(this.handleError)
     }
 
+    updatePayment(payment:any,paymentId) {
+    let url = this.interpolateUrl(INVOICE_PATHS.INVOICE_PAYMENTS,null,{id: Session.getUser().id,companyId:Session.getCurrentCompany()});
+      return this.update(url+"/"+paymentId,payment,SOURCE_TYPE.JAVA).map(res => <any> res.json())
+        .catch(this.handleError)
+    }
+
     payment(paymentId:string) {
         let url = this.interpolateUrl(INVOICE_PATHS.INVOICE_PAYMENTS,null,{id: Session.getUser().id,companyId:Session.getCurrentCompany()});
-        return this.query(url+"/"+paymentId, SOURCE_TYPE.JAVA).map(res => <any> res.json())
+        return this.query(url+"/temp/"+paymentId, SOURCE_TYPE.JAVA).map(res => <any> res.json())
             .catch(this.handleError)
     }
 

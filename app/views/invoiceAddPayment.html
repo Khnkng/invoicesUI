@@ -130,16 +130,16 @@ remember them later…" formControlName="paymentNote">
             <tr *ngFor="let paymentLine of paymentLines;let i=index">
                 <td><input type="checkbox" [(ngModel)]="paymentLine.isSelected" (change)="onPaymentChange($event,i)" style="margin-bottom:0px;margin-top: 5px;"></td>
                 <td>
-                    <div (click)="navigateToInvoice(paymentLine)" style="cursor: pointer">{{paymentLine.number}}</div>
+                    <div (click)="navigateToInvoice(paymentLine)" style="cursor: pointer">{{paymentLine.invoiceNumber}}</div>
                 </td>
-                <td>{{paymentLine.invoiceDate}}</td>
+                <td>{{getFormattedDate(paymentLine.invoiceDate)}}</td>
                 <td>
-                    <div>{{paymentLine.dueDate || "-"}}</div>
+                    <div>{{getFormattedDate(paymentLine.invoiceDueDate) || "-"}}</div>
                     <div><small>{{paymentLine.displayState || "-"}}</small></div>
                 </td>
                 <td>{{numeralService.format('$0,0.00', paymentLine.invoiceAmount)}}</td>
-                <td>{{numeralService.format('$0,0.00', paymentLine.dueAmount)}}</td>
-                <td><input type="text" [readonly]="paymentLine.dueAmount == 0" [(ngModel)]="paymentLine.amount" numeral [locale]="currentLocale" [format]="'$0,0.00'"/></td>
+                <td>{{numeralService.format('$0,0.00', paymentLine.amountDue)}}</td>
+                <td><input type="text" [readonly]="paymentLine.amountDue == 0" [(ngModel)]="paymentLine.amount" numeral [locale]="currentLocale" [format]="'$0,0.00'"/></td>
             </tr>
             </tbody>
         </table>
