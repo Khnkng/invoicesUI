@@ -816,8 +816,6 @@ export class InvoiceComponent{
         this.showPreview=!this.showPreview;
         if(this.showPreview){
             this.titleService.setPageTitle(this.invoiceProcessedData.number);
-            this.getMessageHeaderColor(this.invoiceProcessedData);
-            // this.preViewText="Close Preview"
         }else {
             this.titleService.setPageTitle("Edit Invoice");
             this.preViewText="Preview Invoice"
@@ -1802,55 +1800,6 @@ export class InvoiceComponent{
         this.stateService.addState(new State('InvoicePayments', this._router.url, data, null));
         let link = ['payments/edit', $event.id];
         this._router.navigate(link);
-    }
-
-    getInvoiceDisplayMessage(invoiceData) {
-        let invoiceMessage;
-        let invoiceState = invoiceData.isPastDue ? 'past_due' : invoiceData.state;
-        switch (invoiceState) {
-            case 'paid':
-                invoiceMessage = 'PAID : Paid on ' + this.convertDateToLocaleFormat(this.invoice.payment_date);
-                break;
-            case 'sent':
-                invoiceMessage = 'SENT : Sent by ' + invoiceData.company.name;
-                break;
-            case 'partially_paid':
-                invoiceMessage = 'PARTIALLY PAID';
-                break;
-            case 'draft':
-                invoiceMessage = 'DRAFT';
-                break;
-            case 'past_due':
-                invoiceMessage = 'PAST DUE : Over Due from ' + this.convertDateToLocaleFormat(invoiceData.due_date);
-                break;
-        }
-        return invoiceMessage;
-    }
-
-    convertDateToLocaleFormat(inputDate){
-        return (inputDate) ? this.dateFormater.formatDate(inputDate, this.serviceDateformat, this.dateFormat) : inputDate;
-    }
-
-    getMessageHeaderColor(invoiceData) {
-        let state = invoiceData.isPastDue ? 'past_due' : invoiceData.state;
-
-        switch (state) {
-            case "draft":
-                this.bgColor = "#C9E9E9";
-                break;
-            case "past_due":
-                this.bgColor = "#FBDBD9";
-                break;
-            case "sent":
-                this.bgColor = "#D1D5E4";
-                break;
-            case "paid":
-                this.bgColor = "#C9E9E9";
-                break;
-            default:
-                this.bgColor = "#C9E9E9";
-                break;
-        }
     }
 
     postComment() {
