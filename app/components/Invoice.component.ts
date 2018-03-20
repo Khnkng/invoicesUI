@@ -772,10 +772,10 @@ export class InvoiceComponent{
         this.invoiceProcessedData=invoiceData;
         if(action=='email'){
             this.setBillUpdate(invoiceData);
-            if(!this.showPreview)
+            /*if(!this.showPreview)
             {
                 this.togelPreview(invoiceData);
-            }
+            }*/
             invoiceData.state=this.invoiceID?this.invoice.state:'sent';
             let base=this;
             setTimeout(function(){
@@ -870,7 +870,7 @@ export class InvoiceComponent{
 
     closeEmailDailog(){
         this.resetPopupFields();
-        this.resetInvoiceState();
+       // this.resetInvoiceState();
     }
 
     resetInvoiceState(){
