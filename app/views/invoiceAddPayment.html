@@ -73,7 +73,7 @@
         <div class="medium-6 columns">
             <div class="row" style="margin-top:20px;">
                 <div class="medium-4 columns">
-                    <input type="button" class="button large" [disabled]="saving" (click)="save()" value="Save Collection"/>
+                    <input type="button" class="button large" [disabled]="!invoicePaymentForm.valid" (click)="save()" value="Save Collection"/>
                 </div>
                 <div class="medium-4 columns">
                     <input type="button" class="button large clear" (click)="invoicePaymentForm.reset()" value="Cancel"/>
