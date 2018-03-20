@@ -76,7 +76,7 @@ export class InvoiceComponent{
     itemItemCodes:Array<any>=[];
     discountEditMode:boolean=false;
     amountPaidEditMode:boolean=false;
-    invoiceProcessedData:any;
+    invoiceProcessedData:any={};
     additionalMails:string;
     showPreview:boolean;
     preViewText:string="Preview Invoice";
@@ -737,6 +737,8 @@ export class InvoiceComponent{
         invoiceData.sub_total=this.roundOffValue(this.subTotal);
         if(this.invoiceID){
             invoiceData.amount_due=this.invoice.amount_due;
+        }else {
+          invoiceData.amount_due=this.roundOffValue(this.amount);
         }
         invoiceData.tax_amount=this.roundOffValue(this.taxTotal);
         //invoiceData.invoiceLines=itemLines.concat(taskLines);

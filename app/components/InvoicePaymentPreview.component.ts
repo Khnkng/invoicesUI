@@ -109,7 +109,7 @@ export class InvoicePaymentPreview{
     }
 
     getCompanyLogo() {
-        this.invoiceService.getCompanyLogo(this.invoiceData.company_id,this.invoiceData.user_id)
+        this.invoiceService.getCompanyLogo(Session.getCurrentCompany(),Session.getUser().id)
             .subscribe(preference => this.processPreference(preference[0]), error => this.handleError(error));
     }
 
