@@ -700,6 +700,7 @@ export class InvoiceComponent{
         let base = this;
         invoiceData.invoice_date = this.dateFormater.formatDate(invoiceData.invoice_date,this.dateFormat,this.serviceDateformat);
         invoiceData.due_date = this.dateFormater.formatDate(invoiceData.due_date,this.dateFormat,this.serviceDateformat);
+        invoiceData.payment_date = (this.invoice.payment_date) ? this.dateFormater.formatDate(this.invoice.payment_date,this.dateFormat,this.serviceDateformat) : '';
         if(invoiceData.job_date){
             invoiceData.job_date = this.dateFormater.formatDate(invoiceData.job_date,this.dateFormat,this.serviceDateformat);
         }
