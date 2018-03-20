@@ -76,7 +76,7 @@ export class InvoiceComponent{
     itemItemCodes:Array<any>=[];
     discountEditMode:boolean=false;
     amountPaidEditMode:boolean=false;
-    invoiceProcessedData:any;
+    invoiceProcessedData:any={};
     additionalMails:string;
     showPreview:boolean;
     preViewText:string="Preview Invoice";
@@ -700,7 +700,10 @@ export class InvoiceComponent{
         let base = this;
         invoiceData.invoice_date = this.dateFormater.formatDate(invoiceData.invoice_date,this.dateFormat,this.serviceDateformat);
         invoiceData.due_date = this.dateFormater.formatDate(invoiceData.due_date,this.dateFormat,this.serviceDateformat);
-        invoiceData.payment_date = (this.invoice.payment_date) ? this.dateFormater.formatDate(this.invoice.payment_date,this.dateFormat,this.serviceDateformat) : '';
+        if(this.invoice&&this.invoice.payment_date){
+          invoiceData.payment_date =this.dateFormater.formatDate(this.invoice.payment_date,this.dateFormat,this.serviceDateformat);
+        }
+
         if(invoiceData.job_date){
             invoiceData.job_date = this.dateFormater.formatDate(invoiceData.job_date,this.dateFormat,this.serviceDateformat);
         }
@@ -738,6 +741,8 @@ export class InvoiceComponent{
         invoiceData.sub_total=this.roundOffValue(this.subTotal);
         if(this.invoiceID){
             invoiceData.amount_due=this.invoice.amount_due;
+        }else {
+          invoiceData.amount_due=this.roundOffValue(this.amount);
         }
         invoiceData.tax_amount=this.roundOffValue(this.taxTotal);
         //invoiceData.invoiceLines=itemLines.concat(taskLines);
@@ -771,10 +776,10 @@ export class InvoiceComponent{
         this.invoiceProcessedData=invoiceData;
         if(action=='email'){
             this.setBillUpdate(invoiceData);
-            if(!this.showPreview)
+            /*if(!this.showPreview)
             {
                 this.togelPreview(invoiceData);
-            }
+            }*/
             invoiceData.state=this.invoiceID?this.invoice.state:'sent';
             let base=this;
             setTimeout(function(){
@@ -790,10 +795,10 @@ export class InvoiceComponent{
         }else if(action=='preview'){
             this.togelPreview(invoiceData);
         }else if(action=='download'){
-            if(!this.showPreview)
+            /*if(!this.showPreview)
             {
                 this.togelPreview(invoiceData);
-            }
+            }*/
             let base=this;
             setTimeout(function(){
                 base.exportToPDF();
@@ -867,7 +872,7 @@ export class InvoiceComponent{
 
     closeEmailDailog(){
         this.resetPopupFields();
-        this.resetInvoiceState();
+       // this.resetInvoiceState();
     }
 
     resetInvoiceState(){

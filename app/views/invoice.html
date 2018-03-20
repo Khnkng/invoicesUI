@@ -497,7 +497,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="small-12 medium-12 large-12 columns" *ngIf="showPreview" style="margin-bottom:2rem">
+                                        <div class="small-12 medium-12 large-12 columns" [hidden]="!showPreview" style="margin-bottom:2rem">
                                             <div class="row">
                                                 <div class="preview-action-icons" style="position: absolute;right: 1rem;overflow: visible;right: 16.5rem;">
                                                     <i class='material-icons' (click)="submit($event,false,'preview')" style="margin-top: 1.1rem;font-size: 1.3rem;left: 17px;">create</i>

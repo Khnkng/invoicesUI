@@ -109,7 +109,7 @@ export class InvoicePaymentPreview{
     }
 
     getCompanyLogo() {
-        this.invoiceService.getCompanyLogo(this.invoiceData.company_id,this.invoiceData.user_id)
+        this.invoiceService.getCompanyLogo(Session.getCurrentCompany(),Session.getUser().id)
             .subscribe(preference => this.processPreference(preference[0]), error => this.handleError(error));
     }
 
@@ -151,7 +151,7 @@ export class InvoicePaymentPreview{
                 invoiceMessage = 'Paid on ' + this.convertDateToLocaleFormat(this.invoiceData.payment_date);
                 break;
             case 'sent':
-                invoiceMessage = 'Sent by ' + this.invoiceData.company.name;
+                invoiceMessage = 'Sent by ' + Session.getCurrentCompanyName();
                 break;
             case 'partially_paid':
                 invoiceMessage = 'PARTIALLY PAID';
