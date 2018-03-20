@@ -76,7 +76,7 @@ export class InvoiceComponent{
     itemItemCodes:Array<any>=[];
     discountEditMode:boolean=false;
     amountPaidEditMode:boolean=false;
-    invoiceProcessedData:any;
+    invoiceProcessedData:any={};
     additionalMails:string;
     showPreview:boolean;
     preViewText:string="Preview Invoice";
@@ -738,6 +738,8 @@ export class InvoiceComponent{
         invoiceData.sub_total=this.roundOffValue(this.subTotal);
         if(this.invoiceID){
             invoiceData.amount_due=this.invoice.amount_due;
+        }else {
+          invoiceData.amount_due=this.roundOffValue(this.amount);
         }
         invoiceData.tax_amount=this.roundOffValue(this.taxTotal);
         //invoiceData.invoiceLines=itemLines.concat(taskLines);
@@ -771,10 +773,10 @@ export class InvoiceComponent{
         this.invoiceProcessedData=invoiceData;
         if(action=='email'){
             this.setBillUpdate(invoiceData);
-            if(!this.showPreview)
+            /*if(!this.showPreview)
             {
                 this.togelPreview(invoiceData);
-            }
+            }*/
             invoiceData.state=this.invoiceID?this.invoice.state:'sent';
             let base=this;
             setTimeout(function(){
@@ -867,7 +869,7 @@ export class InvoiceComponent{
 
     closeEmailDailog(){
         this.resetPopupFields();
-        this.resetInvoiceState();
+       // this.resetInvoiceState();
     }
 
     resetInvoiceState(){
