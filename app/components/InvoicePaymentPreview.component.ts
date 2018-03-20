@@ -145,7 +145,25 @@ export class InvoicePaymentPreview{
     }
 
     getInvoiceDisplayState(state){
-        return this.invoiceStates[state];
+        let invoiceMessage;
+        switch (state) {
+            case 'paid':
+                invoiceMessage = 'Paid on ' + this.convertDateToLocaleFormat(this.invoiceData.payment_date);
+                break;
+            case 'sent':
+                invoiceMessage = 'Sent by ' + this.invoiceData.company.name;
+                break;
+            case 'partially_paid':
+                invoiceMessage = 'PARTIALLY PAID';
+                break;
+            case 'draft':
+                invoiceMessage = 'DRAFT';
+                break;
+            case 'past_due':
+                invoiceMessage = 'Over Due from ' + this.convertDateToLocaleFormat(this.invoiceData.due_date);
+                break;
+        }
+        return invoiceMessage;
     }
 
     getHeaderColor(state){
