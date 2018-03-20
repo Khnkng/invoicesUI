@@ -1349,7 +1349,11 @@ export class InvoiceComponent{
                 var blob=new Blob([data._body], {type:"application/pdf"});
                 var link= jQuery('<a></a>');
                 link[0].href= URL.createObjectURL(blob);
-                link[0].download= "Invoice.pdf";
+                if(this.invoice){
+                    link[0].download= this.invoice.number+"_"+this.invoice.invoice_date+"_"+Session.getCurrentCompanyName()+".pdf";
+                }else {
+                    link[0].download= this.invoiceProcessedData.number+"_"+this.invoiceProcessedData.invoice_date+"_"+Session.getCurrentCompanyName()+".pdf";
+                }
                 link[0].click();
                 this.loadingService.triggerLoadingEvent(false);
             }, error =>{
