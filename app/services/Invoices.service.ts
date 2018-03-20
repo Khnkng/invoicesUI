@@ -126,7 +126,7 @@ export class InvoicesService extends QountServices {
 
     payment(paymentId:string) {
         let url = this.interpolateUrl(INVOICE_PATHS.INVOICE_PAYMENTS,null,{id: Session.getUser().id,companyId:Session.getCurrentCompany()});
-        return this.query(url+"/temp/"+paymentId, SOURCE_TYPE.JAVA).map(res => <any> res.json())
+        return this.query(url+"/"+paymentId, SOURCE_TYPE.JAVA).map(res => <any> res.json())
             .catch(this.handleError)
     }
 
