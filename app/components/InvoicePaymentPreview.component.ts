@@ -151,7 +151,7 @@ export class InvoicePaymentPreview{
                 invoiceMessage = 'Paid on ' + this.convertDateToLocaleFormat(this.invoiceData.payment_date);
                 break;
             case 'sent':
-                invoiceMessage = 'Sent by ' + this.invoiceData.company.name;
+                invoiceMessage = 'Sent by ' + Session.getCurrentCompanyName();
                 break;
             case 'partially_paid':
                 invoiceMessage = 'PARTIALLY PAID';

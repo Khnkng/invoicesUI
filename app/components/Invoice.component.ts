@@ -700,7 +700,10 @@ export class InvoiceComponent{
         let base = this;
         invoiceData.invoice_date = this.dateFormater.formatDate(invoiceData.invoice_date,this.dateFormat,this.serviceDateformat);
         invoiceData.due_date = this.dateFormater.formatDate(invoiceData.due_date,this.dateFormat,this.serviceDateformat);
-        invoiceData.payment_date = (this.invoice.payment_date) ? this.dateFormater.formatDate(this.invoice.payment_date,this.dateFormat,this.serviceDateformat) : '';
+        if(this.invoice&&this.invoice.payment_date){
+          invoiceData.payment_date =this.dateFormater.formatDate(this.invoice.payment_date,this.dateFormat,this.serviceDateformat);
+        }
+
         if(invoiceData.job_date){
             invoiceData.job_date = this.dateFormater.formatDate(invoiceData.job_date,this.dateFormat,this.serviceDateformat);
         }
@@ -792,10 +795,10 @@ export class InvoiceComponent{
         }else if(action=='preview'){
             this.togelPreview(invoiceData);
         }else if(action=='download'){
-            if(!this.showPreview)
+            /*if(!this.showPreview)
             {
                 this.togelPreview(invoiceData);
-            }
+            }*/
             let base=this;
             setTimeout(function(){
                 base.exportToPDF();
