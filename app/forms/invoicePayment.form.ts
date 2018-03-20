@@ -25,7 +25,7 @@ export class InvoicePaymentForm extends abstractForm{
             "type": ["", Validators.required],
             "memo": [""],
             "paymentNote": [""],
-            "depositedTo": [""],
+            "depositedTo": ["",Validators.required],
             "payment_status":[""]
         }
     }
