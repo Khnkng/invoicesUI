@@ -191,6 +191,8 @@ export class InvoiceComponent{
                 this.hideHistoryFlyout();
             }else if(this.showInvoicePaymentDetails){
                 this.hideInvoicePayments();
+            }else if(this.showPreview){
+              this.resetInvoiceState();
             }else{
                 this.gotoPreviousState();
             }
@@ -280,9 +282,9 @@ export class InvoiceComponent{
                     this.showUOM=preference.hideUnits;
                     this.showItemName=preference.hideItemName;
                     this.templateType=preference.templateType;
-                    if(!this.isPaymentsNavigation){
+                    /*if(!this.isPaymentsNavigation){
                         this.showInvoice=true;
-                    }
+                    }*/
                     if(preference.templateType=='Other2'){
                         this.isOtherTemplate=true;
                         this.templateType='Other2'
@@ -369,6 +371,7 @@ export class InvoiceComponent{
                 this.addInvoiceList(null,'item');
                 // this.addInvoiceList(null,'task');
             }
+            this.showInvoice=true;
             this.titleService.setPageTitle("New Invoice");
         } else {
             if(!this.isPaymentsNavigation)this.titleService.setPageTitle("Edit Invoice");
@@ -447,6 +450,7 @@ export class InvoiceComponent{
                 this.invoice.invoiceLines.forEach(function(invoiceLine:any){
                     base.addInvoiceList(invoiceLine,invoiceLine.type);
                 });
+                this.showInvoice=true;
             });
         }
     }
