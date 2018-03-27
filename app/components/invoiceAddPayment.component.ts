@@ -84,11 +84,15 @@ export class InvoiceAddPaymentComponent {
     }
 
     loadAccounts() {
+        if(!this.paymentId){
+          this.loadingService.triggerLoadingEvent(true);
+        }
         this.accountsService.financialAccounts(Session.getCurrentCompany())
             .subscribe(accounts=> {
                 this.accounts = accounts.accounts;
               if(!this.paymentId){
                 this.setDefaultBankAccount();
+                this.closeLoader();
               }
             }, error => {
 
@@ -155,16 +159,17 @@ export class InvoiceAddPaymentComponent {
               }else{
                 paymentLine.isSelected=false;
               }
-            })
+            });
+            this.closeLoader()
         })
     }
 
     loadCustomers(companyId:any) {
-        this.loadingService.triggerLoadingEvent(true);
+        //this.loadingService.triggerLoadingEvent(true);
         this.customerService.customers(companyId)
             .subscribe(customers => {
                 this.customers = customers;
-                this.closeLoader();
+               // this.closeLoader();
             }, error =>{
                 this.toastService.pop(TOAST_TYPE.error, "Failed To Load Your Customers");
                 this.closeLoader();
