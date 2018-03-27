@@ -309,7 +309,7 @@ export class InvoiceDashboardComponent {
             this.loadingService.triggerLoadingEvent(false);
             this.titleService.setPageTitle("Proposals");
         } else if (this.selectedTab == 2) {
-            this.isLoading = false;
+            this.isLoading = true;
             this.titleService.setPageTitle("invoices");
             this.invoiceService.allInvoices().subscribe(invoices => {
                 if (invoices) {
@@ -322,10 +322,10 @@ export class InvoiceDashboardComponent {
                 }
             }, error => this.handleError(error));
         } else if (this.selectedTab == 3) {
-            this.isLoading = false;
+            this.isLoading = true;
             this.titleService.setPageTitle("Collections");
             this.invoiceService.getPayments().subscribe(payments => {
-                this.payments = payments;
+                this.payments = payments||[];
                 this.buildPaymentsTableData();
             }, error => this.handleError(error));
         }
@@ -941,12 +941,16 @@ export class InvoiceDashboardComponent {
             }
             base.invoiceTableData.rows.push(row);
         });
-
-        setTimeout(function () {
+        if(invoices&&invoices.length>0){
+          setTimeout(function () {
             base.hasInvoices = true;
-        }, 0);
+            base.loadingService.triggerLoadingEvent(false);
+          }, 500);
+        }else {
+          this.isLoading=false;
+          this.loadingService.triggerLoadingEvent(false);
+        }
         this.displayFooTableDropdown();
-        this.loadingService.triggerLoadingEvent(false);
     }
 
     buildPaymentsTableData() {
@@ -1043,12 +1047,16 @@ export class InvoiceDashboardComponent {
              }*/
             base.paidInvoiceTableData.rows.push(row);
         });
-
-        setTimeout(function(){
+        if(this.payments.length>0){
+          setTimeout(function(){
             base.hasPaidInvoices = true;
-        }, 0);
+            base.loadingService.triggerLoadingEvent(false);
+          }, 500);
+        }else{
+          this.isLoading=false;
+          this.loadingService.triggerLoadingEvent(false);
+        }
         this.displayFooTableDropdown();
-        this.loadingService.triggerLoadingEvent(false);
     }
 
     /*buildPaidInvoiceTableData(invoices) {
