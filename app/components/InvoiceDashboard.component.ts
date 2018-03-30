@@ -71,9 +71,9 @@ export class InvoiceDashboardComponent {
     actions:Array<any> = [];
     historyFlyoutCSS:any;
     invoiceActions: Array<any> = [{
-        'className': 'ion-edit',
-        'name': 'Edit',
-        'value': 'edit'
+        'className': 'ion-ios-eye',
+        'name': 'View',
+        'value': 'view'
     },
         {'className': 'ion-ios-copy-outline',
             'name': 'Duplicate',
@@ -942,13 +942,13 @@ export class InvoiceDashboardComponent {
             base.invoiceTableData.rows.push(row);
         });
         if(invoices&&invoices.length>0){
-          setTimeout(function () {
-            base.hasInvoices = true;
-            base.loadingService.triggerLoadingEvent(false);
-          }, 500);
+            setTimeout(function () {
+                base.hasInvoices = true;
+                base.loadingService.triggerLoadingEvent(false);
+            }, 500);
         }else {
-          this.isLoading=false;
-          this.loadingService.triggerLoadingEvent(false);
+            this.isLoading=false;
+            this.loadingService.triggerLoadingEvent(false);
         }
         this.displayFooTableDropdown();
     }
@@ -1006,11 +1006,11 @@ export class InvoiceDashboardComponent {
             let invoicesString="";
 
             if(payment['payment_status']=='Applied') {
-              assignmentHtml = "<small style='color:#00B1A9'>"+payment['payment_status']+"</small>"
+                assignmentHtml = "<small style='color:#00B1A9'>"+payment['payment_status']+"</small>"
             } else if(payment['payment_status']=='Partially Applied') {
-              assignmentHtml = "<small style='color:#ff3219'>"+payment['payment_status']+"</small>"
+                assignmentHtml = "<small style='color:#ff3219'>"+payment['payment_status']+"</small>"
             } else if(payment['payment_status']=='Unapplied') {
-              assignmentHtml = "<small style='color:#ff3219'>"+payment['payment_status']+"</small>"
+                assignmentHtml = "<small style='color:#ff3219'>"+payment['payment_status']+"</small>"
             }
             /*row["invoiceIds"]=invoicesIds.toString();
             if(invoicesIds.length>0){
@@ -1031,7 +1031,7 @@ export class InvoiceDashboardComponent {
                 JeString= "<a class='action' data-action='navigation'><span class='icon badge je-badge'>JE</span></a>";
             }
             if(payment.depositID){
-              depositString= "<a class='action' data-action='deposit'><span class='icon badge je-badge'>D</span></a>";
+                depositString= "<a class='action' data-action='deposit'><span class='icon badge je-badge'>D</span></a>";
             }
             let postString = "<a class='action' data-action='paymentsCollaboration'><span class='comment-badge'><i class='material-icons'>comment</i></span></a>";
             if(invoicesString&&JeString){
@@ -1048,13 +1048,13 @@ export class InvoiceDashboardComponent {
             base.paidInvoiceTableData.rows.push(row);
         });
         if(this.payments.length>0){
-          setTimeout(function(){
-            base.hasPaidInvoices = true;
-            base.loadingService.triggerLoadingEvent(false);
-          }, 500);
+            setTimeout(function(){
+                base.hasPaidInvoices = true;
+                base.loadingService.triggerLoadingEvent(false);
+            }, 500);
         }else{
-          this.isLoading=false;
-          this.loadingService.triggerLoadingEvent(false);
+            this.isLoading=false;
+            this.loadingService.triggerLoadingEvent(false);
         }
         this.displayFooTableDropdown();
     }
@@ -1185,15 +1185,15 @@ export class InvoiceDashboardComponent {
             let link = ['payments',paymentId,'invoices'];
             this._router.navigate(link);
         }else if(action=='deposit'){
-          this.addInvoiceState();
-          let depositID = $event.depositID;
-          let link = ['deposit',depositID];
-          this._router.navigate(link);
+            this.addInvoiceState();
+            let depositID = $event.depositID;
+            let link = ['deposit',depositID];
+            this._router.navigate(link);
         }else if(action=='navigatePayment'){
-          this.addInvoiceState();
-          let invoiceId = $event.id;
-          let link = ['invoices',invoiceId,'payments'];
-          this._router.navigate(link);
+            this.addInvoiceState();
+            let invoiceId = $event.id;
+            let link = ['invoices',invoiceId,'payments'];
+            this._router.navigate(link);
         }
     }
 
@@ -1324,7 +1324,7 @@ export class InvoiceDashboardComponent {
     handleInvoiceStateChange(action) {
         jQuery('#invoice-dropdown').foundation('close');
         switch (action) {
-            case 'edit':
+            case 'view':
                 this.showInvoice(this.selectedTableRows[0]);
                 break;
             case 'duplicate':
