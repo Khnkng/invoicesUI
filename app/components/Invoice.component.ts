@@ -387,6 +387,7 @@ export class InvoiceComponent{
                 if(invoice['job_date']){
                     invoice.job_date = base.dateFormater.formatDate(invoice['job_date'],base.serviceDateformat,base.dateFormat);
                 }
+                this.amount=invoice.amount;
                 this.invoice = invoice;
                 if(this.templateType=="Other1"||this.templateType=="Other2"){
                     this.setInvoiceValidators();
