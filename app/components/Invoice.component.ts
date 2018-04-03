@@ -191,8 +191,12 @@ export class InvoiceComponent{
                 this.hideHistoryFlyout();
             }else if(this.showInvoicePaymentDetails){
                 this.hideInvoicePayments();
-            }else if(this.showPreview){
-              this.resetInvoiceState();
+            }else if(!this.showPreview){
+                this.showPreview=!this.showPreview;
+                if(this.showPreview){
+                    this.titleService.setPageTitle(this.invoiceProcessedData.number);
+                }
+                // this.resetInvoiceState();
             }else{
                 this.gotoPreviousState();
             }
@@ -261,12 +265,13 @@ export class InvoiceComponent{
     hideCommission(){
         this.showInvoice=true;
         this.showCommission=false;
-        if(this.newInvoice){
+        if(this.showPreview) {
+            this.titleService.setPageTitle(this.invoiceProcessedData.number);
+        } else if(this.newInvoice){
             this.titleService.setPageTitle("Add Invoice");
-        }else {
+        } else {
             this.titleService.setPageTitle("Edit Invoice");
         }
-
     }
 
     getCompanyPreferences(){
@@ -374,7 +379,7 @@ export class InvoiceComponent{
             this.showInvoice=true;
             this.titleService.setPageTitle("New Invoice");
         } else {
-            if(!this.isPaymentsNavigation)this.titleService.setPageTitle("Edit Invoice");
+            // if(!this.isPaymentsNavigation)this.titleService.setPageTitle("Edit Invoice");
             this.invoiceService.getInvoice(this.invoiceID).subscribe(invoice=>{
                 let base=this;
                 invoice.invoice_date = base.dateFormater.formatDate(invoice['invoice_date'],base.serviceDateformat,base.dateFormat);
@@ -382,6 +387,7 @@ export class InvoiceComponent{
                 if(invoice['job_date']){
                     invoice.job_date = base.dateFormater.formatDate(invoice['job_date'],base.serviceDateformat,base.dateFormat);
                 }
+                this.amount=invoice.amount;
                 this.invoice = invoice;
                 if(this.templateType=="Other1"||this.templateType=="Other2"){
                     this.setInvoiceValidators();
@@ -397,7 +403,7 @@ export class InvoiceComponent{
                 if((invoice.state!='partially_paid'&&invoice.state!='paid')&&invoice.is_discount_applied&&invoice.discount_id){
                     this.getDiscountAmountValue();
                 }
-                this.setCustomerComboBoxValue(invoice.customer_id);
+                // this.setCustomerComboBoxValue(invoice.customer_id);
                 if(invoice.attachments_metadata){
                     let attachmentObj=JSON.parse(invoice.attachments_metadata);
                     this.sourceId=attachmentObj.sourceId;
@@ -451,6 +457,8 @@ export class InvoiceComponent{
                     base.addInvoiceList(invoiceLine,invoiceLine.type);
                 });
                 this.showInvoice=true;
+                this.showPreview = false;
+                this.submit(null,false,'preview');
             });
         }
     }
@@ -696,8 +704,10 @@ export class InvoiceComponent{
 
 
     submit($event,sendMail,action){
-        $event.preventDefault();
-        $event.stopPropagation();
+        if($event){
+            $event.preventDefault();
+            $event.stopPropagation();
+        }
         let itemLines=[];
         //let taskLines=[];
         let invoiceData = this._invoiceForm.getData(this.invoiceForm);
@@ -705,7 +715,7 @@ export class InvoiceComponent{
         invoiceData.invoice_date = this.dateFormater.formatDate(invoiceData.invoice_date,this.dateFormat,this.serviceDateformat);
         invoiceData.due_date = this.dateFormater.formatDate(invoiceData.due_date,this.dateFormat,this.serviceDateformat);
         if(this.invoice&&this.invoice.payment_date){
-          invoiceData.payment_date =this.dateFormater.formatDate(this.invoice.payment_date,this.dateFormat,this.serviceDateformat);
+            invoiceData.payment_date =this.dateFormater.formatDate(this.invoice.payment_date,this.dateFormat,this.serviceDateformat);
         }
 
         if(invoiceData.job_date){
@@ -746,7 +756,7 @@ export class InvoiceComponent{
         if(this.invoiceID){
             invoiceData.amount_due=this.invoice.amount_due;
         }else {
-          invoiceData.amount_due=this.roundOffValue(this.amount);
+            invoiceData.amount_due=this.roundOffValue(this.amount);
         }
         invoiceData.tax_amount=this.roundOffValue(this.taxTotal);
         //invoiceData.invoiceLines=itemLines.concat(taskLines);
@@ -876,7 +886,7 @@ export class InvoiceComponent{
 
     closeEmailDailog(){
         this.resetPopupFields();
-       // this.resetInvoiceState();
+        // this.resetInvoiceState();
     }
 
     resetInvoiceState(){
@@ -1143,11 +1153,15 @@ export class InvoiceComponent{
     hideHistoryFlyout(){
         this.showInvoiceHistory=false;
         this.showInvoice=true;
-        this.titleService.setPageTitle("Edit Invoice");
         this.historyList=[];
         this.count=0;
-        let invoiceData = this._invoiceForm.getData(this.invoiceForm);
-        this.setCustomerComboBoxValue(invoiceData.customer_id);
+        if(this.showPreview) {
+            this.titleService.setPageTitle(this.invoiceProcessedData.number);
+        } else {
+            this.titleService.setPageTitle("Edit Invoice");
+            let invoiceData = this._invoiceForm.getData(this.invoiceForm);
+            this.setCustomerComboBoxValue(invoiceData.customer_id);
+        }
     }
 
     saveItem(){
