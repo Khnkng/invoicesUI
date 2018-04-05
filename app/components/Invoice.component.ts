@@ -805,6 +805,7 @@ export class InvoiceComponent{
             this.saveInvoiceDetails(invoiceData);
         }else if(action=='save'){
             this.setBillUpdate(invoiceData);
+            invoiceData.remainder_name=this.remainder_name;
             this.saveInvoiceDetails(invoiceData);
         }else if(action=='preview'){
             this.togelPreview(invoiceData);
@@ -901,7 +902,7 @@ export class InvoiceComponent{
 
     resetEmailDailogFields(){
         this.additionalMails=null;
-        this.remainder_name="";
+        // this.remainder_name="";
         this.email_notes=null;
     }
 
