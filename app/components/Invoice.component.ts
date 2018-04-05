@@ -144,6 +144,7 @@ export class InvoiceComponent{
     payments: Array<any> = [];
     isPaymentsNavigation:boolean=false;
     bgColor: string = '#878787';
+    remainder_jobId:string="";
 
     constructor(private _fb: FormBuilder, private _router:Router, private _route: ActivatedRoute, private loadingService: LoadingService,
                 private invoiceService: InvoicesService, private toastService: ToastService, private codeService: CodesService, private companyService: CompaniesService,
@@ -436,6 +437,10 @@ export class InvoiceComponent{
                 if(invoice.remainder_name){
                     this.remainder_name=invoice.remainder_name;
                 }
+                if(invoice.remainder_job_id){
+                    this.remainder_jobId = invoice.remainder_job_id;
+                }
+
                 //        taskLines =  _.filter(this.invoice.invoiceLines, function(invoice) { return invoice.type == 'task'; });
                 // itemLines =  _.filter(this.invoice.invoiceLines, function(invoice) { return invoice.type == 'item'; });
                 itemLines =this.invoice.invoiceLines;  //_.filter(, function(invoice) { return invoice.type == 'item'; });
@@ -805,6 +810,8 @@ export class InvoiceComponent{
             this.saveInvoiceDetails(invoiceData);
         }else if(action=='save'){
             this.setBillUpdate(invoiceData);
+            invoiceData.remainder_name=this.remainder_name;
+            invoiceData.remainder_job_id = this.remainder_jobId;
             this.saveInvoiceDetails(invoiceData);
         }else if(action=='preview'){
             this.togelPreview(invoiceData);
@@ -901,7 +908,7 @@ export class InvoiceComponent{
 
     resetEmailDailogFields(){
         this.additionalMails=null;
-        this.remainder_name="";
+        // this.remainder_name="";
         this.email_notes=null;
     }
 
@@ -918,6 +925,7 @@ export class InvoiceComponent{
             this.invoiceProcessedData.recepientsMails=_.uniq(this.invoiceProcessedData.recepientsMails.concat(mails));
         }
         this.invoiceProcessedData.remainder_name=this.remainder_name;
+        this.invoiceProcessedData.remainder_job_id = this.remainder_jobId;
         this.invoiceProcessedData.email_notes=this.email_notes;
         this.invoiceProcessedData.customer_first_name=this.selectedContact.first_name;
         this.invoiceProcessedData.customer_last_name=this.selectedContact.last_name;
