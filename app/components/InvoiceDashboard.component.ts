@@ -629,12 +629,13 @@ export class InvoiceDashboardComponent {
             .subscribe(metricData => {
                 this.hasARAgingSummaryData = true;
                 let columns = metricData.columns;
-                let data = metricData.data;
+                let data = metricData.data || {};
+                let totalObj = data.TOTAL || {};
                 let series = [];
                 _.each(columns, function(column){
                     series.push({
                         name: column,
-                        y: base.unFormatAmount(data[column])
+                        y: base.unFormatAmount(totalObj[column])
                     });
                 });
                 this.customerAgingSummary={
