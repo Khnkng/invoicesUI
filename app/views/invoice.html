@@ -70,7 +70,7 @@
                                                                     {{selectedContact?selectedContact.mobile:""}}
                                                                 </div>
                                                                 <div style="color:grey">
-                                                                    {{selectedContact?selectedContact.email:""}}
+                                                                    {{selectedContact?selectedContact.email?selectedContact.email.split(',')[0]:"":""}}
                                                                 </div>
                                                             </label>
                                                         </div>
