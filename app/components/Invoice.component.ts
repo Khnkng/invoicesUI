@@ -1052,7 +1052,7 @@ export class InvoiceComponent{
         if(contact){
           if(contact.email){
             let mails:Array<string>=[];
-            let mailsUi:Array<string>=this.additionalMails.split(',');
+            let mailsUi:Array<string>=contact.email.split(',');
             _.forEach(mailsUi, function(value) {
               if(value)
               {
