@@ -161,6 +161,13 @@
     font-size: 1.05em;
   }
 
+  .image-styling {
+    background-repeat: no-repeat;
+    height: 100px;
+    width: 100px;
+    background-position: center center;
+  }
+
 </style>
 <div id="prev-Other" *ngIf="templateType=='Other'">
   <div class="preview-table-header" [style.background-color]="bgColor">
@@ -195,7 +202,7 @@
               <p class="company-style">{{invoiceData.company?invoiceData.company.state:""}}, {{invoiceData.company?invoiceData.company.zipcode:""}}</p>
               <p class="company-style">{{invoiceData.company?invoiceData.company.country:""}}</p>
             </td>
-              <td class="text-right" id="company-img"><img src={{logoURL}} alt="" height="90" style="position: relative;bottom:30px;" [style.width]="logoWidth"/></td>
+              <td class="image-styling" [style.background-image]="'url('+logoURL+')'"></td>
             </tr>
             </tbody>
           </table>
@@ -344,7 +351,7 @@
               <p class="company-style">{{invoiceData.company?invoiceData.company.state:""}}, {{invoiceData.company?invoiceData.company.zipcode:""}}</p>
               <p class="company-style">{{invoiceData.company?invoiceData.company.country:""}}</p>
             </td>
-              <td class="text-right" id="company-img"><img src={{logoURL}} alt="" height="90" style="position: relative;bottom:30px;" [style.width]="logoWidth"/></td>
+              <td class="image-styling" [style.background-image]="'url('+logoURL+')'"></td>
             </tr>
             </tbody>
           </table>
@@ -512,7 +519,7 @@
                 <p class="company-style">{{invoiceData.company?invoiceData.company.state:""}}, {{invoiceData.company?invoiceData.company.zipcode:""}}</p>
                 <p class="company-style">{{invoiceData.company?invoiceData.company.country:""}}</p>
               </td>
-              <td class="text-right" id="company-img"><img src={{logoURL}} alt="" height="90" style="position: relative;bottom:30px;" [style.width]="logoWidth"/></td>
+              <td class="image-styling" [style.background-image]="'url('+logoURL+')'"></td>
             </tr>
             </tbody>
           </table>
@@ -681,7 +688,7 @@
               </td>
               <td></td>
               <td></td>
-              <td class="text-right" id="company-img"><img src={{logoURL}} alt="" height="90" style="position: relative;bottom:30px;" [style.width]="logoWidth"/></td>
+              <td class="image-styling" [style.background-image]="'url('+logoURL+')'"></td>
             </tr>
             </tbody>
           </table>
@@ -854,7 +861,7 @@
                 <p class="company-style">{{invoiceData.company?invoiceData.company.state:""}}, {{invoiceData.company?invoiceData.company.zipcode:""}}</p>
                 <p class="company-style">{{invoiceData.company?invoiceData.company.country:""}}</p>
               </td>
-              <td class="text-right" id="company-img"><img src={{logoURL}} alt="" height="90" style="position: relative;bottom:30px;" [style.width]="logoWidth"/></td>
+              <td class="image-styling" [style.background-image]="'url('+logoURL+')'"></td>
             </tr>
             </tbody>
           </table>
@@ -1040,7 +1047,7 @@
             </thead>
             <tbody cellpadding=5 cellspacing=5>
             <tr>
-              <td id="company-img"><img src={{logoURL}} alt="" height="90" style="position: relative;bottom:30px;" [style.width]="logoWidth"/></td>
+              <td class="image-styling" [style.background-image]="'url('+logoURL+')'"></td>
               <td>
                 <p class="text-right company-style">{{invoiceData.company?invoiceData.company.name:""}}</p>
                 <p class="text-right company-style">{{invoiceData.company?invoiceData.company.address:""}}</p>
@@ -1211,7 +1218,7 @@
             </thead>
             <tbody cellpadding=5 cellspacing=5>
             <tr>
-              <td id="company-img"><img src={{logoURL}} alt="" height="90" style="position: relative;bottom:30px;" [style.width]="logoWidth"/></td>
+              <td class="image-styling" [style.background-image]="'url('+logoURL+')'"></td>
               <td>
                 <p class="text-right company-style">{{invoiceData.company?invoiceData.company.name:""}}</p>
                 <p class="text-right company-style">{{invoiceData.company?invoiceData.company.address:""}}</p>
@@ -1398,7 +1405,7 @@
             </thead>
             <tbody cellpadding=5 cellspacing=5>
             <tr>
-              <td id="company-img"><img src={{logoURL}} alt="" height="90" style="position: relative;bottom:30px;" [style.width]="logoWidth"/></td>
+              <td class="image-styling" [style.background-image]="'url('+logoURL+')'"></td>
               <td>
                 <p class="text-right company-style">{{invoiceData.company?invoiceData.company.name:""}}</p>
                 <p class="text-right company-style">{{invoiceData.company?invoiceData.company.address:""}}</p>
