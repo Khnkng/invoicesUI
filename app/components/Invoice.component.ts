@@ -1049,7 +1049,19 @@ export class InvoiceComponent{
     onCustomerContactSelect(id){
         let contact = _.find(this.customerContacts, {'id': id});
         this.selectedContact=contact;
-        this.maillIds.push(contact.email);
+        if(contact){
+          if(contact.email){
+            let mails:Array<string>=[];
+            let mailsUi:Array<string>=contact.email.split(',');
+            _.forEach(mailsUi, function(value) {
+              if(value)
+              {
+                mails.push(value);
+              }
+            });
+            this.maillIds.concat(mails);
+          }
+        }
     }
 
     getCustomerContacts(id){
@@ -1070,7 +1082,7 @@ export class InvoiceComponent{
                         let contact = _.find(this.customerContacts, {'id': this.invoice.send_to});
                         if(contact){
                             this.selectedContact=contact;
-                            this.maillIds.push(contact.email);
+                            this.setEmilContacts(contact.email);
                         }
                     }else if(this.newInvoice){
                         let invoiceData=this._invoiceForm.getData(this.invoiceForm);
@@ -1078,7 +1090,9 @@ export class InvoiceComponent{
                             let contact = _.find(this.customerContacts, {'id': invoiceData.send_to});
                             if(contact){
                                 this.selectedContact=contact;
-                                this.maillIds.push(contact.email);
+                                if(contact.email){
+                                  this.setEmilContacts(contact.email);
+                                }
                             }
                         }
                     }
@@ -1088,6 +1102,19 @@ export class InvoiceComponent{
                 this.closeLoader();
             });
     }
+
+
+  setEmilContacts(emails){
+    let mails:Array<string>=[];
+    let mailsUi:Array<string>=emails.split(',');
+    _.forEach(mailsUi, function(value) {
+      if(value)
+      {
+        mails.push(value);
+      }
+    });
+    this.maillIds.concat(mails);
+  }
 
     loadCOA(){
         this.coaService.chartOfAccounts(Session.getCurrentCompany())
