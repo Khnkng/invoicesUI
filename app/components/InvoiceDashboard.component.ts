@@ -93,21 +93,21 @@ export class InvoiceDashboardComponent {
         'value': 'sent'
     }, {'className': 'ion-ios-trash','name': 'Delete', 'value': 'delete'}];
     paymentActions: Array<any> = [{
-        'className': 'ion-edit',
-        'name': 'Edit',
-        'value': 'edit'
+        'className': 'ion-ios-eye',
+        'name': 'View',
+        'value': 'view'
     }];
     paidInvoiceActions:Array<any>=[{
-        'className': 'ion-android-send',
+        'className': 'ion-ios-eye',
         'name': 'View',
-        'value': 'edit'
+        'value': 'view'
 
     }];
     draftInvoiceActions:Array<any>=[
         {
-            'className': 'ion-edit',
-            'name': 'Edit',
-            'value': 'edit'
+            'className': 'ion-ios-eye',
+            'name': 'View',
+            'value': 'view'
         },
         {'className': 'ion-ios-copy-outline',
             'name': 'Duplicate',
