@@ -14,6 +14,8 @@ import {ToastService} from "qCommon/app/services/Toast.service";
 import {TOAST_TYPE} from "qCommon/app/constants/Qount.constants";
 import {LoadingService} from "qCommon/app/services/LoadingService";
 import {pageTitleService} from "qCommon/app/services/PageTitle";
+import {ActivatedRoute, Router} from "@angular/router";
+import {SwitchBoard} from "qCommon/app/services/SwitchBoard";
 
 declare let jQuery:any;
 declare let Foundation:any;
@@ -36,9 +38,11 @@ export class InvoiceSettingsComponent implements  OnInit {
   preference: any;
   userID:any;
   showUploader:boolean;
+  routeSubscribe:any;
 
   constructor(private _fb: FormBuilder, private _invoiceSettingsForm: InvoiceSettingsForm, private dss: DomSanitizer,
-      private invoiceService: InvoicesService, private toastService: ToastService, private loadingService: LoadingService,private titleService:pageTitleService){
+      private invoiceService: InvoicesService, private toastService: ToastService, private loadingService: LoadingService,private titleService:pageTitleService
+      , private _router:Router,private switchBoard: SwitchBoard){
     this.invoiceSettingsForm = this._fb.group(this._invoiceSettingsForm.getForm());
     this.companyId = Session.getCurrentCompany();
     this.userID=Session.getUser().id;
@@ -51,7 +55,11 @@ export class InvoiceSettingsComponent implements  OnInit {
             this.toastService.pop(TOAST_TYPE.error, "Failed To Load Invoice Preferences");
           });
     }
-    this.getCompanyLogo();
+    this.routeSubscribe = switchBoard.onClickPrev.subscribe(title => {
+      this.titleService.setPageTitle("Tools");
+      let link = ['tools'];
+      this._router.navigate(link);
+    });
   }
 
   getCompanyLogo() {
@@ -253,6 +261,12 @@ export class InvoiceSettingsComponent implements  OnInit {
       }
     }
     this.showUploader=true;
+  }
+
+  ngOnDestroy(){
+    if(this.routeSubscribe){
+      this.routeSubscribe.unsubscribe();
+    }
   }
 
 }
