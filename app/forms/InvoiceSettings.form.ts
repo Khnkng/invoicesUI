@@ -38,7 +38,9 @@ export class InvoiceSettingsForm extends abstractForm{
             "otherItems": [""],
             "otherUnits": [""],
             "otherPrice": [""],
-            "otherAmount": [""]
+            "otherAmount": [""],
+            "reply_to_email":[""],
+            "reply_to_name":[""]
         }
     }
 
