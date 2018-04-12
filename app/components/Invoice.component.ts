@@ -549,8 +549,9 @@ export class InvoiceComponent{
             if (status === 200) {
                 this.uploader.progress = 100;
                 this.billUploadResp = response;
-                this.uploader.queue.forEach(function (item) {
-                    item.remove();
+                this.uploader.queue.forEach(function (_item) {
+                    if(item._file.name===_item._file.name)
+                    _item.remove();
                 });
                 this.document = JSON.parse(response);
                 this.compileLink();
