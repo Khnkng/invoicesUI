@@ -55,6 +55,7 @@ export class InvoiceSettingsComponent implements  OnInit {
             this.toastService.pop(TOAST_TYPE.error, "Failed To Load Invoice Preferences");
           });
     }
+    this.getCompanyLogo();
     this.routeSubscribe = switchBoard.onClickPrev.subscribe(title => {
       this.titleService.setPageTitle("Tools");
       let link = ['tools'];
