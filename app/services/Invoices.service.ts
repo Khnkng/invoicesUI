@@ -210,6 +210,15 @@ export class InvoicesService extends QountServices {
             .catch(this.handleError)
     }
 
+    getUnassignedCollections(companyId) {
+      let url = this.interpolateUrl(INVOICE_PATHS.INVOICE_PAYMENTS + "?unassigned=true", null, {
+        id: Session.getUser().id,
+        companyId: companyId
+      });
+      return this.query(url, SOURCE_TYPE.JAVA).map(res => <any> res.json())
+        .catch(this.handleError)
+    }
+
     getPaymentInvoices(paymentID:string){
       let url = this.interpolateUrl(INVOICE_PATHS.PAYMENT_INVOICES,null,{id: Session.getUser().id, companyId: Session.getCurrentCompany(), paymentID: paymentID});
       return this.query(url, SOURCE_TYPE.JAVA).map(res => <any> res.json())

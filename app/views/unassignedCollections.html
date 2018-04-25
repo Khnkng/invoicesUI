@@ -1,0 +1,5 @@
+<foo-table class="bigpay-dashboard bighalf-footable invoice-table" *ngIf="hasPayments" [data]="unassignedCollectionData" [options]="unassignedCollectionOptions" (onSearch)="setSearchString($event)" (onRowClick)="handleAction($event)" #paidTable></foo-table>
+<div class=" callout text-center" [hidden]="isLoading" *ngIf="!hasPayments">
+    <div class="woo-woo">Woot Woot!</div>
+    <p>There are no Unassigned Collections.</p>
+</div>
