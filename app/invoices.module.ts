@@ -22,6 +22,7 @@ import {InvoiceAddPayment} from "./components/AddPaymentToInvoice.component";
 import {InvoicePaymentPreview} from "./components/InvoicePaymentPreview.component";
 import {InvoiceTableComponent} from "./components/InvoiceTable.component";
 import {UnappliedCollections} from "./components/UnappliedCollections.component";
+import {UnassignedCollections} from "./components/UnassignedCollections.component";
 import {PaymentInvoices} from "./components/PaymentInvoices.component";
 import {InvoicePayments} from "./components/InvoicePayments.component";
 
@@ -38,12 +39,14 @@ import {InvoicePayments} from "./components/InvoicePayments.component";
         {path: 'invoices/:invoiceID', component: InvoiceAddPayment,canActivate: [LoggedInActivator]},
         {path: 'invoice/:invoiceTableID', component: InvoiceTableComponent,canActivate: [LoggedInActivator]},
         {path: 'payments/unapplied', component: UnappliedCollections,canActivate: [LoggedInActivator]},
+        {path: 'collections/unassigned', component: UnassignedCollections,canActivate: [LoggedInActivator]},
         {path: 'payments/:paymentID/invoices', component: PaymentInvoices, canActivate: [LoggedInActivator]},
         {path: 'invoices/:invoiceID/payments', component: InvoicePayments, canActivate: [LoggedInActivator]}
     ])],
     declarations: [InvoiceCustomDatepicker, CustomDatepicker1, InvoiceSettingsComponent, InvoiceDashboardComponent,
             InvoiceComponent, InvoiceCustomDatepicker,InvoicePayComponent,InvoiceAddPaymentComponent,
-            InvoiceAddPayment,InvoicePaymentPreview, InvoiceTableComponent, UnappliedCollections, PaymentInvoices, InvoicePayments],
+            InvoiceAddPayment,InvoicePaymentPreview, InvoiceTableComponent, UnappliedCollections, PaymentInvoices, InvoicePayments,
+            UnassignedCollections],
     exports: [RouterModule, CustomDatepicker1],
     providers: [InvoiceSettingsForm, InvoicesService, InvoiceForm, InvoiceLineForm, InvoiceLineTaxesForm, InvoicePaymentForm],
     schemas: [ CUSTOM_ELEMENTS_SCHEMA ]

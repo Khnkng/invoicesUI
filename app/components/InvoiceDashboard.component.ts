@@ -219,6 +219,10 @@ export class InvoiceDashboardComponent {
             this.stateService.addState(new State("INVOICE_DASHBOARD", this._router.url, null, null));
             let link = ['payments/unapplied'];
             this._router.navigate(link);
+        } else if(key == 'unassigned'){
+            this.stateService.addState(new State("INVOICE_DASHBOARD", this._router.url, null, null));
+            let link = ['collections/unassigned'];
+            this._router.navigate(link);
         }
     }
 
