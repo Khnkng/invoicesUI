@@ -229,6 +229,10 @@
             <span>Unapplied</span>
             <span class="notifiers-count">({{badges.unappliedPaymentsCount ? badges.unappliedPaymentsCount : localBadges ? localBadges.unappliedPaymentsCount: 0 }})</span>
         </span>
+        <span class="pointer" (click)="goToTools('unassigned')">
+            <span>Unassigned</span>
+            <span class="notifiers-count">({{badges.unassignedCollectionCount ? badges.unassignedCollectionCount : localBadges ? localBadges.unassignedCollectionCount: 0 }})</span>
+        </span>
     </div>
 
     <div class="row chart-margin" *ngIf="showDetailedChart">
