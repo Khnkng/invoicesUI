@@ -76,8 +76,7 @@ export class UnassignedCollections{
             {"name": "receivedFrom", "title": "Received From"},
             {"name": "dateReceived", "title": "Date Received"},
             {"name": "amount", "title": "Amount"},
-            {"name": "status", "title": "Status", "type": "html", "sortable": false, "filterable": false},
-            {"name": "payment_applied_amount", "title": "Applied Amount"}
+            {"name": "status", "title": "Status", "type": "html", "sortable": false, "filterable": false}
         ];
         let base = this;
         unappliedCollections.forEach(function(payment) {
@@ -97,7 +96,6 @@ export class UnassignedCollections{
             }
             row['status'] = assignmentHtml;
             row['amount'] = "<div>"+base.numeralService.format("$0,0.00", payment.paymentAmount)+"</div>";
-            row['payment_applied_amount'] = "<div>"+base.numeralService.format("$0,0.00", payment.payment_applied_amount)+"</div>";
             base.unassignedCollectionData.rows.push(row);
         });
 
