@@ -34,6 +34,8 @@ export class InvoiceSettingsForm extends abstractForm{
             "hidePrice": [false],
             "hideAmount": [false],
             "displayCommission":[false],
+            "showCreditCard":[true],
+            "showBankAccount":[true],
 
             "otherItems": [""],
             "otherUnits": [""],
