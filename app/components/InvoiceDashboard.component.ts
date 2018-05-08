@@ -880,6 +880,7 @@ export class InvoiceDashboardComponent {
             {"name": "journalId", "title": "Journal ID", 'visible': false, 'filterable': false},
             {"name": "paymentId", "title": "Payment ID", 'visible': false, 'filterable': false},
             {"name": "number", "type": "html", "title": "Number"},
+            {"name": "numberForExcel", "type": "text", "title": "Number", 'visible': false, 'filterable': false},
             {"name": "customer", "title": "Customer"},
             {"name": "invoice_date", "title": "Invoice Date"},
             {"name": "due_date", "title": "Due Date"},
@@ -900,6 +901,7 @@ export class InvoiceDashboardComponent {
             row['paymentId'] = invoice['payment_ids'];
             row['selectCol'] = "<input type='checkbox' class='checkbox'/>";
             row['number'] = "<a class='actionOnId' data-action='viewInvoice'><span class='icon'>"+invoice['number']+"</span></a>";
+            row['numberForExcel'] = invoice['number'];
             row['customer'] = invoice['customer_name'];
             row['invoice_date'] = (invoice['invoice_date']) ? base.dateFormater.formatDate(invoice['invoice_date'],base.serviceDateformat,base.dateFormat) : invoice['invoice_date'];
             row['due_date'] = (invoice['due_date']) ? base.dateFormater.formatDate(invoice['due_date'],base.serviceDateformat,base.dateFormat) : invoice['due_date'];
@@ -1355,7 +1357,7 @@ export class InvoiceDashboardComponent {
 
         for( var i in  tempData) {
             tempJsonArray = {};
-            tempJsonArray["Number"] = tempData[i].number;
+            tempJsonArray["Number"] = tempData[i].numberForExcel;
             tempJsonArray["Customer"] = tempData[i].customer;
             tempJsonArray["Invoice Date"] = tempData[i].invoice_date;
             tempJsonArray["Due Date"] = tempData[i].due_date;
