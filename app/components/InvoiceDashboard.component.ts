@@ -339,135 +339,179 @@ export class InvoiceDashboardComponent {
         let reportRequest = _.clone(this.reportRequest);
         reportRequest.startDate = this.currentFiscalStart;
         reportRequest.asOfDate = this.asOfDate;
-        let boxData = this.invoiceService.getDashboardBoxData(this.currentCompanyId, this.currentFiscalStart, this.asOfDate);
-        reportRequest.type = "cashBalance";
-        let cashBalance = this.reportService.generateAccountReport(reportRequest, this.currentCompanyId);
-
-        Observable.forkJoin(boxData, cashBalance).subscribe(results => {
+        let boxData = this.invoiceService.getDashboardBoxData(this.currentCompanyId, this.currentFiscalStart, this.asOfDate)
+          .subscribe(results => {
             this.hasBoxData = true;
-            this.metrics["totalReceivable"] = this.formatAmount(results[0].totalReceivableAmount);
             this.metrics["totalPastDue"] = this.formatAmount(results[0].totalPastDueAmount);
             this.metrics["avgReceivableDays"] = this.numeralService.format('0', results[0].avgReceivableDays);
             this.metrics["openedInvoices"] = this.numeralService.format('0', results[0].openedInvoices);
             this.metrics["sentInvoices"] = this.numeralService.format('0', results[0].sentInvoices);
             this.metrics["totalReceivedLast30Days"] = this.formatAmount(results[0].totalReceivedLast30Days);
-            this.metrics["cashBalance"] = this.formatAmount(results[1].cashBalance || 0);
             this.loadingService.triggerLoadingEvent(false);
         }, error => {
             this.loadingService.triggerLoadingEvent(false);
             this.toastService.pop(TOAST_TYPE.error, "Failed To Get Box Data");
         });
-        this.getTotalReceivablesByCustomer();
-        this.getAgingTotalReceivablesByCustomer();
-        this.getCustomerAgingSummary();
+        this.makeCall(['boxes', 'ageingtotalReceivablesByCustomer', 'totalReceivablesByCustomer', 'customerAgingSummary']);
     }
 
-    getTotalReceivablesByCustomer(){
+    makeCall(types){
         let base = this;
-        this.reportRequest.metricsType = 'totalReceivablesByCustomer';
-        this.reportService.generateMetricReport(this.reportRequest, this.currentCompanyId)
-            .subscribe(metricData => {
-                this.hasTotalReceivableData = true;
-                this.totalReceivablesChartOptions = {
-                    colors: this.chartColors,
-                    credits: {
-                        enabled: false
-                    },
-                    legend: {
-                        enabled: true
-                    },
-                    chart: {
-                        plotBackgroundColor: null,
-                        plotBorderWidth: null,
-                        plotShadow: false,
-                        type: 'pie',
-                        style: {
-                            fontFamily: 'NiveauGroteskRegular'
-                        }
-                    },
-                    title: {
-                        text: 'Total Receivables By Customer',
-                        style: {
-                            color: '#878787',
-                            fontFamily: 'NiveauGroteskLight',
-                            fontSize:'24'
-                        }
-                    },
-                    tooltip: {
-                        pointFormatter: function(){
-                            return '<b>Total: '+base.formatAmount(this.y)+'</b><b>('+base.getFormattedPercentage(this.percentage)+'%)</b>';
-                        }
-                    },
-                    plotOptions: {
-                        pie: {
-                            allowPointSelect: true,
-                            cursor: 'pointer',
-                            dataLabels: {
-                                enabled: false
-                            },
-                            showInLegend: true
-                        }
-                    },
-                    series: [{
-                        colorByPoint: true,
-                        data: base.getOpexData(metricData.data)
-                    }]
-                };
-                this.groupedTotalReceivablesChartOptions = {
-                    colors: this.chartColors,
-                    chart: {
-                        plotBackgroundColor: null,
-                        plotBorderWidth: null,
-                        plotShadow: false,
-                        type: 'pie',
-                        style: {
-                            fontFamily: 'NiveauGroteskRegular'
-                        }
-                    },
-                    title: {
-                        text: 'Total Receivables By Customer',
-                        align:'left',
-                        style: {
-                            color: '#878787',
-                            fontFamily: 'NiveauGroteskLight',
-                            fontSize:'24'
-                        }
-                    },
-                    subtitle: {
-                        text: ''
-                    },
-                    credits: {
-                        enabled: false
-                    },
-                    legend: {
-                        enabled: false
-                    },
-                    tooltip: {
-                        pointFormatter: function(){
-                            return '<b>Total: '+base.formatAmount(this.y)+'</b><b>('+base.getFormattedPercentage(this.percentage)+'%)</b>';
-                        }
-                    },
-                    pie: {
-                        dataLabels: {
-                            enabled: true,
-                            inside: true,
-                            formatter: function(){
-                                return this.y;
-                            },
-                            distance: -40,
-                            color: 'white'
-                        },
-                        showInLegend: true
-                    },
-                    series: [{
-                        colorByPoint: true,
-                        data: base.getOpexData(metricData.groupedData)
-                    }]
-                };
+        let data:Array<any> = [];
+        let metricTypeArray:Array<string> = [];
+        let metricRequest = {
+            "type": "metrics",
+            "companyID": this.currentCompanyId,
+            "companyCurrency": this.companyCurrency,
+            "startDate": this.reportRequest.startDate,
+            "asOfDate": this.reportRequest.asOfDate,
+            "daysPerAgingPeriod": "30",
+            "numberOfPeriods": "3",
+            "basis": "accrual"
+        };
+        _.each(types, function(type){
+            if(type == 'boxes'){
+                data.push({
+                    "type": "boxes",
+                    "kpi": ["Cash Balance", "Account Receivable"]
+                });
+            } else{
+                metricTypeArray.push(type);
+            }
+        });
+        metricRequest["metricType"] = metricTypeArray;
+        data.push(metricRequest);
+        base.companiesService.invokeFacadeService(data, this.currentCompanyId)
+            .subscribe(response => {
+                if(response.boxes) {
+                    this.metrics["totalReceivable"] = this.formatAmount(response.boxes["Account Receivable"] || 0);
+                    this.metrics["cashBalance"] = this.formatAmount(response.boxes["Cash Balance"] || 0);
+                    base.hasBoxData = true;
+                }
+                this.handleMetricResponse(response);
                 this.loadingService.triggerLoadingEvent(false);
             }, error =>{
                 this.loadingService.triggerLoadingEvent(false);
             });
+    }
+
+    handleMetricResponse(response){
+      let base = this;
+      let keys = _.keys(response);
+      _.each(keys, function(key){
+        switch(key){
+          case 'ageingtotalReceivablesByCustomer':
+            base.handleAgingTotalReceivablesByCustomer(response[key]);
+            break;
+          case 'totalReceivablesByCustomer':
+            base.handleTotalReceivablesByCustomer(response[key]);
+            break;
+          case 'customerAgingSummary':
+            base.handleCustomerAgingSummary(response[key]);
+            break;
+        }
+      });
+    }
+
+    handleTotalReceivablesByCustomer(metricData){
+        let base = this;
+        this.hasTotalReceivableData = true;
+        this.totalReceivablesChartOptions = {
+            colors: this.chartColors,
+            credits: {
+                enabled: false
+            },
+            legend: {
+                enabled: true
+            },
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie',
+                style: {
+                    fontFamily: 'NiveauGroteskRegular'
+                }
+            },
+            title: {
+                text: 'Total Receivables By Customer',
+                style: {
+                    color: '#878787',
+                    fontFamily: 'NiveauGroteskLight',
+                    fontSize:'24'
+                }
+            },
+            tooltip: {
+                pointFormatter: function(){
+                    return '<b>Total: '+base.formatAmount(this.y)+'</b><b>('+base.getFormattedPercentage(this.percentage)+'%)</b>';
+                }
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: false
+                    },
+                    showInLegend: true
+                }
+            },
+            series: [{
+                colorByPoint: true,
+                data: base.getOpexData(metricData.data)
+            }]
+        };
+        this.groupedTotalReceivablesChartOptions = {
+            colors: this.chartColors,
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie',
+                style: {
+                    fontFamily: 'NiveauGroteskRegular'
+                }
+            },
+            title: {
+                text: 'Total Receivables By Customer',
+                align:'left',
+                style: {
+                    color: '#878787',
+                    fontFamily: 'NiveauGroteskLight',
+                    fontSize:'24'
+                }
+            },
+            subtitle: {
+                text: ''
+            },
+            credits: {
+                enabled: false
+            },
+            legend: {
+                enabled: false
+            },
+            tooltip: {
+                pointFormatter: function(){
+                    return '<b>Total: '+base.formatAmount(this.y)+'</b><b>('+base.getFormattedPercentage(this.percentage)+'%)</b>';
+                }
+            },
+            pie: {
+                dataLabels: {
+                    enabled: true,
+                    inside: true,
+                    formatter: function(){
+                        return this.y;
+                    },
+                    distance: -40,
+                    color: 'white'
+                },
+                showInLegend: true
+            },
+            series: [{
+                colorByPoint: true,
+                data: base.getOpexData(metricData.groupedData)
+            }]
+        };
     }
 
     showOtherCharts(type){
@@ -497,120 +541,113 @@ export class InvoiceDashboardComponent {
         return result;
     }
 
-    getAgingTotalReceivablesByCustomer(){
+    handleAgingTotalReceivablesByCustomer(metricData){
         let base = this;
-        this.reportRequest.metricsType = 'ageingtotalReceivablesByCustomer';
-        this.reportService.generateMetricReport(this.reportRequest, this.currentCompanyId)
-            .subscribe(metricData => {
-                this.hasAgingByCustomerData = true;
-                let columns = metricData.columns;
-                let data = metricData.data;
-                let series = [];
-                _.each(data, function(value, key){
-                    let array = [];
-                    _.each(columns, function (column) {
-                        array.push(value[column]);
-                    });
-                    let valueArray = base.removeCurrency(array);
-                    series.push({
-                        name: key,
-                        data: valueArray
-                    });
-                });
-                this.agingByCustomer={
-                    colors: this.chartColors,
-                    chart: {
-                        type: 'bar',
-                        marginRight: 50,
-                        style: {
-                            fontFamily: 'NiveauGroteskRegular'
-                        }
-                    },
-                    title: {
-                        text: 'Aging By Customer',
-                        align: 'left',
-                        style: {
-                            color: '#878787',
-                            fontFamily: 'NiveauGroteskLight',
-                            fontSize:'24'
-                        }
-                    },
-                    credits: {
-                        enabled: false
-                    },
-                    xAxis: {
-                        gridLineWidth: 0,
-                        minorGridLineWidth: 0,
-                        categories: columns
-                    },
-                    tooltip: {
-                        headerFormat: '<b>{point.x}</b><br/>',
-                        pointFormatter: function(){
-                            return '<span style="color:'+this.series.color+'">'+this.series.name+': '+base.formatAmount(this.y)+'</span><br/>'
-                        },
-                        shared: true
-                    },
-                    yAxis: {
-                        gridLineWidth: 0,
-                        minorGridLineWidth: 0,
-                        min: 0,
-                        title: {
-                            text: '',
-                            style: {
-                                fontSize:'15px'
-                            }
-                        },
-
-                        stackLabels: {
-                            enabled: true,
-                            formatter: function () {
-                                return base.formatAmount(this.total)
-                            },
-                            style: {
-                                fontSize:'13px',
-                                fontWeight:'bold',
-                                color:'#878787',
-                                fill:'#878787'
-                                // color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
-                            }
-                        },
-                        labels: {
-                            style: {
-                                fontSize:'13px',
-                                fontWeight:'bold',
-                                color:'#878787',
-                                fill:'#878787'
-
-                            }
-                        }
-                    },
-                    legend: {
-                        enabled: false
-                    },
-                    plotOptions: {
-                        enabled: true,
-                        series: {
-                            stacking: 'normal',
-                            dataLabels: {
-                                enabled: false,
-                                format: '{y}',
-                                fontSize:'13px',
-                                color:'#878787',
-                                fill:'#878787',
-                                style: {
-                                    fontSize:'13px'
-                                },
-                                // color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
-                            }
-                        },
-
-                    },
-                    series:series
-                };
-                this.loadingService.triggerLoadingEvent(false);
-            }, error => {
-                this.loadingService.triggerLoadingEvent(false);
+        this.hasAgingByCustomerData = true;
+        let columns = metricData.columns;
+        let data = metricData.data;
+        let series = [];
+        _.each(data, function(value, key){
+            let array = [];
+            _.each(columns, function (column) {
+                array.push(value[column]);
             });
+            let valueArray = base.removeCurrency(array);
+            series.push({
+                name: key,
+                data: valueArray
+            });
+        });
+        this.agingByCustomer={
+            colors: this.chartColors,
+            chart: {
+                type: 'bar',
+                marginRight: 50,
+                style: {
+                    fontFamily: 'NiveauGroteskRegular'
+                }
+            },
+            title: {
+                text: 'Aging By Customer',
+                align: 'left',
+                style: {
+                    color: '#878787',
+                    fontFamily: 'NiveauGroteskLight',
+                    fontSize:'24'
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            xAxis: {
+                gridLineWidth: 0,
+                minorGridLineWidth: 0,
+                categories: columns
+            },
+            tooltip: {
+                headerFormat: '<b>{point.x}</b><br/>',
+                pointFormatter: function(){
+                    return '<span style="color:'+this.series.color+'">'+this.series.name+': '+base.formatAmount(this.y)+'</span><br/>'
+                },
+                shared: true
+            },
+            yAxis: {
+                gridLineWidth: 0,
+                minorGridLineWidth: 0,
+                min: 0,
+                title: {
+                    text: '',
+                    style: {
+                        fontSize:'15px'
+                    }
+                },
+
+                stackLabels: {
+                    enabled: true,
+                    formatter: function () {
+                        return base.formatAmount(this.total)
+                    },
+                    style: {
+                        fontSize:'13px',
+                        fontWeight:'bold',
+                        color:'#878787',
+                        fill:'#878787'
+                        // color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                    }
+                },
+                labels: {
+                    style: {
+                        fontSize:'13px',
+                        fontWeight:'bold',
+                        color:'#878787',
+                        fill:'#878787'
+
+                    }
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                enabled: true,
+                series: {
+                    stacking: 'normal',
+                    dataLabels: {
+                        enabled: false,
+                        format: '{y}',
+                        fontSize:'13px',
+                        color:'#878787',
+                        fill:'#878787',
+                        style: {
+                            fontSize:'13px'
+                        },
+                        // color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
+                    }
+                },
+
+            },
+            series:series
+        };
     }
 
     removeCurrency(values) {
@@ -626,103 +663,96 @@ export class InvoiceDashboardComponent {
         return this.numeralService.value(amount);
     }
 
-    getCustomerAgingSummary(){
+    handleCustomerAgingSummary(metricData){
         let base = this;
-        this.reportRequest.metricsType = 'customerAgingSummary';
-        this.reportService.generateMetricReport(this.reportRequest, this.currentCompanyId)
-            .subscribe(metricData => {
-                this.hasARAgingSummaryData = true;
-                let columns = metricData.columns;
-                let data = metricData.data || {};
-                let totalObj = data.TOTAL || {};
-                let series = [];
-                _.each(columns, function(column){
-                    series.push({
-                        name: column,
-                        y: base.unFormatAmount(totalObj[column])
-                    });
-                });
-                this.customerAgingSummary={
-                    colors: this.chartColors,
-                    chart: {
-                        type: 'column',
-                        style: {
-                            fontFamily: 'NiveauGroteskRegular'
-                        }
-                    },
-                    title: {
-                        text: 'AR Aging Summary',
-                        align: 'left',
-                        style: {
-                            color: '#878787',
-                            fontFamily: 'NiveauGroteskLight',
-                            fontSize:'24'
-                        }
-                    },
-                    credits: {
-                        enabled: false
-                    },
-                    xAxis: {
-                        type: 'category',
-                        labels: {
-                            style: {
-                                fontSize:'13px',
-                                fontWeight:'bold',
-                                color:'#878787',
-                                fill:'#878787'
-
-                            }
-                        }
-                    },
-                    yAxis: {
-                        title: {
-                            text: '',
-                            style: {
-                                fontSize:'15px'
-
-                            }
-                        },
-                        labels: {
-                            style: {
-                                fontSize:'13px'
-
-                            }
-                        }
-                    },
-                    legend: {
-                        enabled: false
-                    },
-                    plotOptions: {
-                        series: {
-                            borderWidth: 0,
-                            dataLabels: {
-                                enabled: true,
-                                formatter: function () {
-                                    return base.formatAmount(this.y);
-                                },
-                                fontSize:'13px',
-                                color:'#878787',
-                                fill:'#878787',
-                                style: {
-                                    fontSize:'13px'
-                                }
-                            }
-                        }
-                    },
-                    tooltip: {
-                        pointFormatter: function(){
-                            return '<span style="color:'+this.series.color+'">'+this.series.name+': '+base.formatAmount(this.y)+'</span><br/>'
-                        }
-                    },
-                    series: [{
-                        colorByPoint: true,
-                        data: series
-                    }],
-                };
-                this.loadingService.triggerLoadingEvent(false);
-            }, error => {
-                this.loadingService.triggerLoadingEvent(false);
+        this.hasARAgingSummaryData = true;
+        let columns = metricData.columns;
+        let data = metricData.data || {};
+        let totalObj = data.TOTAL || {};
+        let series = [];
+        _.each(columns, function(column){
+            series.push({
+                name: column,
+                y: base.unFormatAmount(totalObj[column])
             });
+        });
+        this.customerAgingSummary={
+            colors: this.chartColors,
+            chart: {
+                type: 'column',
+                style: {
+                    fontFamily: 'NiveauGroteskRegular'
+                }
+            },
+            title: {
+                text: 'AR Aging Summary',
+                align: 'left',
+                style: {
+                    color: '#878787',
+                    fontFamily: 'NiveauGroteskLight',
+                    fontSize:'24'
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            xAxis: {
+                type: 'category',
+                labels: {
+                    style: {
+                        fontSize:'13px',
+                        fontWeight:'bold',
+                        color:'#878787',
+                        fill:'#878787'
+
+                    }
+                }
+            },
+            yAxis: {
+                title: {
+                    text: '',
+                    style: {
+                        fontSize:'15px'
+
+                    }
+                },
+                labels: {
+                    style: {
+                        fontSize:'13px'
+
+                    }
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                series: {
+                    borderWidth: 0,
+                    dataLabels: {
+                        enabled: true,
+                        formatter: function () {
+                            return base.formatAmount(this.y);
+                        },
+                        fontSize:'13px',
+                        color:'#878787',
+                        fill:'#878787',
+                        style: {
+                            fontSize:'13px'
+                        }
+                    }
+                }
+            },
+            tooltip: {
+                pointFormatter: function(){
+                    return '<span style="color:'+this.series.color+'">'+this.series.name+': '+base.formatAmount(this.y)+'</span><br/>'
+                }
+            },
+            series: [{
+                colorByPoint: true,
+                data: series
+            }],
+        };
     }
 
     getFormattedPercentage(value){
