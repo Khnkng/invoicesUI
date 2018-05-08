@@ -1328,6 +1328,23 @@
                   <input type="text" formControlName="defaultTitle"/>
                 </div>
               </div>
+              <div class="row" style="margin-top: 1rem">
+                <div class="small-12 medium-2 columns text-right">
+                  <label>Email Replied by Name:</label>
+                </div>
+                <div class="small-12 medium-6 columns">
+                  <input type="text" formControlName="reply_to_name"/>
+                </div>
+              </div>
+              <div class="row" style="margin-top: 1rem">
+                <div class="small-12 medium-2 columns text-right">
+                  <label>Reply Email:</label>
+                </div>
+                <div class="small-12 medium-6 columns">
+                  <input type="text" formControlName="reply_to_email"/>
+                </div>
+              </div>
+
             </div>
             <div class="reports tabs-panel" id="columnSettings">
               <div class="row" style="margin-top: 1rem">
@@ -1361,7 +1378,7 @@
                       </label>
                     </div>
                     <div class="field-row other">
-                      <label class="float-left">
+                      <label class="float-left" style="margin-left: -4px;">
                         <input type="radio" formControlName="items" value="Other"/>
                         <span>Other</span>
                       </label>
@@ -1389,7 +1406,7 @@
                       </label>
                     </div>
                     <div class="field-row other">
-                      <label class="float-left">
+                      <label class="float-left" style="margin-left: -4px;">
                         <input type="radio" formControlName="units" value="Other"/>
                         <span>Other</span>
                       </label>
@@ -1417,7 +1434,7 @@
                       </label>
                     </div>
                     <div class="field-row other">
-                      <label class="float-left">
+                      <label class="float-left" style="margin-left: -4px;">
                         <input type="radio" formControlName="price" value="Other"/>
                         <span>Other</span>
                       </label>
@@ -1463,9 +1480,26 @@
                   </div>
                 </div>
               </div>
+              <div class="row">
+                <div class="small-12 medium-2 columns text-right">
+                  <label>Payment Methods:</label>
+                </div>
+                <div class="small-12 medium-9 columns">
+                  <div class="row">
+                    <div class="small-12 medium-6 columns">
+                      <input type="checkbox" formControlName="showBankAccount"><label>Bank Account</label>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="small-12 medium-6 columns">
+                      <input type="checkbox" formControlName="showCreditCard"><label>Credit Card</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
             </div>
           </div>
-        </div>
     </div>
     <div class="row">
         <div class="small-12 medium-12 columns">
