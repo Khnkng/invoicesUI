@@ -339,14 +339,14 @@ export class InvoiceDashboardComponent {
         let reportRequest = _.clone(this.reportRequest);
         reportRequest.startDate = this.currentFiscalStart;
         reportRequest.asOfDate = this.asOfDate;
-        let boxData = this.invoiceService.getDashboardBoxData(this.currentCompanyId, this.currentFiscalStart, this.asOfDate)
-          .subscribe(results => {
+        this.invoiceService.getDashboardBoxData(this.currentCompanyId, this.currentFiscalStart, this.asOfDate)
+          .subscribe(response => {
             this.hasBoxData = true;
-            this.metrics["totalPastDue"] = this.formatAmount(results[0].totalPastDueAmount);
-            this.metrics["avgReceivableDays"] = this.numeralService.format('0', results[0].avgReceivableDays);
-            this.metrics["openedInvoices"] = this.numeralService.format('0', results[0].openedInvoices);
-            this.metrics["sentInvoices"] = this.numeralService.format('0', results[0].sentInvoices);
-            this.metrics["totalReceivedLast30Days"] = this.formatAmount(results[0].totalReceivedLast30Days);
+            this.metrics["totalPastDue"] = this.formatAmount(response.totalPastDueAmount);
+            this.metrics["avgReceivableDays"] = this.numeralService.format('0', response.avgReceivableDays);
+            this.metrics["openedInvoices"] = this.numeralService.format('0', response.openedInvoices);
+            this.metrics["sentInvoices"] = this.numeralService.format('0', response.sentInvoices);
+            this.metrics["totalReceivedLast30Days"] = this.formatAmount(response.totalReceivedLast30Days);
             this.loadingService.triggerLoadingEvent(false);
         }, error => {
             this.loadingService.triggerLoadingEvent(false);
