@@ -1,0 +1,56 @@
+<div *ngIf="hasCustomerDataLoaded">
+    <div class="row">
+        <div class="column medium-6"></div>
+        <div class="column medium-6">
+            <div class="row">
+                <div class="column medium-4"></div>
+                <div class="column medium-4" style="padding-right: 10px;">
+                    <select [(ngModel)]="searchTerm" (change)="getCurrentCustomerActivityData(null, $event.target.value)" style="color:#878787;">
+                        <option value="As Of Today">As Of Today</option>
+                        <option value="Last Month">Last Month</option>
+                        <option value="Last 3 Months">Last 3 Months</option>
+                        <option value="Last 6 Months">Last 6 Months</option>
+                        <option value="Last Year">Last Year</option>
+                    </select>
+                </div>
+                <div class="column medium-4">
+                    <select [(ngModel)]="currentCustomer" (change)="getCurrentCustomerActivityData($event.target.value, null)" style="color:#878787;">
+                        <option value="{{customer.customer_name}}" *ngFor="let customer of customersData">{{customer.customer_name}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="column medium-12">
+            <table>
+                <thead>
+                    <tr>
+                        <td>Date</td>
+                        <td>Ref #/Number</td>
+                        <td>Type</td>
+                        <td>Amount</td>
+                        <td>Due/UnApplied Amount</td>
+                        <td>Status</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let activity of customerActivityData">
+                        <td>{{activity.date}}</td>
+                        <td>{{activity.number}}</td>
+                        <td>{{activity.type}}</td>
+                        <td>{{activity.amount}}</td>
+                        <td>{{activity.dueAmount}}</td>
+                        <td>{{activity.status}}</td>
+                    </tr>
+                    <tr>
+                        <td class="total-color" style="font-weight: 800">Total</td>
+                        <td colspan="2"></td>
+                        <td  class="total-color" style="font-weight: 800">{{totalAmount}}</td>
+                        <td colspan="2"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
