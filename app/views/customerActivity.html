@@ -25,11 +25,30 @@
         <div class="column medium-12">
             <table>
                 <thead>
-                <tr><td>DATE</td><td>REF_NUMBER/NUMBER</td><td>TYPE</td><td>AMOUNT</td><td>DUE/UN_APPLIED AMOUNT</td><td>STATUS</td></tr>
+                    <tr>
+                        <td>Date</td>
+                        <td>Ref #/Number</td>
+                        <td>Type</td>
+                        <td>Amount</td>
+                        <td>Due/UnApplied Amount</td>
+                        <td>Status</td>
+                    </tr>
                 </thead>
                 <tbody>
-                <tr *ngFor="let activity of customerActivityData"><td>{{activity.date}}</td><td>{{activity.number}}</td><td>{{activity.type}}</td><td>{{activity.amount}}</td><td>{{activity.dueAmount}}</td><td>{{activity.status}}</td></tr>
-                <tr><td class="total-color" style="font-weight: 800">Total</td><td></td><td></td><td  class="total-color" style="font-weight: 800">{{totalAmount}}</td><td></td><td></td></tr>
+                    <tr *ngFor="let activity of customerActivityData">
+                        <td>{{activity.date}}</td>
+                        <td>{{activity.number}}</td>
+                        <td>{{activity.type}}</td>
+                        <td>{{activity.amount}}</td>
+                        <td>{{activity.dueAmount}}</td>
+                        <td>{{activity.status}}</td>
+                    </tr>
+                    <tr>
+                        <td class="total-color" style="font-weight: 800">Total</td>
+                        <td colspan="2"></td>
+                        <td  class="total-color" style="font-weight: 800">{{totalAmount}}</td>
+                        <td colspan="2"></td>
+                    </tr>
                 </tbody>
             </table>
         </div>

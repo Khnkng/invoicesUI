@@ -71,23 +71,30 @@ export class CustomerActivityComponent{
         });
     }
 
+    getFormattedAmount(amount){
+        return this.numeralService.format("$0,0.00", amount);
+    }
+
     getCustomerActivityData(data) {
         let base = this;
+        this.loadingService.triggerLoadingEvent(true);
         this.invoiceService.getCustomersData(this.currentCustomerId, data).subscribe(customersData  => {
+            this.loadingService.triggerLoadingEvent(false);
             this.customerActivityData = customersData.data;
             this.hasCustomerDataLoaded = true;
-            console.log("CustomersData == ", customersData);
-            this.customerActivityData.forEach(function (customer) {
-                customer.date = base.dateFormater.formatDate(customer.date,base.serviceDateformat,base.dateFormat);
-                customer.amount = parseFloat(customer.amount).toLocaleString(base.localeFortmat, { style: 'currency', currency: base.companyCurrency, minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                customer.dueAmount = parseFloat(customer.dueAmount).toLocaleString(base.localeFortmat, { style: 'currency', currency: base.companyCurrency, minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                if(customer.type === 'Invoice') {
-                    customer.status = base.statusMessage[customer.status];
+            this.customerActivityData.forEach(function (activity) {
+                activity.date = base.dateFormater.formatDate(activity.date, base.serviceDateformat, base.dateFormat);
+                activity.amount = base.getFormattedAmount(activity.amount);
+                activity.dueAmount = base.getFormattedAmount(activity.dueAmount);
+                if(activity.type === 'Invoice') {
+                    activity.status = base.statusMessage[activity.status];
                 }
             });
-            this.totalAmount = parseFloat(customersData.total).toLocaleString(base.localeFortmat, { style: 'currency', currency: base.companyCurrency, minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            this.totalAmount = base.getFormattedAmount(customersData.total);
+        }, error =>  {
             this.loadingService.triggerLoadingEvent(false);
-        }, error =>  this.handleError(error));
+            this.handleError(error);
+        });
     }
 
     ngOnDestroy(){
@@ -154,17 +161,6 @@ export class CustomerActivityComponent{
                     console.log("Start date == ", data['startDate']);
                     console.log("End date == ", data['asOfDate']);
                     break;
-
-                /*
-                        case "Custom":
-                          if(targetObj.startDate){
-                            targetObj.startDate=moment(targetObj.startDate, this.dateFormat).format(this.dateFormat);
-                          }
-                          if(targetObj.asOfDate){
-                            targetObj.asOfDate=moment(targetObj.asOfDate, this.dateFormat).format(this.dateFormat);
-                          }
-                          break;
-                */
             }
             this.getCustomerActivityData(data);
 
