@@ -12,5 +12,6 @@ export const INVOICE_PATHS={
     DOCUMENTS_SERVICE: "/DocumentServices/user/:id/companies/:companyId/documents?mappedType=:type&mappedTo=:mappedId",
     DOCUMENT_SERVICE_BASE:"/DocumentServices/user/:id/companies/:companyId/documents",
     CUSTOMER_INVOICE:"/Invoices/users/:id/companies/:companyId/invoice/customer/:customerId",
-    PAYMENT_INVOICES:"/Invoices/users/:id/companies/:companyId/payment/:paymentID/invoices"
+    PAYMENT_INVOICES:"/Invoices/users/:id/companies/:companyId/payment/:paymentID/invoices",
+    CUSTOMER_ACTIVITY_SERVICE:"/Invoices/users/:id/companies/:companyId/customers/:customerID/customerActivity"
 };

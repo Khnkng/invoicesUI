@@ -232,4 +232,10 @@ export class InvoicesService extends QountServices {
         .catch(this.handleError)
     }
 
+    getCustomersData(customerID : string, data) {
+        let url = this.interpolateUrl(INVOICE_PATHS.CUSTOMER_ACTIVITY_SERVICE,null,{id: Session.getUser().id, companyId: Session.getCurrentCompany(), customerID: customerID});
+        return this.create(url, data, SOURCE_TYPE.JAVA).map(res => <any> res.json())
+            .catch(this.handleError);
+    }
+
 }
