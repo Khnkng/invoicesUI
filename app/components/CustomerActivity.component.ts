@@ -41,6 +41,9 @@ export class CustomerActivityComponent{
     searchTerm:string;
     statusMessage = {'partially_paid' : 'Partially Paid', 'paid' : 'Paid', 'sent' : 'Sent', 'draft' : 'Draft', "past_due":"Past Due", 'Applied' : 'Applied'};
     hasCustomerDataLoaded: boolean = false;
+    dateFilter: any = {};
+    filterObj:any = {};
+    filters: Array<any> = [];
 
     constructor(private switchBoard: SwitchBoard, private toastService: ToastService, private loadingService:LoadingService,
                 private invoiceService:InvoicesService,private _router:Router, private _route: ActivatedRoute,
@@ -75,7 +78,7 @@ export class CustomerActivityComponent{
         return this.numeralService.format("$0,0.00", amount);
     }
 
-    getCustomerActivityData(data) {
+    getCustomerActivityData(data, closePopup?) {
         let base = this;
         this.loadingService.triggerLoadingEvent(true);
         this.invoiceService.getCustomersData(this.currentCustomerId, data).subscribe(customersData  => {
@@ -91,6 +94,9 @@ export class CustomerActivityComponent{
                 }
             });
             this.totalAmount = base.getFormattedAmount(customersData.total);
+            if(closePopup){
+                this.closeReveal();
+            }
         }, error =>  {
             this.loadingService.triggerLoadingEvent(false);
             this.handleError(error);
@@ -113,70 +119,92 @@ export class CustomerActivityComponent{
 
     getCurrentCustomerActivityData(customerName, searchItem) {
         this.loadingService.triggerLoadingEvent(true);
-
         if(searchItem) {
             this.setDates(searchItem);
         } else if(customerName) {
             this.currentCustomerId = _.filter(this.customersData, {customer_name: customerName})[0].customer_id;
             this.setDates(this.searchTerm);
         }
-        console.log("Change Value == ", customerName);
-        console.log("search term == ", this.searchTerm);
-        console.log("Customer Id == ", this.currentCustomerId);
     }
 
     setDates(value) {
-        // this.loadingService.triggerLoadingEvent(true);
         let data = {};
         if(value){
             switch(value){
                 case "As Of Today":
                     data['asOfDate'] = this.todaysDate;
                     break;
-
                 case "Last Month":
                     data['startDate'] = moment().subtract(1, 'months').startOf('month').format(this.serviceDateformat);
                     data['asOfDate'] = moment().subtract(1, 'months').endOf('month').format(this.serviceDateformat);
-                    console.log("Start date == ", data['startDate']);
-                    console.log("End date == ", data['asOfDate']);
                     break;
 
                 case "Last 3 Months":
                     data['startDate'] = moment().subtract(3, 'months').startOf('month').format(this.serviceDateformat);
                     data['asOfDate'] = moment().subtract(3, 'months').endOf('month').format(this.serviceDateformat);
-                    console.log("Start date == ", data['startDate']);
-                    console.log("End date == ", data['asOfDate']);
                     break;
 
                 case "Last 6 Months":
                     data['startDate'] = moment().subtract(6, 'months').startOf('month').format(this.serviceDateformat);
                     data['asOfDate'] = moment().subtract(6, 'months').endOf('month').format(this.serviceDateformat);
-                    console.log("Start date == ", data['startDate']);
-                    console.log("End date == ", data['asOfDate']);
                     break;
 
                 case "Last Year":
                     data['startDate'] = moment().subtract(1, 'year').startOf('year').format(this.serviceDateformat);
                     data['asOfDate'] = moment().subtract(1, 'year').endOf('year').format(this.serviceDateformat);
-                    console.log("Start date == ", data['startDate']);
-                    console.log("End date == ", data['asOfDate']);
                     break;
             }
             this.getCustomerActivityData(data);
-
         }
     }
-    /*
-      handleAction($event){
-        let action = $event.action;
-        if(action == 'edit') {
-          let invoiceId= $event.id;
-          let link = ['invoices/edit', invoiceId];
-          this._router.navigate(link);
+
+    setFilterDate($event, dateKey){
+        this.dateFilter[dateKey] = this.dateFormater.formatDate($event, this.dateFormat, this.serviceDateformat);
+    }
+
+    applyFilters(){
+        let data: any = {};
+        data.filters = [];
+        if(this.dateFilter.startDate){
+            data['startDate'] = this.dateFilter.startDate;
         }
-      }
-    */
+        if(this.dateFilter.asOfDate){
+            data['asOfDate'] = this.dateFilter.asOfDate;
+        } else{
+            data['asOfDate'] = this.todaysDate;
+        }
 
+        if(this.filterObj.amountCondition != 'between' && this.filterObj.amount){
+            data.filters.push({
+                "filterName": "amount",
+                "operator": this.filterObj.amountCondition,
+                "values": [this.filterObj.amount]
+            });
+        }
+        if(this.filterObj.amountCondition == 'between' && this.filterObj.lowerBound && this.filterObj.upperBound){
+            data.filters.push({
+                "filterName": "amount",
+                "operator": "between",
+                "values": [this.filterObj.lowerBound, this.filterObj.upperBound]
+            });
+        }
+        if(this.filterObj.type && this.filterObj.type != 'All'){
+            data.filters.push({
+                "filterName": "type",
+                "values": [this.filterObj.type]
+            });
+        }
+        this.getCustomerActivityData(data, true);
+    }
 
+    setFilter(filterName, value){
+        this.filterObj[filterName] = value;
+    }
+
+    closeReveal(){
+        this.dateFilter = {};
+        this.filterObj = {};
+        jQuery('#filter-reveal').foundation('close');
+    }
 }
 
