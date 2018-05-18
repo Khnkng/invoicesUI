@@ -98,11 +98,11 @@
     <div class="row">
       <div class="column medium-4">
         <label>
-          Amount
+          Condition
           <select [(ngModel)]="amountCondition" (change)="setFilter('amountCondition', $event.target.value)">
             <option value="<">&lt;</option>
             <option value="<=">&lt;=</option>
-            <option value=">">&gt;=</option>
+            <option value=">">&gt;</option>
             <option value=">=">&gt;=</option>
             <option value="between">Between</option>
           </select>
@@ -110,17 +110,26 @@
       </div>
       <div class="column medium-8" style="margin-top: 25px;">
         <ng-template [ngIf]="filterObj.amountCondition != 'between'">
-          <input type="text" [(ngModel)]="filterObj.amount"/>
+            <label>
+                Amount
+            <input type="text" [(ngModel)]="filterObj.amount"/>
+        </label>
         </ng-template>
         <ng-template [ngIf]="filterObj.amountCondition == 'between'">
           <span class="float-left">
-            <input type="text" [(ngModel)]="filterObj.lowerBound"/>
+              <label>
+                  Lower Value
+                <input type="text" [(ngModel)]="filterObj.lowerBound"/>
+              </label>
           </span>
           <span class="float-left">
             And
           </span>
           <span class="float-left">
-            <input type="text" [(ngModel)]="filterObj.upperBound"/>
+              <label>
+                  Upper Value
+                  <input type="text" [(ngModel)]="filterObj.upperBound"/>
+              </label>
           </span>
         </ng-template>
       </div>
