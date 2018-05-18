@@ -3,7 +3,11 @@
         <div class="column medium-6"></div>
         <div class="column medium-6">
             <div class="row">
-                <div class="column medium-4"></div>
+                <div class="column medium-4">
+                  <span class="float-right">
+                    <i class="icon ion-funnel" style="font-size: 1.3em; top: 5px;" data-toggle="filter-reveal"></i>
+                  </span>
+                </div>
                 <div class="column medium-4" style="padding-right: 10px;">
                     <select [(ngModel)]="searchTerm" (change)="getCurrentCustomerActivityData(null, $event.target.value)" style="color:#878787;">
                         <option value="As Of Today">As Of Today</option>
@@ -39,18 +43,92 @@
                         <td>{{activity.date}}</td>
                         <td>{{activity.number}}</td>
                         <td>{{activity.type}}</td>
-                        <td>{{activity.amount}}</td>
-                        <td>{{activity.dueAmount}}</td>
+                        <td class="text-right">{{activity.amount}}</td>
+                        <td class="text-right">{{activity.dueAmount}}</td>
                         <td>{{activity.status}}</td>
                     </tr>
                     <tr>
                         <td class="total-color" style="font-weight: 800">Total</td>
                         <td colspan="2"></td>
-                        <td  class="total-color" style="font-weight: 800">{{totalAmount}}</td>
+                        <td class="total-color text-right" style="font-weight: 800">{{totalAmount}}</td>
                         <td colspan="2"></td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
+
+  <div foundation class="reveal small" id="filter-reveal" data-reveal>
+    <div class="row">
+      <div class="small-12 medium-12 columns">
+        <div class="float-left" style="font-size: 1.3rem; font-weight: bold;">
+          Filter:
+        </div>
+        <div class="float-right">
+          <i class="icon ion-ios-close-outline" (click)="closeReveal()"></i>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="column medium-4">
+        <label>
+          Start Date
+          <input type="text" invoice-custom-datepicker [format]="dateFormat" [mindate]="'past'" (valueChanged)="setFilterDate($event, 'startDate')"/>
+        </label>
+      </div>
+      <div class="column medium-4">
+        <label>
+          As Of Date
+          <input type="text" invoice-custom-datepicker [format]="dateFormat" [mindate]="'past'" (valueChanged)="setFilterDate($event, 'asOfDate')"/>
+        </label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="column medium-4">
+        <label>
+          Type
+          <select [(ngModel)]="type" (change)="setFilter('type', $event.target.value)">
+            <option value="All">All</option>
+            <option value="Invoice">Invoice</option>
+            <option value="Collection">Collection</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="column medium-4">
+        <label>
+          Amount
+          <select [(ngModel)]="amountCondition" (change)="setFilter('amountCondition', $event.target.value)">
+            <option value="<">&lt;</option>
+            <option value="<=">&lt;=</option>
+            <option value=">">&gt;=</option>
+            <option value=">=">&gt;=</option>
+            <option value="between">Between</option>
+          </select>
+        </label>
+      </div>
+      <div class="column medium-8" style="margin-top: 25px;">
+        <ng-template [ngIf]="filterObj.amountCondition != 'between'">
+          <input type="text" [(ngModel)]="filterObj.amount"/>
+        </ng-template>
+        <ng-template [ngIf]="filterObj.amountCondition == 'between'">
+          <span class="float-left">
+            <input type="text" [(ngModel)]="filterObj.lowerBound"/>
+          </span>
+          <span class="float-left">
+            And
+          </span>
+          <span class="float-left">
+            <input type="text" [(ngModel)]="filterObj.upperBound"/>
+          </span>
+        </ng-template>
+      </div>
+    </div>
+    <div class="row">
+      <div class="column medium-4">
+        <button class="button small" (click)="applyFilters()">Apply</button>
+      </div>
+    </div>
+  </div>
 </div>
